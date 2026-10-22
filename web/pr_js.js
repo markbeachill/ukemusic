@@ -167,7 +167,7 @@
           $p('prLevel').hidden = true;
           $p('prTimer').hidden = true;
           $p('prClean').hidden = true;
-          $p('prTitle').textContent = 'Practice';
+          $p('prTitle').textContent = 'Free Practice';
           prRenderHome();
         }
 

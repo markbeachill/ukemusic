@@ -334,6 +334,11 @@
       .lib-folder-button { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; padding: 5px 10px; }
       .lib-folder-button svg { width: 16px; height: 16px; color: var(--accent); }
       .library-heading { display: flex; align-items: center; gap: 18px; }
+      /* Free Practice: its own colour, first thing on the songs screen, so it isn't missed (4.33.1) */
+      .practice-cta { flex: none; align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border: 0; border-radius: 12px; background: #c2410c; color: #fff; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+      .practice-cta:hover { background: #9a3412; }
+      .practice-cta:focus-visible { outline: 3px solid #fdba74; outline-offset: 2px; }
+      .practice-cta [data-icon] svg, .practice-cta svg { stroke: currentColor; }
       .library-new { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 0; border-radius: 12px; background: var(--accent); color: #fff; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; }
       .library-new:hover { background: var(--accent-dark); }
       .library-new svg { width: 20px; height: 20px; }
@@ -2641,12 +2646,12 @@
         <button id="libSwitch" class="lib-switch" type="button" title="Your libraries: switch to another, start a new one, share one as a library pack or open a pack"><span data-icon="folder" aria-hidden="true"></span><span id="libSwitchName">Songs</span><span class="caret" aria-hidden="true">▾</span></button>
         <span class="library-folder" id="libFolder"></span>
         <span class="appbar-spacer"></span>
-        <button id="libPractice" class="appbar-button" type="button" data-icon="metronome" title="Warm-ups, chords, strumming, picking, scales and routines">Practice</button>
         <button id="libSettingsButton" class="appbar-button" type="button" data-icon="gear" title="Defaults for all songs">Settings</button>
         <button id="libBackButton" class="appbar-button" type="button" data-icon="back" title="Go back to the song you were working on" hidden>Back to song</button>
       </header>
       <main class="library-main">
         <div class="library-heading">
+          <button id="libPractice" class="practice-cta" type="button" title="Warm-ups, chords, strumming, picking, scales and routines: no song needed"><span data-icon="metronome" aria-hidden="true"></span>Free Practice</button>
           <div class="library-title"><h1 id="libHeading">Your songs</h1><p id="libAbout" class="library-about" hidden></p></div>
           <button id="libNew" class="library-new" type="button"><span data-icon="plus" aria-hidden="true"></span>New song</button>
         </div>
@@ -3074,11 +3079,11 @@
       </div>
     </dialog>
 
-        <div id="practice" class="practice" hidden role="dialog" aria-label="Practice">
+        <div id="practice" class="practice" hidden role="dialog" aria-label="Free Practice">
       <div class="practice-bar">
         <button id="prBack" type="button" title="Back to all the exercises (Esc)" hidden>← All exercises</button>
         <div class="pr-heading">
-          <strong id="prTitle" class="pr-title">Practice</strong>
+          <strong id="prTitle" class="pr-title">Free Practice</strong>
           <span id="prLevel" class="pr-level" hidden></span>
         </div>
         <div id="prRoutineBar" class="pr-routine-bar" hidden>
@@ -7187,7 +7192,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           $p('prLevel').hidden = true;
           $p('prTimer').hidden = true;
           $p('prClean').hidden = true;
-          $p('prTitle').textContent = 'Practice';
+          $p('prTitle').textContent = 'Free Practice';
           prRenderHome();
         }
 

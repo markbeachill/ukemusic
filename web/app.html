@@ -76,6 +76,12 @@ button { cursor: pointer; }
 
 /* ── Library ── */
 .library { max-width: 820px; margin: 0 auto; padding-block: 18px 40px; display: grid; gap: 16px; }
+/* Free Practice: its own colour, first on the songs screen, so it isn't missed */
+.lib-head { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: flex-start; }
+.lib-head > div { flex: 1 1 260px; min-width: 0; }
+.practice-cta { flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 18px; border: 0; border-radius: 12px; background: #c2410c; color: #fff; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.practice-cta:hover { background: #9a3412; }
+.practice-cta:focus-visible { outline: 3px solid #fdba74; outline-offset: 2px; }
 .library h1 { margin: 0; font-size: 28px; letter-spacing: -0.02em; text-wrap: balance; }
 .library .sub { margin: 4px 0 0; color: var(--muted); }
 .search { width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); }
@@ -253,14 +259,16 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
       <div class="brand"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="15.5" r="4.5"/><circle cx="8.5" cy="15.5" r="1.2" fill="currentColor"/><path d="M11.7 12.3 19 5"/><path d="m17.5 3.5 3 3"/></svg>ukemusic</div>
       <span class="spacer"></span>
       <span id="syncState" class="sync"></span>
-      <button id="libPractice" class="btn" type="button">Practice</button>
       <button id="guideBtnLib" class="btn ghost icon" type="button" title="How to write songs" aria-label="How to write songs">?</button>
       <button id="themeBtn" class="btn ghost icon" type="button" title="Light or dark" aria-label="Switch light or dark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
     </div></header>
     <main class="library gutter">
-      <div>
+      <div class="lib-head">
+        <button id="libPractice" class="practice-cta" type="button" title="Warm-ups, chords, strumming, picking, scales and routines: no song needed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l4 18H5z"/><path d="m12 15 5-9"/><path d="M7.5 15h9"/></svg>Free Practice</button>
+        <div>
         <h1 id="libTitle">Your songs</h1>
         <p id="libSub" class="sub">Play along and practise. The songs come from the desktop app: there, the library’s <strong>Songs for the web…</strong> saves them in one file; here, <strong>Update songs</strong> loads it.</p>
+        </div>
       </div>
       <div id="storeBanner" class="banner" hidden></div>
       <input id="search" class="search" type="search" placeholder="Find a song, artist, tag or key…" autocomplete="off" aria-label="Find a song">
@@ -378,6 +386,21 @@ function stripSteps(pattern, beatsPerBar) {
   return steps;
 }
 function stopPlayback() { if (player && player.playing) player.stop(); }
+// Safari (iPhone, iPad, Mac) only lets sound start inside the tap itself, not after the app has
+// waited for anything: so every tap wakes the audio until it's running.
+function unlockAudio() {
+  if (!player) return;
+  try {
+    const ctx = player.ensureContext();
+    if (ctx.state === 'running') return;
+    ctx.resume().catch(() => {});
+    const silence = ctx.createBufferSource();
+    silence.buffer = ctx.createBuffer(1, 1, 22050);
+    silence.connect(ctx.destination);
+    silence.start(0);
+  } catch (_e) { /* tried again on the next tap */ }
+}
+for (const type of ['pointerdown', 'touchend', 'click', 'keydown']) document.addEventListener(type, unlockAudio, true);
 function setStatusMessage(text) { window.ukemusicToast && window.ukemusicToast(text); }
 window.ukemusicLogError = (message, error) => console.warn(message, error);
 async function confirmLoseChanges() { return true; }
@@ -825,7 +848,8 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     player.setSound(prefs().instrument === 'guitar' ? 'steel' : 'sampled');
     $('playBtn').textContent = '■ Stop';
     $('status').textContent = schedule.countInDuration ? 'Count-in…' : '';
-    try { play.wake = await navigator.wakeLock?.request('screen'); } catch (_e) { play.wake = null; }
+    play.wake = null;
+    try { navigator.wakeLock?.request('screen').then((w) => { play.wake = w; }, () => {}); } catch (_e) { /* the screen may sleep */ }
     cancelAnimationFrame(play.raf);
     play.raf = requestAnimationFrame(tick);
     try { await player.play(schedule, { onEnd: ended }); }
@@ -924,7 +948,8 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     window.__k.start(ir, schedule, fromLine, 0);
     player.setSound(p.instrument === 'guitar' ? 'steel' : 'sampled');
     karaoke.schedule = schedule;
-    try { karaoke.wake = await navigator.wakeLock?.request('screen'); } catch (_e) { karaoke.wake = null; }
+    karaoke.wake = null;
+    try { navigator.wakeLock?.request('screen').then((w) => { karaoke.wake = w; }, () => {}); } catch (_e) { /* the screen may sleep */ }
     try { await player.play(schedule, { onBar: (bar) => { if (bar) karaoke.line = bar.line; }, onEnd: () => { window.__k.stopped(); try { karaoke.wake?.release(); } catch (_e) { /* fine */ } } }); }
     catch (error) { toast(`Couldn’t play: ${error.message}`); window.__k.stopped(); }
   };

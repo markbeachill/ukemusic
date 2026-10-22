@@ -352,7 +352,15 @@
     async play(schedule, callbacks = {}) {
       this.stop();
       const ctx = this.ensureContext();
-      if (ctx.state === 'suspended') await ctx.resume();
+      if (ctx.state !== 'running') {
+        // Some browsers (Safari) never resume sound that wasn't started by a tap: don't wait for ever
+        await Promise.race([ctx.resume().catch(() => {}), new Promise((r) => setTimeout(r, 1500))]);
+        if (ctx.state !== 'running') {
+          const error = new Error('The sound didn\u2019t start. Tap Play again (and check the phone isn\u2019t on silent).');
+          error.code = 'audio-locked';
+          throw error;
+        }
+      }
       if (soundOf(this.sound).sampled) this.samples = await this.loadSamples();
       this.schedule = schedule;
       this.callbacks = callbacks;
