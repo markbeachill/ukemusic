@@ -1,0 +1,46 @@
+name: Website
+# Publishes the website with GitHub Pages (Settings → Pages → Source: GitHub Actions):
+# the home page from site/ at the top, and the web version, built from the desktop app's code, at /app/.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: npm ci --omit=dev --ignore-scripts
+      - run: npm test
+      - run: npm install --no-save --prefix web esbuild@0.24.0
+      - run: node web/make.js
+      - name: Put the site together
+        run: |
+          mkdir -p _site/app
+          cp -r site/. _site/
+          cp -r web/out/. _site/app/
+          rm -f _site/app/ukemusic-web.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

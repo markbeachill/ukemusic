@@ -1,0 +1,32 @@
+# --- Dependencies and builds ---
+node_modules/
+dist/
+web/node_modules/
+web/umw.js
+web/out/
+*.AppImage
+*.dmg
+*.exe
+*.snap
+
+# --- Your own songs: never published (most are under copyright) ---
+mysongs/
+**/exports/
+**/.history/
+
+# --- Public Domain Songs: songs whose rights aren't confirmed yet stay local ---
+public domain songs/Public Domain Songs/C C Rider (See See Rider)/
+
+# --- Working files ---
+logs/
+test_exports/
+REVIEW.md
+audit-text.txt
+*.tmp
+.*.tmp
+*.bak
+
+# --- System files ---
+.DS_Store
+Thumbs.db
+desktop.ini

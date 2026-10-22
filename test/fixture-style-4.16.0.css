@@ -1,0 +1,223 @@
+/* ukemusic style set: Classic — the usual look: red chords, blue headings, grey strums */
+
+/* Light theme (default) */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --chord-color: #b22222;
+  --rhythm-color: #666666;
+  --section-color: #1a5276;
+  --monospace-font: "Courier New", monospace;
+  --monospace-size: 14px;
+  --font-family: system-ui, -apple-system, sans-serif;
+  --rhythm-size: 14px;
+  --line-spacing: 1.4;
+  --section-spacing: 1.5em;
+  --verse-spacing: 1em;
+  /* Stage: the "(stage)" exports, and the preview when View → Look is Stage */
+  --stage-font: "Consolas", "Lucida Console", "DejaVu Sans Mono", monospace;
+  --stage-size: 18px;
+  --stage-color: #000000;
+}
+
+[data-theme="dark"] {
+  --bg-color: #1e1e1e;
+  --text-color: #d4d4d4;
+  --chord-color: #f08080;
+  --rhythm-color: #aaaaaa;
+  --section-color: #5dade2;
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="auto"] {
+    --bg-color: #1e1e1e;
+    --text-color: #d4d4d4;
+    --chord-color: #f08080;
+    --rhythm-color: #aaaaaa;
+    --section-color: #5dade2;
+  }
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--monospace-size);
+  line-height: var(--line-spacing);
+}
+
+.line-group { margin-bottom: 0; }
+
+/* Monospace layout: chords + lyrics + tab share --monospace-font and --monospace-size */
+.lyrics {
+  font-family: var(--monospace-font);
+  font-size: var(--monospace-size);
+  color: var(--text-color);
+  line-height: var(--line-spacing);
+  white-space: nowrap;
+  min-height: 1em;
+}
+
+.lyrics:empty { min-height: var(--verse-spacing); }
+
+.chords {
+  font-family: var(--monospace-font);
+  font-size: var(--monospace-size);
+  color: var(--chord-color);
+  line-height: var(--line-spacing);
+  white-space: nowrap;
+}
+
+.rhythm {
+  font-family: var(--monospace-font);
+  font-size: var(--rhythm-size);
+  color: var(--rhythm-color);
+  line-height: var(--line-spacing);
+  white-space: nowrap;
+}
+
+.section {
+  font-family: var(--font-family);
+  color: var(--section-color);
+  margin: var(--section-spacing) 0 0.5em;
+}
+
+.bar { color: var(--chord-color); }
+
+.tab {
+  font-family: var(--monospace-font);
+  font-size: var(--monospace-size);
+  color: var(--text-color);
+  line-height: var(--line-spacing);
+  background: transparent;
+  white-space: pre-wrap;
+}
+
+/* Diagrams */
+.chord-diagram {
+  --diagram-size: 80px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+.chord-diagram svg { width: var(--diagram-size); }
+.chord-diagram .dot { fill: var(--text-color); }
+.chord-diagram .line { stroke: var(--rhythm-color); }
+.chord-diagram .name { fill: var(--chord-color); }
+
+.chord-diagrams {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+
+.chord-diagram-text {
+  min-width: calc(var(--diagram-size) * 0.75);
+  min-height: calc(var(--diagram-size) * 0.75);
+  border: 1px solid var(--rhythm-color);
+  justify-content: center;
+  padding: 0.5rem;
+}
+.chord-diagram-text .name {
+  color: var(--chord-color);
+  fill: var(--chord-color);
+}
+
+/* Table layout: uses --font-family (proportional), not monospace */
+.chord-table {
+  border-collapse: collapse;
+  font-family: var(--font-family);
+  font-size: var(--monospace-size);
+  margin-bottom: 0.25em;
+}
+.chord-table td {
+  padding: 0 0.3em 0 0;
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+.chord-table .chord-row td {
+  color: var(--chord-color);
+  font-weight: bold;
+  padding-bottom: 0;
+}
+.chord-table .lyric-row td {
+  color: var(--text-color);
+  padding-top: 0;
+}
+.chord-table .rhythm-row td {
+  color: var(--rhythm-color);
+  font-size: var(--rhythm-size);
+}
+.chord-table .bar { padding: 0 0.1em; }
+
+/* ── Tab ─────────────────────────────────────────────────
+   View → Tab picks between these (data-tab-… on the page). */
+.tab .tab-fret { font-weight: 700; color: var(--chord-color); }
+.tab .tab-string { opacity: 0.7; }
+[data-tab-frets="bold"] .tab .tab-fret { font-weight: 700; color: var(--text-color); }
+[data-tab-frets="plain"] .tab .tab-fret { font-weight: inherit; color: inherit; }
+[data-tab-size="smaller"] .tab { font-size: calc(var(--monospace-size) * 0.85); }
+[data-tab-size="larger"] .tab { font-size: calc(var(--monospace-size) * 1.2); }
+[data-tab-box] .tab {
+  background: rgba(127, 127, 127, 0.08);
+  border: 1px solid rgba(127, 127, 127, 0.3);
+  border-radius: 6px;
+  padding: 8px 12px;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+[data-tab-faint] .tab .tab-dash, [data-tab-faint] .tab .tab-string { opacity: 0.4; }
+
+/* ── Exports: the title at the top ─────────────────────── */
+.song-title { font-family: var(--font-family); font-size: 1.6em; margin: 0 0 0.15em; color: var(--text-color); }
+.song-subtitle { font-family: var(--font-family); font-size: 0.9em; margin: 0 0 1.2em; color: var(--rhythm-color); }
+.song-artist { font-family: var(--font-family); font-size: 1.05em; margin: 0 0 0.2em; color: var(--text-color); }
+
+/* ── Stage ───────────────────────────────────────────────
+   Bold and black, easy to read at a gig: the "(stage)" PDFs and web pages,
+   stage songbooks, and the preview when View → Look is Stage.
+   Its font, size and colour are --stage-font, --stage-size and --stage-color
+   at the top of this file (Settings → Export changes them too). */
+[data-style="stage"] {
+  --bg-color: #ffffff;
+  --text-color: var(--stage-color);
+  --chord-color: var(--stage-color);
+  --rhythm-color: var(--stage-color);
+  --section-color: var(--stage-color);
+  --monospace-font: var(--stage-font);
+  --monospace-size: var(--stage-size);
+  --rhythm-size: calc(var(--stage-size) - 2px);
+  --line-spacing: 1.3;
+}
+[data-style="stage"] .chords, [data-style="stage"] .lyrics, [data-style="stage"] .rhythm,
+[data-style="stage"] .tab, [data-style="stage"] .chord-table td { font-weight: 700; color: var(--stage-color); }
+[data-style="stage"] .tab .tab-fret, [data-style="stage"] .tab .tab-string { color: var(--stage-color); opacity: 1; }
+[data-style="stage"] .tab .tab-fret { font-weight: 900; }
+[data-style="stage"] .section, [data-style="stage"] .song-title, [data-style="stage"] .lyrics-title { font-weight: 700; color: var(--stage-color); }
+[data-style="stage"] .song-subtitle { color: var(--stage-color); }
+[data-style="stage"] .chord-diagram svg line { stroke: var(--stage-color) !important; }
+[data-style="stage"] .chord-diagram svg text.name { font-weight: 700; fill: var(--stage-color) !important; }
+[data-style="stage"] .lyrics-page, [data-style="stage"] .lyric-line { color: var(--stage-color); font-weight: 700; }
+[data-style="stage"] .lyric-line { font-size: calc(var(--stage-size) * 1.1); }
+
+/* ── Strum boxes and chord diagrams ─────────────────────
+   --strum-size: the size of the strum pattern boxes (View → Strum patterns).
+   The --diagram-… colours reach every part of the chord diagrams. */
+.strum-box, .strum-legend { --strum-size: calc(var(--monospace-size) * 1.15); }
+.chord-diagram {
+  --diagram-line: var(--rhythm-color);
+  --diagram-dot: var(--text-color);
+  --diagram-finger: var(--bg-color);
+  --diagram-name: var(--chord-color);
+}
+.chord-diagram svg .line { stroke: var(--diagram-line); }
+.chord-diagram svg .dot, .chord-diagram svg .barre { fill: var(--diagram-dot); }
+.chord-diagram svg .open { stroke: var(--diagram-dot); }
+.chord-diagram svg .muted, .chord-diagram svg .fret-label { fill: var(--diagram-dot); }
+.chord-diagram svg .finger { fill: var(--diagram-finger); }
+.chord-diagram svg .name { fill: var(--diagram-name); }
+[data-style="stage"] .chord-diagram { --diagram-line: var(--stage-color); --diagram-dot: var(--stage-color); --diagram-name: var(--stage-color); }
+/* For a box round each diagram, take away the comment marks around the next line
+.chord-diagram { border: 1px solid var(--diagram-line); border-radius: 8px; padding: 4px 6px; }
+*/

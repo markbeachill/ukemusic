@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "tuning": "DGBE",
+    "instrument": "baritone ukulele"
+  },
+  "chords": {
+    "C":   { "frets": [2, 0, 1, 0], "fingers": [2, 0, 1, 0], "barre": null, "base_fret": 1 },
+    "Cm":  { "frets": [1, 0, 1, 3], "fingers": [1, 0, 2, 4], "barre": null, "base_fret": 1 },
+    "C7":  { "frets": [2, 3, 1, 3], "fingers": [2, 3, 1, 4], "barre": null, "base_fret": 1 },
+    "D":   { "frets": [0, 2, 3, 2], "fingers": [0, 1, 3, 2], "barre": null, "base_fret": 1 },
+    "Dm":  { "frets": [0, 2, 3, 1], "fingers": [0, 2, 3, 1], "barre": null, "base_fret": 1 },
+    "D7":  { "frets": [0, 2, 1, 2], "fingers": [0, 2, 1, 3], "barre": null, "base_fret": 1 },
+    "E":   { "frets": [2, 1, 0, 0], "fingers": [2, 1, 0, 0], "barre": null, "base_fret": 1 },
+    "Em":  { "frets": [2, 0, 0, 0], "fingers": [2, 0, 0, 0], "barre": null, "base_fret": 1 },
+    "E7":  { "frets": [0, 1, 0, 0], "fingers": [0, 1, 0, 0], "barre": null, "base_fret": 1 },
+    "F":   { "frets": [3, 2, 1, 1], "fingers": [3, 2, 1, 1], "barre": { "fret": 1, "strings": [2, 3] }, "base_fret": 1 },
+    "Fm":  { "frets": [3, 1, 1, 1], "fingers": [3, 1, 1, 1], "barre": { "fret": 1, "strings": [1, 2, 3] }, "base_fret": 1 },
+    "F7":  { "frets": [1, 2, 1, 1], "fingers": [1, 2, 1, 1], "barre": { "fret": 1, "strings": [0, 1, 2, 3] }, "base_fret": 1 },
+    "G":   { "frets": [0, 0, 0, 3], "fingers": [0, 0, 0, 3], "barre": null, "base_fret": 1 },
+    "Gm":  { "frets": [0, 3, 3, 3], "fingers": [0, 1, 1, 1], "barre": { "fret": 3, "strings": [1, 2, 3] }, "base_fret": 1 },
+    "G7":  { "frets": [0, 0, 0, 1], "fingers": [0, 0, 0, 1], "barre": null, "base_fret": 1 },
+    "A":   { "frets": [2, 2, 2, 0], "fingers": [1, 2, 3, 0], "barre": null, "base_fret": 1 },
+    "Am":  { "frets": [2, 2, 1, 0], "fingers": [2, 3, 1, 0], "barre": null, "base_fret": 1 },
+    "A7":  { "frets": [2, 2, 2, 3], "fingers": [1, 1, 1, 2], "barre": { "fret": 2, "strings": [0, 1, 2] }, "base_fret": 1 },
+    "B":   { "frets": [4, 4, 4, 2], "fingers": [2, 3, 4, 1], "barre": null, "base_fret": 1 },
+    "Bm":  { "frets": [4, 4, 3, 2], "fingers": [3, 4, 2, 1], "barre": null, "base_fret": 1 },
+    "B7":  { "frets": [1, 2, 0, 2], "fingers": [1, 2, 0, 3], "barre": null, "base_fret": 1 },
+    "Bb":  { "frets": [3, 3, 3, 1], "fingers": [2, 3, 4, 1], "barre": null, "base_fret": 1 },
+    "Eb":  { "frets": [5, 3, 4, 3], "fingers": [3, 1, 2, 1], "barre": { "fret": 3, "strings": [1, 2, 3] }, "base_fret": 3 },
+    "Ab":  { "frets": [6, 5, 4, 4], "fingers": [3, 2, 1, 1], "barre": { "fret": 4, "strings": [2, 3] }, "base_fret": 4 },
+    "Db":  { "frets": [3, 1, 2, 1], "fingers": [3, 1, 2, 1], "barre": { "fret": 1, "strings": [1, 2, 3] }, "base_fret": 1 },
+    "F#m": { "frets": [4, 2, 2, 2], "fingers": [3, 1, 1, 1], "barre": { "fret": 2, "strings": [1, 2, 3] }, "base_fret": 1 },
+    "C#m": { "frets": [2, 1, 2, 0], "fingers": [2, 1, 3, 0], "barre": null, "base_fret": 1 },
+    "G#m": { "frets": [6, 4, 4, 4], "fingers": [3, 1, 1, 1], "barre": { "fret": 4, "strings": [1, 2, 3] }, "base_fret": 4 }
+  }
+}

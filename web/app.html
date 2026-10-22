@@ -1,0 +1,1028 @@
+<title>ukemusic web</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ukemusic">
+<meta name="theme-color" content="#0e6b64">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Figtree:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: one-screen app. Library → song (Song · Edit · Info · Notes) with a sticky toolbar and a play band;
+   Practice and the writing guide open over it. Teal is the desktop app's colour; chords are brick red. */
+[hidden] { display: none !important; }
+:root {
+  --bg: #f4f7f6;
+  --surface: #ffffff;
+  --ink: #17221f;
+  --muted: #5f6f6a;
+  --line: #d6e0dd;
+  --accent: #0e6b64;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(14, 107, 100, 0.10);
+  --chord: #b22222;
+  --section: #1a5276;
+  --playing: rgba(250, 204, 21, 0.30);
+  --warn: #9a5b00;
+  --danger: #b42318;
+  --font-ui: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sheet: "Courier Prime", "Courier New", ui-monospace, monospace;
+  /* the desktop practice window's names for the same colours */
+  --panel-bg: var(--surface); --border: var(--line); --text: var(--ink); --toolbar-bg: var(--bg);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101816; --surface: #17211e; --ink: #e5eeeb; --muted: #94a7a1; --line: #2a3834;
+    --accent: #3fb3a6; --accent-ink: #06201c; --accent-soft: rgba(63, 179, 166, 0.14);
+    --chord: #f08a80; --section: #7cc0ea; --playing: rgba(250, 204, 21, 0.18); --warn: #f0b45a; --danger: #ff8a80; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101816; --surface: #17211e; --ink: #e5eeeb; --muted: #94a7a1; --line: #2a3834;
+  --accent: #3fb3a6; --accent-ink: #06201c; --accent-soft: rgba(63, 179, 166, 0.14);
+  --chord: #f08a80; --section: #7cc0ea; --playing: rgba(250, 204, 21, 0.18); --warn: #f0b45a; --danger: #ff8a80; color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 16px;
+  -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--surface); }
+button, select, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.muted { color: var(--muted); }
+.link-button { border: 0; background: none; color: var(--accent); text-decoration: underline; padding: 0; }
+
+/* ── Top bar ── */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--line); }
+.bar-row { display: flex; align-items: center; gap: 8px; min-height: 56px; padding-block: 6px; }
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 20px; letter-spacing: -0.01em; }
+.brand svg { color: var(--accent); }
+.spacer { flex: 1; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--surface); font-weight: 600; font-size: 15px; white-space: nowrap;
+}
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.ghost { border-color: transparent; background: none; }
+.btn.icon { width: 40px; padding: 0; }
+.btn.danger { color: var(--danger); }
+.btn:disabled { opacity: 0.4; cursor: default; }
+.sync { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.sync.warn { color: var(--warn); }
+.banner { background: var(--accent-soft); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; font-size: 14px; line-height: 1.45; }
+
+/* ── Library ── */
+.library { max-width: 820px; margin: 0 auto; padding-block: 18px 40px; display: grid; gap: 16px; }
+.library h1 { margin: 0; font-size: 28px; letter-spacing: -0.02em; text-wrap: balance; }
+.library .sub { margin: 4px 0 0; color: var(--muted); }
+.search { width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); }
+.songs { display: grid; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--surface); }
+.song-row { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: center; text-align: left; padding: 14px 16px; border: 0; border-top: 1px solid var(--line); background: none; }
+.song-row:first-child { border-top: 0; }
+.song-row:hover { background: var(--accent-soft); }
+.song-row .t { font-weight: 700; font-size: 17px; min-width: 0; overflow-wrap: anywhere; }
+.song-row .a { grid-column: 1; color: var(--muted); font-size: 14px; min-width: 0; overflow-wrap: anywhere; }
+.song-row .k { grid-row: 1 / span 2; grid-column: 2; font-size: 13px; color: var(--muted); text-align: right; }
+.empty { padding: 22px 16px; color: var(--muted); text-align: center; line-height: 1.5; }
+.add-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.note { font-size: 13.5px; color: var(--muted); line-height: 1.45; margin: 0; }
+.card-form { display: grid; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+.card-form textarea { min-height: 180px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); padding: 10px; font-family: var(--font-sheet); font-size: 14px; resize: vertical; }
+.card-form input { min-height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); padding: 0 10px; }
+.form-error { color: var(--danger); font-size: 14px; margin: 0; min-height: 0; }
+
+/* ── Song view ── */
+.song-head { display: grid; gap: 2px; min-width: 0; }
+.song-head .title { font-weight: 800; font-size: 18px; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.song-head .artist { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tabs { display: flex; gap: 4px; padding-block: 0 8px; }
+.tabs button { border: 0; background: none; padding: 7px 12px; border-radius: 9px; font-weight: 700; font-size: 15px; color: var(--muted); }
+.tabs button[aria-selected="true"] { background: var(--accent-soft); color: var(--accent); }
+.tools { display: flex; gap: 8px; overflow-x: auto; padding-block: 0 10px; scrollbar-width: none; }
+.tools::-webkit-scrollbar { display: none; }
+.tool { flex: none; display: flex; align-items: center; gap: 4px; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+.tool label, .tool .lab { font-size: 12px; font-weight: 700; color: var(--muted); padding: 0 4px 0 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+.tool .val { min-width: 3.4em; text-align: center; font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
+.tool button { min-width: 36px; min-height: 34px; border: 0; border-radius: 9px; background: var(--surface); font-weight: 700; font-size: 16px; }
+.tool select { min-height: 34px; border: 0; border-radius: 9px; background: var(--surface); padding: 0 6px; font-size: 14px; font-weight: 600; }
+.panel { max-width: 1100px; margin: 0 auto; padding-block: 14px 190px; }
+.song-meta { font-size: 13.5px; color: var(--muted); margin: 0 0 12px; }
+
+/* Edit: the editor and the sheet side by side on a wide screen */
+.edit-wrap { display: grid; gap: 12px; }
+@media (min-width: 900px) { .edit-wrap { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } .edit-wrap .sheet { position: sticky; top: 170px; max-height: calc(100vh - 360px); overflow: auto; } }
+.edit-tools { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.edit-tools .fmt { width: 40px; font-family: Georgia, serif; font-size: 17px; }
+.editor-box { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; min-height: 55vh; background: var(--surface); --editor-font-size: 15px; }
+.editor-box .cm-editor { min-height: 55vh; }
+.editor-box textarea { width: 100%; min-height: 55vh; box-sizing: border-box; border: 0; padding: 12px; font-family: var(--font-sheet); font-size: 15px; background: var(--surface); }
+.warnings { font-size: 13px; color: var(--warn); line-height: 1.4; margin: 0; }
+
+/* Info and Notes */
+.fields { display: grid; gap: 12px; max-width: 640px; }
+.fields .row { display: grid; gap: 4px; }
+.fields .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fields label { font-size: 13px; font-weight: 700; color: var(--muted); }
+.fields input, .fields select, .notes-box { min-height: 42px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); padding: 0 10px; width: 100%; box-sizing: border-box; }
+.fields h2 { margin: 12px 0 0; font-size: 15px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.notes-box { min-height: 50vh; padding: 12px; line-height: 1.5; resize: vertical; }
+
+/* The chord sheet (the desktop app's renderer and stylesheet) */
+.sheet {
+  --bg-color: var(--surface); --text-color: var(--ink); --chord-color: var(--chord); --rhythm-color: var(--muted);
+  --section-color: var(--section); --monospace-font: var(--font-sheet); --monospace-size: 16px;
+  --font-family: var(--font-ui); --rhythm-size: 13px; --line-spacing: 1.35; --section-spacing: 1.3em; --verse-spacing: 0.9em;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px 16px; overflow-x: auto;
+  font-family: var(--font-ui); font-size: var(--monospace-size); line-height: var(--line-spacing); min-width: 0;
+}
+/*SHEET_CSS*/
+.sheet .tab .tab-fret { font-weight: 700; color: var(--chord-color); }
+.sheet .tab .tab-string { opacity: 0.7; }
+.sheet .line-group { border-radius: 6px; scroll-margin: 160px 0 220px; }
+.sheet .line-group.playing { background: var(--playing); box-shadow: 0 0 0 4px var(--playing); }
+.sheet .chord-diagram { --diagram-size: 64px; }
+.sheet .section { font-size: 1.05em; }
+.sheet { --stage-font: var(--font-sheet); --stage-size: 19px; --stage-color: #000000; }
+.sheet[data-style="stage"] { background: #ffffff; }
+
+/* ── Play band ── */
+.player {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 25;
+  background: var(--surface); border-top: 1px solid var(--line);
+  padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+}
+.player-row { display: flex; align-items: center; gap: 10px; padding-block: 10px 0; }
+.now { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
+.now-chord { font-family: var(--font-sheet); font-weight: 700; font-size: 34px; color: var(--chord); min-width: 2.2ch; line-height: 1; }
+.now-shapes { display: flex; gap: 6px; align-items: flex-end; min-width: 0; overflow: hidden;
+  --bg-color: var(--surface); --text-color: var(--ink); --chord-color: var(--chord); --rhythm-color: var(--muted); }
+.now-shapes .chord-diagram { --diagram-size: 64px; }
+.now-shapes .chord-diagram:not(:first-child) { --diagram-size: 48px; opacity: 0.6; }
+.now-shapes .chord-diagram svg { width: var(--diagram-size); }
+.strip { display: flex; gap: 3px; padding-block: 8px 0; overflow: hidden; }
+.strip span { flex: 1; min-width: 0; max-width: 40px; height: 34px; border-radius: 7px; border: 1px solid var(--line); display: grid; place-items: center; font-weight: 700; font-size: 17px; color: var(--muted); }
+.strip span.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.strip span.rest { opacity: 0.45; }
+.tempo { display: flex; align-items: center; gap: 2px; }
+.tempo .val { min-width: 3.6em; text-align: center; font-size: 13px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tempo button { width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); font-weight: 700; }
+.status { font-size: 12.5px; color: var(--muted); padding-block: 4px 0; min-height: 1.2em; }
+
+/* ── Dialogs ── */
+dialog { border: 1px solid var(--line); border-radius: 16px; padding: 20px; width: min(520px, 92vw); background: var(--surface); color: var(--ink); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25); }
+dialog::backdrop { background: rgba(0, 0, 0, 0.35); }
+dialog h2 { margin: 0 0 8px; font-size: 20px; }
+.dialog-buttons, .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 0; margin: 14px 0 0; }
+.choice-list { display: grid; gap: 8px; margin: 10px 0 0; }
+.choice-list button { text-align: left; display: grid; gap: 2px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); }
+.choice-list button strong { font-size: 15px; }
+.choice-list button span { font-size: 13px; color: var(--muted); }
+.guide-dialog { width: min(820px, 94vw); max-height: 86vh; }
+.guide-body { line-height: 1.55; font-size: 15px; }
+.guide-body code { font-family: var(--font-sheet); background: var(--bg); padding: 1px 4px; border-radius: 4px; }
+.guide-body pre { background: var(--bg); padding: 10px; border-radius: 8px; overflow-x: auto; }
+.guide-body table { border-collapse: collapse; display: block; overflow-x: auto; }
+.guide-body td, .guide-body th { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+.about-name { font-size: 22px; }
+.about-version, .about-author, .about-foot { color: var(--muted); }
+.about-body h4 { margin: 12px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.about-list { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.about-licence { display: inline-block; font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 0 7px; }
+.about-body a { color: var(--accent); }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(150px + env(safe-area-inset-bottom, 0px)); z-index: 60; background: var(--ink); color: var(--surface); padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; max-width: 90vw; }
+
+/* ── Karaoke (the desktop app's karaoke view) ── */
+/*KARAOKE_CSS*/
+.karaoke { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.karaoke-bar { padding-left: max(16px, env(safe-area-inset-left, 0px)) !important; padding-right: max(16px, env(safe-area-inset-right, 0px)) !important; min-height: 0 !important; }
+.karaoke-bar button, .k-tempo button { border: 1px solid var(--line); background: var(--surface); border-radius: 9px; min-height: 38px; }
+#karaokePlay { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.karaoke-bar button:disabled { opacity: 0.4; }
+.karaoke-lines { --k-chord: var(--chord); }
+.k-chord, .k-now { color: var(--chord) !important; }
+.k-shapes { --bg-color: var(--surface) !important; --text-color: var(--ink) !important; --chord-color: var(--chord) !important; --rhythm-color: var(--muted) !important; }
+@media (max-width: 700px) {
+  .karaoke-bar { gap: 8px !important; padding-block: 8px !important; }
+  .karaoke-bar .k-heading-block { max-width: 100%; flex: 1 0 100%; }
+  .karaoke-bar .k-title { font-size: 18px; }
+  .k-now { min-width: 56px; font-size: 26px; }
+  .karaoke-bar .k-step { width: 30px; height: 46px; }
+  .karaoke-bar .k-step .sym { font-size: 19px; }
+  .karaoke-main { flex-direction: column; }
+  .karaoke-main .karaoke-lines { flex: 1 1 auto; min-height: 0; padding: 18vh 18px 45vh; }
+  .k-shapes { flex: 0 0 auto !important; flex-direction: row !important; justify-content: center; border-left: 0 !important; border-top: 1px solid var(--line); padding: 8px 12px !important; gap: 10px !important; overflow: hidden !important; }
+  .k-shape figcaption, .k-shape .k-shape-name, .k-shape .chord-diagram text { display: none; }
+  .k-shape.now .chord-diagram { --diagram-size: 70px !important; }
+  .k-shape .chord-diagram { --diagram-size: 52px !important; }
+  .karaoke-bar .k-step .num { display: none; }
+  .karaoke-bar .k-step { width: 28px !important; height: 34px !important; }
+}
+
+/* ── Practice (the desktop app's practice window) ── */
+/*PRACTICE_CSS*/
+.practice { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.practice-bar { flex-wrap: wrap; padding-left: max(16px, env(safe-area-inset-left, 0px)) !important; padding-right: max(16px, env(safe-area-inset-right, 0px)) !important; }
+.practice .primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.practice button { border: 1px solid var(--line); background: var(--surface); border-radius: 9px; }
+.practice select, .practice input { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+@media (max-width: 760px) {
+  .practice-bar { gap: 8px; padding-block: 8px; }
+  .practice-bar .pr-title { font-size: 17px; }
+  .practice-bar button { padding: 6px 10px; font-size: 14px; }
+  .pr-home { grid-template-columns: 1fr; overflow-y: auto; }
+  .practice-body { overflow-y: auto; }
+  .practice-stage { padding: 16px 12px; }
+}
+
+@media (max-width: 420px) {
+  .now-chord { font-size: 28px; }
+  .library h1 { font-size: 24px; }
+  .fields .pair { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div id="app">
+  <!-- Library -->
+  <section id="libraryView">
+    <header class="bar"><div class="bar-row gutter">
+      <div class="brand"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="15.5" r="4.5"/><circle cx="8.5" cy="15.5" r="1.2" fill="currentColor"/><path d="M11.7 12.3 19 5"/><path d="m17.5 3.5 3 3"/></svg>ukemusic</div>
+      <span class="spacer"></span>
+      <span id="syncState" class="sync"></span>
+      <button id="libPractice" class="btn" type="button">Practice</button>
+      <button id="guideBtnLib" class="btn ghost icon" type="button" title="How to write songs" aria-label="How to write songs">?</button>
+      <button id="themeBtn" class="btn ghost icon" type="button" title="Light or dark" aria-label="Switch light or dark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
+    </div></header>
+    <main class="library gutter">
+      <div>
+        <h1 id="libTitle">Your songs</h1>
+        <p id="libSub" class="sub">Play along and practise. The songs come from the desktop app: there, the library’s <strong>Songs for the web…</strong> saves them in one file; here, <strong>Update songs</strong> loads it.</p>
+      </div>
+      <div id="storeBanner" class="banner" hidden></div>
+      <input id="search" class="search" type="search" placeholder="Find a song, artist, tag or key…" autocomplete="off" aria-label="Find a song">
+      <div id="songList" class="songs"><div class="empty">Loading your songs…</div></div>
+      <div class="add-row">
+        <label class="btn" for="updateInput" title="Load the file made by Songs for the web… in the desktop app's library">Update songs</label>
+        <input id="updateInput" type="file" accept=".json,application/json" hidden>
+      </div>
+      <div id="updatePanel" class="card-form" hidden>
+        <p id="updateText" class="note" style="color:var(--ink)"></p>
+        <div class="add-row"><button id="updateGo" class="btn primary" type="button">Replace the songs</button><button id="updateCancel" class="btn" type="button">Cancel</button></div>
+      </div>
+      <p id="starterNote" class="note" hidden><button id="starterBtn" class="link-button" type="button">Bring back the public-domain songs</button> (they replace the songs here)</p>
+      <p class="note"><button id="aboutBtn" class="link-button" type="button">About ukemusic and thanks</button></p>
+      <p class="note">On iPhone and iPad, Safari's Share button → <strong>Add to Home Screen</strong> gives ukemusic its own icon. Key, capo, instrument and tempo changes are kept on each device.</p>
+    </main>
+  </section>
+
+  <!-- Song -->
+  <section id="songView" hidden>
+    <header class="bar">
+      <div class="bar-row gutter">
+        <button id="backBtn" class="btn ghost icon" type="button" aria-label="Back to the songs">‹</button>
+        <div class="song-head"><div id="songTitle" class="title"></div><div id="songArtist" class="artist"></div></div>
+        <span class="spacer"></span>
+        <span id="saveState" class="sync"></span>
+        <button id="downloadBtn" class="btn ghost icon" type="button" title="Download" aria-label="Download this song">⤓</button>
+      </div>
+      <div id="tools" class="tools gutter" role="toolbar" aria-label="How the song is shown">
+        <div class="tool"><span class="lab">Key</span><button id="keyDown" type="button" aria-label="Key down">−</button><span id="keyVal" class="val"></span><button id="keyUp" type="button" aria-label="Key up">+</button></div>
+        <div class="tool"><span class="lab">Capo</span><button id="capoDown" type="button" aria-label="Capo down">−</button><span id="capoVal" class="val"></span><button id="capoUp" type="button" aria-label="Capo up">+</button></div>
+        <div class="tool"><label for="instrument">Plays</label><select id="instrument"></select></div>
+        <div class="tool"><label for="layout">Sheet</label><select id="layout">
+          <option value="lines">Chords above</option><option value="inline">Chords in the words</option><option value="table">Columns</option><option value="chords">Chords only</option></select></div>
+        <div class="tool"><label for="diagrams">Shapes</label><select id="diagrams">
+          <option value="song_start">At the top</option><option value="first_use">Where used</option><option value="none">None</option></select></div>
+        <div class="tool"><label for="lookSel">Look</label><select id="lookSel"><option value="standard">Standard</option><option value="stage">Stage</option></select></div>
+        <div class="tool" id="stageFormatTool" hidden><label for="stageFormat">Stage</label><select id="stageFormat"><option value="clear">Clear</option><option value="brackets">Brackets [C]</option><option value="compact">Compact</option><option value="heavy">Heavy</option></select></div>
+        <div class="tool" id="stageChorusTool" hidden><label for="stageChorus">Chorus</label><select id="stageChorus"><option value="full">Every time</option><option value="once">Once, then “as before”</option></select></div>
+        <div class="tool"><span class="lab">Text</span><button id="textDown" type="button" aria-label="Smaller text">A−</button><button id="textUp" type="button" aria-label="Bigger text">A+</button></div>
+      </div>
+    </header>
+
+    <main id="songPanel" class="panel gutter">
+      <p id="songMeta" class="song-meta"></p>
+      <div id="sheet" class="sheet"></div>
+    </main>
+
+    <div id="player" class="player">
+      <div class="gutter">
+        <div class="player-row">
+          <button id="playBtn" class="btn primary" type="button">▶ Play</button>
+          <button id="karaokeButton" class="btn" type="button" title="Full screen, big words that light up as you sing, with the chord shapes">Karaoke</button>
+          <div class="now"><div id="nowChord" class="now-chord"></div><div id="nowShapes" class="now-shapes"></div></div>
+          <div class="tempo"><button id="slower" type="button" aria-label="Slower">−</button><span id="tempoVal" class="val"></span><button id="faster" type="button" aria-label="Faster">+</button></div>
+        </div>
+        <div id="strip" class="strip" aria-hidden="true"></div>
+        <div id="status" class="status"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<dialog id="downloadDialog">
+  <h2>Download</h2>
+  <p class="note">Files are saved to your device (on iPhone and iPad: Files or the share sheet).</p>
+  <div class="choice-list">
+    <button type="button" data-dl="song"><strong>Song file (.txt)</strong><span>The song as written, to open in the ukemusic desktop app</span></button>
+    <button type="button" data-dl="html"><strong>Chord sheet web page</strong><span>As shown here, in the current key</span></button>
+    <button type="button" data-dl="stage"><strong>Stage chord sheet</strong><span>Big and easy to scan at a gig, in the Stage format chosen for this song</span></button>
+    <button type="button" data-dl="lyrics"><strong>Lyrics only (.txt)</strong><span>The words, without chords</span></button>
+    <button type="button" data-dl="chordpro"><strong>ChordPro (.txt)</strong><span>For other chord apps</span></button>
+  </div>
+  <div class="dialog-actions"><button id="dlClose" class="btn" type="button">Close</button></div>
+</dialog>
+
+<dialog id="aboutDialog" class="guide-dialog">
+  <div id="aboutBody" class="guide-body about-body"></div>
+  <div class="dialog-actions"><button id="aboutClose" class="btn" type="button">Close</button></div>
+</dialog>
+
+<dialog id="guideDialog" class="guide-dialog">
+  <div id="guideBody" class="guide-body"></div>
+  <div class="dialog-actions"><button id="guideClose" class="btn" type="button">Close</button></div>
+</dialog>
+
+<div id="toast" class="toast" hidden role="status"></div>
+
+<button id="practiceButton" type="button" hidden>Practice</button>
+<!--KARAOKE_MARKUP-->
+<!--PRACTICE_MARKUP-->
+
+<script>/*UMW_BUNDLE*/</script>
+<script>/*PLAYER*/</script>
+<script type="text/plain" id="sheetCssText">/*SHEET_CSS_RAW*/</script>
+<script>
+// ── The desktop helpers the practice window uses, for the web ─────────────────
+const state = { config: { playback: { sound: 'sampled' }, song: {}, library: { songs_folder: '/songs' } }, userStopped: false };
+const player = window.UkePlayer ? new window.UkePlayer() : null;
+const songsFolder = () => '/songs';
+function effectiveConfig() { return state.config; }
+function songInstrument() { return window.ukemusic.instrument(state.config.song.instrument || 'soprano'); }
+function chordLibraryFor(id) { return UMW.library(id || 'soprano'); }
+function stripSteps(pattern, beatsPerBar) {
+  const steps = [];
+  for (const ch of String(pattern || '')) {
+    if (ch === '>') { if (steps.length) steps[steps.length - 1].accent = true; } else steps.push({ stroke: ch, accent: false });
+  }
+  const perBeat = steps.length / beatsPerBar;
+  steps.forEach((step, i) => {
+    if (Number.isInteger(perBeat) && perBeat > 0 && i % perBeat === 0) step.num = String(i / perBeat + 1);
+    else if (perBeat === 2) step.num = '&';
+    else step.num = perBeat < 1 ? String(i + 1) : '';
+  });
+  return steps;
+}
+function stopPlayback() { if (player && player.playing) player.stop(); }
+function setStatusMessage(text) { window.ukemusicToast && window.ukemusicToast(text); }
+window.ukemusicLogError = (message, error) => console.warn(message, error);
+async function confirmLoseChanges() { return true; }
+// Karaoke: the song being played, its key and capo, and the text size (kept on this device)
+try { state.config.playback.karaoke_size = Number(localStorage.getItem('ukeweb.karaokeSize')) || 26; } catch (_e) { /* default */ }
+state.transpose = 0;
+function keyLabel(t) { return window.__keyLabel ? window.__keyLabel(t) : ''; }
+function songCapo() { return window.__songCapo ? window.__songCapo() : 0; }
+function focusEditor() {}
+async function persistConfig() { try { localStorage.setItem('ukeweb.karaokeSize', String(state.config.playback.karaoke_size)); } catch (_e) { /* not kept */ } }
+function playSong(options) { return window.__playSong ? window.__playSong(options || {}) : null; }
+function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewSong && window.ukemusicNewSong(suggestedTitle || 'My melody', text); }
+</script>
+<script>
+(() => {
+/*PRACTICE_JS*/
+})();
+</script>
+<script>
+(() => {
+/*KARAOKE_JS*/
+})();
+</script>
+<script>
+(async () => {
+  const U = window.ukemusic;
+  const $ = (id) => document.getElementById(id);
+  const local = {
+    get(key, fallback) { try { const v = localStorage.getItem('ukeweb.' + key); return v === null ? fallback : JSON.parse(v); } catch (_e) { return fallback; } },
+    set(key, value) { try { localStorage.setItem('ukeweb.' + key, JSON.stringify(value)); } catch (_e) { /* not kept */ } }
+  };
+  const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  let toastTimer = null;
+  function toast(text) {
+    const el = $('toast');
+    el.textContent = text;
+    el.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.hidden = true; }, 3200);
+  }
+  window.ukemusicToast = toast;
+
+  // ── Theme ──
+  const savedTheme = local.get('theme', null);
+  if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+  const isDark = () => (document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches);
+  $('themeBtn').addEventListener('click', () => {
+    document.documentElement.dataset.theme = isDark() ? 'light' : 'dark';
+    local.set('theme', document.documentElement.dataset.theme);
+
+  });
+
+  // ── Where songs are kept: the artifact's private store (synced between devices), or this browser ──
+  const songs = new Map();   // id -> { id, title, text, settings, notes, updated }
+  let db = null;
+  const store = {
+    mode: 'local',
+    async save(song) {
+      song.updated = new Date().toISOString();
+      songs.set(song.id, song);
+      if (db) {
+        try { await db.doc('songs/' + song.id).set(clean(song)); setSync(''); return true; }
+        catch (error) { setSync(error.code === 'quota_exceeded' ? 'Storage is full' : 'Not saved: offline?', true); return false; }
+      }
+      local.set('songs', [...songs.values()]);
+      return true;
+    },
+    async remove(id) {
+      songs.delete(id);
+      if (db) { try { await db.doc('songs/' + id).delete(); } catch (_e) { setSync('Not deleted: offline?', true); } }
+      else local.set('songs', [...songs.values()]);
+    }
+  };
+  function clean(song) { return JSON.parse(JSON.stringify({ title: song.title, text: song.text, settings: song.settings || {}, notes: song.notes || '', updated: song.updated || '' })); }
+  function setSync(text, warn = false) {
+    for (const el of [$('syncState'), $('saveState')]) { el.textContent = text; el.classList.toggle('warn', warn); }
+  }
+  const slug = (title) => String(title).toLowerCase().normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/[\s_]+/g, '-').replace(/-+/g, '-').slice(0, 120) || 'song';
+  function uniqueId(title) {
+    let id = slug(title);
+    for (let n = 2; songs.has(id); n += 1) id = `${slug(title)}-${n}`;
+    return id;
+  }
+
+  // ── Library ──
+  const parserOptions = { useDelimiters: true, rhythmEnabled: true, tablatureEnabled: true };
+  const keyCache = new Map();
+  function songKey(song) {
+    const chosen = song.settings?.song?.key;
+    if (chosen && chosen !== 'auto') { const k = U.keys.parse(chosen); if (k) return { ...k, guessed: false }; }
+    const cacheKey = song.text;
+    if (!keyCache.has(cacheKey)) {
+      let k = null;
+      try { k = U.keys.detect(U.versions.songChords(U.parseSong(song.text, parserOptions))); } catch (_e) { k = null; }
+      keyCache.set(cacheKey, k);
+    }
+    const k = keyCache.get(cacheKey);
+    return k ? { ...k, guessed: true } : null;
+  }
+  function renderLibrary() {
+    const q = $('search').value.trim().toLowerCase();
+    const list = [...songs.values()].sort((a, b) => a.title.localeCompare(b.title));
+    const shown = list.filter((s) => !q || `${s.title} ${s.settings?.song?.artist || ''} ${s.settings?.song?.tags || ''} ${songKey(s)?.name || ''}`.toLowerCase().includes(q));
+    if (!list.length) {
+      $('songList').innerHTML = `<div class="empty">No songs yet. Use <strong>Update songs</strong> to load the file the desktop app makes with <strong>Songs for the web…</strong></div>`;
+    } else {
+      $('songList').innerHTML = shown.length ? shown.map((s) => {
+        const key = songKey(s);
+        const tr = Number(s.settings?.song?.transpose) || 0;
+        const k = key ? U.keys.transpose(key, tr) : null;
+        return `<button class="song-row" type="button" data-id="${esc(s.id)}">
+          <span class="t">${esc(s.title)}</span>
+          <span class="a">${esc([s.settings?.song?.artist, s.settings?.song?.year].filter(Boolean).join(', ') || ' ')}</span>
+          <span class="k">${k ? esc(U.keys.describe(k)) : ''}</span>
+        </button>`;
+      }).join('') : '<div class="empty">No songs match.</div>';
+    }
+    for (const row of $('songList').querySelectorAll('.song-row')) row.addEventListener('click', () => openSong(row.dataset.id));
+  }
+  $('search').addEventListener('input', renderLibrary);
+
+  // ── Update songs: the file from the desktop app's "Songs for the web…" replaces the songs here ──
+  window.ukemusicNewSong = () => toast('Save new songs in the desktop app; then Songs for the web… and Update songs here.');
+  let pendingUpdate = null;
+  $('updateInput').addEventListener('change', async (event) => {
+    const file = event.target.files[0];
+    event.target.value = '';
+    if (!file) return;
+    const r = U.readWebSongs(await file.text());
+    if (!r.ok) { toast(r.error); return; }
+    pendingUpdate = r;
+    const when = r.exported ? new Date(r.exported).toLocaleString() : 'an unknown date';
+    const gone = [...songs.keys()].filter((id) => !r.songs.some((s) => s.id === id)).length;
+    $('updateText').textContent = starterShown
+      ? `This file has ${r.songs.length} song${r.songs.length === 1 ? '' : 's'}, saved by the desktop app on ${when}. They take the place of the public-domain songs. Practice progress is kept.`
+      : `This file has ${r.songs.length} song${r.songs.length === 1 ? '' : 's'}, saved by the desktop app on ${when}. They replace the ${songs.size} here${gone ? ` (${gone} not in the file will be removed)` : ''}. Practice progress is kept.`;
+    $('updatePanel').hidden = false;
+  });
+  $('updateCancel').addEventListener('click', () => { pendingUpdate = null; $('updatePanel').hidden = true; });
+  $('updateGo').addEventListener('click', async () => {
+    if (!pendingUpdate) return;
+    const r = pendingUpdate;
+    pendingUpdate = null;
+    if (r.starters && store.mode === 'local') {
+      // back to the public-domain songs: shown, not saved
+      songs.clear();
+      local.set('songs', []);
+      for (const s of r.songs) songs.set(s.id, s);
+      $('updatePanel').hidden = true;
+      showStarterMode(true);
+      renderLibrary();
+      toast(`${r.songs.length} songs loaded.`);
+      return;
+    }
+    $('updateGo').disabled = true;
+    $('updateText').textContent = 'Updating…';
+    let done = 0;
+    for (const song of r.songs) {
+      await store.save({ ...song });
+      done += 1;
+      $('updateText').textContent = `Updating… ${done} of ${r.songs.length}`;
+    }
+    for (const id of [...songs.keys()]) if (!r.songs.some((s) => s.id === id)) await store.remove(id);
+    $('updateGo').disabled = false;
+    $('updatePanel').hidden = true;
+    if (store.mode === 'local') showStarterMode(false);
+    renderLibrary();
+    toast(`${r.songs.length} songs loaded.`);
+  });
+
+  // ── Song view ──
+  const view = { song: null, panel: 'songPanel' };
+  const look = local.get('look', { layout: 'lines', diagrams: 'song_start', size: 16 });
+  $('instrument').innerHTML = UMW.INSTRUMENTS.map((i) => `<option value="${i.id}">${esc(i.name)}</option>`).join('');
+  // Key, capo, instrument and tempo: the song's own settings (from the desktop), changed here per device
+  const devicePrefs = local.get('prefs', {});
+  const S = () => (devicePrefs[view.song.id] = devicePrefs[view.song.id] || {});
+  const prefs = () => {
+    const s = { ...(view.song.settings?.song || {}), ...S() };
+    return {
+      transpose: Number(s.transpose) || 0,
+      capo: Math.max(0, Math.min(11, Number(s.capo) || 0)),
+      instrument: UMW.INSTRUMENTS.some((i) => i.id === s.instrument) ? s.instrument : 'soprano',
+      tempo: Number(s.tempo) || 100,
+      beats: Number(s.beats_per_bar) || 4,
+      stageFormat: U.stageFormats.formatOf(S().stageFormat || view.song.settings?.export?.stage_format || 'clear').id,
+      stageChorus: (S().stageChorus || view.song.settings?.export?.stage_chorus) === 'once' ? 'once' : 'full'
+    };
+  };
+  // ── Stage formats (desktop 4.29–4.32): Clear, Brackets, Compact or Heavy; repeated choruses in full or once ──
+  const STAGE_CSS = U.stageFormats.css;
+  document.head.insertAdjacentHTML('beforeend', `<style id="stageFormatsCss">${STAGE_CSS.split('html[data-stage-format').join('.sheet[data-stage-format')}</style>`);
+  function stageText(text) {
+    if (prefs().stageChorus !== 'once') return text;
+    try {
+      const sections = U.progressions.analyse(U.parseSong(text, parserOptions), {}).sections;
+      return U.stageFormats.collapseRepeats(text, sections).text;
+    } catch (_e) { return text; }
+  }
+  /** Render options for a Stage copy: the format's layout, and how much fits across */
+  function stageOptions(options, monospaceChars, pageWidthPx, sizePx) {
+    const f = U.stageFormats.formatOf(prefs().stageFormat);
+    const out = { ...options };
+    if (f.layout) out.layout = f.layout;
+    if (view.song.settings?.export?.stage_diagrams === 'none') out.diagrams = { ...(out.diagrams || {}), enable: false };
+    out.maxLineChars = out.layout === 'lines' ? monospaceChars : U.stageFormats.charsAcross(f.id, { pageWidthPx, sizePx, monospaceChars });
+    if (out.layout === 'inline') delete out.maxLineChars;
+    return out;
+  }
+  let saveTimer = null;
+  function saveSoon() { local.set('prefs', devicePrefs); }
+
+  function openSong(id) {
+    const song = songs.get(id);
+    if (!song) return;
+    stop();
+    view.song = song;
+    $('songTitle').textContent = song.title;
+    $('songArtist').textContent = [song.settings?.song?.artist, song.settings?.song?.year].filter(Boolean).join(', ');
+    $('libraryView').hidden = true;
+    $('songView').hidden = false;
+    setSync('');
+    $('updatePanel').hidden = true;
+    renderSong();
+    window.scrollTo(0, 0);
+    state.config.song.instrument = prefs().instrument;
+  }
+  $('backBtn').addEventListener('click', () => {
+    stop();
+    view.song = null;
+    $('songView').hidden = true;
+    $('libraryView').hidden = false;
+    setSync(store.mode === 'local' ? 'On this device only' : '', store.mode === 'local');
+    renderLibrary();
+    window.scrollTo(0, 0);
+  });
+  // The sheet
+  function library() {
+    const p = prefs();
+    const base = UMW.library(p.instrument);
+    const inst = U.instrument(p.instrument);
+    const setting = view.song.settings?.shapes?.[inst.sameShapesAs || inst.id];
+    try { return setting ? U.shapes.withShapes(base, U.shapes.parseSetting(setting, inst.strings.length)) : base; } catch (_e) { return base; }
+  }
+  function currentIr(text = view.song.text) {
+    const p = prefs();
+    const ir = U.parseSong(text, parserOptions);
+    return U.transposeIR(ir, p.transpose - p.capo, { spelling: 'key', key: songKey(view.song), instrument: p.instrument });
+  }
+  function charsAcross(sheet) {
+    const probe = document.createElement('span');
+    probe.style.cssText = `font-family: var(--font-sheet); font-size: ${look.size}px; position: absolute; visibility: hidden; white-space: pre;`;
+    probe.textContent = 'M'.repeat(40);
+    sheet.appendChild(probe);
+    const per = probe.getBoundingClientRect().width / 40 || look.size * 0.6;
+    probe.remove();
+    return Math.max(16, Math.floor((sheet.clientWidth - 32) / per) - 1);
+  }
+  function renderSheet(sheet) {
+    const p = prefs();
+    sheet.style.setProperty('--monospace-size', `${look.size}px`);
+    const stage = look.style === 'stage';
+    if (stage) { sheet.dataset.style = 'stage'; sheet.dataset.stageFormat = p.stageFormat; } else { delete sheet.dataset.style; delete sheet.dataset.stageFormat; }
+    let options = {
+      layout: look.layout,
+      strumStyle: 'clean',
+      beatsPerBar: p.beats,
+      tempo: p.tempo,
+      diagrams: { enable: look.diagrams !== 'none', placement: look.diagrams, show_fingers: true },
+      chordLibrary: library(),
+      maxLineChars: look.layout === 'lines' ? charsAcross(sheet) : 0
+    };
+    if (stage) options = stageOptions(options, options.maxLineChars || charsAcross(sheet), sheet.clientWidth - 32, look.size);
+    try { sheet.innerHTML = U.renderHTML(currentIr(stage ? stageText(view.song.text) : view.song.text), options); }
+    catch (error) { sheet.innerHTML = `<p>This song couldn’t be shown: ${esc(error.message)}</p>`; }
+  }
+  function keyText() {
+    const key = songKey(view.song);
+    const t = prefs().transpose;
+    const shown = key ? U.keys.transpose(key, t) : null;
+    return { name: shown ? shown.name : (t > 0 ? `+${t}` : String(t)), shift: t };
+  }
+  function renderTools() {
+    const p = prefs();
+    const k = keyText();
+    $('keyVal').textContent = k.name;
+    $('capoVal').textContent = p.capo ? String(p.capo) : 'None';
+    $('instrument').value = p.instrument;
+    $('layout').value = look.layout;
+    $('diagrams').value = look.diagrams;
+    $('lookSel').value = look.style || 'standard';
+    $('stageFormatTool').hidden = $('stageChorusTool').hidden = look.style !== 'stage';
+    $('stageFormat').value = p.stageFormat;
+    $('stageChorus').value = p.stageChorus;
+    $('tempoVal').textContent = `${p.tempo} bpm`;
+  }
+  function renderSong() {
+    if (!view.song) return;
+    renderTools();
+    const p = prefs();
+    const k = keyText();
+    const bits = [`${p.beats === 6 ? '6/8' : `${p.beats}/4`}`, `${p.tempo} bpm`];
+    if (k.shift) bits.push(`${k.shift > 0 ? '+' : ''}${k.shift} from the original`);
+    if (p.capo) bits.push(`capo ${p.capo}: the chords are the shapes to play`);
+    $('songMeta').textContent = bits.join(' · ');
+    if (view.panel === 'songPanel') renderSheet($('sheet'));
+    if (!(player && player.playing)) showFirstChords();
+  }
+  const change = (fn, { song = true } = {}) => () => {
+    fn();
+    local.set('look', look);
+    if (song) saveSoon();
+    state.config.song.instrument = prefs().instrument;
+    if (player && player.playing) restart(); else renderSong();
+  };
+  $('keyDown').addEventListener('click', change(() => { S().transpose = Math.max(-11, prefs().transpose - 1); }));
+  $('keyUp').addEventListener('click', change(() => { S().transpose = Math.min(11, prefs().transpose + 1); }));
+  $('capoDown').addEventListener('click', change(() => { S().capo = Math.max(0, prefs().capo - 1); }));
+  $('capoUp').addEventListener('click', change(() => { S().capo = Math.min(11, prefs().capo + 1); }));
+  $('instrument').addEventListener('change', change(() => { S().instrument = $('instrument').value; }));
+  $('layout').addEventListener('change', change(() => { look.layout = $('layout').value; }, { song: false }));
+  $('diagrams').addEventListener('change', change(() => { look.diagrams = $('diagrams').value; }, { song: false }));
+  $('lookSel').addEventListener('change', change(() => { look.style = $('lookSel').value; }, { song: false }));
+  $('stageFormat').addEventListener('change', change(() => { S().stageFormat = $('stageFormat').value; }));
+  $('stageChorus').addEventListener('change', change(() => { S().stageChorus = $('stageChorus').value; }));
+  $('textDown').addEventListener('click', change(() => { look.size = Math.max(11, look.size - 1); }, { song: false }));
+  $('textUp').addEventListener('click', change(() => { look.size = Math.min(30, look.size + 1); }, { song: false }));
+  $('slower').addEventListener('click', change(() => { S().tempo = Math.max(40, prefs().tempo - 5); }));
+  $('faster').addEventListener('click', change(() => { S().tempo = Math.min(240, prefs().tempo + 5); }));
+  let resizeTimer = null;
+  window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (view.song && !(player && player.playing)) renderSong(); }, 200); });
+
+  // ── Downloads ──
+  let downloads = null;
+  $('downloadBtn').addEventListener('click', () => $('downloadDialog').showModal());
+  $('dlClose').addEventListener('click', () => $('downloadDialog').close());
+  function sheetDocument(stage) {
+    const p = prefs();
+    const lib = library();
+    const base = { layout: stage ? 'lines' : look.layout, strumStyle: 'clean', beatsPerBar: p.beats, tempo: p.tempo, diagrams: { enable: true, placement: 'song_start', show_fingers: true }, chordLibrary: lib, maxLineChars: stage ? 48 : 0 };
+    const ir = currentIr(stage ? stageText(view.song.text) : view.song.text);
+    const body = U.renderHTML(ir, stage ? stageOptions(base, 48, 680, 20) : base) + (U.shorthandKeyHtml ? U.shorthandKeyHtml(ir) : '');
+    const k = keyText();
+    const sub = [view.song.settings?.song?.artist, view.song.settings?.song?.year].filter(Boolean).join(', ');
+    const stageCss = ':root{--stage-font:"Courier New",monospace;--stage-size:20px;--stage-color:#000}';
+    return `<!doctype html><html lang="en"${stage ? ` data-style="stage" data-stage-format="${p.stageFormat}"` : ''}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(view.song.title)}</title><style>
+:root{--bg-color:#fff;--text-color:#222;--chord-color:#b22222;--rhythm-color:#666;--section-color:#1a5276;--monospace-font:"Courier New",monospace;--monospace-size:15px;--font-family:system-ui,sans-serif;--rhythm-size:12px;--line-spacing:1.35;--section-spacing:1.3em;--verse-spacing:.9em}
+body{font-family:var(--font-family);margin:24px;background:#fff;color:var(--text-color)}h1{margin:0}.sub{color:#666;margin:2px 0 16px}
+${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:18px;font-size:12px;color:#555}</style></head><body><h1>${esc(view.song.title)}</h1><p class="sub">${esc([sub, k.shift ? `Key ${k.name}` : '', prefs().capo ? `Capo ${prefs().capo}` : ''].filter(Boolean).join(' · '))}</p>${body}</body></html>`;
+  }
+  const SHEET_CSS_TEXT = document.getElementById('sheetCssText').textContent;
+  for (const b of document.querySelectorAll('[data-dl]')) {
+    b.addEventListener('click', async () => {
+      const kind = b.dataset.dl;
+      const t = view.song.title.replace(/[\\/:*?"<>|]+/g, '').trim() || 'song';
+      const k = keyText();
+      const keyPart = k.shift ? ` (${k.name})` : '';
+      let file;
+      if (kind === 'song') file = { filename: `${t}-song.txt`, data: view.song.text };
+      if (kind === 'html') file = { filename: `${t}${keyPart}.html`, data: sheetDocument(false) };
+      if (kind === 'stage') file = { filename: `${t}${keyPart} (stage).html`, data: sheetDocument(true) };
+      if (kind === 'lyrics') file = { filename: `${t} (lyrics).txt`, data: U.renderLyricsText(U.parseSong(view.song.text, parserOptions), { title: view.song.title }) };
+      if (kind === 'chordpro') {
+        const p = prefs();
+        file = { filename: `${t}${keyPart} (ChordPro).txt`, data: U.ukemusicToChordPro(currentIr(), { title: view.song.title, artist: view.song.settings?.song?.artist || '', year: view.song.settings?.song?.year || '', capo: p.capo || '', tempo: p.tempo, time: `${p.beats}/4`, key: '' }) };
+      }
+      downloads = downloads || (window.claude && window.claude.use ? await window.claude.use('downloads').catch(() => null) : null);
+      if (!downloads) {
+        // Not on claude.ai: the browser saves it
+        const type = file.filename.endsWith('.html') ? 'text/html' : 'text/plain';
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([file.data], { type: `${type};charset=utf-8` }));
+        a.download = file.filename;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        $('downloadDialog').close();
+        return;
+      }
+      try {
+        await downloads.save(file);
+        $('downloadDialog').close();
+      } catch (error) {
+        if (error && error.code !== 'declined') toast(`Couldn’t save it (${error.code || 'error'}).`);
+      }
+    });
+  }
+
+  // ── The writing guide ──
+  function openGuide() {
+    if (!$('guideBody').innerHTML) {
+      const g = U.writingGuide();
+      $('guideBody').innerHTML = g.html || '';
+    }
+    $('guideDialog').showModal();
+  }
+  $('guideBtnLib').addEventListener('click', openGuide);
+  $('guideClose').addEventListener('click', () => $('guideDialog').close());
+  $('aboutBtn').addEventListener('click', () => {
+    $('aboutBody').innerHTML = U.aboutHtml({ version: U.appVersion, edition: 'web' }).replace(/<p class="about-foot">[\s\S]*?<\/p>/, '<p class="about-foot">The full licence texts are in THIRD_PARTY_NOTICES.md in the ukemusic folder.</p>');
+    $('aboutDialog').showModal();
+  });
+  $('aboutClose').addEventListener('click', () => $('aboutDialog').close());
+
+  // ── Play along ──
+  const play = { schedule: null, raf: null, line: null, barKey: null, wake: null, userStopped: false };
+  const ARROWS = { D: '↓', U: '↑', X: '✕', '-': '·' };
+  function diagram(name, lib) {
+    const def = U.chordDefinition(lib, name);
+    return def ? U.diagramSvg({ ...def, name }, { show_fingers: true }) : '';
+  }
+  function showChords(bars, index, lib) {
+    const now = bars[index];
+    $('nowChord').textContent = now ? (now.tab ? 'Tab' : (now.rest ? 'N.C.' : now.chord)) : '';
+    const names = [];
+    for (let i = Math.max(0, index); i < bars.length && names.length < 3; i += 1) {
+      const b = bars[i];
+      if (b && !b.tab && !b.rest && b.chord && b.chord !== names[names.length - 1]) names.push(b.chord);
+    }
+    $('nowShapes').innerHTML = names.map((n) => diagram(n, lib)).join('');
+  }
+  function scheduleOptions(countIn) {
+    const p = prefs();
+    return {
+      library: library(), instrument: p.instrument, capo: p.capo, tempo: p.tempo, beatsPerBar: p.beats, countIn,
+      defaultStrum: view.song.settings?.playback?.default_strum || 'island',
+      customStrum: view.song.settings?.playback?.custom_strum || ''
+    };
+  }
+  function showFirstChords() {
+    try {
+      const schedule = U.buildSchedule(currentIr(), scheduleOptions(false));
+      showChords(schedule.bars, 0, library());
+      $('strip').innerHTML = '';
+      $('status').textContent = schedule.bars.length ? `${schedule.bars.length} bars · Play to hear it and follow along` : 'No chords to play yet.';
+    } catch (_e) { /* the sheet shows the problem */ }
+  }
+  async function start(fromLine = 0) {
+    if (!player) { $('status').textContent = 'Sound isn’t available in this browser.'; return; }
+    const schedule = U.buildSchedule(currentIr(), { ...scheduleOptions(fromLine === 0), startLine: fromLine });
+    if (!schedule.bars.length) { $('status').textContent = 'Nothing to play: the song has no chords.'; return; }
+    play.schedule = schedule;
+    play.userStopped = false;
+    play.line = null;
+    play.barKey = null;
+    player.setSound(prefs().instrument === 'guitar' ? 'steel' : 'sampled');
+    $('playBtn').textContent = '■ Stop';
+    $('status').textContent = schedule.countInDuration ? 'Count-in…' : '';
+    try { play.wake = await navigator.wakeLock?.request('screen'); } catch (_e) { play.wake = null; }
+    cancelAnimationFrame(play.raf);
+    play.raf = requestAnimationFrame(tick);
+    try { await player.play(schedule, { onEnd: ended }); }
+    catch (error) { $('status').textContent = `Couldn’t play: ${error.message}`; ended(); }
+  }
+  function ended() {
+    cancelAnimationFrame(play.raf);
+    $('playBtn').textContent = '▶ Play';
+    document.querySelectorAll('.line-group.playing').forEach((el) => el.classList.remove('playing'));
+    [...$('strip').children].forEach((c) => c.classList.remove('on'));
+    try { play.wake?.release(); } catch (_e) { /* fine */ }
+    play.wake = null;
+    if (!play.userStopped && play.schedule) $('status').textContent = 'The end. Play to go again.';
+    play.schedule = null;
+  }
+  function stop() {
+    play.userStopped = true;
+    if (player && player.playing && play.schedule) player.stop();
+    else if (play.schedule) ended();
+  }
+  function restart() {
+    const line = play.line || 0;
+    play.userStopped = true;
+    player.stop();
+    renderSong();
+    setTimeout(() => start(line), 80);
+  }
+  $('playBtn').addEventListener('click', () => {
+    if (player && player.playing && play.schedule) { stop(); $('status').textContent = 'Stopped.'; showFirstChords(); }
+    else start(0);
+  });
+  for (const id of ['sheet']) {
+    $(id).addEventListener('click', (event) => {
+      const group = event.target.closest('.line-group[data-line]');
+      if (!group || !(player && player.playing && play.schedule)) return;
+      play.line = Number(group.dataset.line);
+      restart();
+    });
+  }
+  function tick() {
+    const schedule = play.schedule;
+    if (!schedule) return;
+    if (!player.playing) { play.raf = requestAnimationFrame(tick); return; }
+    const t = player.position();
+    const beat = 60 / schedule.tempo;
+    if (t < schedule.countInDuration) {
+      $('status').textContent = `Count-in… ${Math.floor(t / beat) + 1}`;
+    } else {
+      let index = -1;
+      for (let i = 0; i < schedule.bars.length; i += 1) { if (schedule.bars[i].time <= t) index = i; else break; }
+      const bar = schedule.bars[index];
+      if (bar) {
+        if (play.barKey !== index) {
+          play.barKey = index;
+          showChords(schedule.bars, index, library());
+          const all = stripSteps(bar.pattern, bar.beats || schedule.beatsPerBar);
+          const steps = (bar.share || 1) < 1 ? all.slice(0, Math.max(1, Math.round(all.length * bar.share))) : all;
+          $('strip').innerHTML = bar.tab || bar.rest ? '' : steps.map((s) => `<span class="${s.stroke === '-' ? 'rest' : ''}">${ARROWS[s.stroke] || s.stroke}</span>`).join('');
+          $('status').textContent = `Bar ${index + 1} of ${schedule.bars.length} · tap a line to jump there`;
+          if (bar.line !== play.line) {
+            play.line = bar.line;
+            document.querySelectorAll('.line-group.playing').forEach((el) => el.classList.remove('playing'));
+            const host = $('sheet');
+            const el = host.querySelector(`.line-group[data-line="${bar.line}"]`);
+            if (el) {
+              el.classList.add('playing');
+              el.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+            }
+          }
+        }
+        const cells = $('strip').children;
+        if (cells.length) {
+          const lit = Math.floor(((t - bar.time) / (bar.duration || beat * schedule.beatsPerBar)) * cells.length);
+          [...cells].forEach((c, i) => c.classList.toggle('on', i === lit));
+        }
+      }
+    }
+    play.raf = requestAnimationFrame(tick);
+  }
+  // ── Karaoke: the desktop karaoke view, started from here ──
+  window.__keyLabel = (t) => { const k = keyText(); return k.shift ? `Key ${k.name} (${t > 0 ? '+' : ''}${t})` : `Key ${k.name}`; };
+  window.__songCapo = () => prefs().capo;
+  const karaoke = { line: 0 };
+  window.__playSong = async ({ karaoke: big = false, fromLine = 0, startLine } = {}) => {
+    if (startLine !== undefined) fromLine = startLine;   // the desktop karaoke's name for it
+    if (!big || !player || !view.song) return;
+    if (player.playing) { play.userStopped = true; player.stop(); }
+    const p = prefs();
+    state.song = { title: view.song.title };
+    state.transpose = p.transpose;
+    state.config.song.instrument = p.instrument;
+    const ir = currentIr();
+    const schedule = U.buildSchedule(ir, { ...scheduleOptions(fromLine === 0), startLine: fromLine });
+    if (!schedule.bars.length) { toast('Nothing to play: the song has no chords.'); return; }
+    $('karaokeTempo').textContent = `${p.tempo} bpm`;
+    window.__k.start(ir, schedule, fromLine, 0);
+    player.setSound(p.instrument === 'guitar' ? 'steel' : 'sampled');
+    karaoke.schedule = schedule;
+    try { karaoke.wake = await navigator.wakeLock?.request('screen'); } catch (_e) { karaoke.wake = null; }
+    try { await player.play(schedule, { onBar: (bar) => { if (bar) karaoke.line = bar.line; }, onEnd: () => { window.__k.stopped(); try { karaoke.wake?.release(); } catch (_e) { /* fine */ } } }); }
+    catch (error) { toast(`Couldn’t play: ${error.message}`); window.__k.stopped(); }
+  };
+  const karaokeTempo = (step) => () => {
+    S().tempo = Math.max(40, Math.min(240, prefs().tempo + step));
+    saveSoon();
+    $('karaokeTempo').textContent = `${prefs().tempo} bpm`;
+    $('tempoVal').textContent = `${prefs().tempo} bpm`;
+    if (player && player.playing && karaoke.schedule) window.__playSong({ karaoke: true, fromLine: karaoke.line || 0 });
+  };
+  $('karaokeSlower').addEventListener('click', karaokeTempo(-5));
+  $('karaokeFaster').addEventListener('click', karaokeTempo(5));
+  // The play band stops when karaoke starts
+  $('karaokeButton').addEventListener('click', () => { if (play.schedule) stop(); }, true);
+
+  // Practice stops the song first
+  $('libPractice').addEventListener('click', () => stop(), true);
+
+  // ── Starter songs: public-domain-songs.json beside the page (the public web player) ──
+  async function loadStarters() {
+    try {
+      const response = await fetch('public-domain-songs.json', { cache: 'no-cache' });
+      if (!response.ok) return null;
+      const r = U.readWebSongs(await response.text());
+      return r.ok && r.songs.length ? r : null;
+    } catch (_e) { return null; }
+  }
+  let starterShown = false;
+  function showStarterMode(on) {
+    starterShown = on;
+    $('libTitle').textContent = on ? 'Songs to play' : 'Your songs';
+    $('libSub').innerHTML = on
+      ? 'Public-domain songs to play along with, sing with karaoke and practise. Change the key, capo, instrument or tempo as you like.'
+      : 'Play along and practise. The songs come from the desktop app: there, the library’s <strong>Songs for the web…</strong> saves them in one file; here, <strong>Update songs</strong> loads it.';
+    $('storeBanner').hidden = false;
+    $('storeBanner').innerHTML = on
+      ? 'To play your own songs, write them in the <strong>ukemusic desktop app</strong>, save them with <strong>Songs for the web…</strong> in its library, and load that file here with <strong>Update songs</strong>. They stay in this browser.'
+      : 'Songs are kept in this browser only, so they won’t appear on your other devices. Back them up from the desktop app’s songs folder.';
+    setSync(on ? 'Starter songs' : 'On this device only', !on);
+    $('starterNote').hidden = on || store.mode !== 'local';
+  }
+  $('starterBtn').addEventListener('click', async () => {
+    const r = await loadStarters();
+    if (!r) { toast('The public-domain songs couldn’t be loaded.'); return; }
+    pendingUpdate = { ...r, starters: true };
+    $('updateText').textContent = `${r.songs.length} public-domain songs will replace the ${songs.size} here. Practice progress is kept.`;
+    $('updatePanel').hidden = false;
+    $('updatePanel').scrollIntoView({ block: 'center' });
+  });
+
+  // ── Start: connect to the store, load the songs (and practice progress) ──
+  const capability = window.claude && typeof window.claude.use === 'function' ? window.claude.use('db') : Promise.resolve(null);
+  db = await Promise.race([capability.catch(() => null), new Promise((r) => setTimeout(() => r(null), 12000))]);
+  if (db) {
+    store.mode = 'db';
+    // practice progress (practice.json in the desktop app) lives in practice/progress
+    try {
+      const snap = await db.doc('practice/progress').get();
+      if (snap.exists && snap.data().data) UMW.vfs.__files.set('practice.json', JSON.stringify(snap.data().data));
+    } catch (_e) { /* starts fresh */ }
+    let progressTimer = null;
+    UMW.vfs.__onWrite((name, text) => {
+      if (name !== 'practice.json') return;
+      clearTimeout(progressTimer);
+      progressTimer = setTimeout(() => { try { db.doc('practice/progress').set({ data: JSON.parse(text) }); } catch (_e) { /* next time */ } }, 1500);
+    });
+    let first = true;
+    db.collection('songs').onSnapshot((snap) => {
+      for (const change of snap.docChanges()) {
+        const id = change.doc.id;
+        if (change.type === 'removed') { songs.delete(id); continue; }
+        const data = change.doc.data();
+        const mine = view.song && view.song.id === id;
+        // a change from another device: take it unless this song is being edited here right now
+        if (mine && change.doc.metadata.hasPendingWrites) continue;
+        const song = { id, ...JSON.parse(JSON.stringify(data)) };
+        songs.set(id, song);
+        if (mine && !first) {
+          view.song = song;
+          renderSong();
+        }
+      }
+      first = false;
+      if (!view.song) renderLibrary();
+    }, () => { setSync('Not syncing', true); });
+  } else {
+    store.mode = 'local';
+    for (const s of local.get('songs', [])) songs.set(s.id, s);
+    // No songs of your own here yet: the public-domain songs that come with ukemusic, to play straight away.
+    // They aren't saved: Update songs puts your own in their place.
+    const starters = songs.size ? null : await loadStarters();
+    if (starters) {
+      for (const s of starters.songs) songs.set(s.id, s);
+      showStarterMode(true);
+    } else {
+      showStarterMode(false);
+    }
+    renderLibrary();
+  }
+})();
+</script>

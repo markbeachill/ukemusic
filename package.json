@@ -1,0 +1,118 @@
+{
+  "name": "ukemusic",
+  "version": "4.33.1",
+  "description": "Ukulele chord sheet editor with live preview, fingering diagrams, and tablature support",
+  "main": "main.js",
+  "author": "Mark Beachill",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build:chords": "node tools/build-chord-library.js",
+    "build:web": "node web/make.js",
+    "test": "node test/parser.test.js && node test/renderer-html.test.js && node test/renderer-markdown.test.js && node test/diagram-svg.test.js && node test/transpose.test.js && node test/song-library.test.js && node test/chord-library.test.js && node test/versions.test.js && node test/renderer-lyrics.test.js && node test/playback-schedule.test.js && node test/chord-sheet.test.js && node test/chord-names.test.js && node test/keys.test.js && node test/chordpro.test.js && node test/line-wrap.test.js && node test/karaoke.test.js && node test/tab.test.js && node test/capo.test.js && node test/strums.test.js && node test/starters.test.js && node test/v41.test.js && node test/strum-box.test.js && node test/v45.test.js && node test/v46.test.js && node test/v47.test.js && node test/v48.test.js && node test/v412.test.js && node test/v413.test.js && node test/about.test.js && node test/v415.test.js && node test/v416.test.js && node test/v417.test.js && node test/v418.test.js && node test/v419.test.js && node test/v420.test.js && node test/v421.test.js && node test/v422.test.js && node test/v424.test.js && node test/v425.test.js && node test/v426.test.js && node test/v427.test.js && node test/v429.test.js && node test/v431.test.js && node test/v432.test.js && node test/v433.test.js",
+    "build": "electron-builder --dir",
+    "package": "electron-builder --publish never",
+    "package:win": "electron-builder --win --publish never",
+    "package:mac": "electron-builder --mac --publish never",
+    "package:linux": "electron-builder --linux --publish never"
+  },
+  "devDependencies": {
+    "electron": "^41.0.2",
+    "electron-builder": "^26.0.12",
+    "@tombatossals/chords-db": "^0.5.1"
+  },
+  "build": {
+    "appId": "com.ukemusic.app",
+    "productName": "ukemusic",
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "publish": null,
+    "asar": true,
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "index.html",
+      "preload.js",
+      "src/**/*",
+      "package.json",
+      "THIRD_PARTY_NOTICES.md",
+      "WRITING.md",
+      "!src/**/*.test.*",
+      "!test/**"
+    ],
+    "extraResources": [
+      {
+        "from": "src/chords.json",
+        "to": "chords.json"
+      },
+      {
+        "from": "src/chords-baritone.json",
+        "to": "chords-baritone.json"
+      },
+      {
+        "from": "src/chords-guitar.json",
+        "to": "chords-guitar.json"
+      },
+      {
+        "from": "src/default-style.css",
+        "to": "default-style.css"
+      },
+      {
+        "from": "build/icon.png",
+        "to": "icon.png"
+      }
+    ],
+    "icon": "build/icon.png",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "build/icon.icns",
+      "category": "public.app-category.music"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "category": "AudioVideo"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  },
+  "dependencies": {
+    "ini": "^6.0.0",
+    "@codemirror/commands": "^6.8.1",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.38.6",
+    "@codemirror/language": "^6.11.3"
+  }
+}

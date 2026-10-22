@@ -1,0 +1,29 @@
+    <div id="karaoke" class="karaoke" hidden role="dialog" aria-label="Karaoke view">
+      <div class="karaoke-bar">
+        <div class="k-heading-block">
+          <span id="karaokeTitle" class="k-title"></span>
+          <span id="karaokeInfo" class="k-info"></span>
+        </div>
+        <div class="k-strip" aria-hidden="true">
+          <span id="karaokeChord" class="k-now"></span>
+          <span id="karaokeSteps" class="k-steps"></span>
+        </div>
+        <span class="k-spacer"></span>
+        <span class="k-tempo" title="Tempo: changes carry on straight away, and are saved with the song">
+          <button id="karaokeSlower" type="button" title="5 bpm slower">−</button>
+          <span id="karaokeTempo">100 bpm</span>
+          <button id="karaokeFaster" type="button" title="5 bpm faster">+</button>
+        </span>
+        <button id="karaokeShapesToggle" type="button" title="Show or hide the chord shapes: the chord now and the next two" aria-pressed="true">Shapes</button>
+        <button id="karaokeSmaller" type="button" title="Smaller text">A−</button>
+        <button id="karaokeBigger" type="button" title="Bigger text">A+</button>
+        <button id="karaokePlay" type="button" title="Play from the start (Space)">▶ Play</button>
+        <button id="karaokeRestart" type="button" title="Back to the start (also while it's playing). Or click a line to play from there">⏮ From the start</button>
+        <button id="karaokeStop" type="button" title="Stop (Space)">■ Stop</button>
+        <button id="karaokeClose" type="button" title="Close (Esc)">Close</button>
+      </div>
+      <div class="karaoke-main">
+        <div id="karaokeLines" class="karaoke-lines"></div>
+        <aside id="karaokeShapes" class="k-shapes" aria-label="Chord shapes: now, next and then"></aside>
+      </div>
+    </div>

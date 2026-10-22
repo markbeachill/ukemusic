@@ -1,0 +1,111 @@
+      /* ── Karaoke view ─────────────────────────────────── */
+      .karaoke {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        background: var(--panel-bg);
+        color: var(--text);
+      }
+      .karaoke[hidden] { display: none; }
+      .karaoke-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 24px;
+        min-height: 92px;
+        background: var(--toolbar-bg);
+        border-bottom: 1px solid var(--border);
+      }
+      .karaoke-bar .k-heading-block { display: grid; gap: 2px; min-width: 120px; max-width: 220px; }
+      .karaoke-bar .k-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .karaoke-bar .k-title { font-weight: 700; font-size: 22px; }
+      .karaoke-bar .k-info { color: var(--muted); font-size: 15px; }
+      .karaoke-bar .k-spacer { flex: 1; }
+      .karaoke-bar button { padding: 8px 12px; font-size: 15px; }
+      .karaoke-bar { column-gap: 8px; padding-left: 18px; padding-right: 18px; }
+      .karaoke-bar .k-strip { margin-left: 4px; gap: 12px; }
+      .karaoke-bar .k-step { width: 40px; }
+      /* Strum strip: the current chord and this bar's strokes, the one being played lit */
+      .k-strip { display: flex; align-items: center; gap: 16px; margin-left: 12px; }
+      .k-now { min-width: 90px; font-size: 34px; font-weight: 800; color: #b91c1c; text-align: right; }
+      .k-now.counting { font-size: 20px; color: var(--muted); font-weight: 600; }
+      .k-steps { display: flex; gap: 4px; }
+      .k-step {
+        width: 44px;
+        height: 60px;
+        display: grid;
+        grid-template-rows: 1fr auto;
+        justify-items: center;
+        align-items: center;
+        border-radius: 10px;
+        background: var(--panel-bg);
+        border: 1px solid var(--border);
+        transition: background 60ms, color 60ms;
+      }
+      .k-step .sym { font-size: 26px; line-height: 1; }
+      /* Chord shapes: the chord now, big, and the next two, smaller */
+      .karaoke-main { display: flex; min-height: 0; }
+      .karaoke-main .karaoke-lines { flex: 1 1 auto; min-width: 0; }
+      .k-shapes { flex: 0 0 210px; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 18px 12px; border-left: 1px solid var(--border); overflow-y: auto; background: var(--panel-bg); --rhythm-color: #555; --chord-color: #b22222; --text-color: #111; --bg-color: #fff; }
+      .k-shapes[hidden] { display: none; }
+      .k-shape { display: grid; justify-items: center; gap: 2px; margin: 0; transition: opacity 0.2s; }
+      .k-shape figcaption { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; }
+      .k-shape .chord-diagram { --diagram-size: 96px; }
+      .k-shape .chord-diagram svg { width: var(--diagram-size); display: block; }
+      .k-shape.now .chord-diagram { --diagram-size: 150px; }
+      .k-shape.later { opacity: 0.75; }
+      .k-shape .k-shape-name { font-size: 30px; font-weight: 800; color: var(--muted); line-height: 1.2; }
+      @media (max-width: 900px) { .k-shapes { flex-basis: 140px; } .k-shape.now .chord-diagram { --diagram-size: 110px; } .k-shape .chord-diagram { --diagram-size: 76px; } }
+      #karaokeShapesToggle[aria-pressed="false"] { opacity: 0.6; }
+      .k-step .num { font-size: 12px; color: var(--muted); padding-bottom: 4px; min-height: 16px; }
+      .k-step.accent .sym { font-weight: 800; font-size: 30px; }
+      .k-step.rest .sym { color: var(--muted); }
+      .k-step.past { opacity: 0.55; }
+      .k-step.on { background: var(--accent); border-color: var(--accent); color: #fff; opacity: 1; }
+      .k-step.on .num { color: #fff; }
+      .karaoke-lines {
+        --k-size: 26px;
+        overflow-y: auto;
+        padding: 30vh 6vw 55vh;
+        font: 400 var(--k-size)/1.25 system-ui, -apple-system, "Segoe UI", sans-serif;
+        scroll-behavior: smooth;
+      }
+      .k-line { margin: 0 0 0.55em; opacity: 0.8; transition: opacity 0.25s; cursor: pointer; }
+      .k-tempo { display: flex; align-items: center; gap: 6px; margin-right: 10px; font-size: 15px; font-weight: 600; }
+      #karaokeTempo { min-width: 70px; text-align: center; }
+      .k-tab pre { margin: 0; font: 600 0.62em/1.35 "Consolas", "Lucida Console", "Courier New", monospace; white-space: pre; }
+      .k-tab .k-piece { max-width: 100%; overflow-x: auto; }
+      .k-tab .k-mark { border-radius: 4px; transition: background 60ms, color 60ms; }
+      .k-tab .k-mark.played { color: var(--accent); }
+      .k-tab .k-mark.on { background: var(--accent); color: #fff; box-shadow: 0 0 0 3px var(--accent); }
+      .k-line.past { opacity: 0.38; }
+      .k-line.current { opacity: 1; }
+      .k-heading {
+        margin: 0.9em 0 0.35em;
+        font-size: 0.62em;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
+      .k-label { font-weight: 700; margin-right: 0.4em; vertical-align: bottom; }
+      .k-piece { display: inline-block; position: relative; vertical-align: bottom; white-space: pre-wrap; padding-bottom: 6px; }
+      .k-chord { display: block; min-height: 1.15em; font-size: 0.7em; font-weight: 700; color: #b91c1c; white-space: pre; }
+      .k-chord.k-carried { opacity: 0.45; font-weight: 600; }
+      .k-piece.chord-only .k-chord { margin-right: 0.8em; }
+      .k-chord.k-bar { color: var(--muted); font-weight: 700; }
+      /* Instrumental lines: chords on the line itself, at the size of the words */
+      .k-instrumental .k-label { vertical-align: baseline; }
+      .k-instrumental .k-piece { vertical-align: baseline; margin-right: 0.7em; }
+      .k-instrumental .k-chord { display: inline; font-size: 1em; min-height: 0; }
+      .k-instrumental .k-chord.k-bar { font-weight: 400; }
+      .k-instrumental .k-text { display: none; }
+      .k-instrumental .k-piece.chord-only .k-chord { margin-right: 0; }
+      .k-line.current.k-instrumental .k-piece.done .k-chord { opacity: 0.55; }
+      .k-gridbar { color: var(--muted); font-weight: 400; margin: 0 0.7em 0 0; }
+      .k-text { display: block; }
+      .k-progress { position: absolute; left: 0; bottom: 0; height: 4px; width: 0; border-radius: 2px; background: var(--accent); }
+      .k-piece.done .k-progress { width: 100%; opacity: 0.35; }
