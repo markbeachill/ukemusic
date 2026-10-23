@@ -190,7 +190,26 @@ contextBridge.exposeInMainWorld('ukemusic', {
     exportPack: (payload) => ipcRenderer.invoke('libraries:exportPack', payload),
     choosePack: () => ipcRenderer.invoke('libraries:choosePack'),
     importPack: (payload) => ipcRenderer.invoke('libraries:importPack', payload),
+    importChordPro: (payload) => ipcRenderer.invoke('libraries:importChordPro', payload), // 4.34: a folder of .cho files
     LICENCES: { 'public-domain': 'Public domain', own: 'My own song', permission: 'Shared with permission', personal: 'Copyrighted: for my own use' }
+  },
+  chordProImportSettings: (meta, instrumentId) => require('./chordpro-import').importSettings(meta, instrumentId), // 4.34
+  // 4.35: the Session screen (src/session-view.js, session.html)
+  sessionHtml: (ir, options) => require('./session-view').sessionHtml(ir, options),
+  sessionChords: (ir) => require('./session-view').sessionChords(ir),
+  sessionCss: () => require('./session-view').SESSION_CSS,
+  sessionSong: (shown, options) => require('./session-view').sessionSong(shown, options),
+  isCommonChord: (name, list) => require('./renderer-html').isCommonChord(name, list),
+  session: {
+    open: (payload) => ipcRenderer.invoke('session:open', payload),
+    check: (payload) => ipcRenderer.invoke('session:check', payload),
+    key: (key) => ipcRenderer.send('session:key', key),
+    close: () => ipcRenderer.send('session:close'),
+    sendState: (state) => ipcRenderer.send('session:state', state),
+    sendChecked: (result) => ipcRenderer.send('session:checked', result),
+    onData: (cb) => ipcRenderer.on('session:data', (_e, data) => cb(data)),
+    onKey: (cb) => ipcRenderer.on('session:key', (_e, key) => cb(key)),
+    onState: (cb) => ipcRenderer.on('session:state', (_e, state) => cb(state))
   },
   setlistFolderPdf: (payload) => ipcRenderer.invoke('setlists:folderPdf', payload),
   openFolder: (folder) => ipcRenderer.invoke('shell:openFolder', folder),

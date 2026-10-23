@@ -334,6 +334,13 @@
       .lib-folder-button { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; padding: 5px 10px; }
       .lib-folder-button svg { width: 16px; height: 16px; color: var(--accent); }
       .library-heading { display: flex; align-items: center; gap: 18px; }
+      /* Session screen (4.35) */
+      .session-cta { border-color: #0e6b64; color: #0e6b64; }
+      .session-bar { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 900; display: flex; align-items: center; gap: 12px; padding: 8px 10px 8px 16px; border-radius: 14px; background: #0e6b64; color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.25); font-size: 14px; max-width: 92vw; }
+      .session-bar[hidden] { display: none; }
+      .session-bar .muted { color: #cfe7e3; }
+      .session-bar button { border: 0; border-radius: 9px; padding: 6px 12px; font: inherit; font-weight: 700; background: rgba(255,255,255,.16); color: #fff; cursor: pointer; }
+      .session-bar button:hover { background: rgba(255,255,255,.28); }
       /* Free Practice: its own colour, first thing on the songs screen, so it isn't missed (4.33.1) */
       .practice-cta { flex: none; align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border: 0; border-radius: 12px; background: #c2410c; color: #fff; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
       .practice-cta:hover { background: #9a3412; }
@@ -1922,6 +1929,7 @@
                 </div>
                 <div class="rib-checks">
                   <label title="Mirror the diagrams for a left-handed instrument (all songs)"><input id="viewLeftHanded" type="checkbox" /> Left-handed (all songs)</label>
+                  <label title="No diagram for the chords everyone knows: C, G, Am, F… (all songs; change the list in Settings → All songs)"><input id="viewSkipCommon" type="checkbox" /> Hide common</label>
                 </div>
               </div>
               <span class="rib-label">Diagrams</span>
@@ -2056,6 +2064,7 @@
                 <button id="stopButton" class="rib-button" type="button" data-icon="stop" title="Stop playing (Shift+F5)" disabled>Stop</button>
                 <button id="playFromStartButton" class="rib-button" type="button" data-icon="restart" title="Play from the top of the song (also while it's playing). Tip: while it plays, click a line in the preview to jump there">From the start</button>
                 <button id="karaokeButton" class="rib-button" type="button" data-icon="karaoke" title="Karaoke: full screen, with big words lighting up as they're sung, the strum and the chord shapes">Karaoke</button>
+                <button id="sessionButton" class="rib-button" type="button" data-icon="screen" title="Session screen: the whole song on one screen, as big as it will go, for a group to play from (on the TV or projector, if one is plugged in)">Session</button>
               </div>
               <span class="rib-label">Play</span>
             </div>
@@ -2385,6 +2394,14 @@
                         <input id="diagrams-left_handed" type="checkbox" data-config-path="diagrams.left_handed" />
                       </div>
                       <div class="toggle-row">
+                        <label for="diagrams-skip_common">Not the common chords (no diagram for the chords below)</label>
+                        <input id="diagrams-skip_common" type="checkbox" data-config-path="diagrams.skip_common" />
+                      </div>
+                      <div class="field">
+                        <label for="diagrams-common_chords">Common chords: the ones you know (spaces between)</label>
+                        <input id="diagrams-common_chords" type="text" data-config-path="diagrams.common_chords" spellcheck="false" />
+                      </div>
+                      <div class="toggle-row">
                         <label for="diagrams-show_fingers">Show finger numbers on the diagrams</label>
                         <input id="diagrams-show_fingers" type="checkbox" data-config-path="diagrams.show_fingers" />
                       </div>
@@ -2640,6 +2657,15 @@
       </footer>
     </div>
 
+    <div id="sessionBar" class="session-bar" hidden role="status">
+      <strong>Session screen</strong>
+      <span id="sessionNow"></span>
+      <span id="sessionNext" class="muted"></span>
+      <span class="appbar-spacer"></span>
+      <button id="sessionPrev" type="button" title="Back (← or Page Up)">◀</button>
+      <button id="sessionFwd" type="button" title="On: the next page or song (→, Space or a clicker)">▶</button>
+      <button id="sessionEnd" type="button" title="End the session screen (Esc)">End</button>
+    </div>
     <section id="library" class="library" aria-label="Your songs">
       <header class="library-bar">
         <div class="library-brand"><span data-icon="uke" aria-hidden="true"></span><strong>ukemusic</strong></div>
@@ -2690,6 +2716,7 @@
             <div class="setlist-head">
               <input id="setlistName" type="text" aria-label="Setlist name" />
               <span class="appbar-spacer"></span>
+              <button id="setlistSession" class="appbar-button session-cta" type="button" data-icon="screen" title="Run the session: each song on one screen, in order, on the TV or projector if one is plugged in. → or a clicker for the next song">Session screen</button>
               <button id="setlistPdf" class="appbar-button" type="button" data-icon="export" title="One PDF with every song in this setlist, in order">Songbook PDF…</button>
               <button id="setlistFolder" class="appbar-button" type="button" data-icon="folder" title="A folder with one PDF per song, numbered in setlist order (in the gig folder, if you've chosen one): for a tablet, or to print">Setlist folder…</button>
               <button id="setlistDelete" class="appbar-button" type="button" title="Delete this setlist (the songs stay in your library)">Delete</button>
@@ -3628,7 +3655,9 @@
             placement: 'song_start',
             max_per_row: 5,
             show_fingers: true,
-            fallback: 'placeholder'
+            fallback: 'placeholder',
+            skip_common: false,
+            common_chords: 'A A7 Am B7 Bb Bm C C7 D D7 Dm E E7 Em F F7 F#m G G7 Gm Gm7'
           },
           tablature: { enable: true, frets: 'chord', size: 'same', box: false, faint: false, in_print: true },
           playback: { count_in: true, follow: true, from_cursor: false, default_strum: 'simple', custom_strum: 'D>-DU-UDU', swing: 'auto', voice_count: false, voice_sections: false, voice_chords: false, sound: 'sampled', guitar_sound: 'steel', karaoke_size: 26 }
@@ -4396,6 +4425,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           // ChordPro fields: from an import, or carried over by Save as New
           const keptChordPro = pending?.kept || (saveAsNew ? keptBefore : '');
           if (keptChordPro) state.chordPro = await window.ukemusic.writeChordPro({ folder: song.folder, text: keptChordPro });
+          if (pending?.links?.length) state.links = await window.ukemusic.writeLinks({ folder: song.folder, links: pending.links }); // 4.34
           state.savedContent = getEditorValue();
           updateDirtyState();
           setStatusMessage(`Saved as "${song.title}".`);
@@ -5658,34 +5688,16 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         async function applyImportedMeta(meta, kept = '') {
           if ((!meta || !Object.keys(meta).length) && !kept) return;
           meta = meta || {};
-          const settings = {};
-          const key = meta.key && window.ukemusic.keys.parse(meta.key);
-          if (key) settings.key = key.name;
-          const beats = Number((String(meta.time || '').match(/^\s*(\d+)\s*\//) || [])[1]);
-          if ([2, 3, 4, 6].includes(beats)) settings.beats_per_bar = beats;
-          // No {artist}: many sites put the artist in the subtitle ({st: Paul Simon})
-          if (meta.artist || meta.subtitle) settings.artist = String(meta.artist || meta.subtitle).trim();
-          const tempo = Math.round(Number(String(meta.tempo || '').match(/\d+(\.\d+)?/)?.[0]));
-          if (tempo >= 40 && tempo <= 240) settings.tempo = tempo;
-          // {capo} is kept on the ChordPro tab, not made the song's capo: ChordPro files write the
-          // capo shapes, ukemusic writes the sounding chords and works the shapes out from the capo
-          const writers = [meta.composer, meta.lyricist].filter(Boolean).map((w) => String(w).trim());
-          if (writers.length) settings.writer = [...new Set(writers)].join(', ');
-          if (meta.album) settings.album = String(meta.album).trim();
-          const year = String(meta.year || '').match(/\b(1\d{3}|2[01]\d{2})\b/);
-          if (year) settings.year = Number(year[1]);
-          // {define} chord shapes that fit the song's instrument
-          const extra = {};
-          const instrumentId = songInstrument().id;
-          const fitting = (meta.defines || []).filter((d) => d.frets.length === window.ukemusic.instrument(instrumentId).strings.length);
-          if (fitting.length) {
-            const map = Object.fromEntries(fitting.map((d) => [d.name, d.frets]));
-            extra.shapes = { [shapesKey(instrumentId)]: window.ukemusic.shapes.formatSetting(map) };
-          }
+          // 4.34: the same rules as Import ChordPro files (src/chordpro-import.js): key, time,
+          // artist, tempo, writers, album, year, tags, and {define} shapes for each instrument
+          const imported = window.ukemusic.chordProImportSettings(meta, songInstrument().id);
+          const settings = imported.song;
+          const extra = imported.shapes ? { shapes: imported.shapes } : {};
+          const newLinks = meta.links || [];
           // Everything else in the file is kept on the song's ChordPro tab (4.27)
           const noteBits = [];
           if (!state.song) {
-            state.pendingImport = { settings, noteBits, extra, kept };
+            state.pendingImport = { settings, noteBits, extra, kept, links: newLinks };
             state.chordPro = kept || '';
             return;
           }
@@ -5696,6 +5708,11 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           state.songSettings.song = { ...(state.songSettings.song || {}), ...settings };
           if (extra.shapes) state.songSettings.shapes = { ...(state.songSettings.shapes || {}), ...extra.shapes };
           await persistSongSettings();
+          if (newLinks.length) {
+            const have = new Set((state.links || []).map((l) => l.url));
+            state.links = [...(state.links || []), ...newLinks.filter((l) => !have.has(l.url))];
+            await saveLinks();
+          }
           populateSettingsForm();
           if (noteBits.length) await addHistory(noteBits.join(' · ').replace('— ·', '—'));
           renderPreviewNow();
@@ -9080,6 +9097,10 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             case 'lib-share':
               if (librarySongs.length) openPackDialog();
               break;
+            case 'lib-import-cho':
+              if (libraryEl.hidden) await showLibrary();
+              importChordProFolder();
+              break;
             case 'lib-about':
               openLibraryDialog('edit');
               break;
@@ -9156,6 +9177,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           play: 'M7 4l13 8-13 8z',
           stop: 'M6 6h12v12H6z',
           karaoke: 'M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3zM5 11a7 7 0 0 0 14 0M12 18v3',
+          screen: 'M3 5h18v11H3zM8 20h8M12 16v4',
           metronome: 'M9 3h6l4 18H5zM12 17l5-9',
           sliders: 'M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0M14 4v4M8 10v4M16 16v4',
           gear: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z',
@@ -9647,6 +9669,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           // Greyed out when they can't be used (no library, or nothing in it)
           menuButton(menu, 'About this library…', () => { closeSetlistMenu(); openLibraryDialog('edit'); }, { disabled: !current, title: 'Its name, what it is, who made it, its licence' });
           menuButton(menu, 'Share as a library pack…', () => { closeSetlistMenu(); openPackDialog(); }, { disabled: !current || !librarySongs.length, title: librarySongs.length ? 'Save the library as one .ukelib file to share' : 'No songs to share yet' });
+          menuButton(menu, 'Check songs fit one screen…', () => { closeSetlistMenu(); checkSessionFit(); }, { disabled: !current || !librarySongs.length, title: 'Lay out every song as the Session screen would on a 1920×1080 TV, and list any that need a page turn or small text' });
+          menuButton(menu, 'Import ChordPro files…', () => { closeSetlistMenu(); importChordProFolder(); }, { disabled: !current, title: 'Bring a folder of ChordPro (.cho) files into this library, one song each; its subfolders become setlists' });
           menuButton(menu, 'Open the library folder', () => { closeSetlistMenu(); window.ukemusic.openFolder(current); }, { disabled: !current });
           placeMenu(menu, anchor, { alignLeft: true });
         }
@@ -9742,6 +9766,127 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
 
         // Open a library pack: as a new library beside this one, or into this one
         let openingPack = null;
+        // ── Session screen (4.35): songs fitted to one screen, for a group (session.html) ──
+        // A song for the screen: in its key (or the setlist's), with its capo, instrument and chord
+        // shapes; both layouts (chords above / in the words), and its diagrams.
+        function sessionSong({ title, content, config, semitones = 0, folder = '' }) {
+          const instrument = window.ukemusic.instrument(config?.song?.instrument);
+          const once = config?.export?.stage_chorus === 'once';
+          const ir = window.ukemusic.parseSong(once ? stageText(content, config) : content, getParserOptions());
+          const capo = songCapo(config);
+          const chosen = config?.song?.key && config.song.key !== 'auto' ? window.ukemusic.keys.parse(config.song.key) : null;
+          const key = chosen || window.ukemusic.keys.detect(ir.filter((n) => n.type === 'chord' && !n.noChord).map((n) => n.content));
+          const shown = window.ukemusic.transposeIR(ir, semitones - capo, { spelling: 'key', key, instrument: instrument.id });
+          const keyNow = key ? window.ukemusic.keys.transpose(key, semitones) : null;
+          const sub = [creditText(config), keyNow ? window.ukemusic.keys.describe(keyNow) : '', capo ? `Capo ${capo}` : '', instrument.id !== 'soprano' ? instrument.name : ''].filter(Boolean).join(' · ');
+          return window.ukemusic.sessionSong(shown, { title, sub, folder, library: chordLibraryFor(instrument.id, config), common: config?.diagrams?.common_chords, leftHanded: Boolean(state.config?.diagrams?.left_handed) });
+        }
+        async function sessionSongFromLine(line) {
+          const folder = folderOf(line);
+          if (!folder) return null;
+          const song = await window.ukemusic.openSong(folder);
+          const config = mergeConfig(clone(state.config), song.settings || {});
+          return sessionSong({ title: entryLabel(line), content: song.content, config, semitones: entryOf(line).shift, folder });
+        }
+        const sessionOptions = () => ({ hideCommon: state.config?.diagrams?.skip_common === true || state.config?.diagrams?.skip_common === 'true', minPx: Number(state.config?.export?.session_min_px) || 18 });
+        let sessionExternal = false;
+        async function openSession(songs, start = 0) {
+          if (!songs.length) return;
+          try {
+            const r = await window.ukemusic.session.open({ songs, start, ...sessionOptions() });
+            sessionExternal = Boolean(r?.external);
+            document.getElementById('sessionBar').hidden = !sessionExternal;
+          } catch (e) {
+            showToast('Could not open the Session screen', { detail: String(e.message || e), error: true });
+          }
+        }
+        // the open song (as it is in the editor, in the key and capo shown)
+        async function sessionThisSong() {
+          const title = state.song?.title || state.suggestedTitle || 'Song';
+          await openSession([sessionSong({ title, content: getEditorValue(), config: effectiveConfig(), semitones: state.transpose, folder: state.song?.folder || '' })]);
+        }
+        async function sessionSetlist() {
+          const setlist = setlistView.current;
+          if (!setlist || !setlist.songs.length) return;
+          const songs = [];
+          for (const line of setlist.songs) { const s = await sessionSongFromLine(line); if (s) songs.push(s); }
+          await openSession(songs);
+        }
+        document.getElementById('sessionButton').addEventListener('click', () => sessionThisSong());
+        document.getElementById('setlistSession').addEventListener('click', () => sessionSetlist());
+        document.getElementById('sessionPrev').addEventListener('click', () => window.ukemusic.session.key('ArrowLeft'));
+        document.getElementById('sessionFwd').addEventListener('click', () => window.ukemusic.session.key('ArrowRight'));
+        document.getElementById('sessionEnd').addEventListener('click', () => window.ukemusic.session.close());
+        window.ukemusic.session.onState((s) => {
+          const bar = document.getElementById('sessionBar');
+          if (s.closed) { bar.hidden = true; sessionExternal = false; return; }
+          document.getElementById('sessionNow').textContent = `${s.count > 1 ? `${s.index + 1}/${s.count}: ` : ''}${s.title}${s.pages > 1 ? ` · page ${s.page + 1} of ${s.pages}` : ''}`;
+          document.getElementById('sessionNext').textContent = s.next ? `Next: ${s.next}` : '';
+        });
+        // With the Session screen on the TV, the laptop's arrow keys (and a clicker) turn its pages
+        document.addEventListener('keydown', (e) => {
+          if (!sessionExternal || document.getElementById('sessionBar').hidden) return;
+          if (e.target.closest?.('input, textarea, select, [contenteditable], .cm-editor')) return;
+          if (['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ' ', 'Home', 'End', 'Escape', '+', '-', '=', 'm', 'M', 'd', 'D', 'c', 'C'].includes(e.key)) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.ukemusic.session.key(e.key);
+          }
+        }, true);
+        // Does every song fit one screen (1920×1080, text at least 18px)?
+        async function checkSessionFit() {
+          const folder = songsFolder();
+          if (!folder || !librarySongs.length) return;
+          showToast('Checking every song on a 1920×1080 screen…', { busy: true });
+          const songs = [];
+          for (const item of librarySongs) {
+            try {
+              const song = await window.ukemusic.openSong(item.folder);
+              const config = mergeConfig(clone(state.config), song.settings || {});
+              songs.push(sessionSong({ title: item.title, content: song.content, config, folder: item.folder }));
+            } catch (_e) { /* skipped */ }
+          }
+          let r;
+          try {
+            r = await window.ukemusic.session.check({ songs, ...sessionOptions() });
+          } catch (e) {
+            showToast('Could not check the songs', { detail: String(e.message || e), error: true });
+            return;
+          }
+          const paged = r.songs.filter((x) => x.pages > 1);
+          const small = r.songs.filter((x) => x.pages === 1 && x.px < r.minPx + 2);
+          const bits = [];
+          if (paged.length) bits.push(`Need a page turn: ${paged.map((x) => `${x.title} (${x.pages} pages)`).join(', ')}.`);
+          if (small.length) bits.push(`Fit, but only at the smallest text: ${small.map((x) => x.title).join(', ')}.`);
+          if (paged.length || small.length) bits.push('To help: "Chorus once" (This song → Stage copies), Hide common, or shorter strum lines.');
+          showToast(paged.length ? `${r.songs.length - paged.length} of ${r.songs.length} songs fit one screen` : `All ${r.songs.length} songs fit one screen`, { detail: bits.join(' ') || 'Every song fits a 1920×1080 screen with readable text.' });
+          state.sessionFit = Object.fromEntries(r.songs.map((x) => [x.folder, x]));
+        }
+
+        // 4.34: a folder of ChordPro files into this library (a club's songbook, say)
+        async function importChordProFolder() {
+          const into = state.config?.library?.songs_folder || '';
+          if (!into) return;
+          let r;
+          try {
+            r = await window.ukemusic.libraries.importChordPro({ into, instrument: state.config?.song?.instrument || 'soprano' });
+          } catch (e) {
+            showToast('Could not import those files', { detail: String(e.message || e).replace(/^Error invoking remote method '[^']+': (Error: )?/, ''), error: true });
+            return;
+          }
+          if (!r) return;
+          await refreshLibrary();
+          if (r.setlists.length) await refreshSetlists();
+          const already = r.skipped.filter((s) => /already/.test(s.reason));
+          const problems = r.skipped.filter((s) => !/already/.test(s.reason));
+          const bits = [];
+          if (r.setlists.length) bits.push(`Setlists made from its folders: ${r.setlists.map((s) => s.name).join(', ')}.`);
+          if (already.length) bits.push(`Already here, left alone: ${already.map((s) => s.title || s.file).join(', ')}.`);
+          if (problems.length) bits.push(`Not imported: ${problems.map((s) => `${s.file} (${s.reason})`).join('; ')}.`);
+          bits.push('They\'re marked "Copyrighted: for my own use" (Info → Licence), so they stay out of shared library packs.');
+          showToast(r.files ? `Imported ${r.added.length} song${r.added.length === 1 ? '' : 's'}` : 'No ChordPro files in that folder', { detail: bits.join(' ') });
+        }
+
         async function openPack() {
           try {
             openingPack = await window.ukemusic.libraries.choosePack();
@@ -11040,6 +11185,11 @@ ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or del
             ? [['diagrams.enable', false]]
             : [['diagrams.enable', true], ['diagrams.placement', value]]);
         });
+        document.getElementById('viewSkipCommon').addEventListener('change', async (event) => {
+          state.config.diagrams = { ...(state.config.diagrams || {}), skip_common: event.target.checked };
+          await persistConfig();
+          renderPreviewNow();
+        });
         document.getElementById('viewLeftHanded').addEventListener('change', async (event) => {
           state.config.diagrams = { ...(state.config.diagrams || {}), left_handed: event.target.checked };
           await persistConfig();
@@ -11099,6 +11249,7 @@ ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or del
           const diagrams = config?.diagrams || {};
           document.getElementById('viewDiagrams').value = diagrams.enable === false || diagrams.placement === 'none' ? 'none' : (diagrams.placement || 'song_start');
           document.getElementById('viewLeftHanded').checked = state.config?.diagrams?.left_handed === true;
+          document.getElementById('viewSkipCommon').checked = state.config?.diagrams?.skip_common === true || state.config?.diagrams?.skip_common === 'true';
           document.getElementById('viewStrumStyle').value = config?.rhythm?.style || 'comic';
           document.getElementById('viewLayout').value = config?.export?.layout || 'lines';
           document.getElementById('playFeel').value = ['straight', 'light', 'swing', 'shuffle'].includes(config?.playback?.swing) ? config.playback.swing : 'auto';

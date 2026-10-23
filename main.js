@@ -17,6 +17,7 @@ const {
   dialog,
   ipcMain,
   Menu,
+  screen,
   shell
 } = require('electron');
 const log = require('./src/logger');
@@ -59,7 +60,9 @@ const DEFAULT_CONFIG = {
     placement: 'song_start',
     max_per_row: 5,
     show_fingers: true,
-    fallback: 'placeholder'
+    fallback: 'placeholder',
+    skip_common: false,
+    common_chords: 'A A7 Am B7 Bb Bm C C7 D D7 Dm E E7 Em F F7 F#m G G7 Gm Gm7'
   },
   tablature: { enable: true, frets: 'chord', size: 'same', box: false, faint: false, in_print: true },
   playback: { count_in: true, follow: true, from_cursor: false, default_strum: 'simple', custom_strum: 'D>-DU-UDU', swing: 'auto', voice_count: false, voice_sections: false, voice_chords: false, sound: 'sampled', guitar_sound: 'steel', karaoke_size: 26 }
@@ -317,6 +320,8 @@ function setMenuState({ songPage = true, saved = true, librarySongs = 1, library
   if (share) share.enabled = Boolean(library) && librarySongs > 0;
   const about = menu.getMenuItemById('lib-about');
   if (about) about.enabled = Boolean(library);
+  const importCho = menu.getMenuItemById('lib-import-cho');
+  if (importCho) importCho.enabled = Boolean(library);
   for (const id of SONG_PAGE_ITEMS) {
     const item = menu.getMenuItemById(id);
     if (item) item.enabled = Boolean(songPage) && (!SAVED_SONG_ITEMS.includes(id) || Boolean(saved));
@@ -351,6 +356,7 @@ function buildMenu() {
             { type: 'separator' },
             { label: 'Open a Library Pack…', click: () => sendMenuAction('lib-open-pack') },
             { id: 'lib-share', label: 'Share This Library as a Pack…', click: () => sendMenuAction('lib-share') },
+            { id: 'lib-import-cho', label: 'Import ChordPro Files…', click: () => sendMenuAction('lib-import-cho') },
             { type: 'separator' },
             { id: 'lib-about', label: 'About This Library…', click: () => sendMenuAction('lib-about') }
           ]
@@ -888,6 +894,20 @@ function registerIpc() {
     return { file, ...libraries.readPack(file) };
   });
   handle('libraries:importPack', async (_event, { file, parent = null, into = null } = {}) => libraries.importPack(file, { parent, into }));
+  // 4.34: a folder of ChordPro files (a club's songbook) into the library, one song each;
+  // each subfolder of songs becomes a setlist
+  handle('libraries:importChordPro', async (_event, { into, instrument = 'soprano' } = {}) => {
+    if (!into) throw new Error('Choose or make a library first.');
+    const result = await dialog.showOpenDialog(mainWindow, {
+      title: 'Choose a folder of ChordPro files (.cho) to bring into this library',
+      properties: ['openDirectory']
+    });
+    if (result.canceled || !result.filePaths.length) return null;
+    const source = result.filePaths[0];
+    const name = path.basename(source);
+    const label = /^(songs?|chordpro|cho)$/i.test(name) ? path.basename(path.dirname(source)) : name;
+    return { source, ...require('./src/chordpro-import').importFolder(source, into, { instrument, source: label }) };
+  });
   handle('dialog:chooseFolder', async (_event, { title = 'Choose a folder', defaultPath } = {}) => {
     const result = await dialog.showOpenDialog(mainWindow, { title, defaultPath, properties: ['openDirectory', 'createDirectory'] });
     return result.canceled ? '' : result.filePaths[0];
@@ -940,6 +960,66 @@ function registerIpc() {
     return { deleted: true };
   });
   ipcMain.on('menu:state', (_event, payload) => setMenuState(payload || {}));
+
+  // ── Session screen (4.35): a song (or a setlist) fitted to one screen, for a group ──────
+  // On a second screen (a TV or projector) if there is one, full screen; the laptop keeps the
+  // app, and its keys (or a presentation clicker) turn the pages.
+  let sessionWindow = null;
+  const sessionPrefs = () => ({
+    preload: path.join(__dirname, 'src', 'preload.js'),
+    contextIsolation: true,
+    nodeIntegration: false,
+    sandbox: false
+  });
+  handle('session:open', async (_event, payload = {}) => {
+    const mainDisplay = screen.getDisplayMatching(mainWindow.getBounds());
+    const other = screen.getAllDisplays().find((d) => d.id !== mainDisplay.id);
+    const target = other || mainDisplay;
+    if (!sessionWindow || sessionWindow.isDestroyed()) {
+      sessionWindow = new BrowserWindow({
+        x: target.bounds.x,
+        y: target.bounds.y,
+        width: target.bounds.width,
+        height: target.bounds.height,
+        fullscreen: true,
+        autoHideMenuBar: true,
+        backgroundColor: '#ffffff',
+        title: 'ukemusic: Session screen',
+        icon: getBundledResourcePath('icon.png') || path.join(__dirname, 'build', 'icon.png'),
+        webPreferences: sessionPrefs()
+      });
+      sessionWindow.setMenuBarVisibility(false);
+      attachWindowLogging(sessionWindow);
+      sessionWindow.on('closed', () => {
+        sessionWindow = null;
+        if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('session:state', { closed: true });
+      });
+      await sessionWindow.loadFile(path.join(__dirname, 'session.html'));
+    }
+    sessionWindow.webContents.send('session:data', payload);
+    // with the session on another screen, the laptop keeps the focus (for its keys and a clicker)
+    if (other) mainWindow.focus(); else sessionWindow.focus();
+    return { external: Boolean(other) };
+  });
+  ipcMain.on('session:key', (_event, key) => { if (sessionWindow && !sessionWindow.isDestroyed()) sessionWindow.webContents.send('session:key', key); });
+  ipcMain.on('session:state', (_event, state) => { if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('session:state', state); });
+  ipcMain.on('session:close', () => { if (sessionWindow && !sessionWindow.isDestroyed()) sessionWindow.close(); });
+  // Does every song fit one screen? Each is laid out, unseen, at 1920×1080 (a TV), as the
+  // Session screen would; the answer lists the songs that need pages or small text.
+  handle('session:check', async (_event, payload = {}) => {
+    const win = new BrowserWindow({ show: false, width: 1920, height: 1080, useContentSize: true, webPreferences: sessionPrefs() });
+    try {
+      await win.loadFile(path.join(__dirname, 'session.html'), { query: { check: '1' } });
+      win.setContentSize(1920, 1080);
+      return await new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error('The check took too long.')), 120000);
+        ipcMain.once('session:checked', (_e, result) => { clearTimeout(timer); resolve(result); });
+        win.webContents.send('session:data', { ...payload, check: true });
+      });
+    } finally {
+      if (!win.isDestroyed()) win.destroy();
+    }
+  });
   handle('song:readChordPro', async (_event, folder) => songs.readChordPro(folder));
   handle('song:writeChordPro', async (_event, { folder, text } = {}) => songs.writeChordPro(folder, text));
   handle('song:writeLinks', async (_event, { folder, links } = {}) => require('./src/links').writeLinks(folder, links));

@@ -66,6 +66,20 @@ function renderTabHtml(content, maxLineChars) {
   return `<pre class="tab">${lines.join('\n')}</pre>`;
 }
 
+// 4.34: the chords left out when "not the common ones" is on (the North Shore Ukulele Circle's list)
+const COMMON_CHORDS = 'A A7 Am B7 Bb Bm C C7 D D7 Dm E E7 Em F F7 F#m G G7 Gm Gm7';
+const ROOT_INDEX = { C: 0, 'C#': 1, Db: 1, D: 2, 'D#': 3, Eb: 3, E: 4, F: 5, 'F#': 6, Gb: 6, G: 7, 'G#': 8, Ab: 8, A: 9, 'A#': 10, Bb: 10, B: 11 };
+/** A chord's name for comparing: A# and Bb are the same chord, Cmaj7 and CM7 too */
+function chordKey(name) {
+  const m = String(name || '').trim().match(/^([A-G][#b]?)(.*)$/);
+  if (!m || ROOT_INDEX[m[1]] === undefined) return String(name || '').trim();
+  const quality = m[2].replace(/^(M7|ma7|Maj7)$/, 'maj7').replace(/^min/, 'm');
+  return `${ROOT_INDEX[m[1]]}${quality}`;
+}
+function chordSet(text) {
+  return new Set(String(text || '').split(/[\s,]+/).filter(Boolean).map(chordKey));
+}
+
 function normalizeOptions(options = {}) {
   return {
     layout: options.layout || 'lines',  // 'lines', 'table', 'inline' (chords in the words) or 'chords' (chords only)
@@ -81,7 +95,9 @@ function normalizeOptions(options = {}) {
       placement: options.diagrams?.placement || 'none',
       show_fingers: options.diagrams?.show_fingers !== false,
       left_handed: options.diagrams?.left_handed === true || options.diagrams?.left_handed === 'true',
-      fallback: options.diagrams?.fallback || 'placeholder'
+      fallback: options.diagrams?.fallback || 'placeholder',
+      // 4.34: no diagram for the chords everyone knows (Settings → All songs → Chord diagrams)
+      skip: options.diagrams?.skip_common === true || options.diagrams?.skip_common === 'true' ? chordSet(options.diagrams?.common_chords ?? COMMON_CHORDS) : null
     },
     chordLibrary: options.chordLibrary || getBuiltInLibrary()
   };
@@ -289,6 +305,7 @@ function getGroupChordNames(group) {
 }
 
 function renderDiagramForChord(chordName, options) {
+  if (options.diagrams.skip && options.diagrams.skip.has(chordKey(chordName))) return '';
   const definition = getChordDefinition(options.chordLibrary, chordName);
   if (definition) {
     return renderDiagramSvg({ ...definition, name: chordName }, {
@@ -723,3 +740,6 @@ function renderHtml(irNodes, options = {}) {
 module.exports = renderHtml;
 module.exports.renderHtml = renderHtml;
 module.exports.sheetCss = sheetCss;
+// 4.34/4.35: is this chord in the list of common chords (A# is Bb)? For the Session screen
+module.exports.isCommonChord = (name, list) => chordSet(list ?? COMMON_CHORDS).has(chordKey(name));
+module.exports.COMMON_CHORDS = COMMON_CHORDS;

@@ -112,6 +112,8 @@ button { cursor: pointer; }
 .tool { flex: none; display: flex; align-items: center; gap: 4px; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
 .tool label, .tool .lab { font-size: 12px; font-weight: 700; color: var(--muted); padding: 0 4px 0 8px; text-transform: uppercase; letter-spacing: 0.05em; }
 .tool .val { min-width: 3.4em; text-align: center; font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
+#commonBtn { font-size: 14px; padding: 0 10px; }
+#commonBtn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
 .tool button { min-width: 36px; min-height: 34px; border: 0; border-radius: 9px; background: var(--surface); font-weight: 700; font-size: 16px; }
 .tool select { min-height: 34px; border: 0; border-radius: 9px; background: var(--surface); padding: 0 6px; font-size: 14px; font-weight: 600; }
 .panel { max-width: 1100px; margin: 0 auto; padding-block: 14px 190px; }
@@ -199,6 +201,8 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 .about-list { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
 .about-licence { display: inline-block; font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 0 7px; }
 .about-body a { color: var(--accent); }
+#sessionView { position: fixed; inset: 0; z-index: 200; background: #fff; }
+#sessionView[hidden] { display: none; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(150px + env(safe-area-inset-bottom, 0px)); z-index: 60; background: var(--ink); color: var(--surface); padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; max-width: 90vw; }
 
 /* ── Karaoke (the desktop app's karaoke view) ── */
@@ -305,6 +309,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
           <option value="lines">Chords above</option><option value="inline">Chords in the words</option><option value="table">Columns</option><option value="chords">Chords only</option></select></div>
         <div class="tool"><label for="diagrams">Shapes</label><select id="diagrams">
           <option value="song_start">At the top</option><option value="first_use">Where used</option><option value="none">None</option></select></div>
+        <div class="tool"><button id="commonBtn" type="button" aria-pressed="false" title="No diagrams for the chords everyone knows: C, G, Am, F…">Common: shown</button></div>
         <div class="tool"><label for="lookSel">Look</label><select id="lookSel"><option value="standard">Standard</option><option value="stage">Stage</option></select></div>
         <div class="tool" id="stageFormatTool" hidden><label for="stageFormat">Stage</label><select id="stageFormat"><option value="clear">Clear</option><option value="brackets">Brackets [C]</option><option value="compact">Compact</option><option value="heavy">Heavy</option></select></div>
         <div class="tool" id="stageChorusTool" hidden><label for="stageChorus">Chorus</label><select id="stageChorus"><option value="full">Every time</option><option value="once">Once, then “as before”</option></select></div>
@@ -322,6 +327,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div class="player-row">
           <button id="playBtn" class="btn primary" type="button">▶ Play</button>
           <button id="karaokeButton" class="btn" type="button" title="Full screen, big words that light up as you sing, with the chord shapes">Karaoke</button>
+          <button id="sessionBtn" class="btn" type="button" title="Session screen: the whole song on one screen for a group to play from (a TV or projector). Arrow keys, a clicker or a tap go to the next song in the list">Session</button>
           <div class="now"><div id="nowChord" class="now-chord"></div><div id="nowShapes" class="now-shapes"></div></div>
           <div class="tempo"><button id="slower" type="button" aria-label="Slower">−</button><span id="tempoVal" class="val"></span><button id="faster" type="button" aria-label="Faster">+</button></div>
         </div>
@@ -356,6 +362,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 </dialog>
 
 <div id="toast" class="toast" hidden role="status"></div>
+<div id="sessionView" hidden></div>
 
 <button id="practiceButton" type="button" hidden>Practice</button>
 <!--KARAOKE_MARKUP-->
@@ -363,6 +370,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 
 <script>/*UMW_BUNDLE*/</script>
 <script>/*PLAYER*/</script>
+<script>/*SESSION_JS*/</script>
 <script type="text/plain" id="sheetCssText">/*SHEET_CSS_RAW*/</script>
 <script>
 // ── The desktop helpers the practice window uses, for the web ─────────────────
@@ -521,6 +529,13 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     for (const row of $('songList').querySelectorAll('.song-row')) row.addEventListener('click', () => openSong(row.dataset.id));
   }
   $('search').addEventListener('input', renderLibrary);
+  // the songs as listed (sorted, and found by the search box): the Session screen goes through them
+  const listedIds = () => {
+    const q = $('search').value.trim().toLowerCase();
+    return [...songs.values()].sort((a, b) => a.title.localeCompare(b.title))
+      .filter((s) => !q || `${s.title} ${s.settings?.song?.artist || ''} ${s.settings?.song?.tags || ''} ${songKey(s)?.name || ''}`.toLowerCase().includes(q))
+      .map((s) => s.id);
+  };
 
   // ── Update songs: the file from the desktop app's "Songs for the web…" replaces the songs here ──
   window.ukemusicNewSong = () => toast('Save new songs in the desktop app; then Songs for the web… and Update songs here.');
@@ -669,7 +684,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
       strumStyle: 'clean',
       beatsPerBar: p.beats,
       tempo: p.tempo,
-      diagrams: { enable: look.diagrams !== 'none', placement: look.diagrams, show_fingers: true },
+      diagrams: { enable: look.diagrams !== 'none', placement: look.diagrams, show_fingers: true, skip_common: look.hideCommon === true },
       chordLibrary: library(),
       maxLineChars: look.layout === 'lines' ? charsAcross(sheet) : 0
     };
@@ -692,6 +707,8 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     $('layout').value = look.layout;
     $('diagrams').value = look.diagrams;
     $('lookSel').value = look.style || 'standard';
+    $('commonBtn').setAttribute('aria-pressed', String(look.hideCommon === true));
+    $('commonBtn').textContent = look.hideCommon ? 'Common: hidden' : 'Common: shown';
     $('stageFormatTool').hidden = $('stageChorusTool').hidden = look.style !== 'stage';
     $('stageFormat').value = p.stageFormat;
     $('stageChorus').value = p.stageChorus;
@@ -724,6 +741,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   $('layout').addEventListener('change', change(() => { look.layout = $('layout').value; }, { song: false }));
   $('diagrams').addEventListener('change', change(() => { look.diagrams = $('diagrams').value; }, { song: false }));
   $('lookSel').addEventListener('change', change(() => { look.style = $('lookSel').value; }, { song: false }));
+  $('commonBtn').addEventListener('click', change(() => { look.hideCommon = !look.hideCommon; }, { song: false }));
   $('stageFormat').addEventListener('change', change(() => { S().stageFormat = $('stageFormat').value; }));
   $('stageChorus').addEventListener('change', change(() => { S().stageChorus = $('stageChorus').value; }));
   $('textDown').addEventListener('click', change(() => { look.size = Math.max(11, look.size - 1); }, { song: false }));
@@ -740,7 +758,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   function sheetDocument(stage) {
     const p = prefs();
     const lib = library();
-    const base = { layout: stage ? 'lines' : look.layout, strumStyle: 'clean', beatsPerBar: p.beats, tempo: p.tempo, diagrams: { enable: true, placement: 'song_start', show_fingers: true }, chordLibrary: lib, maxLineChars: stage ? 48 : 0 };
+    const base = { layout: stage ? 'lines' : look.layout, strumStyle: 'clean', beatsPerBar: p.beats, tempo: p.tempo, diagrams: { enable: true, placement: 'song_start', show_fingers: true, skip_common: look.hideCommon === true }, chordLibrary: lib, maxLineChars: stage ? 48 : 0 };
     const ir = currentIr(stage ? stageText(view.song.text) : view.song.text);
     const body = U.renderHTML(ir, stage ? stageOptions(base, 48, 680, 20) : base) + (U.shorthandKeyHtml ? U.shorthandKeyHtml(ir) : '');
     const k = keyText();
@@ -803,6 +821,54 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     $('aboutDialog').showModal();
   });
   $('aboutClose').addEventListener('click', () => $('aboutDialog').close());
+
+  // ── Session screen (4.35): the whole song on one screen for a group (src/session-screen.js) ──
+  function sessionSong(song) {
+    const saved = view.song;
+    view.song = song;
+    try {
+      const p = prefs();
+      const shown = currentIr(stageText(song.text));
+      const key = songKey(song);
+      const sub = [[song.settings?.song?.artist, song.settings?.song?.year].filter(Boolean).join(', '), key ? U.keys.describe(U.keys.transpose(key, p.transpose)) : '', p.capo ? `Capo ${p.capo}` : '', p.instrument !== 'soprano' ? U.instrument(p.instrument).name : ''].filter(Boolean).join(' · ');
+      return U.sessionSong(shown, { title: song.title, sub, library: library(), common: song.settings?.diagrams?.common_chords });
+    } catch (error) {
+      return { title: song.title, sub: '', diagrams: [], html: { over: `<p>This song couldn’t be shown: ${esc(error.message)}</p>`, inline: '' } };
+    } finally { view.song = saved; }
+  }
+  let session = null;
+  function sessionKeys(e) {
+    if (!session) return;
+    if (e.key === 'Escape' || session.key(e.key)) { e.preventDefault(); e.stopPropagation(); if (e.key === 'Escape') closeSession(); }
+  }
+  function closeSession() {
+    if (!session) return;
+    session.destroy();
+    session = null;
+    $('sessionView').hidden = true;
+    document.removeEventListener('keydown', sessionKeys, true);
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  }
+  function openSession() {
+    if (!view.song) return;
+    stop();
+    const ids = listedIds();
+    if (!ids.includes(view.song.id)) ids.unshift(view.song.id);
+    // songs are laid out as they're reached (a big library would be slow to do all at once)
+    const songsList = ids.map((id) => songs.get(id)).filter(Boolean);
+    const box = $('sessionView');
+    box.hidden = false;
+    try { if (box.requestFullscreen) box.requestFullscreen().catch(() => {}); } catch (_e) { /* not here (iPhone) */ }
+    session = UkeSessionScreen.create(box, { css: U.sessionCss(), onClose: closeSession, closeButton: true });
+    const lazy = songsList.map((song) => {
+      let made = null;
+      const get = () => (made = made || sessionSong(song));
+      return { title: song.title, get sub() { return get().sub; }, get diagrams() { return get().diagrams; }, get html() { return get().html; } };
+    });
+    session.show({ songs: lazy, start: Math.max(0, ids.indexOf(view.song.id)), hideCommon: look.hideCommon === true, dark: isDark(), minPx: Math.round(Math.max(13, Math.min(18, Math.min(innerWidth, innerHeight) / 45))) });
+    document.addEventListener('keydown', sessionKeys, true);
+  }
+  $('sessionBtn').addEventListener('click', openSession);
 
   // ── Play along ──
   const play = { schedule: null, raf: null, line: null, barKey: null, wake: null, userStopped: false };

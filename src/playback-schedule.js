@@ -160,18 +160,19 @@ function songSlots(irNodes, options = {}) {
   const barPattern = () => patterns[(Math.max(turn, 1) - 1) % patterns.length];
 
   // A chord (or rest) lasting `total` beats from here, split at bar lines
-  const addSlots = (index, node, total, { stopped = false } = {}) => {
+  const addSlots = (index, node, total, { stopped = false, strokes = 'D' } = {}) => {
     let left = total;
     let first = true;
     while (left > EPS) {
       const room = beats - pos;
       const len = Math.min(left, room);
       const pattern = pos < EPS ? patterns[turn++ % patterns.length] : barPattern();
-      const slot = { chord: currentChord, line: node.line, pattern: stopped ? (first ? 'D' : '-') : pattern, beats, len, node: index };
+      const slot = { chord: currentChord, line: node.line, pattern: stopped ? (first ? strokes : '-') : pattern, beats, len, node: index };
       if (compound) slot.compound = true;
       slot.feel = feelFor(pattern, ownFeel, options.swing || 'straight'); // the app passes Play → Feel ('auto' by default)
       if (stopped) slot.stop = true;
       if (currentRest) slot.rest = true;
+      if (currentRest && node.muted && first) slot.muted = node.muted; // [x] [mute↓↓] (4.34): muted strums
       slots.push(slot);
       pos += len;
       if (pos > beats - EPS) pos = 0;
@@ -222,9 +223,10 @@ function songSlots(irNodes, options = {}) {
       else if (node.restOf) total = Math.max(EPS * 10, (beats - node.restOf.used) / node.restOf.count);
       else if (node.share > 0 && node.share < 1) total = beats * node.share;
       else total = (pos > EPS ? beats - pos : beats) + ((node.bars > 1 ? node.bars : 1) - 1) * beats;
-      const stopped = stopNext && !currentRest;
+      // {stop}[C], or a marked chord [C↓] [C↓↑] (4.34): those strokes, left to ring
+      const stopped = (stopNext || Boolean(node.strokes)) && !currentRest;
       stopNext = false;
-      addSlots(index, node, total, { stopped });
+      addSlots(index, node, total, { stopped, strokes: node.strokes || 'D' });
     } else if (node.type === 'bar' && currentChord) {
       addSlots(index, node, beats);
     }
@@ -307,6 +309,11 @@ function buildSchedule(irNodes, options = {}) {
       barInfo.rest = true;
       bars.push(barInfo);
       events.push({ time, kind: 'mute', barIndex });
+      // [x] [mute↓↓] (4.34): a muted strum ("chk") on each beat
+      if (slot.muted) {
+        barInfo.muted = slot.muted;
+        for (let k = 0; k < slot.muted; k += 1) events.push({ time: time + (k * length) / slot.muted, kind: 'chuck', velocity: 0.85, barIndex });
+      }
       time += length;
       return;
     }

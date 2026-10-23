@@ -15,6 +15,7 @@
 //   {tempo} {capo} {artist} … → notes (tempo is not applied)
 // Pure functions, unit tested.
 const { isChordName } = require('./chord-names');
+const { parseChordToken } = require('./song-syntax');
 
 const ALIASES = {
   t: 'title', st: 'subtitle', c: 'comment', ci: 'comment', cb: 'comment', comment_italic: 'comment',
@@ -43,25 +44,128 @@ function parseDirective(line) {
   return { name: ALIASES[raw] || raw, value: value.trim() };
 }
 
-/** Inline [chords]: [|] -> [], a leading [*Label] -> [[Label]] (bold label), drop other [*annotations] and [N.C.] */
+// 4.34: chord-name shorthands some songbooks use: Gs4 = Gsus4, Dma7 = Dmaj7, Gs2 = Gsus2
+const SHORT_QUALITY = [[/s4$/, 'sus4'], [/s2$/, 'sus2'], [/ma7$/, 'maj7'], [/ma9$/, 'maj9'], [/^(.*)sus$/, '$1sus4']];
+function chordName(name) {
+  const n = String(name || '').trim();
+  if (isChordName(n)) return n;
+  for (const [re, to] of SHORT_QUALITY) {
+    const m = n.match(/^([A-G][#b]?)(.*)$/);
+    if (!m) return null;
+    const fixed = m[1] + m[2].replace(re, to);
+    if (fixed !== n && isChordName(fixed)) return fixed;
+  }
+  return null;
+}
+
+/**
+ * 4.34: songbook marks inside the brackets (as the North Shore Ukulele Circle writes them), as
+ * ukemusic writes them. Returns the replacement text, or null for anything else.
+ *   [C↓] [C↓↓] [C!]   one strum, let it ring       -> {stop}[C]
+ *   [x] [mute↓]       a muted strum                -> [N.C.:1]
+ *   [.] [...] […]     keep the chord going          -> (nothing)    [G…] -> [G]
+ *   [|] [/]           a bar line                    -> []
+ *   [Bm7.Am7]         two chords, one after another -> [Bm7][Am7]
+ *   [x2]              play it twice                 -> (x2), at the end of the line
+ */
+function songbookToken(inner) {
+  let s = String(inner || '').trim();
+  if (!s) return null;
+  const out = [];
+  let repeat = 0;
+  while (s.length) {
+    let m;
+    if ((m = s.match(/^\s+/))) { s = s.slice(m[0].length); continue; }
+    if ((m = s.match(/^[x×](\d{1,2})(?![\w#])/i))) { repeat = Number(m[1]); s = s.slice(m[0].length); continue; }
+    if ((m = s.match(/^mute[↓↑]*/i)) || (m = s.match(/^x[↓↑]*(?![a-z])/i))) { out.push('[N.C.:1]'); s = s.slice(m[0].length); continue; }
+    if ((m = s.match(/^[.…]+/))) { s = s.slice(m[0].length); continue; }
+    if ((m = s.match(/^[|/]/))) { out.push('[]'); s = s.slice(1); continue; }
+    if ((m = s.match(/^([A-G][#b]?[^\s.…|/↓↑!*]*)([↓↑!*]*)/))) {
+      const name = chordName(m[1]);
+      if (!name) return null;
+      out.push(`${/[↓↑!*]/.test(m[2]) ? '{stop}' : ''}[${name}]`);
+      s = s.slice(m[0].length);
+      continue;
+    }
+    return null;
+  }
+  return { text: out.join(''), repeat };
+}
+
+/**
+ * Inline [chords]: [|] -> [], a leading [*Label] -> [[Label]] (bold label); ukemusic's own
+ * annotations come back as they were written ([*stop][C] -> {stop}[C], [C][*×3] -> [C x3],
+ * [C][*2 beats] -> [C:2]); other [*annotations] are dropped; songbook marks (above) are read;
+ * a word in brackets that isn't a chord ([Riff 1]) becomes a label.
+ */
 function convertInline(line) {
   let dropped = false;
   let prefix = '';
+  let repeat = 0;
   const lead = line.match(/^\s*\[\*([^\]]+)\]\s*/);
-  if (lead && line.slice(lead[0].length).trim()) {
+  if (lead && !/^\s*\[\*(stop)\]/i.test(line) && line.slice(lead[0].length).trim()) {
     prefix = `[[${lead[1].trim()}]] `;
     line = line.slice(lead[0].length);
   }
+  // ukemusic's annotations (4.34), before anything else
+  line = line
+    .replace(/\[\*stop\]\s*(?=\[)/gi, '{stop}')
+    .replace(/\[([^\]*][^\]]*)\]\[\*[x×](\d{1,2})\]/g, '[$1 x$2]')
+    .replace(/\[([^\]*][^\]]*)\]\[\*(\d{1,2}) beats?\]/g, '[$1:$2]');
   const out = prefix + line.replace(/\[([^\]]*)\]/g, (whole, inner) => {
     const t = inner.trim();
     if (t === '|' || t === '||') return '[]';
-    if (t.startsWith('*') || /^N\.?C\.?$/i.test(t) || t === '') {
+    if (t.startsWith('*') || t === '') {
       dropped = true;
       return '';
     }
+    if (/^N\.?C\.?(:\d{1,2})?$/i.test(t) || /^no chord$/i.test(t)) return `[N.C.${(t.match(/:\d+$/) || [''])[0]}]`;
+    if (isChordName(t) || /^.+\s*(:\s*\d{1,2}|[x×]\s*\d{1,2})$/.test(t)) return whole;
+    if (/^[()]$/.test(t)) return t; // [(] [)]: brackets in the chord row
+    if (parseChordToken(t)) return whole; // 4.34: songbook marks are ukemusic too ([C↓] [x] [.] [Gs4] [Bm7.Am7])
+    const token = songbookToken(t);
+    if (token) {
+      if (token.repeat > 1) repeat = token.repeat;
+      if (!token.text) dropped = true;
+      return token.text;
+    }
+    if (/^[A-Za-z][\w '’-]{0,30}$/.test(t)) return `[[${t}]]`; // [Riff 1]: a label
     return whole;
   });
-  return dropped ? out.replace(/ {2,}/g, ' ').trimEnd() : out;
+  let result = dropped ? out.replace(/ {2,}/g, ' ').trimEnd() : out;
+  if (repeat > 1) result = `${result.replace(/\s+$/, '')} (x${repeat})`;
+  return result;
+}
+
+// 4.34: a strum box (arrows over counts, as the North Shore songbook writes them):
+//   ↓   × ↑   ↑ × ↑          one character per count; space = no strum
+//   1 & 2 & 3 & 4 &          '|' between bars
+// -> a ukemusic strum: "D-XU-UXU". Two or more different bars alternate: "D-DU | D-UU".
+function strumBox(arrows, counts, beatsPerBar = 4) {
+  const cells = [];
+  for (let j = 0; j < counts.length; j += 1) {
+    const c = counts[j];
+    if (c === ' ') continue;
+    if (c === '|') { cells.push('|'); continue; }
+    const a = arrows[j] || ' ';
+    cells.push({ s: a === '↓' ? 'D' : a === '↑' ? 'U' : /[×xX✕]/.test(a) ? 'X' : '-', count: c });
+  }
+  // bars: at '|', or when the count starts again at 1, or every beatsPerBar beats
+  const bars = [];
+  let bar = [];
+  let beats = 0;
+  for (const cell of cells) {
+    if (cell === '|') { if (bar.length) bars.push(bar); bar = []; beats = 0; continue; }
+    if (/\d/.test(cell.count)) {
+      if ((cell.count === '1' && bar.length) || beats === beatsPerBar) { bars.push(bar); bar = []; beats = 0; }
+      beats += 1;
+    }
+    bar.push(cell.s);
+  }
+  if (bar.length) bars.push(bar);
+  const patterns = [...new Set(bars.map((b) => b.join('')).filter((p) => /[DUX]/.test(p)))];
+  if (!patterns.length) return null;
+  return patterns.join(' | ');
 }
 
 function gridLine(line) {
@@ -84,6 +188,10 @@ function chordProToUkemusic(input) {
   const keptOther = [];
   let inTab = false;
   let inGrid = false;
+  let inStrum = null;            // 4.34: inside {start_of_strum} … {end_of_strum}
+  const strumNames = [];        // every named strum so far ({comment: Strum Verse} recalls one)
+  const boxNames = [];           // named strum boxes: used again after headings of that name
+  const beatsPerBar = () => Number((String(meta.time || '').match(/^\s*(\d+)\s*\//) || [])[1]) || 4;
   const blank = () => {
     if (out.length && out[out.length - 1] !== '') out.push('');
   };
@@ -108,7 +216,13 @@ function chordProToUkemusic(input) {
     if (/^\s*#/.test(line)) { keptOther.push(line.trim()); continue; } // ChordPro comment line: kept
 
     const d = parseDirective(line);
+    if (inStrum && !(d && d.name === 'end_of_strum')) { inStrum.lines.push(line); continue; }
     if (!d) {
+      // a bar line written with bracketed chords, "| [C] | [F] | % |" (ukemusic's own export) -> "| C | F | % |"
+      if (/^\s*\|.*\|\s*(\(x\d+\))?\s*$/.test(line) && /\[[^\]]+\]/.test(line)) {
+        out.push(line.replace(/\[([^\]*][^\]]*)\]/g, '$1').replace(/\[\*([^\]]+)\]\s*/, '[[$1]] ').trim());
+        continue;
+      }
       if (inGrid) {
         const converted = gridLine(line);
         if (converted) out.push(converted);
@@ -125,13 +239,30 @@ function chordProToUkemusic(input) {
     } else if (name === 'meta') {
       const [k, ...rest] = value.split(/\s+/);
       if (k && rest.length && META.includes(k.toLowerCase()) && !meta[k.toLowerCase()]) meta[k.toLowerCase()] = rest.join(' ');
+      // 4.34: {meta: spotify URL}, {meta: youtube URL} -> the song's links
+      const url = rest.join(' ').trim();
+      if (k && /^(spotify|youtube|link|url|video|audio)$/i.test(k) && /^https?:\/\//i.test(url)) {
+        (meta.links = meta.links || []).push({ title: { spotify: 'Spotify', youtube: 'YouTube' }[k.toLowerCase()] || '', url });
+      }
+      if (k && /^orig(inal)?(_key)?$/i.test(k) && rest.length) meta.originalKey = url;
       if (k && rest.length) keptFields.push({ name: k.toLowerCase(), value: rest.join(' ') });
+    } else if (name === 'tag') {
+      // 4.34: {tag: 1970s} -> the song's tags
+      if (value) (meta.tags = meta.tags || []).push(value.replace(/^#/, ''));
+      keptFields.push({ name, value });
+    } else if (name === 'x_voice') {
+      // 4.34: harmony lines (in italics) until {x_voice: lead}
+      out.push(/^harmony/i.test(value) ? '{harmony}' : '{lead}');
     } else if (/^x_/.test(name) && name !== 'x_ukemusic_strum') {
       keptFields.push({ name, value });
-    } else if (name === 'define' || name === 'chord') {
+    } else if (name === 'define' || name === 'chord' || name === 'define-baritone' || name === 'define-guitar') {
       // {define: Am base-fret 1 frets 2 0 0 0}: a chord shape for this song
+      // (4.34: {define-baritone: …} is the same for the baritone ukulele, {define-guitar: …} for guitar)
       const shape = parseDefine(value);
-      if (shape) (meta.defines = meta.defines || []).push(shape);
+      if (shape) {
+        if (name !== 'define' && name !== 'chord') shape.instrument = name.slice(7);
+        (meta.defines = meta.defines || []).push(shape);
+      }
     } else if (name === 'start_of_verse') {
       verseCount += 1;
       heading(value || `Verse ${verseCount}`);
@@ -147,6 +278,27 @@ function chordProToUkemusic(input) {
     } else if (name === 'start_of_grid') {
       heading(value || 'Instrumental');
       inGrid = true;
+    } else if (name === 'start_of_strum') {
+      inStrum = { label: value, lines: [] };
+    } else if (name === 'end_of_strum' && inStrum) {
+      const rows = inStrum.lines.filter((l) => l.trim());
+      const pattern = rows.length >= 2 ? strumBox(rows[0], rows[1], beatsPerBar()) : null;
+      const label = (inStrum.label || '').trim();
+      if (pattern) {
+        const named = /^[A-Za-z][A-Za-z0-9 ]{0,15}$/.test(label) && !/^(stop|swing|shuffle|straight)$/i.test(label);
+        out.push(named ? `{${label}: ${pattern}}` : `{${pattern}}`);
+        if (named) { strumNames.push(label); boxNames.push(label); }
+        report.strums += 1;
+      } else {
+        keptOther.push(...inStrum.lines);
+      }
+      inStrum = null;
+    } else if (/^start_of_x_mono$/.test(name)) {
+      blank();
+    } else if (/^start_of_/.test(name)) {
+      // 4.34: any other section, {start_of_x_intro: Intro}, {start_of_x_solo} …: a heading
+      const kind = name.slice(9).replace(/^x_/, '').replace(/_/g, ' ');
+      heading(value || kind.charAt(0).toUpperCase() + kind.slice(1));
     } else if (name === 'end_of_grid') {
       inGrid = false;
       blank();
@@ -154,7 +306,14 @@ function chordProToUkemusic(input) {
       blank();
     } else if (name === 'comment' || name === 'x_ukemusic_strum') {
       const strum = name === 'x_ukemusic_strum' ? value : (value.match(/^strum(?:ming)?\s*:?\s*(.+)$/i) || [])[1];
-      if (strum && STRUM_RE.test(strum)) {
+      const namedStrum = strum && strum.match(/^([A-Za-z][A-Za-z0-9 ]{0,15}?)\s*(?::\s*(.+))?$/);
+      if (/^stop: one strum, let it ring$/i.test(value)) {
+        out.push('{stop}'); // ukemusic's own (4.34: it used to come back as a heading)
+      } else if (namedStrum && !STRUM_RE.test(strum) && (namedStrum[2] ? STRUM_RE.test(namedStrum[2].split('|')[0]) : strumNames.includes(namedStrum[1]))) {
+        out.push(namedStrum[2] ? `{${namedStrum[1]}: ${namedStrum[2].trim()}}` : `{${namedStrum[1]}}`);
+        if (namedStrum[2]) strumNames.push(namedStrum[1]);
+        report.strums += 1;
+      } else if (strum && STRUM_RE.test(strum.split('|')[0])) {
         out.push(`{${strum.trim()}}`);
         report.strums += 1;
       } else if (value) {
@@ -166,6 +325,15 @@ function chordProToUkemusic(input) {
     }
   }
 
+  // 4.34: a named strum box ({start_of_strum: Verse}) is used again after each heading of that name
+  if (boxNames.length) {
+    for (let i = out.length - 1; i >= 0; i -= 1) {
+      const h = out[i].match(/^\[\[(.+?)\]\]$/);
+      if (!h) continue;
+      const nameFor = boxNames.find((n) => h[1].toLowerCase().replace(/^repeat\s+/, '').startsWith(n.toLowerCase()));
+      if (nameFor && !/^\{/.test(out[i + 1] || '')) out.splice(i + 1, 0, `{${nameFor}}`);
+    }
+  }
   while (out.length && out[0] === '') out.shift();
   while (out.length && out[out.length - 1] === '') out.pop();
   const collapsed = out.filter((l, i) => !(l === '' && out[i - 1] === ''));
@@ -223,7 +391,13 @@ function ukemusicToChordPro(irNodes, info = {}) {
     }
   };
 
+  let harmony = false; // 4.34: {x_voice: harmony} … {x_voice: lead}
   for (const group of groupLines(irNodes || [])) {
+    const lyrics = group.filter((n) => n.type === 'lyric' && n.content.trim());
+    if (lyrics.length && lyrics.every((n) => n.harmony) !== harmony) {
+      harmony = !harmony;
+      out.push(`{x_voice: ${harmony ? 'harmony' : 'lead'}}`);
+    }
     if (group.length === 0) {
       if (out[out.length - 1] !== '') out.push('');
       continue;
@@ -267,7 +441,14 @@ function ukemusicToChordPro(irNodes, info = {}) {
     // inline [[Label]] at the start of a line -> ChordPro annotation [*Label]
     const label = rest[0].type === 'structure' ? `[*${rest[0].content}]` : '';
     const body = rest.map((n) => {
-      if (n.type === 'chord') return `${n.stopped ? '[*stop]' : ''}[${n.content}]${'[|]'.repeat(Math.max(0, (n.bars || 1) - 1))}`;
+      // 4.34: ukemusic's shorthand as ChordPro annotations ([*text]), which other apps print
+      // above the words but don't treat as chords; ukemusic reads them back
+      if (n.type === 'chord') {
+        if (n.muted) return `[${n.written || 'x'}]`;                       // [x] [mute↓] as written
+        if (n.pair) return n.part === 0 ? `[${rest.filter((p) => p.pair && p.line === n.line && p.offset === n.offset).map((p) => p.content).join('.')}]` : '';
+        const extra = n.bars > 1 ? `[*×${n.bars}]` : (n.beats ? `[*${n.beats} beat${n.beats > 1 ? 's' : ''}]` : '');
+        return `${n.stopped && !n.marks ? '[*stop]' : ''}[${n.content}${n.marks || ''}]${extra}`;
+      }
       if (n.type === 'bar') return '[|]';
       if (n.type === 'structure') return '';
       return n.content;

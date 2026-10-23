@@ -62,7 +62,7 @@ test('imports ChordPro into ukemusic format', () => {
     '[F]Dreadful [C]sorry []',
     '',
     '[[Verse 2]]',
-    '[C]Second verse here',
+    '[C]Second verse here [N.C.]', // 4.34: [N.C.] is kept (it used to be dropped)
     '',
     '[[Chorus]]',
     '[F]Lost and gone for[G]ever',
@@ -88,7 +88,7 @@ test('imports ChordPro into ukemusic format', () => {
 test('imported text parses cleanly', () => {
   const nodes = parse(chordProToUkemusic(CHORDPRO).text);
   assert.deepStrictEqual(nodes.flatMap((n) => n.warnings), []);
-  assert.deepStrictEqual(nodes.filter((n) => n.type === 'chord').map((n) => n.content), ['C', 'Em', 'F', 'C', 'C', 'F', 'G']);
+  assert.deepStrictEqual(nodes.filter((n) => n.type === 'chord').map((n) => n.content), ['C', 'Em', 'F', 'C', 'C', 'N.C.', 'F', 'G']);
   assert.strictEqual(nodes.filter((n) => n.type === 'bar').length, 1);
 });
 

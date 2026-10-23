@@ -22,6 +22,7 @@ put('/*KARAOKE_JS*/', safe(fs.readFileSync('k_js.js', 'utf8')));
 put('/*PRACTICE_CSS*/', safe(fs.readFileSync('pr_css.css', 'utf8')));
 put('<!--PRACTICE_MARKUP-->', fs.readFileSync('pr_markup.html', 'utf8'));
 put('/*PRACTICE_JS*/', safe(fs.readFileSync('pr_js.js', 'utf8')));
+put('/*SESSION_JS*/', safe(fs.readFileSync(APP + 'src/session-fit.js', 'utf8') + '\n' + fs.readFileSync(APP + 'src/session-screen.js', 'utf8')));
 put('/*UMW_BUNDLE*/', safe(bundle));
 put('/*PLAYER*/', safe(player));
 fs.mkdirSync('out', { recursive: true });

@@ -113,7 +113,40 @@ function getChordDefinition(library, chordName) {
     const definition = library.chords[name];
     if (definition) return normalizeChordDefinition(chordName, { ...definition, name: chordName });
   }
-  return null;
+  const power = powerChord(library, chordName);
+  return power ? normalizeChordDefinition(chordName, power) : null;
+}
+
+// 4.34: power chords (C5: the root and the fifth, no third), worked out for the tuning, since the
+// chord libraries have none. Ukulele GCEA and baritone DGBE share a shape: the root on the second
+// string (C / G) with the fifth below it and both an octave up three frets higher.
+const NOTE_INDEX = { C: 0, 'C#': 1, Db: 1, D: 2, 'D#': 3, Eb: 3, E: 4, F: 5, 'F#': 6, Gb: 6, G: 7, 'G#': 8, Ab: 8, A: 9, 'A#': 10, Bb: 10, B: 11 };
+function powerChord(library, chordName) {
+  const m = String(chordName || '').match(/^([A-G][#b]?)5$/);
+  if (!m || NOTE_INDEX[m[1]] === undefined) return null;
+  const root = NOTE_INDEX[m[1]];
+  const tuning = String(library?.meta?.tuning || 'GCEA').toUpperCase();
+  const shape = (frets, fingers, barre) => {
+    const played = frets.filter((f) => f > 0);
+    const low = played.length ? Math.min(...played) : 1;
+    return { name: chordName, frets, fingers, barre, base_fret: Math.max(...frets) > 4 ? low : 1 };
+  };
+  if (tuning === 'EADGBE') {
+    const r = (root - 4 + 12) % 12;             // root on the low E string
+    if (r === 0) return shape([0, 2, 2, -1, -1, -1], [0, 1, 2, 0, 0, 0], null);
+    if (r <= 7) return shape([r, r + 2, r + 2, -1, -1, -1], [1, 3, 4, 0, 0, 0], null);
+    const a = (root - 9 + 12) % 12;             // or on the A string
+    return shape([-1, a, a + 2, a + 2, -1, -1], [0, 1, 3, 4, 0, 0], null);
+  }
+  // Two shapes; the one lower on the neck is used.
+  //   root on the 2nd string (C on a ukulele, G on a baritone): r r r+3 r+3
+  //   root on the 1st string (G on a ukulele, D on a baritone): g g+2 g+3 g+5
+  const baritone = tuning === 'DGBE';
+  const r = (root - (baritone ? 7 : 0) + 12) % 12;
+  const g = (root - (baritone ? 2 : 7) + 12) % 12;
+  if (r === 0) return shape([0, 0, 3, 3], [0, 0, 2, 3], null);
+  if (g + 5 < r + 3) return shape([g, g + 2, g + 3, g + 5], g === 0 ? [0, 1, 2, 4] : [1, 2, 3, 4], null);
+  return shape([r, r, r + 3, r + 3], [1, 1, 3, 4], { fret: r, strings: [0, 1] });
 }
 
 module.exports = {

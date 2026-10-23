@@ -26,7 +26,9 @@ A song is plain text. Chords go in square brackets inside the words, and a few o
 | `{A}` | Use the strum named A again |
 | `{D-DU-UDU \| D-DUDU}` | Strums that take turns, bar by bar |
 | `{stop}` | The next chord is one strum, left to ring |
+| `[C↓]` `[C↓↓]` `[x]` `[.]` | One strum, two strums, a muted strum, keep going (see Strums, mutes and holds) |
 | `**loud**` `*soft*` `__this__` | Words in bold, italic or underlined |
+| `{harmony}` … `{lead}` | The lines in between are a harmony part, in italics |
 | A tab block (see Tab, below) | Tablature |
 
 ---
@@ -238,6 +240,25 @@ For I [C]come from Alabama with my [G7]banjo on my {stop}[C]knee
 
 It can go on a line of its own (shown as a STOP box), or in the words just before the chord (the chord is shown as **C stop**).
 
+### Strums, mutes and holds in the brackets
+
+Many ukulele clubs mark strums inside the chord's brackets. ukemusic reads the same marks (the North Shore Ukulele Circle's), and shows them as written:
+
+| You type | It means |
+|---|---|
+| `[C↓]` | One down-strum on C, left to ring (`[Cv]` is the same, easier to type) |
+| `[C↓↓]` `[C↓↑]` | Those strums, spread over the bar |
+| `[x]` `[mute↓]` `[x↓↓]` | Muted strums ("chk"), a beat each |
+| `[.]` `[…]` `[G…]` | Keep the chord going (nothing new to play) |
+| `[Bm7.Am7]` | Two chords sharing the bar |
+| `[\|]` `[/]` | A bar line, like `[]` |
+| `[x2]` at the end of a line | Play the line twice, like `(x2)` |
+| `[Gs4]` `[A7s4]` `[Gs2]` `[Dma7]` | Short names for Gsus4, A7sus4, Gsus2, Dmaj7 |
+
+```
+[C↓] Oh my [G↓↓]darling, [x] oh my [C]darling
+```
+
 ---
 
 ## Tab
@@ -274,13 +295,29 @@ Mark words to stand out, for a shout, a harmony part or who sings what:
 - It shows in the preview, PDFs, web pages and the lyrics; text exports, ChordPro and karaoke show the plain words.
 - A single `*` with no partner on the line stays a `*`. To write a real `*` or `_` next to words, put a backslash before it: `\*`.
 
+### Harmony parts
+
+When some lines are a harmony part sung with (or over) the main line, put `{harmony}` on a line before them and `{lead}` after. Their words are in italics:
+
+```
+[C]Oh my darling, oh my darling
+{harmony}
+[C]  oh my darling
+{lead}
+[F]Oh my darling Clementine
+```
+
+`{harmony}` and `{lead}` take no room on the sheet. Every song starts with the main line.
+
 ---
 
 ## Pasting songs from websites
 
 - **File → Paste from website** takes a song copied from a chord website and turns it into ukemusic's format.
 - Many websites put the chords **on a line above the words**. **File → Tidy chords above words** moves them into the words as `[chords]`. Check lines it marks: where a website has lost the spacing, it has to guess.
-- ChordPro files (`.cho`, `.chopro`) can be imported with **File → Import text file**.
+- ChordPro files (`.cho`, `.chopro`) can be imported with **File → Import text file**. A whole folder of them (a club's songbook, say) comes in at once with **File → Library → Import ChordPro files…** (or the library button): one song each, with their tags and links, and each subfolder becomes a setlist.
+- Songbook marks in the brackets (`[C↓]`, `[x]`, `[.]`, `[Gs4]`…) are part of ukemusic's own format, so they come in as written; strum boxes of arrows over counts become strum patterns, and `[Riff 1]` a label.
+- Saved as ChordPro, ukemusic's shorthand goes out as ChordPro notes, which other apps print above the words: `[C][*×3]`, `[Em][*2 beats]`, `[*stop][C]`. They come back exactly as they were.
 
 ---
 
@@ -302,6 +339,19 @@ Artist, year, written by, album, source, tags and difficulty go on the **Info** 
 | Chords only | Just the chords of each line, for whoever is playing along |
 
 The same choice is in **Settings → How the chord sheet looks**, and it applies to exports and songbooks too.
+
+**View → Not the common ones** leaves out the diagrams of the chords everyone knows (C, G, Am, F, D7 and so on), so the shapes that need looking at stand out. The list is yours to change: **Settings → All songs → Chord diagrams → Common chords**.
+
+
+### On the big screen: the Session screen
+
+**Play → Session** (or **Session** on a setlist) shows the song for a whole group to play from, as big as it fits on one screen. It uses the song as you wrote it, so a few habits help it fit:
+
+- **A blank line between parts** (or a heading like `[[Chorus]]`). Each part is kept together in its column, so parts are what it arranges.
+- **Chorus once:** in **This song → Stage copies**, "Once, then as before" prints the chorus in full the first time and "Chorus" after that. The Session screen does the same, which often saves a page.
+- **Short lines** wrap less. A long line still wraps with the chords above the right words.
+
+**Library → Check songs fit one screen…** tells you which songs need a page turn before the night.
 
 ---
 

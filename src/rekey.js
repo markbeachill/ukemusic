@@ -48,8 +48,11 @@ function rewriteText(text, semitones, { key = null, instrument = 'soprano' } = {
     out.push(line.replace(/(?<!\[)\[([^[\]\n]+)\](?!\])/g, (whole, inner) => {
       const name = inner.trim();
       if (isChordName(name)) return `[${transposeName(name, semitones, key)}]`;
-      const token = parseChordToken(inner);           // [C x3]
-      return token && !token.noChord ? whole.replace(token.name, transposeName(token.name, semitones, key)) : whole;
+      const token = parseChordToken(inner);           // [C x3] [C↓] [Gs4] [Bm7.Am7]
+      if (!token) return whole;
+      if (token.pair) return `[${token.pair.map((p) => transposeName(p.name, semitones, key) + (p.marks || '')).join('.')}]`;
+      if (!token.name || token.noChord) return whole;
+      return whole.replace(token.written || token.name, transposeName(token.name, semitones, key));
     }));
   }
   if (tab) out.push(...tab); // an unclosed tab block stays as it was

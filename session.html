@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ukemusic: Session screen</title>
+<style>
+/* Session screen (4.35): a song fitted to one screen for a group to play from. The screen itself is
+   src/session-screen.js (shared with the web player); this window just feeds it. */
+html, body { margin: 0; height: 100%; overflow: hidden; background: #fff; }
+#screen { height: 100%; }
+</style>
+</head>
+<body>
+<div id="screen"></div>
+<script src="src/session-fit.js"></script>
+<script src="src/session-screen.js"></script>
+<script>
+(() => {
+  const U = window.ukemusic;
+  const screen = UkeSessionScreen.create(document.getElementById('screen'), {
+    css: U.sessionCss(),
+    onState: (state) => U.session.sendState(state),
+    onClose: () => U.session.close()
+  });
+  document.addEventListener('keydown', (e) => { if (screen.key(e.key)) e.preventDefault(); });
+  U.session.onKey((k) => screen.key(k));
+  U.session.onData(async (data) => {
+    document.body.style.background = data.dark ? '#0f1312' : '#fff';
+    if (data.check) {
+      // the fits-one-screen check: lay out every song and report
+      await document.fonts?.ready;
+      screen.show({ ...data, songs: data.songs || [] });
+      U.session.sendChecked({ width: innerWidth, height: innerHeight, minPx: screen.minPx, songs: screen.check() });
+      return;
+    }
+    screen.show(data);
+  });
+})();
+</script>
+</body>
+</html>

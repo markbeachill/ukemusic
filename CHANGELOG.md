@@ -1,5 +1,42 @@
 # Changelog
 
+## v4.35.0
+
+### The Session screen, for playing together
+- **Play → Session** (the Session screen) puts the song on one screen for a group to play from (a club night on the TV or projector): the whole song, as big as it will go, laid out for you so nobody scrolls.
+  - Verses, choruses and the rest are arranged in one, two or three columns and never split across them; ukemusic picks the largest text that fits (at least 18px).
+  - Chords sit above their words, and a long line wraps with its chords still over the right words. If a song still won't fit, the chords go into the words; if even that won't fit, it turns over in as few pages as it can.
+  - The chord shapes run down the side (across the top on a tall screen), with the strum pattern at the top of the song. "Chorus once, then as before" (This song → Stage copies) is used here too.
+- **A setlist as a Session:** the Session button on a setlist goes through it song by song. → Space, PageDown or a presentation clicker for the next page or song, ← to go back, or tap the right or left of the screen.
+- **With a TV or projector plugged in,** the Session screen goes full screen on it, and the laptop keeps a small bar showing the song now and the next one, with ‹ › to turn and its arrow keys still working.
+- On the Session screen: + and − change the smallest text size, M puts the chords above or in the words, D is dark, C hides the common chord shapes, Esc ends it.
+- **Check songs fit one screen…** (the library button) lays out every song as the Session screen would on a 1920×1080 TV, and lists any that need a page turn or would only fit with the smallest text.
+- **The web player has it too:** Session beside Karaoke, full screen, going through the songs as listed (so search first for tonight's songs). Works on a laptop plugged into a TV, or a tablet.
+
+## v4.34.0
+
+### Club songbooks
+- **Songbook marks are part of the song format,** as the North Shore Ukulele Circle writes them, and show on the sheet as written:
+  - `[C↓]` one strum, left to ring (`[Cv]` is the same); `[C↓↓]`, `[C↓↑]` those strums, spread over the bar;
+  - `[x]`, `[mute↓]`, `[x↓↓]` muted strums: a "chk" on each beat;
+  - `[.]`, `[…]`, `[G…]` keep the chord going; `[Bm7.Am7]` two chords sharing the bar;
+  - `[|]`, `[/]` bar lines; `[x2]` at the end of a line plays it twice;
+  - short names `Gs4`, `A7s4`, `Gs2`, `Dma7`.
+  They play, change key and go through ChordPro unchanged. Write → How to write has a table.
+- **Import ChordPro files…** (File → Library, and the library button): a whole folder of `.cho` files comes in at once, one song each, with tags, Spotify and YouTube links, and the file's other details on the ChordPro tab. Each subfolder becomes a setlist. Songs already in the library are left alone. Imported songs are marked "Copyrighted: for my own use", so they stay out of shared library packs.
+- ChordPro import also reads: custom sections (`{start_of_x_intro: Intro}` and the like) as headings; strum boxes (arrows over counts) as strum patterns, a named one used again after headings of that name; `{tag}` as tags; `{define-baritone}` shapes for the baritone; `[Riff 1]` as a label.
+
+### Harmony lines
+- `{harmony}` … `{lead}`: the lines in between are a harmony part, in italics. ChordPro's `{x_voice: harmony}` comes in and goes out as this.
+
+### ChordPro export loses nothing
+- ukemusic's shorthand goes out as ChordPro notes other apps print above the words, and comes back exactly: `[C][*×3]`, `[Em][*2 beats]`, `[N.C.][*2 beats]`, `[*stop][C]`.
+- Fixed: a `{stop}` line came back from ChordPro as a section heading; `[N.C.]` was dropped on import.
+
+### Chord diagrams
+- **Power chords** (C5, G5 …) have diagrams on every instrument, the shape lowest on the neck.
+- **View → Hide common** leaves out the diagrams of the chords everyone knows (C, G, Am, F, D7 …), so the ones to look at stand out. The list is in Settings → All songs → Chord diagrams. Also in the web player (Common: shown / hidden).
+
 ## v4.33.1
 
 ### Ready for a public repository

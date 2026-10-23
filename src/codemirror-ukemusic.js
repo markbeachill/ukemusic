@@ -154,6 +154,8 @@ function createHighlighter(codemirror) {
           addMarks(/\[\]/g, TOKENS.bar);
           addMarks(/\{[^}\n]*\}/g, TOKENS.rhythm);
           addMarks(new RegExp(`\\[(?:${CHORD_INNER_PATTERN}|N\\.?C\\.?)(?:\\s*:\\s*\\d{1,2})?(?:\\s*[x×]\\s*\\d{1,2})?\\]`, 'g'), TOKENS.chord);
+          // 4.34: songbook marks: [C↓] [Gs4] [x] [mute↓] [.] [G…] [Bm7.Am7] [x2] [|]
+          addMarks(/\[(?:[A-G][^\]\s]*[↓↑v!*.…]+|[A-G][#b]?(?:s4|s2|ma7|ma9|7s4)|x[↓↑v]*|mute[↓↑v]*|[.…]+|[x×]\d{1,2}|[|/]|[A-G][^\]\s.]*[.…]+[A-G][^\]\s]*)\]/g, TOKENS.chord);
           // "(x2)" at the end of a line
           const repeat = text.match(REPEAT_RE);
           if (repeat) lineMarks.push({ start: lineStart + repeat.index + (repeat[0].length - repeat[0].trimStart().length), end: lineStart + text.length, className: TOKENS.bar });

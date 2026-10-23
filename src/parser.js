@@ -4,6 +4,7 @@ const { parseChordToken, splitRepeat, parseGridLine, gridNodes, resolveStrums } 
 const INFORMAL_LABEL_RE = /^\s*((?:intro|verse|chorus|refrain|pre-?chorus|bridge|middle 8|solo|instrumental|interlude|break|riff|outro|ending|coda|tag)\b[^:[\]\n]{0,40}:)\s*(?=\[|\||$)/i;
 const STRUCTURE_RE = /^\s*\[\[(.*?)\]\]\s*$/; // 4.26: spaces around a heading line are ignored
 const RHYTHM_RE = /^\{([^}]*)\}$/;
+const VOICE_RE = /^\s*\{\s*(harmony|lead)\s*\}\s*$/i; // 4.34: harmony lines (in italics) until {lead}
 const TAB_START_RE = /^```tab\s*$/;
 const TAB_END_RE = /^```\s*$/;
 
@@ -83,6 +84,14 @@ function parseLineContent(lineText, lineNumber, nodes, options) {
     return;
   }
 
+  // {harmony} … {lead}: the words of the lines in between are a harmony part, shown in italics.
+  // The line itself takes no room on the sheet.
+  const voice = lineText.match(VOICE_RE);
+  if (voice) {
+    options.harmony = voice[1].toLowerCase() === 'harmony';
+    return;
+  }
+
   const rhythmMatch = options.rhythmEnabled ? lineText.match(RHYTHM_RE) : null;
   if (rhythmMatch) {
     nodes.push(createNode('rhythm', rhythmMatch[1], lineNumber, null, []));
@@ -122,6 +131,10 @@ function parseLineContent(lineText, lineNumber, nodes, options) {
   function flushLyric() {
     if (lyricBuffer.length > 0) {
       const node = createNode('lyric', lyricBuffer, lineNumber, null, []);
+      if (options.harmony) {
+        node.harmony = true;
+        lyricStyles = lyricStyles.map((s) => s | 2); // italic (src/rich-text.js)
+      }
       if (lyricStyles.some(Boolean)) node.styles = lyricStyles;
       nodes.push(node);
       lyricBuffer = '';
@@ -170,13 +183,42 @@ function parseLineContent(lineText, lineNumber, nodes, options) {
       if (end !== -1) {
         const inner = lineText.slice(index + 1, end);
         const token = parseChordToken(inner);
+        if (token && (token.hold || token.repeat)) {
+          // [.] keep the chord going: nothing to draw or play. [x2] mid-line: nothing either
+          // ([x2] at the end of a line is a repeat, taken off the line above)
+          index = end + 1;
+          continue;
+        }
+        if (token && token.bar) {
+          flushLyric();
+          nodes.push(createNode('bar', '', lineNumber, visibleOffset, []));
+          index = end + 1;
+          continue;
+        }
         if (token) {
           flushLyric();
-          const chord = createNode('chord', token.name, lineNumber, visibleOffset, []);
-          if (token.bars > 1) chord.bars = token.bars; // [C x3]
-          if (token.beats) chord.beats = token.beats;  // [C:2]
-          if (token.noChord) chord.noChord = true;     // [N.C.]
-          nodes.push(chord);
+          const parts = token.pair || [token];
+          parts.forEach((part, i) => {
+            const chord = createNode('chord', part.name, lineNumber, visibleOffset, []);
+            if (part.bars > 1) chord.bars = part.bars; // [C x3]
+            if (part.beats) chord.beats = part.beats;  // [C:2]
+            if (part.noChord) chord.noChord = true;    // [N.C.]
+            if (part.marks) {                          // [C↓] [C↓↓] (4.34): those strums, left to ring
+              chord.marks = part.marks;
+              chord.strokes = part.strokes;
+              chord.stopped = true;
+            }
+            if (part.muted) {                          // [x] [mute↓] (4.34): muted strums
+              chord.muted = part.muted;
+              chord.written = part.written;
+            }
+            if (token.pair) {                          // [Bm7.Am7] (4.34): sharing the bar
+              chord.share = 1 / parts.length;
+              chord.part = i;
+              chord.pair = true;
+            }
+            nodes.push(chord);
+          });
           index = end + 1;
           continue;
         }
@@ -224,6 +266,7 @@ function parseLineContent(lineText, lineNumber, nodes, options) {
 function parse(input, options = {}) {
   const text = normalizeInput(input);
   const normalizedOptions = normalizeOptions(options);
+  normalizedOptions.harmony = false; // every song starts with the main line
   const lines = getMusicLines(text, normalizedOptions);
   const nodes = [];
 
