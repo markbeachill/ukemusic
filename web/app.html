@@ -107,8 +107,24 @@ button { cursor: pointer; }
 .tabs { display: flex; gap: 4px; padding-block: 0 8px; }
 .tabs button { border: 0; background: none; padding: 7px 12px; border-radius: 9px; font-weight: 700; font-size: 15px; color: var(--muted); }
 .tabs button[aria-selected="true"] { background: var(--accent-soft); color: var(--accent); }
-.tools { display: flex; gap: 8px; overflow-x: auto; padding-block: 0 10px; scrollbar-width: none; }
-.tools::-webkit-scrollbar { display: none; }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; padding-block: 0 10px; }
+/* the everyday settings in the row; the rest behind More (on a phone, Plays, Strum and Text too) */
+.more-tools { display: flex; flex-wrap: wrap; gap: 8px; padding-block: 0 12px; }
+.more-tools[hidden] { display: none; }
+#moreFirst { display: contents; }
+.tool.more button { padding: 0 12px; font-size: 14px; }
+.tool.more button[aria-expanded="true"] { background: var(--ink); color: var(--surface); }
+#strumSel { max-width: 240px; }
+@media (max-width: 719px) {
+  .tools { gap: 6px; }
+  .tools .tool { padding: 2px; }
+  .tools .tool .lab { padding: 0 2px 0 6px; font-size: 11px; }
+  .tools .tool button { min-width: 32px; }
+  .tools .tool .val { min-width: 2.6em; }
+  .tool.more { border: 0; background: none; padding: 0; }
+  .tool.more button { padding: 0 10px; border: 1px solid var(--line); }
+}
+@media (max-width: 380px) { .tools .tool button { min-width: 28px; } .tools .tool .val { min-width: 2.2em; } .tools .tool .lab { padding: 0 1px 0 4px; } }
 .tool { flex: none; display: flex; align-items: center; gap: 4px; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
 .tool label, .tool .lab { font-size: 12px; font-weight: 700; color: var(--muted); padding: 0 4px 0 8px; text-transform: uppercase; letter-spacing: 0.05em; }
 .tool .val { min-width: 3.4em; text-align: center; font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
@@ -304,9 +320,14 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
       <div id="tools" class="tools gutter" role="toolbar" aria-label="How the song is shown">
         <div class="tool"><span class="lab">Key</span><button id="keyDown" type="button" aria-label="Key down">−</button><span id="keyVal" class="val"></span><button id="keyUp" type="button" aria-label="Key up">+</button></div>
         <div class="tool"><span class="lab">Capo</span><button id="capoDown" type="button" aria-label="Capo down">−</button><span id="capoVal" class="val"></span><button id="capoUp" type="button" aria-label="Capo up">+</button></div>
-        <div class="tool"><label for="instrument">Plays</label><select id="instrument"></select></div>
+        <div class="tool" data-wide><label for="instrument">Plays</label><select id="instrument"></select></div>
+        <div class="tool" data-wide><label for="strumSel">Strum</label><select id="strumSel" title="The strum it plays: the song's own, or one from the strum library (strong strokes marked &gt;)"></select></div>
+        <div class="tool" data-wide><span class="lab">Text</span><button id="textDown" type="button" aria-label="Smaller text">A−</button><button id="textUp" type="button" aria-label="Bigger text">A+</button></div>
+        <div class="tool more"><button id="moreBtn" type="button" aria-expanded="false" aria-controls="moreTools">More <span aria-hidden="true">▾</span></button></div>
+      </div>
+      <div id="moreTools" class="more-tools gutter" role="group" aria-label="More settings" hidden>
+        <div id="moreFirst"></div>
         <div class="tool"><label for="timeSel">Time</label><select id="timeSel"><option value="2">2/4</option><option value="3">3/4</option><option value="4">4/4</option><option value="6">6/8</option></select></div>
-        <div class="tool"><label for="strumSel">Strum</label><select id="strumSel" title="The strum it plays: the song's own, or one from the strum library (strong strokes marked &gt;)"></select></div>
         <div class="tool"><label for="feelSel">Feel</label><select id="feelSel" title="Swing: the second of each pair of strokes comes late, long-short"><option value="auto">Auto</option><option value="straight">Straight</option><option value="light">Light swing</option><option value="swing">Swing</option><option value="shuffle">Shuffle</option></select></div>
         <div class="tool"><label for="layout">Sheet</label><select id="layout">
           <option value="lines">Chords above</option><option value="inline">Chords in the words</option><option value="table">Columns</option><option value="chords">Chords only</option></select></div>
@@ -316,7 +337,6 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div class="tool"><label for="lookSel">Look</label><select id="lookSel"><option value="standard">Standard</option><option value="stage">Stage</option></select></div>
         <div class="tool" id="stageFormatTool" hidden><label for="stageFormat">Stage</label><select id="stageFormat"><option value="clear">Clear</option><option value="brackets">Brackets [C]</option><option value="compact">Compact</option><option value="heavy">Heavy</option></select></div>
         <div class="tool" id="stageChorusTool" hidden><label for="stageChorus">Chorus</label><select id="stageChorus"><option value="full">Every time</option><option value="once">Once, then “as before”</option></select></div>
-        <div class="tool"><span class="lab">Text</span><button id="textDown" type="button" aria-label="Smaller text">A−</button><button id="textUp" type="button" aria-label="Bigger text">A+</button></div>
       </div>
     </header>
 
@@ -781,6 +801,28 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   $('stageChorus').addEventListener('change', change(() => { S().stageChorus = $('stageChorus').value; }));
   $('textDown').addEventListener('click', change(() => { look.size = Math.max(11, look.size - 1); }, { song: false }));
   $('textUp').addEventListener('click', change(() => { look.size = Math.min(30, look.size + 1); }, { song: false }));
+  // More: the settings that aren't in the row. On a narrow screen Plays, Strum and Text go in here too.
+  const WIDE = matchMedia('(min-width: 720px)');
+  function placeTools() {
+    const wideTools = [...document.querySelectorAll('[data-wide]')];
+    const more = $('moreBtn').parentElement;
+    if (WIDE.matches) {
+      $('tools').appendChild(more);
+      for (const t of wideTools) $('tools').insertBefore(t, more);
+    } else {
+      for (const t of wideTools) $('moreFirst').appendChild(t);
+      $('downloadBtn').before(more); // on a phone: beside the song's title, so Key and Capo fit the row
+    }
+  }
+  WIDE.addEventListener('change', placeTools);
+  placeTools();
+  function showMore(open) {
+    $('moreTools').hidden = !open;
+    $('moreBtn').setAttribute('aria-expanded', String(open));
+    $('moreBtn').innerHTML = open ? 'Less <span aria-hidden="true">▴</span>' : 'More <span aria-hidden="true">▾</span>';
+  }
+  $('moreBtn').addEventListener('click', () => { look.more = $('moreTools').hidden; local.set('look', look); showMore(look.more); });
+  showMore(look.more === true);
   $('timeSel').addEventListener('change', change(() => {
     const beats = Number($('timeSel').value);
     S().beats_per_bar = beats;

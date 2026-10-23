@@ -12,6 +12,7 @@ From feedback on Reddit.
 - **Time:** 2/4, 3/4, 4/4 or 6/8. Changing it picks a strum that fits; back to the song's own time, back to its own strum.
 - **Feel:** straight, light swing, swing or shuffle (Auto follows the song).
 - All three are kept per song on the device, like key and capo.
+- **No more hidden settings in the web player.** The row above the song used to scroll sideways, which a mouse can't do. Now the row holds the everyday ones (Key, Capo, Plays, Strum and Text) and **More** opens the rest: Time, Feel, Sheet, Shapes, Common, Look and the Stage options. On a phone the row is just Key and Capo, with More beside the song's title. More stays open or closed as you left it.
 
 ### Public Domain Songs
 - **Amazing Grace** is a waltz: `{D>DD}`, a strong down on 1 and two lighter downs.
