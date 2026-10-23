@@ -45,6 +45,7 @@
     [60, 'C4', -5], [62, 'D4', -8], [64, 'E4', -2], [66, 'Fs4', -11], [67, 'G4', -1], [69, 'A4', 0],
     [71, 'B4', 0], [73, 'Cs5', 0], [75, 'Ds5', 3], [77, 'F5', 4], [79, 'G5', 6], [81, 'A5', 8], [84, 'C6', 4]
   ];
+  const BORROW = { 67: 69, 71: 73 }; // G4 -> A4, B4 -> C#5: G4 and B4 are ~12 dB down a second in
   let sampleLoad = null;   // one shared load: { notes: [{ midi, tune, buffer }], chuck }
   const soundOf = (name) => SOUNDS[name] || SOUNDS.standard;
   const SAMPLE_LEVEL = 0.25; // the recordings peak near full scale; this matches the plucked sound's loudness
@@ -171,6 +172,10 @@
       if (!notes || !notes.length) return null;
       let best = notes[0];
       for (const n of notes) if (Math.abs(n.midi - midi) < Math.abs(best.midi - midi)) best = n;
+      // G4 and B4 die away much sooner than the rest (C and G sounded thin and short), so their
+      // notes borrow the A4 and C#5 recordings, retuned by two semitones
+      const borrow = BORROW[best.midi] && notes.find((n) => n.midi === BORROW[best.midi]);
+      if (borrow) best = borrow;
       const cents = (midi - best.midi) * 100 + best.tune;
       return { buffer: best.buffer, rate: Math.pow(2, cents / 1200) };
     }

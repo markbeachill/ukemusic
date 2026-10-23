@@ -225,6 +225,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
   renderLyricsHtml: (irNodes, options) => lyrics.renderLyricsHtml(irNodes, options),
   lyricsCss: () => lyrics.LYRICS_CSS,
   buildSchedule: (irNodes, options) => buildSchedule(irNodes, options),
+  defaultStrumPattern: (beats, style, custom) => require('./playback-schedule').defaultPattern(beats, style, custom),
   instruments: instruments.INSTRUMENTS,
   strums: strumLibrary.STRUMS,
   strumArrows: (pattern) => strumLibrary.arrows(pattern),

@@ -10,7 +10,7 @@ function escapeHtml(value) {
   return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function inline(text) {
+function inline(text, options = {}) {
   // code spans first, so nothing inside them is changed
   const parts = String(text).split(/(`[^`]+`)/g);
   return parts.map((part) => {
@@ -19,7 +19,7 @@ function inline(text) {
       .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
       .replace(/(^|[^*\w])\*([^*\s][^*]*)\*(?!\*)/g, '$1<em>$2</em>')
       .replace(/&lt;u&gt;(.+?)&lt;\/u&gt;/g, '<u>$1</u>')
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1');
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (all, label, url) => (options.href ? `<a href="${escapeHtml(options.href(url.replace(/&amp;/g, '&')))}">${label}</a>` : label));
   }).join('');
 }
 
@@ -27,15 +27,20 @@ function slug(text) {
   return String(text).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
-/** Markdown -> { html, sections: [{ id, title }] } */
-function markdownToHtml(markdown) {
+/**
+ * Markdown -> { html, sections: [{ id, title }] }
+ *   options.href(url)  links become <a href=…> (the app shows them as plain text)
+ *   options.nested     indented list items make a list inside the item above
+ */
+function markdownToHtml(markdown, options = {}) {
+  const inl = (t) => inline(t, options);
   const lines = String(markdown || '').replace(/\r\n?/g, '\n').split('\n');
   const out = [];
   const sections = [];
   let i = 0;
   let para = [];
   const flush = () => {
-    if (para.length) out.push(`<p>${inline(para.join(' '))}</p>`);
+    if (para.length) out.push(`<p>${inl(para.join(' '))}</p>`);
     para = [];
   };
   const cells = (row) => row.trim().replace(/^\||\|$/g, '').split(/(?<!\\)\|/).map((c) => c.trim().replace(/\\\|/g, '|'));
@@ -60,7 +65,7 @@ function markdownToHtml(markdown) {
       const level = heading[1].length;
       const id = slug(heading[2]);
       if (level === 2) sections.push({ id, title: heading[2] });
-      out.push(`<h${level} id="guide-${id}">${inline(heading[2])}</h${level}>`);
+      out.push(`<h${level} id="guide-${id}">${inl(heading[2])}</h${level}>`);
       i += 1;
       continue;
     }
@@ -78,23 +83,25 @@ function markdownToHtml(markdown) {
         rows.push(cells(lines[i]));
         i += 1;
       }
-      out.push(`<table class="guide-table"><thead><tr>${head.map((c) => `<th>${inline(c)}</th>`).join('')}</tr></thead>`
-        + `<tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${inline(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`);
+      out.push(`<table class="guide-table"><thead><tr>${head.map((c) => `<th>${inl(c)}</th>`).join('')}</tr></thead>`
+        + `<tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${inl(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`);
       continue;
     }
     if (/^\s*[-*]\s+/.test(line)) {
       flush();
       const items = [];
       while (i < lines.length && /^\s*[-*]\s+/.test(lines[i])) {
+        const sub = options.nested && items.length && /^\s{2,}[-*]\s+/.test(lines[i]);
         let item = lines[i].replace(/^\s*[-*]\s+/, '');
         i += 1;
         while (i < lines.length && /^\s{2,}\S/.test(lines[i]) && !/^\s*[-*]\s+/.test(lines[i])) {
           item += ` ${lines[i].trim()}`;
           i += 1;
         }
-        items.push(item);
+        if (sub) items[items.length - 1].sub.push(item);
+        else items.push({ text: item, sub: [] });
       }
-      out.push(`<ul>${items.map((t) => `<li>${inline(t)}</li>`).join('')}</ul>`);
+      out.push(`<ul>${items.map((t) => `<li>${inl(t.text)}${t.sub.length ? `<ul>${t.sub.map((x) => `<li>${inl(x)}</li>`).join('')}</ul>` : ''}</li>`).join('')}</ul>`);
       continue;
     }
     if (!line.trim()) {

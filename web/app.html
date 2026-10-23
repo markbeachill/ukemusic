@@ -305,6 +305,9 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div class="tool"><span class="lab">Key</span><button id="keyDown" type="button" aria-label="Key down">−</button><span id="keyVal" class="val"></span><button id="keyUp" type="button" aria-label="Key up">+</button></div>
         <div class="tool"><span class="lab">Capo</span><button id="capoDown" type="button" aria-label="Capo down">−</button><span id="capoVal" class="val"></span><button id="capoUp" type="button" aria-label="Capo up">+</button></div>
         <div class="tool"><label for="instrument">Plays</label><select id="instrument"></select></div>
+        <div class="tool"><label for="timeSel">Time</label><select id="timeSel"><option value="2">2/4</option><option value="3">3/4</option><option value="4">4/4</option><option value="6">6/8</option></select></div>
+        <div class="tool"><label for="strumSel">Strum</label><select id="strumSel" title="The strum it plays: the song's own, or one from the strum library (strong strokes marked &gt;)"></select></div>
+        <div class="tool"><label for="feelSel">Feel</label><select id="feelSel" title="Swing: the second of each pair of strokes comes late, long-short"><option value="auto">Auto</option><option value="straight">Straight</option><option value="light">Light swing</option><option value="swing">Swing</option><option value="shuffle">Shuffle</option></select></div>
         <div class="tool"><label for="layout">Sheet</label><select id="layout">
           <option value="lines">Chords above</option><option value="inline">Chords in the words</option><option value="table">Columns</option><option value="chords">Chords only</option></select></div>
         <div class="tool"><label for="diagrams">Shapes</label><select id="diagrams">
@@ -601,6 +604,8 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
       instrument: UMW.INSTRUMENTS.some((i) => i.id === s.instrument) ? s.instrument : 'soprano',
       tempo: Number(s.tempo) || 100,
       beats: Number(s.beats_per_bar) || 4,
+      strum: S().strum || '',
+      feel: S().feel || view.song.settings?.playback?.swing || 'auto',
       stageFormat: U.stageFormats.formatOf(S().stageFormat || view.song.settings?.export?.stage_format || 'clear').id,
       stageChorus: (S().stageChorus || view.song.settings?.export?.stage_chorus) === 'once' ? 'once' : 'full'
     };
@@ -660,7 +665,29 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     const setting = view.song.settings?.shapes?.[inst.sameShapesAs || inst.id];
     try { return setting ? U.shapes.withShapes(base, U.shapes.parseSetting(setting, inst.strings.length)) : base; } catch (_e) { return base; }
   }
-  function currentIr(text = view.song.text) {
+  // Strum chosen here (the Strum menu): it takes the place of the song's own strum lines
+  function played(text) {
+    const chosen = prefs().strum && U.strums.find((x) => x.id === prefs().strum);
+    if (!chosen) return text;
+    let ir;
+    try { ir = U.parseSong(text, parserOptions); } catch (_e) { return text; }
+    const strumLines = new Set(ir.filter((n) => n.type === 'rhythm' && n.offset == null && !n.stop && !n.feelOnly && n.content).map((n) => n.line));
+    const lines = text.split('\n').filter((_, i) => !strumLines.has(i + 1));
+    lines.splice(lines.findIndex((l) => l.trim() === '--START MUSIC--') + 1, 0, `{${chosen.pattern}}`);
+    return lines.join('\n');
+  }
+  /** The strum the song plays with, for the Strum menu: its own first strum line, or the default */
+  function writtenStrum(song = view.song) {
+    try {
+      const first = U.parseSong(song.text, parserOptions).find((n) => n.type === 'rhythm' && !n.stop && !n.feelOnly && n.content);
+      if (first) return { own: true, pattern: first.content, name: first.strumName || '' };
+    } catch (_e) { /* none */ }
+    const id = song.settings?.playback?.default_strum || 'island';
+    const pattern = U.defaultStrumPattern(prefs().beats, id, song.settings?.playback?.custom_strum || '');
+    const lib = U.strums.find((x) => x.pattern === pattern && x.beats === prefs().beats);
+    return { own: false, pattern, name: lib ? lib.name : (id === 'island' ? 'Island' : '') };
+  }
+  function currentIr(text = played(view.song.text)) {
     const p = prefs();
     const ir = U.parseSong(text, parserOptions);
     return U.transposeIR(ir, p.transpose - p.capo, { spelling: 'key', key: songKey(view.song), instrument: p.instrument });
@@ -689,7 +716,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
       maxLineChars: look.layout === 'lines' ? charsAcross(sheet) : 0
     };
     if (stage) options = stageOptions(options, options.maxLineChars || charsAcross(sheet), sheet.clientWidth - 32, look.size);
-    try { sheet.innerHTML = U.renderHTML(currentIr(stage ? stageText(view.song.text) : view.song.text), options); }
+    try { sheet.innerHTML = U.renderHTML(currentIr(stage ? stageText(played(view.song.text)) : played(view.song.text)), options); }
     catch (error) { sheet.innerHTML = `<p>This song couldn’t be shown: ${esc(error.message)}</p>`; }
   }
   function keyText() {
@@ -713,6 +740,14 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     $('stageFormat').value = p.stageFormat;
     $('stageChorus').value = p.stageChorus;
     $('tempoVal').textContent = `${p.tempo} bpm`;
+    $('timeSel').value = String(p.beats);
+    const own = writtenStrum();
+    const fits = U.strums.filter((x) => x.beats === p.beats);
+    const shown = (pattern) => pattern.replace(/>/g, '›');
+    $('strumSel').innerHTML = `<option value="">${esc(own.own ? `Song's own: ${own.name ? `${own.name} ` : ''}${shown(own.pattern)}` : `Usual: ${own.name ? `${own.name} ` : ''}${shown(own.pattern)}`)}</option>`
+      + fits.map((x) => `<option value="${x.id}">${esc(x.name)}: ${esc(shown(x.pattern))}</option>`).join('');
+    $('strumSel').value = fits.some((x) => x.id === p.strum) ? p.strum : '';
+    $('feelSel').value = p.feel;
   }
   function renderSong() {
     if (!view.song) return;
@@ -746,6 +781,15 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   $('stageChorus').addEventListener('change', change(() => { S().stageChorus = $('stageChorus').value; }));
   $('textDown').addEventListener('click', change(() => { look.size = Math.max(11, look.size - 1); }, { song: false }));
   $('textUp').addEventListener('click', change(() => { look.size = Math.min(30, look.size + 1); }, { song: false }));
+  $('timeSel').addEventListener('change', change(() => {
+    const beats = Number($('timeSel').value);
+    S().beats_per_bar = beats;
+    // back to the song's own time: its own strum; another time: the first strum that fits it
+    if (beats === (Number(view.song.settings?.song?.beats_per_bar) || 4)) { delete S().beats_per_bar; delete S().strum; }
+    else S().strum = (U.strums.find((x) => x.beats === beats) || {}).id;
+  }));
+  $('strumSel').addEventListener('change', change(() => { if ($('strumSel').value) S().strum = $('strumSel').value; else delete S().strum; }));
+  $('feelSel').addEventListener('change', change(() => { S().feel = $('feelSel').value; }));
   $('slower').addEventListener('click', change(() => { S().tempo = Math.max(40, prefs().tempo - 5); }));
   $('faster').addEventListener('click', change(() => { S().tempo = Math.min(240, prefs().tempo + 5); }));
   let resizeTimer = null;
@@ -759,7 +803,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     const p = prefs();
     const lib = library();
     const base = { layout: stage ? 'lines' : look.layout, strumStyle: 'clean', beatsPerBar: p.beats, tempo: p.tempo, diagrams: { enable: true, placement: 'song_start', show_fingers: true, skip_common: look.hideCommon === true }, chordLibrary: lib, maxLineChars: stage ? 48 : 0 };
-    const ir = currentIr(stage ? stageText(view.song.text) : view.song.text);
+    const ir = currentIr(stage ? stageText(played(view.song.text)) : played(view.song.text));
     const body = U.renderHTML(ir, stage ? stageOptions(base, 48, 680, 20) : base) + (U.shorthandKeyHtml ? U.shorthandKeyHtml(ir) : '');
     const k = keyText();
     const sub = [view.song.settings?.song?.artist, view.song.settings?.song?.year].filter(Boolean).join(', ');
@@ -783,7 +827,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       if (kind === 'lyrics') file = { filename: `${t} (lyrics).txt`, data: U.renderLyricsText(U.parseSong(view.song.text, parserOptions), { title: view.song.title }) };
       if (kind === 'chordpro') {
         const p = prefs();
-        file = { filename: `${t}${keyPart} (ChordPro).txt`, data: U.ukemusicToChordPro(currentIr(), { title: view.song.title, artist: view.song.settings?.song?.artist || '', year: view.song.settings?.song?.year || '', capo: p.capo || '', tempo: p.tempo, time: `${p.beats}/4`, key: '' }) };
+        file = { filename: `${t}${keyPart} (ChordPro).txt`, data: U.ukemusicToChordPro(currentIr(), { title: view.song.title, artist: view.song.settings?.song?.artist || '', year: view.song.settings?.song?.year || '', capo: p.capo || '', tempo: p.tempo, time: p.beats === 6 ? '6/8' : `${p.beats}/4`, key: '' }) };
       }
       downloads = downloads || (window.claude && window.claude.use ? await window.claude.use('downloads').catch(() => null) : null);
       if (!downloads) {
@@ -828,7 +872,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     view.song = song;
     try {
       const p = prefs();
-      const shown = currentIr(stageText(song.text));
+      const shown = currentIr(stageText(played(song.text)));
       const key = songKey(song);
       const sub = [[song.settings?.song?.artist, song.settings?.song?.year].filter(Boolean).join(', '), key ? U.keys.describe(U.keys.transpose(key, p.transpose)) : '', p.capo ? `Capo ${p.capo}` : '', p.instrument !== 'soprano' ? U.instrument(p.instrument).name : ''].filter(Boolean).join(' · ');
       return U.sessionSong(shown, { title: song.title, sub, library: library(), common: song.settings?.diagrams?.common_chords });
@@ -892,6 +936,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     return {
       library: library(), instrument: p.instrument, capo: p.capo, tempo: p.tempo, beatsPerBar: p.beats, countIn,
       defaultStrum: view.song.settings?.playback?.default_strum || 'island',
+      swing: p.feel,
       customStrum: view.song.settings?.playback?.custom_strum || ''
     };
   }

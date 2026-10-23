@@ -5,6 +5,7 @@ Ukulele chord sheet editor (also baritone ukulele and guitar) with live preview,
 Ukulele first, with baritone ukulele and guitar too: see [INSTRUMENTS.md](INSTRUMENTS.md) (instruments, file names, capo, left-handed, sounds, strum library).
 How tab works (writing, pasting, key changes, other instruments, playback, and the code behind it): see [TABLATURE.md](TABLATURE.md).
 How to write songs (everything you can type, with examples): see [WRITING.md](WRITING.md), also in the app under Write → How to write.
+ChordPro (what ukemusic reads and writes, and its additions): see [CHORDPRO.md](CHORDPRO.md). What's changed in each version: [CHANGELOG.md](CHANGELOG.md). All three are also pages of the website, made from these files.
 
 ## Getting around (v4)
 

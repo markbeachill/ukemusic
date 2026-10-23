@@ -4,6 +4,9 @@ dist/
 web/node_modules/
 web/umw.js
 web/out/
+site/guide.html
+site/chordpro.html
+site/changes.html
 *.AppImage
 *.dmg
 *.exe

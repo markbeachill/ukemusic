@@ -1,5 +1,29 @@
 # Changelog
 
+## v4.36.0
+
+From feedback on Reddit.
+
+### Fuller C and G
+- **C, G, G7 and Em ring like Am, D and F now.** Two of the ukulele recordings (the open G string and B) die away about 12 dB sooner than the others, so every chord using them sounded thin and short. Those notes now use the A and C♯ recordings, retuned by two semitones. In the desktop app and the web player.
+
+### Strum, time and feel in the web player
+- **Strum:** shows the strum the song plays (its own, or the usual one when it has none) and lets you pick another from the strum library for its time. The chosen strum shows on the sheet in place of the song's own.
+- **Time:** 2/4, 3/4, 4/4 or 6/8. Changing it picks a strum that fits; back to the song's own time, back to its own strum.
+- **Feel:** straight, light swing, swing or shuffle (Auto follows the song).
+- All three are kept per song on the device, like key and capo.
+
+### Public Domain Songs
+- **Amazing Grace** is a waltz: `{D>DD}`, a strong down on 1 and two lighter downs.
+- **The Wild Rover** and **Scarborough Fair** lean on beat 1 (`{D>-DUDU}`).
+- **House of the Rising Sun** is in 6/8 at 60, strong on 1 and 4 (`{D>DDD>DD}`), instead of the island strum.
+
+### Documentation
+- **ukemusic and ChordPro** (CHORDPRO.md): what comes in from a ChordPro file, what goes out, and ukemusic's additions to the format.
+- **The website has pages** for the song guide, ChordPro and What's new, made from the .md files every time the site is built.
+- **Release notes:** each release on GitHub gets its version's section of this changelog.
+- ChordPro: `{swing}` and the other feel lines go out as `{comment: Feel: swing}` and come back; before, they came back as a heading called "Strum".
+
 ## v4.35.0
 
 ### The Session screen, for playing together

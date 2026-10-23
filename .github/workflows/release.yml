@@ -2,6 +2,7 @@ name: Installers
 # Builds the Windows, Mac and Linux installers and attaches them to a release.
 # Make a release on GitHub (Releases → Draft a new release, tag e.g. v4.33.1) and this runs by itself.
 # "Run workflow" by hand builds them too, as downloads on the run's page, without a release.
+# The release's notes get that version's section of CHANGELOG.md (after anything typed there).
 on:
   release:
     types: [published]
@@ -43,3 +44,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ matrix.files }}
+
+  notes:
+    # The version's section of CHANGELOG.md on the release page (tools/release-notes.js)
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node tools/release-notes.js "${{ github.event.release.tag_name }}" > release-notes.md
+      - uses: softprops/action-gh-release@v2
+        with:
+          body_path: release-notes.md
+          append_body: true

@@ -318,6 +318,7 @@ When some lines are a harmony part sung with (or over) the main line, put `{harm
 - ChordPro files (`.cho`, `.chopro`) can be imported with **File → Import text file**. A whole folder of them (a club's songbook, say) comes in at once with **File → Library → Import ChordPro files…** (or the library button): one song each, with their tags and links, and each subfolder becomes a setlist.
 - Songbook marks in the brackets (`[C↓]`, `[x]`, `[.]`, `[Gs4]`…) are part of ukemusic's own format, so they come in as written; strum boxes of arrows over counts become strum patterns, and `[Riff 1]` a label.
 - Saved as ChordPro, ukemusic's shorthand goes out as ChordPro notes, which other apps print above the words: `[C][*×3]`, `[Em][*2 beats]`, `[*stop][C]`. They come back exactly as they were.
+- Everything about ChordPro (what comes in, what goes out, and what ukemusic adds to it) is in [ukemusic and ChordPro](CHORDPRO.md).
 
 ---
 

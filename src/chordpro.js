@@ -15,7 +15,7 @@
 //   {tempo} {capo} {artist} … → notes (tempo is not applied)
 // Pure functions, unit tested.
 const { isChordName } = require('./chord-names');
-const { parseChordToken } = require('./song-syntax');
+const { parseChordToken, FEEL_NAMES } = require('./song-syntax');
 
 const ALIASES = {
   t: 'title', st: 'subtitle', c: 'comment', ci: 'comment', cb: 'comment', comment_italic: 'comment',
@@ -309,6 +309,8 @@ function chordProToUkemusic(input) {
       const namedStrum = strum && strum.match(/^([A-Za-z][A-Za-z0-9 ]{0,15}?)\s*(?::\s*(.+))?$/);
       if (/^stop: one strum, let it ring$/i.test(value)) {
         out.push('{stop}'); // ukemusic's own (4.34: it used to come back as a heading)
+      } else if (/^feel:\s*(straight|light swing|swing|shuffle)\s*$/i.test(value)) {
+        out.push(`{${value.replace(/^feel:\s*/i, '').trim().toLowerCase()}}`); // ukemusic's own (4.36)
       } else if (namedStrum && !STRUM_RE.test(strum) && (namedStrum[2] ? STRUM_RE.test(namedStrum[2].split('|')[0]) : strumNames.includes(namedStrum[1]))) {
         out.push(namedStrum[2] ? `{${namedStrum[1]}: ${namedStrum[2].trim()}}` : `{${namedStrum[1]}}`);
         if (namedStrum[2]) strumNames.push(namedStrum[1]);
@@ -420,7 +422,8 @@ function ukemusicToChordPro(irNodes, info = {}) {
     }
     const strums = group.filter((n) => n.type === 'rhythm' && !n.inlineStop);
     for (const r of strums) {
-      if (r.stop) out.push('{comment: Stop: one strum, let it ring}');
+      if (r.feelOnly) out.push(`{comment: Feel: ${FEEL_NAMES[r.feel] || r.feel}}`); // 4.36: {swing} came back as a heading
+      else if (r.stop) out.push('{comment: Stop: one strum, let it ring}');
       else if (r.recall) out.push(`{comment: Strum ${r.strumName}}`);
       else out.push(`{comment: Strum ${r.strumName ? `${r.strumName}: ` : ''}${r.content.trim()}}`);
     }

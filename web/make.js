@@ -19,6 +19,9 @@ require('esbuild').buildSync({
 // 2. Put the page together (out/index.html and out/ukemusic-web.html)
 require('./build.js');
 
+// 2b. The documents as website pages (site/guide.html, chordpro.html, changes.html)
+console.log('pages:', require('./docs.js').build().join(', '));
+
 // 3. The samples as WAV (Safari can't decode FLAC)
 const sounds = path.join(WEB, 'out', 'sounds');
 fs.mkdirSync(sounds, { recursive: true });

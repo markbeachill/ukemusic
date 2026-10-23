@@ -6,3 +6,4 @@ From the public-domain candidates list (row 4).
 
 History
 2026-10-21  Song created in the Public Domain Songs library
+2026-10-23  Exported 11 files (Classic + Stage, A4)
