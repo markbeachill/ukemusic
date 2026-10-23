@@ -165,7 +165,7 @@ test('a folder of ChordPro files: one song each, subfolders become setlists, not
   fs.mkdirSync(lib);
   fs.writeFileSync(path.join(src, 'Main book', 'Clementine - Percy Montrose.cho'), '{title: Clementine}\n{artist: Percy Montrose}\n{key: C}\n{tag: folk}\n{meta: youtube https://www.youtube.com/watch?v=abc}\n[C↓]Oh my [G7]darling');
   fs.writeFileSync(path.join(src, 'Main book', 'Oh Susanna - Stephen Foster.cho'), '{artist: Stephen Foster}\n[C]I come from Ala[G7]bama');
-  fs.writeFileSync(path.join(src, '2026-05', 'What Now? - Someone.cho'), '{title: What Now?}\n[C]la');
+  fs.writeFileSync(path.join(src, '2026-05', 'What Now - Someone.cho'), '{title: What Now?}\n[C]la');
   fs.writeFileSync(path.join(src, '2026-05', 'notes.txt'), 'not a song');
   const r = imp.importFolder(path.join(tmp, 'club', 'songs'), lib, { source: 'club' });
   assert.strictEqual(r.files, 3);
