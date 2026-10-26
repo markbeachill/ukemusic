@@ -1,5 +1,21 @@
 # Changelog
 
+## v4.38.0
+
+### Chords in the words, with their timing
+- **Words templates:** a line where every letter is a dot and the chords sit in brackets at their letter (`[Dm:2]······· [F:1][G:1]····`). Paste the words on the line underneath and Tidy fills them in, every chord on its syllable however long it's written.
+- **Tidy chords above words** understands chords written with strum marks and lengths (`Dm↓:2`), and several run together (`F:1G:1`) go in at the same place, in order. Chords landing on the same spot used to come out in reverse order.
+- Fixed: `[Dm↓↓:2]` (two strums over two beats) played only one; the strums were spread over the whole bar and the second was cut. Marked strums now spread over the chord's own length. Strum marks in bar lines (`| Dm↓↓:2 F↓ G↓ |`) are played too; they used to be ignored. `v` works as a down-strum everywhere `↓` does (`[Dmvv:2]`, `| Dmvv:2 Fv Gv |`), easier to type.
+
+### Importing
+- Fixed: importing a song with bar lines (`| E7 | E7 G A | E7 | G7 |`) offered to "tidy chords above words", and doing so merged the bars into the next line. Bar lines are left as they are.
+- **Importing a song you already have:** saving it under a name that's taken now offers **Replace the words in "…"**, which puts the words into that song (its old words go to its history) instead of leaving you stuck on "There's already a song folder called…".
+
+## v4.37.0
+
+### Web player
+- **No more hidden settings in the web player.** The row above the song used to scroll sideways, which a mouse can't do. Now the row holds the everyday ones (Key, Capo, Plays, Strum and Text) and **More** opens the rest: Time, Feel, Sheet, Shapes, Common, Look and the Stage options. On a phone the row is just Key and Capo, with More beside the song's title. More stays open or closed as you left it.
+
 ## v4.36.0
 
 From feedback on Reddit.
@@ -12,7 +28,6 @@ From feedback on Reddit.
 - **Time:** 2/4, 3/4, 4/4 or 6/8. Changing it picks a strum that fits; back to the song's own time, back to its own strum.
 - **Feel:** straight, light swing, swing or shuffle (Auto follows the song).
 - All three are kept per song on the device, like key and capo.
-- **No more hidden settings in the web player.** The row above the song used to scroll sideways, which a mouse can't do. Now the row holds the everyday ones (Key, Capo, Plays, Strum and Text) and **More** opens the rest: Time, Feel, Sheet, Shapes, Common, Look and the Stage options. On a phone the row is just Key and Capo, with More beside the song's title. More stays open or closed as you left it.
 
 ### Public Domain Songs
 - **Amazing Grace** is a waltz: `{D>DD}`, a strong down on 1 and two lighter downs.
@@ -23,11 +38,6 @@ From feedback on Reddit.
 - **ukemusic and ChordPro** (CHORDPRO.md): what comes in from a ChordPro file, what goes out, and ukemusic's additions to the format.
 - **The website has pages** for the song guide, ChordPro and What's new, made from the .md files every time the site is built.
 - **Release notes:** each release on GitHub gets its version's section of this changelog.
-- Fixed: importing a song with bar lines (`| E7 | E7 G A | E7 | G7 |`) offered to "tidy chords above words", and doing so merged the bars into the next line. Bar lines are left as they are.
-- **Tidy chords above words** understands chords written with strum marks and lengths (`Dm↓:2`), and several run together (`F:1G:1`) go in at the same place, in order. Chords landing on the same spot used to come out in reverse order.
-- Fixed: `[Dm↓↓:2]` (two strums over two beats) played only one; the strums were spread over the whole bar and the second was cut. Marked strums now spread over the chord's own length. Strum marks in bar lines (`| Dm↓↓:2 F↓ G↓ |`) are played too; they used to be ignored. `v` works as a down-strum everywhere `↓` does (`[Dmvv:2]`, `| Dmvv:2 Fv Gv |`), easier to type.
-- **Words templates:** a line where every letter is a dot and the chords sit in brackets at their letter (`[Dm:2]······· [F:1][G:1]····`). Paste the words on the line underneath and Tidy fills them in, every chord on its syllable however long it's written.
-- **Importing a song you already have:** saving it under a name that's taken now offers **Replace the words in "…"**, which puts the words into that song (its old words go to its history) instead of leaving you stuck on "There's already a song folder called…".
 - ChordPro: `{swing}` and the other feel lines go out as `{comment: Feel: swing}` and come back; before, they came back as a heading called "Strum".
 
 ## v4.35.0
