@@ -3084,7 +3084,7 @@
         <p id="titleError" class="dialog-error" role="alert"></p>
         <p id="titlePreview" class="dialog-note"></p>
         <div class="dialog-actions">
-          <span></span>
+          <span><button id="titleReplace" type="button" hidden title="Put these words into the song that's already there. Its settings stay, and its old words are kept in its history.">Replace its words</button></span>
           <div class="right">
             <button id="titleCancel" type="button">Cancel</button>
             <button id="titleOk" class="primary" type="submit" disabled>Create</button>
@@ -4134,7 +4134,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         }
 
         // Ask for a song title. Checks it live (not "untitled", no clashes with existing folders).
-        function askForTitle({ heading, okLabel, initial = '', songsFolder }) {
+        // allowReplace (4.36): when the title is taken, offer to put these words into that song instead
+        function askForTitle({ heading, okLabel, initial = '', songsFolder, allowReplace = false }) {
           const dialog = document.getElementById('titleDialog');
           const form = document.getElementById('titleForm');
           const input = document.getElementById('titleInput');
@@ -4142,6 +4143,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const previewNote = document.getElementById('titlePreview');
           const ok = document.getElementById('titleOk');
           const cancel = document.getElementById('titleCancel');
+          const replace = document.getElementById('titleReplace');
+          replace.hidden = true;
+          let clash = '';
           document.getElementById('titleDialogHeading').textContent = heading;
           ok.textContent = okLabel;
           input.value = initial;
@@ -4169,6 +4173,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               validTitle = result.ok ? result.title : null;
               ok.disabled = !result.ok;
               error.textContent = result.ok ? '' : result.error;
+              clash = (!result.ok && allowReplace && (String(result.error).match(/already a song folder called "(.+)"/) || [])[1]) || '';
+              replace.hidden = !clash;
+              if (clash) replace.textContent = `Replace the words in "${clash}"`;
               previewNote.textContent = result.ok ? `Creates: ${result.title}\\${result.title}-song.txt` : '';
               return validTitle;
             }
@@ -4178,6 +4185,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               input.removeEventListener('input', onInput);
               form.removeEventListener('submit', onSubmit);
               cancel.removeEventListener('click', onCancel);
+              replace.removeEventListener('click', onReplace);
+              replace.hidden = true;
               dialog.removeEventListener('cancel', onCancel);
               if (dialog.open) dialog.close();
               resolve(value);
@@ -4192,12 +4201,14 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               const title = await check(); // re-check at the moment of creating
               if (title) finish(title);
             }
+            function onReplace() { if (clash) finish({ replace: clash }); }
             function onCancel(event) {
               event?.preventDefault?.();
               finish(null);
             }
 
             input.addEventListener('input', onInput);
+            replace.addEventListener('click', onReplace);
             form.addEventListener('submit', onSubmit);
             cancel.addEventListener('click', onCancel);
             dialog.addEventListener('cancel', onCancel);
@@ -4399,9 +4410,27 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             heading: saveAsNew ? 'Save as new song' : 'Save song',
             okLabel: 'Save',
             initial: saveAsNew ? '' : (state.suggestedTitle || ''),
-            songsFolder
+            songsFolder,
+            allowReplace: !state.song
           });
           if (!title) return false;
+          if (typeof title === 'object') {
+            // 4.36: the title is taken (the same file imported again, say): the words go into that song
+            const sep = songsFolder.includes('\\') ? '\\' : '/';
+            const existing = await window.ukemusic.openSong(`${songsFolder.replace(/[\\/]+$/, '')}${sep}${title.replace}`);
+            const content = getEditorValue();
+            const importedFrom = state.importSource;
+            await window.ukemusic.saveSong({ songFile: existing.songFile, content, allowEmpty: true });
+            state.pendingImport = null;
+            state.importSource = '';
+            adoptSong(existing);
+            showTab('song');
+            await addHistory(`Words replaced${importedFrom ? ` from ${importedFrom}` : ''}`);
+            state.savedContent = content;
+            updateDirtyState();
+            setStatusMessage(`Put the words into "${existing.title}". Its old words are in its history (File → Earlier versions).`);
+            return true;
+          }
 
           // Carry over the current song-level settings and key (plus key/tempo/time from an imported ChordPro file)
           const pending = state.song ? null : state.pendingImport;

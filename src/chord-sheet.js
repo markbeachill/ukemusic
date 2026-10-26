@@ -31,6 +31,26 @@ function stripParens(text) {
 
 const CHORD_PREFIX_RE = new RegExp(`^${CHORD_CORE}`);
 
+// 4.36: a chord as ukemusic writes it, with strum marks and a length: "Dm↓:2", "C↓↑", "G:1".
+// Several run together ("F↓:1G↓:1Dm↓:2") all go in at the same place: chords played between
+// two words, one after another.
+const MARKED_CHORD_SOURCE = `${CHORD_CORE}(?:[↓↑v]+)?(?::\\d{1,2})?`; // v = ↓, as in songbooks
+const MARKED_CHAIN_RE = new RegExp(`^(?:${MARKED_CHORD_SOURCE})+$`);
+const MARKED_ONE_RE = new RegExp(MARKED_CHORD_SOURCE, 'y');
+/** "F↓:1G↓:1" -> ['F↓:1', 'G↓:1'], or null. Only for chords with a mark or a length. */
+function markedChords(text) {
+  if (!/[↓↑]|[A-G][^\s]*v|:\d/.test(text) || !MARKED_CHAIN_RE.test(text)) return null;
+  const out = [];
+  MARKED_ONE_RE.lastIndex = 0;
+  let m;
+  while (MARKED_ONE_RE.lastIndex < text.length && (m = MARKED_ONE_RE.exec(text))) {
+    if (!m[0]) return null;
+    out.push(m[0]);
+  }
+  // each chord must end at a mark or a length, or be the last; otherwise "FG" would read as one
+  return out.join('') === text ? out : null;
+}
+
 /** Split chords a scan has run together ("FC" -> F, C; "G7C" -> G7, C). Null if not possible. */
 function splitJoinedChords(text) {
   const parts = [];
@@ -60,6 +80,11 @@ function splitJoinedChords(text) {
  * bar lines, repeat marks and stray punctuation. Lower-case chords ("c") are accepted
  * only alongside proper ones, and are capitalised.
  */
+/** A line of bars, "| C | G7 C | % |", optionally with a repeat "(x2)" */
+function isBarLine(line) {
+  return /^\s*(\[\[[^\]]*\]\]\s*)?\|.*\|\s*(\(x\d+\))?\s*$/i.test(String(line || ''));
+}
+
 function analyseLine(line) {
   const text = String(line || '');
   if (!text.trim() || /[[\]{}]/.test(text) || /^--(START|END) MUSIC--/.test(text.trim()) || /^```/.test(text.trim())) {
@@ -69,7 +94,11 @@ function analyseLine(line) {
   let strict = 0;
   for (const token of tokens(text)) {
     const bare = stripParens(token.text);
-    if (CHORD_RE.test(bare)) {
+    const marked = markedChords(bare);
+    if (marked) {
+      strict += 1;
+      marked.forEach((name) => chords.push({ name, column: token.start }));
+    } else if (CHORD_RE.test(bare)) {
       strict += 1;
       chords.push({ name: bare, column: token.start });
     } else if (splitJoinedChords(bare)) {
@@ -105,7 +134,8 @@ function spacingKept(chordLine, chords, lyric) {
 function insertAtColumns(lyric, chords) {
   let text = lyric.replace(/\s+$/, '');
   const beyond = chords.filter((c) => c.column >= text.length);
-  const within = chords.filter((c) => c.column < text.length).sort((a, b) => b.column - a.column);
+  // right to left; chords at the same place go in last-first, so they read in order
+  const within = chords.map((c, i) => ({ ...c, i })).filter((c) => c.column < text.length).sort((a, b) => b.column - a.column || b.i - a.i);
   for (const chord of within) {
     text = `${text.slice(0, chord.column)}[${chord.name}]${text.slice(chord.column)}`;
   }
@@ -127,6 +157,56 @@ function spreadOverWords(lyric, chords) {
   placements.sort((a, b) => b.column - a.column || b.order - a.order);
   for (const p of placements) out = `${out.slice(0, p.column)}[${p.name}]${out.slice(p.column)}`;
   return out;
+}
+
+// 4.36: a words template. Each letter of the words is a dot, and the chords sit in brackets at
+// their letter: "[Dm:2]·······, [F:1][G:1]····". With the words pasted on the line below, Tidy
+// fills in the dots, so the chords land on their syllables however long the chords are written.
+const TEMPLATE_RE = /^[\s·]*(?:\[[^\]\n]+\][\s·]*)*$/;
+function isTemplateLine(line) {
+  const text = String(line || '');
+  return text.includes('·') && /\[/.test(text) && TEMPLATE_RE.test(text);
+}
+
+/** Template + its words -> the words with the template's chords in them */
+function fillTemplate(template, lyric) {
+  // where each chord is: [word, letter], and how long each template word is
+  const lengths = [];
+  const marks = [];
+  let word = -1;
+  let letter = 0;
+  let inWord = false;
+  const re = /\[[^\]]+\]|·|\s/g;
+  let m;
+  while ((m = re.exec(template))) {
+    const t = m[0];
+    if (t === '·') {
+      if (!inWord) { word += 1; letter = 0; lengths[word] = 0; inWord = true; }
+      lengths[word] += 1;
+      letter += 1;
+    } else if (/^\s$/.test(t)) {
+      inWord = false;
+    } else {
+      // a chord: in the word it's in, or (between words) at the start of the next one
+      marks.push(inWord ? { word, letter, chord: t } : { word: word + 1, letter: 0, chord: t });
+    }
+  }
+  const words = String(lyric || '').trim().split(/\s+/).filter(Boolean);
+  const inserts = words.map(() => []);
+  const after = [];
+  for (const k of marks) {
+    if (k.word >= words.length) { after.push(k.chord); continue; }
+    const len = lengths[k.word] || 1;
+    const at = words[k.word].length === len ? k.letter : Math.round((k.letter * words[k.word].length) / len);
+    inserts[k.word].push({ at: Math.min(at, words[k.word].length), chord: k.chord });
+  }
+  const out = words.map((w, i) => {
+    let text = '';
+    let pos = 0;
+    for (const { at, chord } of inserts[i]) { text += w.slice(pos, at) + chord; pos = at; }
+    return text + w.slice(pos);
+  }).join(' ');
+  return after.length ? `${out} ${after.join('')}` : out;
 }
 
 function titleCase(text) {
@@ -242,8 +322,17 @@ function convertChordSheet(input) {
       }
     }
 
+    // 4.36: a words template with its words under it
+    if (isTemplateLine(line) && isWordsLine(lines[i + 1])) {
+      out.push(fillTemplate(line, lines[i + 1]));
+      report.merged += 1;
+      i += 1;
+      continue;
+    }
+
     const analysis = analyseLine(line);
-    if (!analysis.isChordLine) {
+    // 4.36: a bar line, "| C | G7 | (x2)", is already ukemusic's format: kept as it is, never merged
+    if (!analysis.isChordLine || isBarLine(line)) {
       out.push(line);
       continue;
     }
@@ -251,6 +340,7 @@ function convertChordSheet(input) {
     const next = lines[i + 1];
     const nextIsLyric = next !== undefined && next.trim() !== ''
       && !analyseLine(next).isChordLine
+      && !isBarLine(next)
       && !/^\s*(\[|\{|--(START|END) MUSIC--|```)/.test(next)
       && !SECTION_RE.test(next);
 
@@ -287,6 +377,12 @@ function convertChordSheet(input) {
   return { text: out.join('\n'), report };
 }
 
+/** A line of words (no chords, not a heading or a directive) */
+function isWordsLine(line) {
+  return line !== undefined && line.trim() !== '' && !analyseLine(line).isChordLine && !isBarLine(line) && !isTemplateLine(line)
+    && !/^\s*(\[|\{|--(START|END) MUSIC--|```)/.test(line) && !SECTION_RE.test(line);
+}
+
 /** Line numbers (1-based) of chord-only lines in a song, inside the music section if delimited. */
 function findChordLines(text, { useDelimiters = true } = {}) {
   const lines = String(text || '').replace(/\r\n?/g, '\n').split('\n');
@@ -312,9 +408,11 @@ function findChordLines(text, { useDelimiters = true } = {}) {
       inTab = true;
       continue;
     }
-    if (isChordLine(lines[i])) found.push(i + 1);
+    if (isChordLine(lines[i]) && !isBarLine(lines[i])) found.push(i + 1);
+    else if (isTemplateLine(lines[i]) && isWordsLine(lines[i + 1])) found.push(i + 1); // 4.36: words to fill in
   }
   return found;
 }
 
-module.exports = { analyseLine, isChordLine, convertChordSheet, findChordLines };
+module.exports = {
+  isBarLine, isTemplateLine, fillTemplate, analyseLine, isChordLine, convertChordSheet, findChordLines };

@@ -321,9 +321,12 @@ function buildSchedule(irNodes, options = {}) {
     const notes = voicings.get(slot.chord).map((midi) => midi + capo);
     // The pattern is spread over a whole bar; a shorter chord plays its first strokes
     // (every chord starts the pattern afresh: a 2-beat chord with D-DU-UDU plays D-DU)
-    const steps = patternSteps(slot.pattern).filter((_, i, all) => i === 0 || i * (barLength / all.length) < length - EPS);
+    // Marked strums ([C↓↓], [Dm↓↓:2]) are spread over the chord's own length, not the bar (4.36:
+    // [Dm↓↓:2] played one strum, the second fell on beat 3 and was cut)
+    const spreadOver = slot.stop && slot.pattern.replace(/-/g, '').length > 1 ? length : barLength;
+    const steps = patternSteps(slot.pattern).filter((_, i, all) => i === 0 || i * (spreadOver / all.length) < length - EPS);
     const allSteps = patternSteps(slot.pattern).length;
-    const step = barLength / allSteps;
+    const step = spreadOver / allSteps;
     const first = 0;
     const accented = steps.some((s) => s.accent);
     // Swing: strokes come in pairs (eighths in 4/4, or sixteenths), and the second of each pair

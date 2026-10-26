@@ -184,6 +184,7 @@ function gridNodes(bars, line, createNode, start = 0) {
         parsedPrev.forEach((t, part) => {
           const node = { ...createNode('chord', t.name, line, offset + part, []), grid: true, gridBar, part };
           if (t.noChord) node.noChord = true;
+          if (t.marks) { node.marks = t.marks; node.strokes = t.strokes; node.stopped = true; }
           if (t.beats) node.beats = t.beats;
           else if (usedPrev) node.restOf = { used: usedPrev, count: openPrev };
           else node.share = 1 / previous.length;
@@ -203,6 +204,7 @@ function gridNodes(bars, line, createNode, start = 0) {
       const t = parsed[part];
       const node = { ...createNode('chord', t.name, line, offset, []), grid: true, gridBar };
       if (t.noChord) node.noChord = true;
+      if (t.marks) { node.marks = t.marks; node.strokes = t.strokes; node.stopped = true; } // 4.36: "| Dm↓↓:2 F↓ G↓ |"
       if (t.beats) node.beats = t.beats;
       else if (used && tokens.length > 1) node.restOf = { used, count: open };
       else if (tokens.length > 1) node.share = 1 / tokens.length;
