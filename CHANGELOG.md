@@ -1,5 +1,98 @@
 # Changelog
 
+## v4.42.0
+
+### Learn in the web player
+The web player has a **Learn** button beside Karaoke, with the same analysis as the desktop app:
+- **From memory:** karaoke with the chords fading: each part's chords the first time it comes and a `?` after that, then numbers only, then none. Tap a `?` to see the chord; when you close, it says which ones you looked at. The chord shapes are hidden so they don't give it away.
+- **Next chord?:** the quiz on the song's changes, with each answer to hear first.
+- **Learn sheet:** shown in the player, in the key and capo you're using, to print (or Save as PDF) or download as a web page.
+- **Chord patterns** and the **circle of fifths**, to read.
+- On a phone, the play bar puts its buttons on one row and the chord now and the tempo below (with Learn added, they no longer fitted).
+
+Trouble spots, exporting learn sheets and the Exports tab stay in the desktop app: the web player plays songs rather than keeping files.
+
+## v4.41.0
+
+### Learn sheets, checked against eight songs
+We made learn sheets for eight songs (four traditional, four from a songbook) and checked every part against the song. These are the fixes.
+
+**The key**
+- **A riff song's key:** the guess also goes by where the song's parts start. A song that starts most of its parts on one chord, starts on it and plays it as much as any is at home there, even when its chords fit another scale better (a funk riff on Dm, F and G is in D minor, not C major). Used everywhere the app guesses a key: the status bar, Info, the library, Guess the key (which now says why), the web player, Learn and Chord patterns.
+- The status bar says 6/8 for a song in 6/8 (it said 6/4), and **This song → Time** has 6/8 and 2/4 (a 6/8 song showed a blank time there, and 6/8 couldn't be chosen).
+
+**Major and minor keys**
+- **What each chord does** depends on the kind of key: in C, A major "leads to two (ii)" and E7 "leads to the sad six"; in A minor, F is "away, warm" and D major is "a brighter four, borrowed (Dorian)". Fm in C is "the sad four, borrowed from the minor key".
+- **A minor key's own five** (E or E7 in A minor) is family, the strongest way home, not "from outside it". The chords are listed in the right order for the kind of key.
+- **Circle notes go by the numbers first:** "five to one", "four to one, the Amen sound" (only for IV to I; F → Am in A minor used to get it), "from home out to five". "Down a fifth" only for moves round the same ring.
+- **Chords from outside the key say what they are:** "Fm: the sad four (iv), borrowed from C minor", "D7: the five of G (II7): it leads to G" (or "here used as a colour on the way somewhere else" when the song doesn't go there).
+
+**Parts and words**
+- The chord map names a part as the route does: "Chorus and Verse" when they share the chords (it said "Verse ×5, new words each time" for a song whose chorus repeats). The words say **the same**, **mostly the same**, **new, with some coming back**, or **new each time**; a part with no words (an intro) doesn't count.
+- The first verse sung again at the end isn't called a chorus; the summary says "The first verse comes back at the end."
+- A part made of two others says so: "= the start of B, then A".
+- When the whole song is one chord pattern: "One chord pattern for the whole song: learn it once, then it's the words."
+
+**Patterns**
+- New: **Five of five (II7–V7–I)**, D7 G7 C, the old-time and music-hall favourite.
+- Patterns are numbered in the order they come in the song; the same loop isn't marked twice (Four-chord pop and Sad four-chord); a short pattern isn't found round the end of a part ("C G7 | C").
+
+**Documentation**
+- A short paper on how Learn works out a song, where each idea comes from and how far to trust it: `docs/explanation/learning-a-song.md`. A shorter version is on the website as **How Learn works**, and the website's front page now has a Learn section.
+
+**Wording and layout**
+- Finger tips: "put your index finger across the G C E strings" (it said "on the across the").
+- Chord diagrams that reach the 4th fret line up with the rest.
+
+## v4.40.5
+- **The Exports tab lists the learn sheets**, under *Learn sheets*: look at them there, open them, and see "old" on one made before the song last changed. **Delete all** and **Delete old ones** include them; your trouble spots are never deleted.
+
+## v4.40.4
+- **Learn sheets from Export:** Export → More formats has **Learn sheet (PDF and web page)**. Tick it and Export makes the song's learn sheet too, in its learn folder; with *every saved key* ticked, one for each key. **Library → Export every song…** does it for the whole library in one go.
+
+## v4.40.3
+
+### The learn sheet takes the best of Chord patterns
+- It starts with **the chords and how they feel**: each shape with its number and what it does ("home", "tension (wants to go home)", "the sad home", "rock / Celtic colour"), home first, then IV and V, then the minors, then the ones from outside the key.
+- **The song's route** shows the first words of each part, as Chord patterns does, and under it how much there is to learn: how many parts, which to learn first, and which parts are only bits of others.
+- The separate "Patterns in it" list is gone when the chord map marks the patterns where they happen.
+- Fixed: the words at the start of each chord-map row didn't appear on sheets made in the app.
+- A home chord with a seventh (I7, like C7 in C) is "home, leaning on to four", not just "home".
+
+## v4.40.2
+
+### The learn sheet's chord map: words, patterns where they are, and what's really new
+- **The words as cues:** each row of the chord map starts with the first words of its line ("Baby love, my baby love…"), so you can find your place and tie the chords to the singing. A part that comes more than once says whether it has **the same words each time** (learn them once) or **new words each time**.
+- **Named patterns where they happen:** the bars of a familiar progression are shaded and numbered ①②, with a line under the part: "① Circle: Em Am D G (back to the start), vi ii V I, in the line “tell me, what did I do…”. Each chord a fourth up from the last, round to home." Each pattern is explained the first time and just named after that, so you learn the names as you go.
+- **What's really new:** a part that's only the start of another says so ("Refrain = the start of C"), a last verse that repeats its opening says "C, then the start of C again", and a one-chord bit says "one chord". "Learn first" only picks a part that's really its own.
+- A part heard once uses its name from the song (Baby Love's last verse showed as "Verse 3").
+- **Chord patterns** shows the same: each named pattern with its chords and the line it's in (explained once), "the same words / new words each time", "= the start of C" on a part that's only a bit of another, and a line at the top saying which parts aren't really new.
+
+## v4.40.1
+- Fixed: Learn made its own guess at the key instead of using the one the app shows, and could get it wrong: Baby Love (in G) was called C major, and moved to C it came out as a learn sheet "in F" with the wrong numbers. The learn sheet, the numbers, playing from memory, the circle, the quiz and **Chord patterns** now all use the song's key (Info → Written in, or the app's guess shown in the status bar), moved with the chords. Chord patterns also follows the key you've moved the song to with − and + (it used to show the written chords).
+- **Circle:** turned so the song's home chord is at the top, ringed, with "Key of G" in the middle and the key's chords numbered round it (IV to the left, V to the right, ii vi iii inside). It used to have C at the top whatever the key, a circle with no start.
+- Fixed: the status bar's key ignored the key set in Info → Written in and always showed the guess from the chords.
+
+## v4.40.0
+
+### Learn: understand it, test yourself, fix the hard bits
+- **Circle:** the circle of fifths with the song's chords lit, the key's family shaded and arrows for how the song moves, with plain notes: which chords are outside the family, and each change with its numbers ("G7 → C (V7 → I), 4 times: one step anticlockwise and home").
+- **Next chord?:** a quiz on the song's changes. The words either side and the chord you're on; pick the next from four (each one can be heard first). You hear the real change after you answer, and get a score at the end.
+- **Trouble spots:** the chords you looked at playing from memory, the quiz answers you missed and the lines you mark with **⚑ Trouble here** (or T) in karaoke, kept in the song's learn folder. **Loop it** plays the line round and round, slower and then faster; **Got it ✓** ticks it off. Flagged lines show ⚑ in karaoke.
+- The learn sheet has the circle and your trouble spots.
+- The Learn tab's labels are shorter so it all fits: From memory, Next chord?, Trouble, Shapes, Numbers, Play it, Circle, Patterns.
+
+## v4.39.0
+
+### Learn: get a song into your head and your fingers
+A new **Learn** tab, from the research on how musicians memorise: recalling a song beats reading it again, and fingers, ears and understanding all help.
+- **Play from memory:** karaoke with the chords fading, in three steps: the chords the first time each part comes and then `?`, the chords as numbers only, or none. Click a `?` to see a chord; when you close, it lists the ones you needed. The chord shapes and the strip don't give the chords away.
+- **The changes…:** every change in the song, the hardest first (moving a finger to another string is harder than sliding it; a finger that stays put helps), with what each finger does, both shapes, and **Practise** or **One minute** to drill that change in Free Practice. **Drill the shapes** runs the shapes drill with the song's chords.
+- **Numbers on the sheet:** the preview shows the chords as numbers in the key (I IV V7…).
+- **Play in that key:** from memory in another key of the same kind (major or minor), chords as numbers, with "I = G · IV = C · V7 = D7" at the top.
+- **Learn sheet:** a PDF and a web page in the song's new **learn** folder (beside exports): key, time, tempo, strum and first chord; the song's parts in order; a chord map with each part once, bar by bar, a row per line, chords and numbers; the chord shapes; the five changes to practise with finger tips; the patterns in it; how to learn it; and a box for trouble spots.
+- The learn folder isn't copied with a song to another library (it's made again from the song), and "Learn" can't be a song's title.
+
 ## v4.38.0
 
 ### Chords in the words, with their timing

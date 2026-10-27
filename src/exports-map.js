@@ -16,10 +16,14 @@ const kindOf = (name) => {
 };
 
 /** Folders in the order they're shown: the song, its saved keys, Stage, Lyrics, anything else */
+// 4.40.5: learn sheets (in the song's learn folder) are listed with the exports
+const LEARN_DIR = 'learn';
+const LEARN_GROUP = 'Learn sheets';
 function groupRank(name) {
   if (name === 'Song') return 0;
   if (name === 'Stage') return 2;
   if (name === 'Lyrics') return 3;
+  if (name === LEARN_GROUP) return 4;
   return 1;
 }
 
@@ -58,7 +62,7 @@ function recordExports(folder, entries, at = Date.now()) {
  *  "Rainbow (lyrics).txt", "Rainbow (capo 2)…" — but not "Rainbow (Live)_uke.pdf" */
 function namedFor(name, title) {
   const t = String(title).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return new RegExp(`^${t}(_|\\.| \\((lyrics|[+-]\\d+|capo|stage)\\b)`, 'i').test(name);
+  return new RegExp(`^${t}(_|\\.| \\((lyrics|learn|[+-]\\d+|capo|stage)\\b)`, 'i').test(name);
 }
 /** The song's title, from its song file (else its folder's name) */
 function songTitle(folder) {
@@ -118,6 +122,24 @@ function listExports(folder, current = {}) {
       if (files.length) groups.push({ name: entry.name, files });
     }
   }
+  // the learn sheets (not trouble-spots.json, which is yours)
+  const learnDir = path.join(folder, LEARN_DIR);
+  if (fs.existsSync(learnDir)) {
+    const files = fs.readdirSync(learnDir, { withFileTypes: true })
+      .filter((f) => f.isFile() && /\.(pdf|html)$/i.test(f.name))
+      .map((f) => {
+        const full = path.join(learnDir, f.name);
+        const st = fs.statSync(full);
+        const file = { name: f.name, rel: `${LEARN_DIR}/${f.name}`, path: full, size: st.size, modified: st.mtimeMs, kind: kindOf(f.name), made: null, learn: true };
+        // only the song and its name: a learn sheet isn't in the export log
+        file.reason = staleReason(file, null, changed, title, {});
+        file.outOfDate = Boolean(file.reason);
+        file.why = REASONS[file.reason] || '';
+        return file;
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
+    if (files.length) groups.push({ name: LEARN_GROUP, files });
+  }
   groups.sort((a, b) => groupRank(a.name) - groupRank(b.name) || a.name.localeCompare(b.name));
   const all = groups.flatMap((g) => g.files);
   return { songChanged: changed, groups, count: all.length, outOfDate: all.filter((f) => f.outOfDate).length };
@@ -135,4 +157,4 @@ function madeText(made) {
   return bits.join(' · ');
 }
 
-module.exports = { namedFor, songTitle, staleReason, REASONS, EXPORTS_DIR, LOG_FILE, listExports, readLog, recordExports, madeText, kindOf, songChanged };
+module.exports = { LEARN_DIR, LEARN_GROUP, namedFor, songTitle, staleReason, REASONS, EXPORTS_DIR, LOG_FILE, listExports, readLog, recordExports, madeText, kindOf, songChanged };

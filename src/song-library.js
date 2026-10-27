@@ -20,6 +20,7 @@ const SONG_SUFFIX = '-song.txt';
 const SONG_SETTINGS_FILE = 'song.ini';
 const NOTES_FILE = 'notes.txt';
 const EXPORTS_DIR = 'exports';
+const LEARN_DIR = 'learn'; // 4.39: the song's learn sheet
 const MAX_TITLE_LENGTH = 100;
 
 // What song.ini holds:
@@ -222,7 +223,7 @@ function validateSongTitle(rawTitle, songsFolder) {
   if (ILLEGAL_CHARS.test(title)) return { ok: false, error: 'Titles can\'t contain any of these characters: < > : " / \\ | ? *' };
   if (WINDOWS_RESERVED.test(title)) return { ok: false, error: `"${title}" is a name Windows reserves — please choose another.` };
   if (title.length > MAX_TITLE_LENGTH) return { ok: false, error: `Titles can be at most ${MAX_TITLE_LENGTH} characters.` };
-  if ([EXPORTS_DIR, 'setlists', 'archived songs', '.history'].includes(title.toLowerCase())) return { ok: false, error: 'Please choose another title.' };
+  if ([EXPORTS_DIR, LEARN_DIR, 'setlists', 'archived songs', '.history'].includes(title.toLowerCase())) return { ok: false, error: 'Please choose another title.' };
   if (songsFolder) {
     const clash = listFolderNames(songsFolder).find((name) => name.toLowerCase() === title.toLowerCase());
     if (clash) return { ok: false, error: `There's already a song folder called "${clash}".` };
@@ -307,6 +308,11 @@ function renameSong(folder, rawTitle) {
 function songKeyName(settings, content) {
   const set = getPath(settings || {}, 'song.key');
   if (set && set !== 'auto') return String(set);
+  // 4.41: the same guess as the app (it also goes by where the song's parts start)
+  try {
+    const k = require('./progressions').songKeyGuess(require('./parser')(String(content || '')));
+    if (k) return k.name;
+  } catch (_e) { /* fall back to the chords alone */ }
   return detectKey(chordsInText(content))?.name || '';
 }
 
@@ -514,6 +520,23 @@ function exportFileName(title, { instrument = 'soprano', transpose = 0, capo = 0
   return `${title}${tags.length ? ` (${tags.join(', ')})` : ''}${code}.${extension}`;
 }
 
+/** 4.39: write the learn sheet into the song's learn/ folder. Content may be text or binary (PDF). */
+function writeLearn(folder, fileName, content) {
+  if (ILLEGAL_CHARS.test(fileName)) throw new Error('Invalid file name: ' + fileName);
+  const learnFolder = path.join(folder, LEARN_DIR);
+  fs.mkdirSync(learnFolder, { recursive: true });
+  const target = path.join(learnFolder, fileName);
+  if (content instanceof Uint8Array) fs.writeFileSync(target, content);
+  else fs.writeFileSync(target, String(content || ''), 'utf8');
+  return target;
+}
+
+/** 4.40: read a text file from the song's learn/ folder ('' if there isn't one) */
+function readLearn(folder, fileName) {
+  if (ILLEGAL_CHARS.test(fileName)) throw new Error('Invalid file name: ' + fileName);
+  try { return fs.readFileSync(path.join(folder, LEARN_DIR, fileName), 'utf8'); } catch (_e) { return ''; }
+}
+
 /** Write into exports/<subfolder>/<fileName>. Content may be text or binary (PDF). */
 function writeExport(folder, fileName, content, subfolder = '') {
   if (ILLEGAL_CHARS.test(fileName)) throw new Error('Invalid export file name: ' + fileName);
@@ -649,6 +672,9 @@ function suggestTitleFromFile(filePath) {
 }
 
 module.exports = {
+  writeLearn,
+  readLearn,
+  LEARN_DIR,
   HISTORY_DIR,
   songHistory,
   renameBusy,

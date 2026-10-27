@@ -17,16 +17,19 @@ const REPO = (() => {
 const PAGES = [
   { md: 'WRITING.md', html: 'guide.html', title: 'How to write songs', nav: 'Song guide', blurb: 'Everything you can type in a ukemusic song, with examples. The same guide is in the app: Write → How to write.', ownIntro: true },
   { md: 'CHORDPRO.md', html: 'chordpro.html', title: 'ukemusic and ChordPro', nav: 'ChordPro', blurb: 'What ukemusic does with ChordPro files, what it writes, and what it adds.' },
-  { md: 'CHANGELOG.md', html: 'changes.html', title: "What's new", nav: "What's new", blurb: 'The changes in each version, newest first.' }
+  { md: 'CHANGELOG.md', html: 'changes.html', title: "What's new", nav: "What's new", blurb: 'The changes in each version, newest first.' },
+  { md: 'docs/explanation/how-learn-works.md', html: 'learn.html', title: 'How Learn works', nav: 'Learn', blurb: 'What the Learn tab works out from a song, how it helps you practise, and how far to trust it.' }
 ];
 const BY_MD = Object.fromEntries(PAGES.map((p) => [p.md, p.html]));
 
-/** A link in a document: the other documents' pages, the rest of the repository on GitHub */
-function href(url) {
+/** A link in a document: the other documents' pages, the rest of the repository on GitHub.
+ *  base: the folder of the document the link is in (a link is relative to it, as on GitHub) */
+function href(url, base = '') {
   if (/^(https?:|mailto:|#)/.test(url)) return url;
-  const [file, hash] = url.split('#');
+  const [rel, hash] = url.split('#');
+  const file = base ? path.posix.normalize(path.posix.join(base, rel)) : rel;
   if (BY_MD[file]) return BY_MD[file] + (hash ? `#guide-${hash}` : '');
-  return `${REPO}/blob/main/${file}${hash ? `#${hash}` : ''}`;
+  return `${REPO}/blob/main/${encodeURI(file)}${hash ? `#${hash}` : ''}`;
 }
 
 const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -117,7 +120,8 @@ function build() {
   const siteCss = index.slice(index.indexOf('<style>') + 7, index.indexOf('</style>'));
   for (const p of PAGES) {
     const md = fs.readFileSync(path.join(APP, p.md), 'utf8');
-    const { html, sections } = markdownToHtml(md, { href, nested: true });
+    const base = path.posix.dirname(p.md) === '.' ? '' : path.posix.dirname(p.md);
+    const { html, sections } = markdownToHtml(md, { href: (u) => href(u, base), nested: true });
     fs.writeFileSync(path.join(SITE, p.html), page(p, html, sections, siteCss));
   }
   return PAGES.map((p) => p.html);

@@ -47,7 +47,7 @@ function parseKey(name) {
  * minor if the song ends (or starts, without ending on the major) on the vi chord.
  * Returns [{ key, score, inKey: [names], outside: [names], starts, ends }] best first.
  */
-function rankKeys(chordNames) {
+function rankKeys(chordNames, { starts = [] } = {}) {
   const chords = (chordNames || []).map((name) => ({ name, parsed: parseChordName(name) }))
     .filter((c) => c.parsed && c.parsed.rootIndex !== undefined);
   if (!chords.length) return [];
@@ -84,6 +84,36 @@ function rankKeys(chordNames) {
     const key = minor ? makeKey(tonic + 9, 'minor') : makeKey(tonic, 'major');
     const home = (c) => (minor ? minorHome(c) : majorHome(c));
     results.push({ key, score, inKey: [...inKey], outside: [...outside], starts: home(first), ends: home(last), first: first.name, last: last.name });
+  }
+  // 4.41: a song that starts and ends on the same chord, and plays it more than any other, is
+  // at home on it, whatever fits the scale best (Higher Ground lives on Dm, F and G: its chords
+  // fit C major best, but it's in D minor). Its key goes to the top.
+  const counts = new Map();
+  for (const c of chords) counts.set(c.parsed.rootIndex * 2 + (quality(c.parsed.canonicalSuffix) === 'min' ? 1 : 0), (counts.get(c.parsed.rootIndex * 2 + (quality(c.parsed.canonicalSuffix) === 'min' ? 1 : 0)) || 0) + 1);
+  const firstQ = quality(first.parsed.canonicalSuffix);
+  const lastQ = quality(last.parsed.canonicalSuffix);
+  const homeId = first.parsed.rootIndex * 2 + (firstQ === 'min' ? 1 : 0);
+  const mostId = [...counts.entries()].sort((a, b) => b[1] - a[1])[0][0];
+  // …or, from the song's parts (starts: the first chord of each part), the chord most parts
+  // start on, when the song starts on it too and it's played about as much as any (a riff
+  // song that ends on the riff's last chord: Higher Ground starts its parts on Dm, ends on G)
+  const idOf = (name) => { const p = parseChordName(name); return p && p.rootIndex !== undefined ? p.rootIndex * 2 + (quality(p.canonicalSuffix) === 'min' ? 1 : 0) : null; };
+  const startCounts = new Map();
+  for (const n of starts) { const id = idOf(n); if (id !== null) startCounts.set(id, (startCounts.get(id) || 0) + 1); }
+  const topStart = [...startCounts.entries()].sort((a, b) => b[1] - a[1])[0];
+  const mostCount = Math.max(...counts.values());
+  const partsHome = starts.length >= 3 && topStart && topStart[0] === homeId && topStart[1] * 2 > starts.length && (counts.get(homeId) || 0) >= mostCount * 0.85;
+  const sameEnds = first.parsed.rootIndex === last.parsed.rootIndex && firstQ === lastQ && homeId === mostId;
+  if ((sameEnds || partsHome) && (firstQ === 'maj' || firstQ === 'min') && chords.length >= 4) {
+    const home = makeKey(first.parsed.rootIndex, firstQ === 'min' ? 'minor' : 'major');
+    const top = Math.max(...results.map((r) => r.score));
+    const hit = results.find((r) => r.key.name === home.name);
+    const by = partsHome && !sameEnds ? 'parts' : 'ends';
+    if (hit && hit.score < top) { hit.score = top + 0.5; hit.homeBy = by; }
+    else if (!hit) {
+      const near = results.find((r) => r.key.tonic === (firstQ === 'min' ? (home.tonic + 3) % 12 : home.tonic)) || results[0];
+      results.push({ ...near, key: home, score: top + 0.5, starts: true, ends: firstQ === lastQ && first.parsed.rootIndex === last.parsed.rootIndex, homeBy: by });
+    }
   }
   // Highest score first; ties keep the lower tonic, as detectKey always did
   return results.map((r, i) => ({ ...r, order: i })).sort((a, b) => b.score - a.score || a.order - b.order)

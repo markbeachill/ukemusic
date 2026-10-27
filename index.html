@@ -360,6 +360,7 @@
       .pt-content { display: grid; gap: 4px; min-width: 0; }
       .pt-letter { width: 38px; height: 38px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 18px; }
       .pt-where { font-size: 13px; color: var(--muted); }
+      .pt-where .pt-like { color: var(--accent); font-weight: 600; }
       .pt-lines { font: 700 17px Georgia, serif; line-height: 1.5; }
       .pt-chordlines { font: 13px Consolas, "Courier New", monospace; color: var(--muted); }
       .pt-named { font-size: 13.5px; }
@@ -1468,6 +1469,40 @@
       [data-ribbon-panel="view"] .rib-group { padding: 0 8px; }
       .rib-fields .rib-button-inline { min-width: 60px; padding: 4px 6px; }
       .about-dialog { width: min(640px, 94vw); max-height: 86vh; }
+      /* 4.39: Learn */
+      .learn-changes-dialog { width: min(760px, 94vw); max-height: 88vh; }
+      .learn-changes { display: grid; gap: 10px; max-height: 62vh; overflow-y: auto; margin: 10px 0; }
+      .learn-change { display: grid; grid-template-columns: auto 1fr auto; gap: 6px 14px; align-items: center; border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; }
+      .learn-change .lc-shapes { display: flex; align-items: center; gap: 4px; --diagram-size: 58px; --rhythm-color: #555; --chord-color: #b22222; --text-color: #111; }
+      .learn-change .lc-shapes .chord-diagram svg { width: 58px; height: auto; }
+      .learn-change .lc-arrow { font-size: 20px; color: var(--muted); }
+      .learn-change .lc-title { font-weight: 800; }
+      .learn-change .lc-title .lc-count { font-weight: 400; color: var(--muted); }
+      .learn-change .lc-tip { font-size: 13px; line-height: 1.4; }
+      .learn-change .lc-actions { display: grid; gap: 4px; }
+      .learn-change.trouble-row { grid-template-columns: minmax(0, 1fr) auto; }
+      .learn-change.trouble-row .lc-actions { grid-auto-flow: column; }
+      .k-chord.k-hidden { color: var(--muted, #888); cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+      .k-chord.k-revealed { color: #c2410c; }
+      .k-chord.k-number { font-style: normal; }
+      .k-line.k-trouble::before { content: '⚑'; position: absolute; margin-left: -1.4em; color: #c2410c; font-size: 0.8em; }
+      .learn-circle-dialog { width: min(860px, 96vw); }
+      .learn-circle { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: start; }
+      .learn-circle svg { width: min(440px, 80vw); height: auto; }
+      .learn-circle ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; font-size: 14px; line-height: 1.45; }
+      @media (max-width: 760px) { .learn-circle { grid-template-columns: 1fr; } }
+      .learn-quiz-dialog { width: min(640px, 94vw); }
+      .lq-words { font-size: 22px; line-height: 1.5; margin: 6px 0 4px; }
+      .lq-words .lq-gap { display: inline-block; min-width: 2.4em; margin: 0 4px; padding: 0 6px; text-align: center; font-weight: 800; color: #b22222; border-bottom: 3px solid #b22222; }
+      .lq-now { color: var(--muted); margin: 6px 0 10px; }
+      .lq-now b { color: #b22222; }
+      .lq-options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+      .lq-options .lq-opt { display: grid; gap: 4px; }
+      .lq-options .lq-pick { font-size: 22px; font-weight: 800; padding: 10px 4px; }
+      .lq-options .lq-pick.right { background: #d9f2e3; border-color: #2e8b57; }
+      .lq-options .lq-pick.wrong { background: #fde2e2; border-color: #b22222; }
+      .lq-options .lq-hear { font-size: 12px; padding: 2px 4px; }
+      .lq-result { min-height: 1.4em; font-weight: 600; }
       .about-body { font-size: 14px; line-height: 1.5; }
       .about-name { font-size: 24px; }
       .about-version { color: var(--muted); font-size: 14px; }
@@ -1746,6 +1781,7 @@
             <button id="ribbonTabView" class="ribbon-tab" type="button" role="tab" data-ribbon="view" title="How the song looks: chord diagrams, text size, strum patterns, layout">View</button>
             <button id="ribbonTabExport" class="ribbon-tab" type="button" role="tab" data-ribbon="export" title="PDFs, web pages, lyrics and ChordPro files, into the song's exports folder">Export</button>
             <button id="ribbonTabPlay" class="ribbon-tab" type="button" role="tab" data-ribbon="play" title="Play, stop, karaoke, tempo and how playback sounds">Play</button>
+            <button id="ribbonTabLearn" class="ribbon-tab" type="button" role="tab" data-ribbon="learn" title="Learn the song: play it from memory, practise its changes, think in numbers, and make a learn sheet">Learn</button>
             <button id="ribbonTabSettings" class="ribbon-tab" type="button" role="tab" data-ribbon="settings" title="Settings for this song and the defaults for all songs">Settings</button>
             <span class="ribbon-end">
               <button id="ribbonHide" class="ribbon-close ribbon-hide" type="button" title="Hide the tools, for more room (click any tab, or this again, to show them)" aria-label="Hide the tools"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -1888,6 +1924,8 @@
                   <select id="beatsSelect" data-config-path="song.beats_per_bar" data-scope="song" title="Beats in each bar. Saved with the song.">
                     <option value="4">4/4</option>
                     <option value="3">3/4</option>
+                    <option value="2">2/4</option>
+                    <option value="6">6/8</option>
                   </select>
                 </div>
                 <div class="rib-field" title="The strum played where the song has no {pattern} of its own. Saved with the song; Default follows Settings → All songs.">
@@ -2147,6 +2185,52 @@
                 </details>
               </div>
               <span class="rib-label">How it plays</span>
+            </div>
+          </div>
+
+          <!-- 4.39: Learn (src/learn.js) -->
+          <div class="ribbon-panel" data-ribbon-panel="learn" role="tabpanel" hidden>
+            <div class="rib-group">
+              <div class="rib-items rib-fields">
+                <div class="rib-field">
+                  <label for="learnStage">Chords shown</label>
+                  <select id="learnStage" title="How much help: the chords the first time each part comes, then from memory; the numbers only; or no chords at all">
+                    <option value="repeats">First time only</option>
+                    <option value="numbers">As numbers only</option>
+                    <option value="none">None</option>
+                  </select>
+                </div>
+                <button id="learnPlayButton" class="rib-button" type="button" data-icon="karaoke" title="Karaoke with the chords fading: play along from memory. Click a hidden chord (?) to see it; the ones you needed go in your trouble spots">From memory</button>
+                <button id="learnQuizButton" class="rib-button" type="button" data-icon="quiz" title="What comes next? The song's chord changes one at a time: pick the next chord, and hear each answer">Next chord?</button>
+                <button id="learnTroubleButton" class="rib-button" type="button" data-icon="flag" title="Trouble spots: where you stumble, from playing from memory, the quiz, or ⚑ Trouble here in karaoke. Loop each one slowly">Trouble</button>
+              </div>
+              <span class="rib-label">Remember it</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <button id="learnChangesButton" class="rib-button" type="button" data-icon="convert" title="The song's chord changes, the hardest first, with what each finger does, and practice for each">The changes…</button>
+                <button id="learnDrillButton" class="rib-button" type="button" data-icon="sliders" title="Free Practice's shapes drill, with this song's chords">Shapes</button>
+              </div>
+              <span class="rib-label">Fingers</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items rib-fields">
+                <label class="rib-check" title="The chords on the sheet as numbers in the key: I is home, IV and V are away (the chord diagrams are hidden while the numbers show)"><input id="learnNumbers" type="checkbox" /> Numbers</label>
+                <div class="rib-field">
+                  <label for="learnKey">Another key</label>
+                  <select id="learnKey" title="Play it in another key, thinking in numbers"></select>
+                </div>
+                <button id="learnKeyButton" class="rib-button" type="button" data-icon="key" title="Play from memory in the other key: the chords show as numbers, with what each number is in that key">Play it</button>
+              </div>
+              <span class="rib-label">Numbers</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <button id="learnSheetButton" class="rib-button" type="button" data-icon="export" title="One page to learn the song from: the chord map, the chords, the changes to practise and how to learn it. A PDF and a web page in the song's learn folder">Learn sheet</button>
+                <button id="learnCircleButton" class="rib-button" type="button" data-icon="circle" title="The circle of fifths: the song's chords lit, the key's family shaded, and how it moves">Circle</button>
+                <button id="learnPatternsButton" class="rib-button" type="button" data-icon="patterns" title="The song's chords as numbers, the familiar progressions in it, and which parts share them">Patterns</button>
+              </div>
+              <span class="rib-label">Understand it</span>
             </div>
           </div>
 
@@ -2839,10 +2923,14 @@
               <label><input type="checkbox" name="format" value="lyrics_txt" /> Plain text (.txt)</label>
               <label><input type="checkbox" name="format" value="lyrics_html" /> Web page (HTML)</label>
             </fieldset>
+            <fieldset>
+              <legend>To learn from</legend>
+              <label title="The chords and how they feel, the song's parts with their words, the chord map with its patterns, the changes to practise, the circle of fifths and your trouble spots. In the song's learn folder"><input type="checkbox" name="format" value="learn_sheet" /> Learn sheet (PDF and web page)</label>
+            </fieldset>
           </div>
         </details>
         <fieldset>
-          <legend>Key (chord sheets)</legend>
+          <legend>Key (chord sheets and learn sheets)</legend>
           <label><input type="radio" name="exportScope" value="current" /> <span id="exportCurrentLabel">Current key</span></label>
           <label><input type="radio" name="exportScope" value="all" /> <span id="exportAllLabel">Original and every saved version</span></label>
         </fieldset>
@@ -3074,6 +3162,48 @@
           </div>
         </div>
       </form>
+    </dialog>
+
+    <dialog id="learnCircleDialog" class="learn-circle-dialog">
+      <h2>The circle of fifths</h2>
+      <p class="dialog-note">Twelve chords round the outside, each a fifth from the next, and their relative minors inside. It's turned so the song's home chord is at the top: chords next to it belong with it, and music loves to move one step anticlockwise, towards home.</p>
+      <div class="learn-circle"><div id="learnCircleSvg"></div><ul id="learnCircleNotes"></ul></div>
+      <div class="dialog-actions"><span></span><div class="right"><button id="learnCircleClose" class="primary" type="button">Close</button></div></div>
+    </dialog>
+
+    <dialog id="learnQuizDialog" class="learn-quiz-dialog">
+      <h2>What comes next?</h2>
+      <p class="dialog-note" id="learnQuizProgress"></p>
+      <div id="learnQuizBody">
+        <div class="lq-words"><span id="learnQuizBefore"></span><span class="lq-gap">?</span><span id="learnQuizAfter"></span></div>
+        <p class="lq-now">Playing <b id="learnQuizFrom"></b>. Which chord comes next?</p>
+        <div id="learnQuizOptions" class="lq-options"></div>
+        <p id="learnQuizResult" class="lq-result"></p>
+      </div>
+      <div class="dialog-actions">
+        <button id="learnQuizHear" type="button" title="Hear the chord now and the right answer">▶ Hear the change</button>
+        <div class="right"><button id="learnQuizClose" type="button">Stop</button><button id="learnQuizNext" class="primary" type="button" disabled>Next</button></div>
+      </div>
+    </dialog>
+
+    <dialog id="learnTroubleDialog" class="learn-changes-dialog">
+      <h2>Trouble spots</h2>
+      <p class="dialog-note">Where you stumbled: chords you looked at playing from memory, quiz answers you missed, and lines you marked. Loop each one slowly until it's easy, then tick it off.</p>
+      <div id="learnTroubleList" class="learn-changes"></div>
+      <div class="dialog-actions">
+        <button id="learnTroubleClear" type="button">Clear them all</button>
+        <div class="right"><button id="learnTroubleClose" class="primary" type="button">Close</button></div>
+      </div>
+    </dialog>
+
+    <dialog id="learnChangesDialog" class="learn-changes-dialog">
+      <h2>The changes in this song</h2>
+      <p class="dialog-note" id="learnChangesNote">The hardest first. Practise a change on its own until it's smooth, then play the song.</p>
+      <div id="learnChangesList" class="learn-changes"></div>
+      <div class="dialog-actions">
+        <button id="learnChangesDrill" type="button" title="Free Practice's shapes drill, with this song's chords">Drill all the shapes</button>
+        <div class="right"><button id="learnChangesClose" class="primary" type="button">Close</button></div>
+      </div>
     </dialog>
 
     <dialog id="titleDialog">
@@ -3452,6 +3582,7 @@
         <button id="karaokePlay" type="button" title="Play from the start (Space)">▶ Play</button>
         <button id="karaokeRestart" type="button" title="Back to the start (also while it's playing). Or click a line to play from there">⏮ From the start</button>
         <button id="karaokeStop" type="button" title="Stop (Space)">■ Stop</button>
+        <button id="karaokeTrouble" type="button" title="Mark the line playing now as a trouble spot (T)" hidden>⚑ Trouble here</button>
         <button id="karaokeClose" type="button" title="Close (Esc)">Close</button>
       </div>
       <div class="karaoke-main">
@@ -3526,7 +3657,8 @@
             const key = window.ukemusic.keys.parse(chosen);
             if (key) return { ...key, guessed: false };
           }
-          const detected = window.ukemusic.keys.detect(songChordNames());
+          // 4.41: the guess also goes by where the song's parts start (a riff song's home chord)
+          const detected = window.ukemusic.progressions.songKeyGuess(window.ukemusic.parseSong(getEditorValue(), getParserOptions()));
           return detected ? { ...detected, guessed: true } : null;
         }
 
@@ -3580,7 +3712,7 @@
               select.appendChild(option);
             }
           }
-          const detected = window.ukemusic.keys.detect(songChordNames());
+          const detected = window.ukemusic.progressions.songKeyGuess(window.ukemusic.parseSong(getEditorValue(), getParserOptions()));
           select.options[0].textContent = detected
             ? `Auto: from the chords (${window.ukemusic.keys.describe(detected)})`
             : 'Auto: from the chords';
@@ -3933,7 +4065,11 @@
             const ir = window.ukemusic.parseSong(stageLook ? stageText(getEditorValue()) : getEditorValue(), getParserOptions());
             const transposedIr = window.ukemusic.transposeIR(ir, state.transpose - songCapo(), transposeOptions());
             // View → Stage shows the Stage copy as it will print (4.29: in its Stage format)
-            const html = window.ukemusic.renderHTML(transposedIr, stageLook ? stageRenderOptions(renderOptions()) : renderOptions());
+            // 4.39: Learn → Numbers on the sheet: the chords as numbers in the key, no diagrams
+            const numbers = state.learnNumbers && !stageLook;
+            const shownIr = numbers ? window.ukemusic.learn.numberedIR(transposedIr, window.ukemusic.progressions.analyse(transposedIr, { key: learnKey(state.transpose - songCapo()) }).key) : transposedIr;
+            const baseOptions = numbers ? { ...renderOptions(), diagrams: { ...(renderOptions().diagrams || {}), enable: false } } : renderOptions();
+            const html = window.ukemusic.renderHTML(shownIr, stageLook ? stageRenderOptions(baseOptions) : baseOptions);
             if (previewLook() === 'stage' && !state.stageCss) state.stageCss = (await window.ukemusic.stageStyleRead())?.content || '';
             preview.srcdoc = buildPreviewDocument(html, docCss(previewLook() === 'stage', PREVIEW_CSS), undefined, '', docAttrs(undefined, { stage: previewLook() === 'stage' }));
             updateKeySetting();
@@ -4755,6 +4891,15 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             }
           }
 
+          // 4.40.4: learn sheets, in the key(s) chosen, into the song's learn folder
+          if (formats.includes('learn_sheet')) {
+            const shifts = allVersions ? [0, ...getVersions().map((v) => v.semitones)] : [state.transpose];
+            for (const semitones of [...new Set(shifts)]) {
+              const r = await writeLearnSheet(semitones);
+              written.push(`..\\learn\\${r.baseName}.pdf`, `..\\learn\\${r.baseName}.html`);
+            }
+          }
+
           // Lyrics don't change with the key, so they're exported once
           const lyricsName = (ext) => `${state.song.title} (lyrics).${ext}`;
           for (const printStyle of PRINT_STYLES) {
@@ -4854,7 +4999,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             const written = await runExport(choice);
             showToast(
               `Export complete — ${written.length} file${written.length === 1 ? '' : 's'} saved`,
-              { detail: written.length === 1 ? `exports\\${written[0]}` : 'in this song\'s exports folder', action: 'Open folder', onAction: openExports }
+              { detail: written.length === 1 ? `exports\\${written[0]}` : `in this song's exports folder${choice.formats.includes('learn_sheet') ? ' (learn sheets in its learn folder)' : ''}`, action: 'Open folder', onAction: openExports }
             );
           } catch (err) {
             setStatusMessage(`Export failed: ${err.message}`);
@@ -4893,7 +5038,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           }
           await showLibrary();
           showToast(failed.length ? `Exported ${list.length - failed.length} of ${list.length} songs` : `Exported every song (${list.length})`, {
-            detail: failed.length ? `Not done: ${failed.join(', ')} (see Help → Open Log File)` : `${files} files, each in its song's exports folder.`,
+            detail: failed.length ? `Not done: ${failed.join(', ')} (see Help → Open Log File)` : `${files} files, each in its song's exports folder${choice.formats.includes('learn_sheet') ? ' (learn sheets in its learn folder)' : ''}.`,
             error: failed.length > 0
           });
         }
@@ -5816,7 +5961,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             dialog.showModal();
             return;
           }
-          const ranked = window.ukemusic.keys.rank(chords);
+          const ranked = window.ukemusic.keys.rank(chords, { starts: window.ukemusic.progressions.partStarts(window.ukemusic.parseSong(getEditorValue(), getParserOptions())) });
           const best = ranked[0];
           const confidence = window.ukemusic.keys.confidence(ranked);
           nameEl.textContent = window.ukemusic.keys.describe(best.key);
@@ -5831,6 +5976,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           else if (best.ends) say(`It ends on ${home}, the home chord (it starts on ${best.first}).`);
           else if (best.starts) say(`It starts on ${home}, the home chord (it ends on ${best.last}).`);
           else say(`It neither starts nor ends on ${home} (first chord ${best.first}, last ${best.last}), so this is less certain.`);
+          if (best.homeBy === 'parts') say(`Most of its parts start on ${home}, the song starts on it and plays it as much as any chord: that's home, even though the chords fit another key's scale better.`);
           // the relative major/minor uses the same chords
           const relative = best.key.mode === 'major'
             ? window.ukemusic.keys.parse(`${window.ukemusic.keys.transpose(best.key, 9).name.replace(/m$/, '')}m`)
@@ -6532,6 +6678,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
 
         async function playSong(options = {}) {
           const karaoke = options.karaoke === true;
+          // 4.39: Learn → Play from memory (chords fading). A click on a line keeps the mode going.
+          const learn = 'learn' in options ? options.learn : (karaoke && !karaokeEl.hidden && karaokeView.learn ? karaokeView.learn.opts : null);
           if (!player) {
             setStatusMessage('Playback is not available.');
             return;
@@ -6540,12 +6688,13 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           // letting it loop round again
           if (player.playing) { state.userStopped = true; player.stop(); }
           state.userStopped = false;
+          if (learn) await learnLoadTrouble();
           const config = effectiveConfig();
           const instrument = songInstrument(config).id;
           const capo = songCapo(config);
           const ir = window.ukemusic.transposeIR(
             window.ukemusic.parseSong(getEditorValue(), getParserOptions()),
-            state.transpose - capo,   // the shapes; playback raises them by the capo
+            (learn && Number.isFinite(learn.transpose) ? learn.transpose : state.transpose) - capo,   // the shapes; playback raises them by the capo
             transposeOptions()
           );
           const practice = practiceSettings();
@@ -6586,7 +6735,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           player.setSound(instrument === 'guitar'
             ? (state.config?.playback?.guitar_sound === 'nylon' ? 'nylon' : 'steel')
             : (['hollow', 'sampled'].includes(state.config?.playback?.sound) ? state.config.playback.sound : 'standard'));
-          if (karaoke) karaokeStart(ir, schedule, startLine, endLine);
+          if (karaoke) karaokeStart(ir, schedule, startLine, endLine, learn);
           else startPlayBand(ir, schedule, startLine, endLine);
           startVoice(ir, schedule, config);
           state.lastSchedule = schedule;
@@ -6605,10 +6754,10 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
                 setPlayingUi(false);
                 karaokeStopped();
                 // Looping: go round again (a little faster if asked), until Stop
-                if (range && !state.userStopped && document.getElementById('loopSection').checked) {
+                if (range && !state.userStopped && (options.loop || document.getElementById('loopSection').checked)) {
                   const next = practice.speedUp ? Math.min(100, speed + 5) : speed;
                   if (practice.speedUp) document.getElementById('practiceSpeed').value = String(nearestSpeed(next));
-                  playSong({ karaoke: karaoke && !karaokeEl.hidden, range, speed: next, resume: true, round: round + 1 });
+                  playSong({ karaoke: karaoke && !karaokeEl.hidden, range, speed: next, resume: true, round: round + 1, loop: options.loop });
                 }
               }
             });
@@ -6738,7 +6887,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         }
         function drawKaraokeShapes(index) {
           const holder = document.getElementById('karaokeShapes');
-          holder.hidden = !karaokeShapesOn();
+          holder.hidden = !karaokeShapesOn() || Boolean(karaokeView.learn); // 4.39: no shapes when playing from memory
           if (holder.hidden) return;
           drawShapes(holder, karaokeView, index);
         }
@@ -6812,7 +6961,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             return;
           }
           const steps = stripSteps(bar.pattern, bar.beats || schedule.beatsPerBar);
-          drawStrip(`bar${index}`, bar.chord, false, steps);
+          const learnShown = learnMode(bar.line);
+          drawStrip(`bar${index}`, learnShown === 'hide' ? '?' : (learnShown === 'number' ? learnNumeral(bar.chord) : bar.chord), false, steps);
           // a chord shorter than a bar (share < 1) plays the start of the pattern at the usual speed
           const barTime = bar.duration / (bar.share || 1);
           lightStrip(Math.min(steps.length - 1, Math.floor((t - bar.time) / (barTime / steps.length))));
@@ -6826,6 +6976,49 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
 
         function karaokeSize() {
           return Math.max(16, Math.min(48, Number(state.config?.playback?.karaoke_size) || 26));
+        }
+
+        // 4.39: what a chord shows when playing from memory: itself, its number, or "?"
+        function learnMode(line) {
+          const L = karaokeView.learn;
+          if (!L) return 'show';
+          return L.plan.lines[line] || L.plan.fallback;
+        }
+        function learnNumeral(chord) {
+          const L = karaokeView.learn;
+          const bare = String(chord || '').replace(/[↓↑]+.*$/, '').replace(/:.*$/, '').replace(/\s.*$/, '');
+          return L && L.key ? window.ukemusic.learn.numeral(bare, L.key) : bare;
+        }
+        function learnInfo(ir) {
+          const L = karaokeView.learn;
+          if (!L) return '';
+          const stage = { repeats: 'chords the first time only', numbers: 'chords as numbers', none: 'no chords' }[L.opts.stage] || '';
+          let legend = '';
+          if (L.opts.legend && L.key) {
+            const chords = ir.filter((n) => n.type === 'chord' && !n.noChord && n.content).map((n) => n.content);
+            legend = window.ukemusic.learn.keyLegend(chords, L.key, L.key).map((x) => `${x.numeral} = ${x.chord}`).join(' · ');
+          }
+          return ` · From memory: ${stage}${legend ? ` · ${legend}` : ''}`;
+        }
+        function learnChordEl(chordEl, chord, line) {
+          const mode = learnMode(line);
+          if (mode === 'show' || !chord) return;
+          if (mode === 'number') {
+            chordEl.textContent = learnNumeral(chord);
+            chordEl.classList.add('k-number');
+            return;
+          }
+          chordEl.textContent = '?';
+          chordEl.classList.add('k-hidden');
+          chordEl.title = 'Click to see the chord';
+          chordEl.addEventListener('click', (event) => {
+            event.stopPropagation(); // not "play from here"
+            chordEl.textContent = chord;
+            chordEl.classList.remove('k-hidden');
+            chordEl.classList.add('k-revealed');
+            const needed = karaokeView.learn?.needed;
+            if (needed) needed.set(`${line}:${chord}`, { line, chord });
+          }, { once: true });
         }
 
         function karaokeRender(ir, schedule, startLine, endLine = 0) {
@@ -6907,8 +7100,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               const chord = document.createElement('span');
               chord.className = piece.bar ? 'k-chord k-bar' : 'k-chord';
               chord.textContent = piece.chord || ' ';
+              if (karaokeView.learn && piece.chord && !piece.bar) learnChordEl(chord, piece.chord, line.line);
               // Words that start before the line's first chord: the chord still playing, faintly (4.29)
-              if (!piece.chord && piece.carried && piece.text.trim()) {
+              if (!piece.chord && piece.carried && piece.text.trim() && learnMode(line.line) === 'show') { // (not when playing from memory: it would give the chord away)
                 chord.textContent = `(${piece.carried})`;
                 chord.classList.add('k-carried');
                 chord.title = `${piece.carried} is still playing from the line before`;
@@ -6930,6 +7124,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               sep.textContent = '|';
               el.appendChild(sep);
             }
+            if (karaokeView.learn && learnTroubleLines().has(line.line)) el.classList.add('k-trouble');
             karaokeLines.appendChild(el);
             karaokeView.lines.push({ line, el, pieces, played: line.start === null && line.line < startLine });
           }
@@ -6991,8 +7186,15 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           karaokeView.raf = window.requestAnimationFrame(karaokeTick);
         }
 
-        function karaokeStart(ir, schedule, startLine, endLine = 0) {
+        function karaokeStart(ir, schedule, startLine, endLine = 0, learn = null) {
           karaokeView.schedule = schedule;
+          // 4.39: playing from memory: which lines show their chords, as numbers, or hidden
+          const keep = karaokeView.learn && learn && karaokeView.learn.opts === learn ? karaokeView.learn.needed : null;
+          if (learn) {
+            const shift = (Number.isFinite(learn.transpose) ? learn.transpose : state.transpose) - songCapo();
+            const analysis = window.ukemusic.progressions.analyse(ir, { key: learnKey(shift) });
+            karaokeView.learn = { opts: learn, plan: window.ukemusic.learn.fadePlan(ir, analysis, learn.stage), key: analysis.key, needed: keep || new Map() };
+          } else karaokeView.learn = null;
           karaokeView.library = chordLibraryFor(songInstrument(effectiveConfig()).id);
           karaokeView.shapesKey = null;
           karaokeView.shapesIndex = -1;
@@ -7001,8 +7203,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           karaokeView.current = -1;
           clearStrip();
           document.getElementById('karaokeTitle').textContent = state.song?.title || 'New song';
+          document.getElementById('karaokeTrouble').hidden = !learn;
           document.getElementById('karaokeInfo').textContent =
-            `${keyLabel(state.transpose)}${songCapo() ? ` · capo ${songCapo()}` : ''}`;
+            `${learn && learn.legend && karaokeView.learn?.key ? `In ${karaokeView.learn.key.name}` : keyLabel(learn && Number.isFinite(learn.transpose) ? learn.transpose : state.transpose)}${songCapo() ? ` · capo ${songCapo()}` : ''}${learnInfo(ir)}`;
           karaokeRender(ir, schedule, startLine, endLine);
           karaokeEl.hidden = false;
           karaokeLines.scrollTop = 0;
@@ -7021,6 +7224,15 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           state.userStopped = true;
           if (player && player.playing) player.stop();
           karaokeEl.hidden = true;
+          // 4.39: how playing from memory went (4.40: the chords you needed are trouble spots)
+          if (karaokeView.learn) {
+            const needed = [...karaokeView.learn.needed.values()];
+            if (needed.length) learnAddTrouble(needed.map((n) => ({ line: n.line, chord: n.chord, from: 'memory' })));
+            showToast(needed.length ? `From memory: you looked at ${needed.length} chord${needed.length === 1 ? '' : 's'}` : 'From memory: you didn\'t need to look at a chord', {
+              detail: needed.length ? `${needed.map((n) => `${n.chord} (line ${n.line})`).join(', ')}: they're in your trouble spots (Learn → Trouble). Loop them, then try again.` : 'Next: try it with fewer chords shown (Learn → Chords shown), or in another key.'
+            });
+            karaokeView.learn = null;
+          }
           if (karaokeView.raf) window.cancelAnimationFrame(karaokeView.raf);
           karaokeView.raf = null;
           focusEditor();
@@ -7038,7 +7250,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           }
         }
 
-        document.getElementById('karaokeButton').addEventListener('click', () => playSong({ karaoke: true }));
+        document.getElementById('karaokeButton').addEventListener('click', () => playSong({ karaoke: true, learn: null }));
         document.getElementById('karaokePlay').addEventListener('click', () => playSong({ karaoke: true, startLine: 0 }));
         document.getElementById('karaokeRestart').addEventListener('click', () => playSong({ karaoke: true, startLine: 0, fromStart: true }));
         // Click a line in karaoke to play from there (4.22)
@@ -7060,6 +7272,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             event.preventDefault();
             if (player && player.playing) stopPlayback();
             else playSong({ karaoke: true });
+          } else if ((event.key === 't' || event.key === 'T') && karaokeView.learn && !event.ctrlKey && !event.metaKey && !event.altKey) {
+            event.preventDefault();
+            karaokeMarkTrouble();
           }
         });
 
@@ -8451,6 +8666,23 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           practiceEl.hidden = true;
         }
         window.ukemusicPractice = openPractice;
+        // 4.39: Learn → practise one of the song's changes, or its shapes
+        function practiseChange(exId, from, to) {
+          openPractice(exId);
+          prChordSelects($p('prFromRoot'), $p('prFromType'), from);
+          prChordSelects($p('prToRoot'), $p('prToType'), to);
+          for (const id of ['prFromRoot', 'prFromType', 'prToRoot', 'prToType']) $p(id).dispatchEvent(new Event('change'));
+          prPreview();
+        }
+        function practiseShapes(chords) {
+          openPractice('shape-drill');
+          $p('prDrillSet').value = chords.join(' ');
+          $p('prDrillSet').dispatchEvent(new Event('input'));
+          $p('prDrillSet').dispatchEvent(new Event('change'));
+          prPreview();
+        }
+        window.ukemusicPractiseChange = practiseChange;
+        window.ukemusicPractiseShapes = practiseShapes;
         window.ukemusicPracticeState = pr;   // for the tests
         document.getElementById('practiceButton')?.addEventListener('click', () => openPractice()); // 4.19: Practice is on the songs screen
         document.getElementById('libPractice').addEventListener('click', () => openPractice());
@@ -8888,10 +9120,24 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         // ── Chord patterns (4.21): I IV V…, named progressions, sections that share one ──
         let patternsResult = null;
         function openPatterns() {
-          const ir = window.ukemusic.parseSong(getEditorValue(), getParserOptions());
+          // 4.40.1: the chords as shown (moved with − and +, as shapes under a capo), in the key the
+          // app shows: the song's key or the app's guess, not a second guess (Baby Love in G was C)
+          const shift = state.transpose - songCapo();
+          const ir = window.ukemusic.transposeIR(window.ukemusic.parseSong(getEditorValue(), getParserOptions()), shift, transposeOptions());
           const key = songKey();
-          const r = window.ukemusic.progressions.analyse(ir, { key });
+          const r = window.ukemusic.progressions.analyse(ir, { key: learnKey(shift) });
           patternsResult = r;
+          // 4.40.2: the learn sheet's chord map, for where the named patterns are and which parts
+          // are only bits of others
+          let map = { parts: [] };
+          try {
+            const cfg = effectiveConfig();
+            const instrument = songInstrument(cfg).id;
+            const schedule = window.ukemusic.buildSchedule(ir, { library: chordLibraryFor(instrument, cfg), instrument, tempo: Number(cfg?.song?.tempo) || 100, beatsPerBar: Number(cfg?.song?.beats_per_bar) || 4, countIn: false });
+            map = window.ukemusic.learn.chordMap(ir, schedule, r);
+          } catch { /* the dialog still works without it */ }
+          const mapPart = (letter) => map.parts.find((p) => p.letter === letter) || {};
+          const told = new Set();
           const body = document.getElementById('patternsBody');
           const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
           document.getElementById('patternsKey').textContent = r.key
@@ -8910,6 +9156,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             }
             body.appendChild(chips);
             for (const line of r.summary.slice(1)) body.appendChild(el('p', 'pt-tips', line));
+            // 4.40.2: parts that aren't really new
+            const bits = map.parts.filter((p) => p.like && p.like.how !== 'one' && p.like.letter);
+            if (bits.length) body.appendChild(el('p', 'pt-tips', `Not as much to learn as it looks: ${bits.map((p) => `${p.letter} is ${p.like.text}`).join('; ')}.`));
             // The song's route: Intro → Verse → Chorus…, each with its first words (4.24)
             body.appendChild(el('div', 'pt-label', 'The song, part by part'));
             const shape = el('div', 'pt-route');
@@ -8931,8 +9180,13 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               outer.appendChild(el('div', 'pt-letter', part.letter));
               const box = el('div', 'pt-content');
               outer.appendChild(box);
-              const where = `${part.name}${part.times > 1 ? ` · ${part.times} times` : ''}${part.alsoIn.length ? ` · the ${part.alsoIn.join(' and ')} use${part.alsoIn.length === 1 ? 's' : ''} these chords too` : ''}`;
-              box.appendChild(el('div', 'pt-where', where));
+              const mp = mapPart(part.letter);
+              const like = mp.like ? mp.like.text : '';
+              const wordsEach = window.ukemusic.learn.wordsText(mp.wordsEach);
+              const where = `${mp.name || part.name}${part.times > 1 ? ` · ${part.times} times${wordsEach}` : ''}${part.alsoIn.length ? ` · the ${part.alsoIn.join(' and ')} use${part.alsoIn.length === 1 ? 's' : ''} these chords too` : ''}`;
+              const whereEl = el('div', 'pt-where', where);
+              if (like) whereEl.appendChild(el('span', 'pt-like', ` = ${like}`));
+              box.appendChild(whereEl);
               box.appendChild(el('div', 'pt-lines', `${part.lines.join('  |  ')}${part.linesTimes > 1 ? '   — twice' : ''}`));
               // How it goes: the chords over the words, the first time it's sung (4.24)
               const ex = part.example || { lines: [] };
@@ -8972,7 +9226,19 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
                 box.appendChild(list);
               }
               if (/×\d/.test(part.chordsText) && !part.lines.some((l) => /×\d/.test(l)) && part.linesTimes < 2) box.appendChild(el('div', 'pt-named', `In short: ${part.chordsText}`));
-              if (part.patterns.length) {
+              // 4.40.2: the named patterns where they are: their chords and the line they're in,
+              // explained the first time and named after that
+              const marks = mp.marks || [];
+              if (marks.length) {
+                const named = el('div', 'pt-named');
+                marks.forEach((m, n) => {
+                  if (n) named.appendChild(document.createElement('br'));
+                  const first = !told.has(m.name);
+                  told.add(m.name);
+                  named.append(el('strong', '', m.name), document.createTextNode(`: ${m.chords.join(' ')}${m.round ? ' (back to the start)' : ''}, ${m.steps.join(' – ')}${m.words && first ? `, in the line “${m.words}”` : ''}${first ? `. ${m.hint.charAt(0).toUpperCase()}${m.hint.slice(1)}` : ' (as before).'}`));
+                });
+                box.appendChild(named);
+              } else if (part.patterns.length) {
                 const named = el('div', 'pt-named');
                 part.patterns.forEach((p, n) => {
                   if (n) named.appendChild(document.createElement('br'));
@@ -8999,6 +9265,395 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           if (!dialog.open) dialog.showModal();
         }
         document.getElementById('patternsButton').addEventListener('click', openPatterns);
+
+        // ── 4.39: Learn (src/learn.js) ──
+        // The song as it's played now: in the key shown, as shapes (under a capo)
+        function learnSong(transpose = state.transpose) {
+          const config = effectiveConfig();
+          const instrument = songInstrument(config);
+          const capo = songCapo(config);
+          const ir = window.ukemusic.transposeIR(window.ukemusic.parseSong(getEditorValue(), getParserOptions()), transpose - capo, transposeOptions());
+          const analysis = window.ukemusic.progressions.analyse(ir, { key: learnKey(transpose - capo) });
+          return { config, instrument, capo, ir, analysis, library: chordLibraryFor(instrument.id, config) };
+        }
+        // 4.40.1: Learn goes by the key the app shows (the song's key, or the app's guess at it),
+        // moved with the chords, rather than guessing again (Baby Love in G was called C major)
+        function learnKey(shift) {
+          const k = keyAfter(shift);
+          return k ? { ...k, guessed: false } : null;
+        }
+        function learnDiagram(library, name) {
+          const def = window.ukemusic.chordDefinition(library, name);
+          return def ? window.ukemusic.diagramSvg({ ...def, name }, { left_handed: effectiveConfig()?.diagrams?.left_handed, show_fingers: true }) : '';
+        }
+        const songChordList = (ir) => [...new Set(ir.filter((n) => n.type === 'chord' && !n.noChord && !n.hidden && n.content).map((n) => n.content))];
+
+        document.getElementById('learnPlayButton').addEventListener('click', () => playSong({ karaoke: true, learn: { stage: document.getElementById('learnStage').value } }));
+        document.getElementById('learnPatternsButton').addEventListener('click', openPatterns);
+        document.getElementById('learnNumbers').addEventListener('change', (event) => {
+          state.learnNumbers = event.target.checked;
+          renderPreviewNow();
+        });
+        document.getElementById('learnDrillButton').addEventListener('click', () => {
+          const chords = songChordList(learnSong().ir);
+          if (!chords.length) { setStatusMessage('No chords in this song yet.'); return; }
+          practiseShapes(chords);
+        });
+
+        // Another key: the keys of the song's kind (major or minor), the song's own key not offered
+        function fillLearnKeys() {
+          const select = document.getElementById('learnKey');
+          const key = keyAfter(state.transpose);
+          const minor = key?.mode === 'minor';
+          const choices = window.ukemusic.keys.choices().filter((k) => /m$/.test(k) === minor && (!key || window.ukemusic.keys.parse(k)?.tonic !== key.tonic));
+          const before = select.value;
+          select.replaceChildren(...choices.map((k) => new Option(k, k)));
+          const friendly = (minor ? ['Am', 'Em', 'Dm'] : ['G', 'C', 'F', 'D', 'A']).find((k) => choices.includes(k));
+          select.value = choices.includes(before) ? before : (friendly || choices[0] || '');
+        }
+        document.getElementById('ribbonTabLearn').addEventListener('click', fillLearnKeys);
+        document.getElementById('learnKeyButton').addEventListener('click', () => {
+          const written = songKey();
+          const target = window.ukemusic.keys.parse(document.getElementById('learnKey').value);
+          if (!written || !target) { setStatusMessage('Set the song\'s key first (Info → Written in), so the numbers mean something.'); return; }
+          let shift = ((target.tonic - written.tonic) % 12 + 12) % 12;
+          if (shift > 6) shift -= 12;
+          playSong({ karaoke: true, learn: { stage: 'numbers', transpose: shift, legend: true } });
+        });
+
+        // The changes, the hardest first, with what each finger does
+        function openLearnChanges() {
+          const L = learnSong();
+          const changes = window.ukemusic.learn.songChanges(L.ir, L.library, { tuningName: L.instrument.tuningName });
+          const list = document.getElementById('learnChangesList');
+          list.replaceChildren();
+          if (!changes.length) {
+            list.appendChild(Object.assign(document.createElement('p'), { textContent: 'No chord changes in this song yet.' }));
+          }
+          for (const c of changes.slice(0, 14)) {
+            const row = document.createElement('div');
+            row.className = 'learn-change';
+            const shapes = document.createElement('div');
+            shapes.className = 'lc-shapes';
+            shapes.innerHTML = `${learnDiagram(L.library, c.from)}<span class="lc-arrow">→</span>${learnDiagram(L.library, c.to)}`;
+            const text = document.createElement('div');
+            const title = document.createElement('div');
+            title.className = 'lc-title';
+            title.textContent = `${c.from} → ${c.to} `;
+            const count = document.createElement('span');
+            count.className = 'lc-count';
+            count.textContent = c.count > 1 ? `${c.count} times in the song` : 'once in the song';
+            title.appendChild(count);
+            const tip = document.createElement('div');
+            tip.className = 'lc-tip';
+            tip.textContent = c.missing ? 'No shape for one of these chords on this instrument.' : c.tip;
+            text.append(title, tip);
+            const actions = document.createElement('div');
+            actions.className = 'lc-actions';
+            const practise = Object.assign(document.createElement('button'), { type: 'button', textContent: 'Practise' });
+            practise.title = `Back and forth between ${c.from} and ${c.to}, in time (Free Practice)`;
+            practise.addEventListener('click', () => { document.getElementById('learnChangesDialog').close(); practiseChange('chord-change', c.from, c.to); });
+            const minute = Object.assign(document.createElement('button'), { type: 'button', textContent: 'One minute' });
+            minute.title = `How many clean changes from ${c.from} to ${c.to} in a minute? Your scores are kept`;
+            minute.addEventListener('click', () => { document.getElementById('learnChangesDialog').close(); practiseChange('one-minute', c.from, c.to); });
+            if (c.missing) { practise.disabled = true; minute.disabled = true; }
+            actions.append(practise, minute);
+            row.append(shapes, text, actions);
+            list.appendChild(row);
+          }
+          document.getElementById('learnChangesNote').textContent = changes.length > 14
+            ? `The hardest 14 of ${changes.length}. Practise a change on its own until it's smooth, then play the song.`
+            : 'The hardest first. Practise a change on its own until it\'s smooth, then play the song.';
+          document.getElementById('learnChangesDialog').showModal();
+        }
+        document.getElementById('learnChangesButton').addEventListener('click', openLearnChanges);
+        document.getElementById('learnChangesClose').addEventListener('click', () => document.getElementById('learnChangesDialog').close());
+        document.getElementById('learnChangesDrill').addEventListener('click', () => {
+          document.getElementById('learnChangesDialog').close();
+          practiseShapes(songChordList(learnSong().ir));
+        });
+
+        // ── 4.40: the circle of fifths, What comes next?, trouble spots ──
+        function openLearnCircle() {
+          const L = learnSong();
+          const learn = window.ukemusic.learn;
+          const key = L.analysis.key;
+          document.getElementById('learnCircleSvg').innerHTML = learn.circleSvg(L.ir, key);
+          const notes = document.getElementById('learnCircleNotes');
+          const list = learn.circleNotes(L.ir, key);
+          notes.replaceChildren(...(list.length ? list : ['No chords in this song yet.']).map((t) => Object.assign(document.createElement('li'), { textContent: t })));
+          document.getElementById('learnCircleDialog').showModal();
+        }
+        document.getElementById('learnCircleButton').addEventListener('click', openLearnCircle);
+        document.getElementById('learnCircleClose').addEventListener('click', () => document.getElementById('learnCircleDialog').close());
+
+        // Trouble spots: learn/trouble-spots.json in the song's folder (kept in memory for an unsaved song)
+        const TROUBLE_FILE = 'trouble-spots.json';
+        let troubleCache = { folder: null, store: { spots: [] } };
+        async function learnLoadTrouble() {
+          const folder = state.song ? state.song.folder : null;
+          if (troubleCache.folder === folder && troubleCache.loaded) return troubleCache.store;
+          let store = { spots: [] };
+          if (folder) {
+            try {
+              const text = await window.ukemusic.learnRead({ folder, fileName: TROUBLE_FILE });
+              const parsed = text ? JSON.parse(text) : null;
+              if (parsed && Array.isArray(parsed.spots)) store = parsed;
+            } catch { /* a damaged file: start again */ }
+          }
+          troubleCache = { folder, store, loaded: true };
+          return store;
+        }
+        async function learnSaveTrouble(store) {
+          troubleCache = { folder: state.song ? state.song.folder : null, store, loaded: true };
+          updateTroubleCount();
+          if (!state.song) return;
+          try {
+            await window.ukemusic.learnWrite({ folder: state.song.folder, fileName: TROUBLE_FILE, content: `${JSON.stringify(store, null, 2)}\n` });
+          } catch (error) {
+            setStatusMessage(`Could not save the trouble spots: ${error.message || error}`);
+          }
+        }
+        function learnTroubleLines() {
+          if (troubleCache.folder !== (state.song ? state.song.folder : null)) return new Set();
+          return new Set(window.ukemusic.learn.placeTrouble(troubleCache.store, getEditorValue()).filter((t) => !t.gone).map((t) => t.line));
+        }
+        function updateTroubleCount() {
+          const n = troubleCache.store.spots.length;
+          const button = document.getElementById('learnTroubleButton');
+          const label = [...button.childNodes].find((x) => x.nodeType === Node.TEXT_NODE && x.textContent.trim());
+          if (label) label.textContent = n ? `Trouble (${n})` : 'Trouble';
+        }
+        async function learnAddTrouble(items) {
+          let store = await learnLoadTrouble();
+          const lines = getEditorValue().split(/\r?\n/);
+          const when = new Date().toISOString().slice(0, 10);
+          for (const it of items) store = window.ukemusic.learn.addTrouble(store, { ...it, words: lines[it.line - 1] || '', when });
+          await learnSaveTrouble(store);
+        }
+        function editorToLine(line) {
+          if (state.usingCodeMirror) { window.ukemusic.editorGoToLine(line); return; }
+          const lines = editorFallback.value.split('\n');
+          const at = lines.slice(0, Math.max(0, line - 1)).reduce((n, l) => n + l.length + 1, 0);
+          editorFallback.focus();
+          editorFallback.setSelectionRange(at, at);
+        }
+
+        async function openLearnTrouble() {
+          const store = await learnLoadTrouble();
+          updateTroubleCount();
+          const spots = window.ukemusic.learn.placeTrouble(store, getEditorValue()).sort((a, b) => b.count - a.count || a.line - b.line);
+          const list = document.getElementById('learnTroubleList');
+          list.replaceChildren();
+          if (!spots.length) {
+            list.appendChild(Object.assign(document.createElement('p'), { textContent: 'None yet. Play from memory (the chords you look at come here), try Next chord?, or press ⚑ Trouble here in karaoke when a line trips you up.' }));
+          }
+          const how = { memory: 'looked at, playing from memory', quiz: 'missed in the quiz', tap: 'marked' };
+          for (const t of spots) {
+            const row = document.createElement('div');
+            row.className = 'learn-change trouble-row';
+            const text = document.createElement('div');
+            const title = document.createElement('div');
+            title.className = 'lc-title';
+            title.textContent = `Line ${t.line}${t.chord ? ` · ${t.chord}` : ''} `;
+            const count = document.createElement('span');
+            count.className = 'lc-count';
+            count.textContent = `${t.count > 1 ? `${t.count} times: ` : ''}${t.from.split(',').map((f) => how[f] || f).join(', ')}`;
+            title.appendChild(count);
+            const tip = document.createElement('div');
+            tip.className = 'lc-tip';
+            tip.textContent = t.gone ? `“${t.words}” isn't in the song any more.` : (t.words ? `“${t.words}”` : '');
+            text.append(title, tip);
+            const actions = document.createElement('div');
+            actions.className = 'lc-actions';
+            const loop = Object.assign(document.createElement('button'), { type: 'button', textContent: 'Loop it' });
+            loop.title = 'Play this line round and round, slower, then a little faster each time (Stop to finish)';
+            loop.disabled = !!t.gone;
+            loop.addEventListener('click', () => {
+              document.getElementById('learnTroubleDialog').close();
+              playSong({ karaoke: true, learn: null, range: { start: t.line, end: t.line, label: `line ${t.line}` }, speed: 75, loop: true });
+            });
+            const go = Object.assign(document.createElement('button'), { type: 'button', textContent: 'Go to it' });
+            go.disabled = !!t.gone;
+            go.addEventListener('click', () => { document.getElementById('learnTroubleDialog').close(); editorToLine(t.line); });
+            const done = Object.assign(document.createElement('button'), { type: 'button', textContent: 'Got it ✓' });
+            done.title = 'Take it off the list';
+            done.addEventListener('click', async () => { await learnSaveTrouble(window.ukemusic.learn.removeTrouble(troubleCache.store, t)); openLearnTrouble(); });
+            actions.append(loop, go, done);
+            row.append(text, actions);
+            list.appendChild(row);
+          }
+          document.getElementById('learnTroubleClear').disabled = !spots.length;
+          const dialog = document.getElementById('learnTroubleDialog');
+          if (!dialog.open) dialog.showModal();
+        }
+        document.getElementById('learnTroubleButton').addEventListener('click', openLearnTrouble);
+        document.getElementById('learnTroubleClose').addEventListener('click', () => document.getElementById('learnTroubleDialog').close());
+        document.getElementById('learnTroubleClear').addEventListener('click', async () => { await learnSaveTrouble({ spots: [] }); openLearnTrouble(); });
+        document.getElementById('ribbonTabLearn').addEventListener('click', async () => { await learnLoadTrouble(); updateTroubleCount(); });
+
+        // ⚑ Trouble here (or T) in karaoke: the line playing now
+        async function karaokeMarkTrouble() {
+          const entry = karaokeView.lines[karaokeView.current];
+          if (!entry) { setStatusMessage('Mark a line while it plays.'); return; }
+          const line = entry.line.line;
+          const chord = (entry.line.pieces || []).map((p) => (p.bar ? '' : p.chord)).find(Boolean) || '';
+          await learnAddTrouble([{ line, chord, from: 'tap' }]);
+          entry.el.classList.add('k-trouble');
+          showToast(`Line ${line} is a trouble spot`, { detail: 'Learn → Trouble to loop it.' });
+        }
+        document.getElementById('karaokeTrouble').addEventListener('click', karaokeMarkTrouble);
+
+        // What comes next? The song's changes one at a time; misses become trouble spots
+        const quiz = { list: [], i: 0, score: 0, answered: false, songChords: [], key: null, library: null, instrument: 'soprano' };
+        async function quizPlay(chords) {
+          if (!player) return;
+          const ir = window.ukemusic.parseSong(chords.map((c) => `[${c}]`).join(' '), { useDelimiters: false });
+          const schedule = window.ukemusic.buildSchedule(ir, {
+            library: quiz.library, instrument: quiz.instrument, tempo: 100, beatsPerBar: 2, countIn: false, defaultStrum: 'custom', customStrum: 'D>D'
+          });
+          if (player.playing) { state.userStopped = true; player.stop(); }
+          player.setSound(quiz.instrument === 'guitar'
+            ? (state.config?.playback?.guitar_sound === 'nylon' ? 'nylon' : 'steel')
+            : (['hollow', 'sampled'].includes(state.config?.playback?.sound) ? state.config.playback.sound : 'standard'));
+          await player.play(schedule, {});
+        }
+        function quizShow() {
+          const q = quiz.list[quiz.i];
+          const body = document.getElementById('learnQuizBody');
+          const next = document.getElementById('learnQuizNext');
+          const result = document.getElementById('learnQuizResult');
+          if (!q) {
+            body.hidden = true;
+            document.getElementById('learnQuizHear').hidden = true;
+            const missed = quiz.list.length - quiz.score;
+            document.getElementById('learnQuizProgress').textContent = `${quiz.score} out of ${quiz.list.length}.${missed ? ` The ${missed === 1 ? 'one you missed is' : `${missed} you missed are`} in your trouble spots.` : ' You know where it goes.'}`;
+            next.textContent = 'Again';
+            next.disabled = false;
+            return;
+          }
+          body.hidden = false;
+          document.getElementById('learnQuizHear').hidden = false;
+          document.getElementById('learnQuizProgress').textContent = `Change ${quiz.i + 1} of ${quiz.list.length} · line ${q.line} · ${quiz.score} right so far`;
+          document.getElementById('learnQuizBefore').textContent = q.before ? `${q.before.length > 40 ? '…' : ''}${q.before.slice(-40)}` : '';
+          document.getElementById('learnQuizAfter').textContent = q.after ? `${q.after.slice(0, 40)}${q.after.length > 40 ? '…' : ''}` : '';
+          document.getElementById('learnQuizFrom').textContent = q.from;
+          result.textContent = '';
+          next.textContent = quiz.i + 1 < quiz.list.length ? 'Next' : 'Finish';
+          next.disabled = true;
+          quiz.answered = false;
+          const options = document.getElementById('learnQuizOptions');
+          options.replaceChildren();
+          for (const chord of window.ukemusic.learn.quizOptions(q, quiz.songChords, quiz.key, quiz.i + 1)) {
+            const cell = document.createElement('div');
+            cell.className = 'lq-opt';
+            const pick = Object.assign(document.createElement('button'), { type: 'button', textContent: chord, className: 'lq-pick' });
+            pick.dataset.chord = chord;
+            pick.addEventListener('click', () => quizAnswer(chord));
+            const hear = Object.assign(document.createElement('button'), { type: 'button', textContent: `▶ ${q.from} → ${chord}`, className: 'lq-hear' });
+            hear.title = 'Hear it: does it sound right?';
+            hear.addEventListener('click', () => quizPlay([q.from, chord]));
+            cell.append(pick, hear);
+            options.appendChild(cell);
+          }
+        }
+        async function quizAnswer(chord) {
+          if (quiz.answered) return;
+          quiz.answered = true;
+          const q = quiz.list[quiz.i];
+          const right = chord === q.to;
+          if (right) quiz.score += 1;
+          for (const b of document.querySelectorAll('#learnQuizOptions .lq-pick')) {
+            if (b.dataset.chord === q.to) b.classList.add('right');
+            else if (b.dataset.chord === chord) b.classList.add('wrong');
+          }
+          document.getElementById('learnQuizResult').textContent = right ? `Yes: ${q.from} → ${q.to}.` : `It's ${q.to}: ${q.from} → ${q.to}.`;
+          document.getElementById('learnQuizNext').disabled = false;
+          if (!right) await learnAddTrouble([{ line: q.line, chord: q.to, from: 'quiz' }]);
+          quizPlay([q.from, q.to]);
+        }
+        function openLearnQuiz() {
+          const L = learnSong();
+          const list = window.ukemusic.learn.quizQuestions(L.ir);
+          if (!list.length) { setStatusMessage('No chord changes in this song yet.'); return; }
+          Object.assign(quiz, { list, i: 0, score: 0, answered: false, songChords: songChordList(L.ir), key: L.analysis.key, library: L.library, instrument: L.instrument.id });
+          document.getElementById('learnQuizNext').textContent = 'Next';
+          quizShow();
+          document.getElementById('learnQuizDialog').showModal();
+        }
+        document.getElementById('learnQuizButton').addEventListener('click', openLearnQuiz);
+        document.getElementById('learnQuizNext').addEventListener('click', () => {
+          if (quiz.i >= quiz.list.length) { openLearnQuiz(); return; }
+          quiz.i += 1;
+          quizShow();
+        });
+        document.getElementById('learnQuizHear').addEventListener('click', () => {
+          const q = quiz.list[quiz.i];
+          if (q) quizPlay(quiz.answered ? [q.from, q.to] : [q.from]);
+        });
+        document.getElementById('learnQuizClose').addEventListener('click', () => {
+          if (player && player.playing) { state.userStopped = true; player.stop(); }
+          document.getElementById('learnQuizDialog').close();
+        });
+
+        // The learn sheet: a PDF and a web page in the song's learn folder
+        async function makeLearnSheet() {
+          if (!state.song && !(await requireSongForExport())) return;
+          showToast('Making the learn sheet…', { busy: true });
+          try {
+            const r = await writeLearnSheet(state.transpose);
+            showToast(`Learn sheet made: ${r.baseName}.pdf`, { detail: 'In the song\'s learn folder, as a PDF and a web page.', action: 'Open', onAction: () => window.ukemusic.exportsOpen(r.pdfFile) });
+            state.lastLearnSheet = r;
+          } catch (error) {
+            showToast('Could not make the learn sheet', { detail: String(error.message || error), error: true });
+          }
+        }
+        // 4.40.4: the learn sheet for the song in a key (semitones from the original), written to
+        // its learn folder; also from Export and Export every song
+        async function writeLearnSheet(transpose) {
+          const L = learnSong(transpose);
+          const cfg = L.config;
+          const beats = Number(cfg?.song?.beats_per_bar) || 4;
+          const tempo = Number(cfg?.song?.tempo) || 100;
+          const schedule = window.ukemusic.buildSchedule(L.ir, {
+            library: L.library, instrument: L.instrument.id, capo: L.capo, tempo, beatsPerBar: beats, countIn: false,
+            defaultStrum: cfg?.playback?.default_strum || 'simple', customStrum: cfg?.playback?.custom_strum || '', swing: cfg?.playback?.swing || 'auto'
+          });
+          const learn = window.ukemusic.learn;
+          const key = L.analysis.key;
+          const strum = L.ir.find((n) => n.type === 'rhythm' && !n.stop && !n.feelOnly && n.content);
+          const firstChord = L.ir.find((n) => n.type === 'chord' && !n.noChord && n.content)?.content || '';
+          const patterns = [];
+          for (const part of L.analysis.parts) for (const pat of part.patterns || []) if (!patterns.some((x) => x.name === pat.name)) patterns.push({ name: pat.name, hint: pat.hint });
+          const facts = [
+            ['Key', key ? window.ukemusic.keys.describe(key) : ''],
+            ['Capo', L.capo ? String(L.capo) : ''],
+            ['Time', beats === 6 ? '6/8' : `${beats}/4`],
+            ['Tempo', `${tempo} bpm`],
+            ['Strum', strum ? `${strum.strumName ? `${strum.strumName}: ` : ''}${strum.content}` : ''],
+            ['Starts on', firstChord ? `${firstChord}${key ? ` (${learn.numeral(firstChord, key)})` : ''}` : ''],
+            ['Plays', L.instrument.id !== 'soprano' ? L.instrument.name : '']
+          ];
+          const html = learn.learnSheetHtml({
+            title: state.song.title,
+            sub: creditText(cfg),
+            facts,
+            map: learn.chordMap(L.ir, schedule, L.analysis),
+            shapes: L.analysis.chords.map((c) => ({ name: c.chord, numeral: c.numeral, role: c.role, svg: learnDiagram(L.library, c.chord) })),
+            summary: (L.analysis.summary || []).slice(1),
+            changes: learn.songChanges(L.ir, L.library, { tuningName: L.instrument.tuningName }),
+            patterns,
+            circle: learn.circleSvg(L.ir, key, { size: 300 }),
+            circleNotes: learn.circleNotes(L.ir, key),
+            trouble: learn.placeTrouble(await learnLoadTrouble(), getEditorValue()).filter((t) => !t.gone).sort((a, b) => a.line - b.line),
+            made: new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
+          });
+          const keyPart = transpose && key ? ` in ${key.name}` : '';
+          const baseName = `${state.song.title} (learn${keyPart})`;
+          const r = await window.ukemusic.learnSheet({ folder: state.song.folder, baseName, html, pageSize: cfg?.export?.pdf_page_size || 'A4' });
+          return { ...r, baseName };
+        }
+        document.getElementById('learnSheetButton').addEventListener('click', makeLearnSheet);
         // Write the guessed names in as [[headings]] (4.24): then they show on the sheet, can be
         // corrected, and the analysis goes by them from then on
         document.getElementById('patternsLabels').addEventListener('click', () => {
@@ -9217,6 +9872,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           history: 'M4 12a8 8 0 1 0 2.3-5.7M4 4v4h4M12 8v5l3 2',
           archive: 'M3 4h18v4H3zM5 8v12h14V8M10 12h4',
           patterns: 'M4 6h4v4H4zM10 14h4v4h-4zM16 6h4v4h-4zM8 8h8M12 10v4M6 10l4 4M18 10l-4 4',
+          quiz: 'M9 9a3 3 0 1 1 4 2.8c-.7.3-1 1-1 1.7V15M12 18.5v.5M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z',
+          flag: 'M5 21V4M5 4h11l-2 4 2 4H5',
+          circle: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM12 3v4M21 12h-4',
           restart: 'M6 5v14M18 5L9 12l9 7z',
           pdf: 'M14 3H7v18h10V7zM14 3v4h4M9 13h6M9 17h4',
           web: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',
@@ -9462,13 +10120,11 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           refreshViewTab(config);
           document.getElementById('karaokeTempo').textContent = `${config?.song?.tempo || 100} bpm`;
           const capo = songCapo(config);
-          const bits = [songInstrument(config).name, `${config?.song?.tempo || 100} bpm`, `${config?.song?.beats_per_bar || 4}/4`];
+          const bits = [songInstrument(config).name, `${config?.song?.tempo || 100} bpm`, timeLabel(Number(config?.song?.beats_per_bar) || 4)];
           if (capo) bits.push(`capo ${capo}`);
-          const detected = window.ukemusic.keys.detect(songChordNames());
-          if (detected) {
-            const shown = state.transpose ? window.ukemusic.keys.transpose(detected, state.transpose) : detected;
-            if (shown) bits.unshift(`Key ${shown.name}`);
-          }
+          // 4.40.1: the song's key (Info → Written in) if it's set, else the guess (it always guessed)
+          const shown = keyAfter(state.transpose);
+          if (shown) bits.unshift(`Key ${shown.name}`);
           songInfoLabel.textContent = bits.join(' · ');
         }
 
@@ -9804,7 +10460,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const ir = window.ukemusic.parseSong(once ? stageText(content, config) : content, getParserOptions());
           const capo = songCapo(config);
           const chosen = config?.song?.key && config.song.key !== 'auto' ? window.ukemusic.keys.parse(config.song.key) : null;
-          const key = chosen || window.ukemusic.keys.detect(ir.filter((n) => n.type === 'chord' && !n.noChord).map((n) => n.content));
+          const key = chosen || window.ukemusic.progressions.songKeyGuess(ir);
           const shown = window.ukemusic.transposeIR(ir, semitones - capo, { spelling: 'key', key, instrument: instrument.id });
           const keyNow = key ? window.ukemusic.keys.transpose(key, semitones) : null;
           const sub = [creditText(config), keyNow ? window.ukemusic.keys.describe(keyNow) : '', capo ? `Capo ${capo}` : '', instrument.id !== 'soprano' ? instrument.name : ''].filter(Boolean).join(' · ');
@@ -11056,7 +11712,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             const semitones = entryOf(line).shift; // the key chosen in the setlist (0 = original)
             const capo = songCapo(config);
             const chosen = config?.song?.key && config.song.key !== 'auto' ? window.ukemusic.keys.parse(config.song.key) : null;
-            const key = chosen || window.ukemusic.keys.detect(ir.filter((n) => n.type === 'chord' && !n.noChord).map((n) => n.content));
+            const key = chosen || window.ukemusic.progressions.songKeyGuess(ir);
             const shown = window.ukemusic.transposeIR(ir, semitones - capo, { spelling: 'key', key, instrument: instrument.id });
             let options = renderOptions(config);
             if (options.layout === 'lines') options.maxLineChars = maxLineChars(printStyle, { ignoreSongFont: true });

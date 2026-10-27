@@ -7,6 +7,7 @@ web/out/
 site/guide.html
 site/chordpro.html
 site/changes.html
+site/learn.html
 *.AppImage
 *.dmg
 *.exe

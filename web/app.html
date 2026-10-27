@@ -212,6 +212,37 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 .guide-body table { border-collapse: collapse; display: block; overflow-x: auto; }
 .guide-body td, .guide-body th { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
 .about-name { font-size: 22px; }
+/* ── Learn ── */
+.learn-memory { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 8px 0 0; }
+.learn-memory select { padding: 6px 8px; border-radius: 9px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+.dialog-actions .spacer { flex: 1; }
+.lq-words { font-size: 20px; line-height: 1.5; margin: 6px 0 4px; }
+.lq-gap { display: inline-block; min-width: 2.2em; margin: 0 4px; text-align: center; font-weight: 800; color: #b22222; border-bottom: 3px solid #b22222; }
+.lq-from { color: #b22222; }
+.lq-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+@media (min-width: 560px) { .lq-options { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.lq-opt { display: grid; gap: 4px; }
+.lq-pick { font-size: 22px; font-weight: 800; padding: 12px 4px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+.lq-pick.right { background: #d9f2e3; border-color: #2e8b57; color: #111; }
+.lq-pick.wrong { background: #fde2e2; border-color: #b22222; color: #111; }
+.lq-hear { font-size: 12.5px; padding: 6px 4px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.lq-result { min-height: 1.4em; font-weight: 600; }
+.learn-sheet-dialog { width: min(900px, 96vw); height: 88vh; display: none; flex-direction: column; padding: 12px; }
+.learn-sheet-dialog[open] { display: flex; }
+.learn-sheet-dialog iframe { flex: 1; width: 100%; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.learn-info .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+.learn-info .chip { border: 1px solid var(--line); border-radius: 10px; padding: 6px 10px; display: grid; gap: 1px; min-width: 70px; }
+.learn-info .chip .num { font-size: 12px; color: var(--muted); }
+.learn-info .chip .ch { font-weight: 800; color: #b22222; }
+.learn-info .chip .role { font-size: 12px; color: var(--muted); }
+.learn-info .route { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; }
+.learn-info .route .step { border: 1px solid var(--line); border-radius: 10px; padding: 2px 8px; display: inline-grid; line-height: 1.3; }
+.learn-info .route small { color: var(--muted); font-style: italic; }
+.learn-info .part { border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; margin: 10px 0; }
+.learn-info .part .letter { display: inline-block; min-width: 24px; text-align: center; background: #0e6b64; color: #fff; border-radius: 6px; margin-right: 6px; font-weight: 800; }
+.learn-info .part .lines { font: 700 16px Georgia, serif; margin: 4px 0; }
+.learn-info .part .muted, .learn-info .muted { color: var(--muted); font-size: 13.5px; }
+.learn-info .circle svg { width: min(420px, 100%); height: auto; display: block; margin: 0 auto 10px; }
 .about-version, .about-author, .about-foot { color: var(--muted); }
 .about-body h4 { margin: 12px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
 .about-list { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
@@ -264,6 +295,12 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
   .practice-stage { padding: 16px 12px; }
 }
 
+/* a phone: the buttons on one row, the chord now and the tempo below (with Learn, they didn't fit) */
+@media (max-width: 600px) {
+  .player-row { flex-wrap: wrap; row-gap: 8px; }
+  .player-row > .btn { flex: 1 1 auto; padding-inline: 10px; }
+  .player-row .now { flex: 1 1 60%; }
+}
 @media (max-width: 420px) {
   .now-chord { font-size: 28px; }
   .library h1 { font-size: 24px; }
@@ -350,6 +387,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div class="player-row">
           <button id="playBtn" class="btn primary" type="button">▶ Play</button>
           <button id="karaokeButton" class="btn" type="button" title="Full screen, big words that light up as you sing, with the chord shapes">Karaoke</button>
+          <button id="learnBtn" class="btn" type="button" title="Learn the song by heart: play from memory, a quiz on the changes, the learn sheet, its chord patterns and the circle of fifths">Learn</button>
           <button id="sessionBtn" class="btn" type="button" title="Session screen: the whole song on one screen for a group to play from (a TV or projector). Arrow keys, a clicker or a tap go to the next song in the list">Session</button>
           <div class="now"><div id="nowChord" class="now-chord"></div><div id="nowShapes" class="now-shapes"></div></div>
           <div class="tempo"><button id="slower" type="button" aria-label="Slower">−</button><span id="tempoVal" class="val"></span><button id="faster" type="button" aria-label="Faster">+</button></div>
@@ -372,6 +410,47 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
     <button type="button" data-dl="chordpro"><strong>ChordPro (.txt)</strong><span>For other chord apps</span></button>
   </div>
   <div class="dialog-actions"><button id="dlClose" class="btn" type="button">Close</button></div>
+</dialog>
+
+<dialog id="learnDialog">
+  <h2>Learn this song</h2>
+  <p class="note">Get it into your head and your fingers, so you can play it without the sheet.</p>
+  <div class="learn-memory">
+    <label for="learnStage">Chords shown</label>
+    <select id="learnStage"><option value="repeats">The first time only</option><option value="numbers">As numbers only</option><option value="none">None</option></select>
+    <button id="learnPlay" class="btn primary" type="button">▶ From memory</button>
+  </div>
+  <p class="note">Karaoke with the chords fading: each part's chords the first time it comes and a <b>?</b> after that, then numbers only, then none. Tap a <b>?</b> to see the chord.</p>
+  <div class="choice-list">
+    <button type="button" id="learnQuizBtn"><strong>Next chord?</strong><span>The song's changes one at a time: which chord comes next? Hear each answer</span></button>
+    <button type="button" id="learnSheetBtn"><strong>Learn sheet</strong><span>One page: the chords and how they feel, the song's parts, the chord map, the changes to practise and the circle. Print it or save it</span></button>
+    <button type="button" id="learnPatternsBtn"><strong>Chord patterns</strong><span>The chords as numbers, the parts and the familiar patterns in them</span></button>
+    <button type="button" id="learnCircleBtn"><strong>Circle of fifths</strong><span>The song's chords on the circle, home at the top, and how it moves</span></button>
+  </div>
+  <div class="dialog-actions"><button id="learnClose" class="btn" type="button">Close</button></div>
+</dialog>
+
+<dialog id="quizDialog">
+  <h2>Next chord?</h2>
+  <p id="quizProgress" class="note"></p>
+  <div id="quizBody">
+    <div class="lq-words"><span id="quizBefore"></span><span class="lq-gap">?</span><span id="quizAfter"></span></div>
+    <p class="note">Playing <b id="quizFrom" class="lq-from"></b>. Which chord comes next?</p>
+    <div id="quizOptions" class="lq-options"></div>
+    <p id="quizResult" class="lq-result"></p>
+  </div>
+  <div class="dialog-actions"><button id="quizHear" class="btn" type="button">▶ Hear it</button><span class="spacer"></span><button id="quizClose" class="btn" type="button">Stop</button><button id="quizNext" class="btn primary" type="button" disabled>Next</button></div>
+</dialog>
+
+<dialog id="learnSheetDialog" class="guide-dialog learn-sheet-dialog">
+  <iframe id="learnSheetFrame" title="Learn sheet"></iframe>
+  <div class="dialog-actions"><button id="learnSheetPrint" class="btn" type="button" title="Print it, or choose Save as PDF">Print / PDF</button><button id="learnSheetSave" class="btn" type="button">Download</button><span class="spacer"></span><button id="learnSheetClose" class="btn primary" type="button">Close</button></div>
+</dialog>
+
+<dialog id="learnInfoDialog" class="guide-dialog">
+  <h2 id="learnInfoTitle"></h2>
+  <div id="learnInfoBody" class="guide-body learn-info"></div>
+  <div class="dialog-actions"><button id="learnInfoClose" class="btn primary" type="button">Close</button></div>
 </dialog>
 
 <dialog id="aboutDialog" class="guide-dialog">
@@ -525,7 +604,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     const cacheKey = song.text;
     if (!keyCache.has(cacheKey)) {
       let k = null;
-      try { k = U.keys.detect(U.versions.songChords(U.parseSong(song.text, parserOptions))); } catch (_e) { k = null; }
+      try { k = U.progressions.songKeyGuess(U.parseSong(song.text, parserOptions)); } catch (_e) { k = null; }
       keyCache.set(cacheKey, k);
     }
     const k = keyCache.get(cacheKey);
@@ -1086,7 +1165,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
   window.__keyLabel = (t) => { const k = keyText(); return k.shift ? `Key ${k.name} (${t > 0 ? '+' : ''}${t})` : `Key ${k.name}`; };
   window.__songCapo = () => prefs().capo;
   const karaoke = { line: 0 };
-  window.__playSong = async ({ karaoke: big = false, fromLine = 0, startLine } = {}) => {
+  window.__playSong = async ({ karaoke: big = false, fromLine = 0, startLine, learn } = {}) => {
     if (startLine !== undefined) fromLine = startLine;   // the desktop karaoke's name for it
     if (!big || !player || !view.song) return;
     if (player.playing) { play.userStopped = true; player.stop(); }
@@ -1098,7 +1177,9 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     const schedule = U.buildSchedule(ir, { ...scheduleOptions(fromLine === 0), startLine: fromLine });
     if (!schedule.bars.length) { toast('Nothing to play: the song has no chords.'); return; }
     $('karaokeTempo').textContent = `${p.tempo} bpm`;
-    window.__k.start(ir, schedule, fromLine, 0);
+    // from memory (Learn): asked for, or kept when a line is tapped or the tempo changes
+    const learnOpts = learn !== undefined ? learn : (!$('karaoke').hidden && window.__k.learnOpts ? window.__k.learnOpts() : null);
+    window.__k.start(ir, schedule, fromLine, 0, learnOpts);
     player.setSound(p.instrument === 'guitar' ? 'steel' : 'sampled');
     karaoke.schedule = schedule;
     karaoke.wake = null;
@@ -1120,6 +1201,197 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
 
   // Practice stops the song first
   $('libPractice').addEventListener('click', () => stop(), true);
+
+  // ── Learn (as the desktop app's Learn tab, src/learn.js) ──
+  /** The song as it's played now (in the key shown, as shapes under a capo), its key and analysis */
+  function learnSong() {
+    const p = prefs();
+    const ir = currentIr();
+    const base = songKey(view.song);
+    const k = base ? U.keys.transpose(base, p.transpose - p.capo) : null;
+    const key = k ? { ...k, guessed: false } : null;
+    const analysis = U.progressions.analyse(ir, { key });
+    return { p, ir, key: analysis.key || key, analysis, lib: library(), inst: U.instrument(p.instrument) };
+  }
+  const songChordList = (ir) => [...new Set(ir.filter((n) => n.type === 'chord' && !n.noChord && !n.hidden && n.content).map((n) => n.content))];
+  $('learnBtn').addEventListener('click', () => { stop(); $('learnDialog').showModal(); });
+  $('learnClose').addEventListener('click', () => $('learnDialog').close());
+  $('learnPlay').addEventListener('click', () => {
+    $('learnDialog').close();
+    const L = learnSong();
+    window.__playSong({ karaoke: true, learn: { stage: $('learnStage').value, key: L.key } });
+  });
+
+  // Next chord?: the changes one at a time; hear each answer
+  const quiz = { list: [], i: 0, score: 0, answered: false, chords: [], key: null, lib: null, instrument: 'soprano' };
+  async function quizPlay(chords) {
+    if (!player) return;
+    const ir = U.parseSong(chords.map((c) => `[${c}]`).join(' '), { useDelimiters: false });
+    const schedule = U.buildSchedule(ir, { library: quiz.lib, instrument: quiz.instrument, tempo: 100, beatsPerBar: 2, countIn: false, defaultStrum: 'custom', customStrum: 'D>D' });
+    if (player.playing) player.stop();
+    player.setSound(quiz.instrument === 'guitar' ? 'steel' : 'sampled');
+    try { await player.play(schedule, {}); } catch (_e) { /* no sound */ }
+  }
+  function quizShow() {
+    const q = quiz.list[quiz.i];
+    const next = $('quizNext');
+    if (!q) {
+      $('quizBody').hidden = true;
+      $('quizHear').hidden = true;
+      const missed = quiz.list.length - quiz.score;
+      $('quizProgress').textContent = `${quiz.score} out of ${quiz.list.length}.${missed ? ` Practise the ${missed === 1 ? 'one' : 'ones'} you missed, then try again.` : ' You know where it goes.'}`;
+      next.textContent = 'Again';
+      next.disabled = false;
+      return;
+    }
+    $('quizBody').hidden = false;
+    $('quizHear').hidden = false;
+    $('quizProgress').textContent = `Change ${quiz.i + 1} of ${quiz.list.length} · ${quiz.score} right so far`;
+    $('quizBefore').textContent = q.before ? `${q.before.length > 34 ? '…' : ''}${q.before.slice(-34)}` : '';
+    $('quizAfter').textContent = q.after ? `${q.after.slice(0, 34)}${q.after.length > 34 ? '…' : ''}` : '';
+    $('quizFrom').textContent = q.from;
+    $('quizResult').textContent = '';
+    next.textContent = quiz.i + 1 < quiz.list.length ? 'Next' : 'Finish';
+    next.disabled = true;
+    quiz.answered = false;
+    const box = $('quizOptions');
+    box.replaceChildren();
+    for (const chord of U.learn.quizOptions(q, quiz.chords, quiz.key, quiz.i + 1)) {
+      const cell = document.createElement('div');
+      cell.className = 'lq-opt';
+      const pick = Object.assign(document.createElement('button'), { type: 'button', textContent: chord, className: 'lq-pick' });
+      pick.dataset.chord = chord;
+      pick.addEventListener('click', () => quizAnswer(chord));
+      const hear = Object.assign(document.createElement('button'), { type: 'button', textContent: `▶ ${q.from} → ${chord}`, className: 'lq-hear' });
+      hear.addEventListener('click', () => quizPlay([q.from, chord]));
+      cell.append(pick, hear);
+      box.appendChild(cell);
+    }
+  }
+  function quizAnswer(chord) {
+    if (quiz.answered) return;
+    quiz.answered = true;
+    const q = quiz.list[quiz.i];
+    const right = chord === q.to;
+    if (right) quiz.score += 1;
+    for (const b of $('quizOptions').querySelectorAll('.lq-pick')) {
+      if (b.dataset.chord === q.to) b.classList.add('right');
+      else if (b.dataset.chord === chord) b.classList.add('wrong');
+    }
+    $('quizResult').textContent = right ? `Yes: ${q.from} → ${q.to}.` : `It's ${q.to}: ${q.from} → ${q.to}.`;
+    $('quizNext').disabled = false;
+    quizPlay([q.from, q.to]);
+  }
+  function openQuiz() {
+    const L = learnSong();
+    const list = U.learn.quizQuestions(L.ir);
+    if (!list.length) { toast('No chord changes in this song yet.'); return; }
+    Object.assign(quiz, { list, i: 0, score: 0, answered: false, chords: songChordList(L.ir), key: L.key, lib: L.lib, instrument: L.p.instrument });
+    $('learnDialog').close();
+    quizShow();
+    $('quizDialog').showModal();
+  }
+  $('learnQuizBtn').addEventListener('click', openQuiz);
+  $('quizNext').addEventListener('click', () => {
+    if (quiz.i >= quiz.list.length) { openQuiz(); return; }
+    quiz.i += 1;
+    quizShow();
+  });
+  $('quizHear').addEventListener('click', () => { const q = quiz.list[quiz.i]; if (q) quizPlay(quiz.answered ? [q.from, q.to] : [q.from]); });
+  $('quizClose').addEventListener('click', () => { if (player && player.playing) player.stop(); $('quizDialog').close(); });
+
+  // The learn sheet, shown here: print it (or Save as PDF) or download the page
+  let learnSheet = { html: '', name: '' };
+  function learnSheetHtml() {
+    const L = learnSong();
+    const p = L.p;
+    const schedule = U.buildSchedule(L.ir, { ...scheduleOptions(false) });
+    const key = L.key;
+    const strum = L.ir.find((n) => n.type === 'rhythm' && !n.stop && !n.feelOnly && n.content);
+    const first = L.ir.find((n) => n.type === 'chord' && !n.noChord && n.content)?.content || '';
+    const patterns = [];
+    for (const part of L.analysis.parts) for (const pat of part.patterns || []) if (!patterns.some((x) => x.name === pat.name)) patterns.push({ name: pat.name, hint: pat.hint });
+    const facts = [
+      ['Key', key ? U.keys.describe(key) : ''],
+      ['Capo', p.capo ? String(p.capo) : ''],
+      ['Time', p.beats === 6 ? '6/8' : `${p.beats}/4`],
+      ['Tempo', `${p.tempo} bpm`],
+      ['Strum', strum ? `${strum.strumName ? `${strum.strumName}: ` : ''}${strum.content}` : ''],
+      ['Starts on', first ? `${first}${key ? ` (${U.learn.numeral(first, key)})` : ''}` : ''],
+      ['Plays', p.instrument !== 'soprano' ? L.inst.name : '']
+    ];
+    return U.learn.learnSheetHtml({
+      title: view.song.title,
+      sub: [view.song.settings?.song?.artist, view.song.settings?.song?.year].filter(Boolean).join(', '),
+      facts,
+      map: U.learn.chordMap(L.ir, schedule, L.analysis),
+      shapes: L.analysis.chords.map((c) => ({ name: c.chord, numeral: c.numeral, role: c.role, svg: diagram(c.chord, L.lib) })),
+      summary: (L.analysis.summary || []).slice(1),
+      changes: U.learn.songChanges(L.ir, L.lib, { tuningName: L.inst.tuningName }),
+      patterns,
+      circle: U.learn.circleSvg(L.ir, key, { size: 300 }),
+      circleNotes: U.learn.circleNotes(L.ir, key),
+      made: new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
+    }).replace(' (Learn → The changes…)', ' (Free Practice → Chord switching)');   // the web player's names
+  }
+  $('learnSheetBtn').addEventListener('click', () => {
+    try { learnSheet = { html: learnSheetHtml(), name: `${view.song.title.replace(/[\\/:*?"<>|]+/g, '').trim() || 'song'} (learn${keyText().shift ? ` in ${keyText().name}` : ''}).html` }; }
+    catch (error) { toast(`Couldn’t make the learn sheet: ${error.message}`); return; }
+    $('learnDialog').close();
+    $('learnSheetFrame').srcdoc = learnSheet.html;
+    $('learnSheetDialog').showModal();
+  });
+  $('learnSheetPrint').addEventListener('click', () => { try { $('learnSheetFrame').contentWindow.focus(); $('learnSheetFrame').contentWindow.print(); } catch (_e) { toast('Printing isn’t available here: download it and print from there.'); } });
+  $('learnSheetSave').addEventListener('click', async () => {
+    const file = { filename: learnSheet.name, data: learnSheet.html };
+    downloads = downloads || (window.claude && window.claude.use ? await window.claude.use('downloads').catch(() => null) : null);
+    if (!downloads) {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([file.data], { type: 'text/html;charset=utf-8' }));
+      a.download = file.filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      return;
+    }
+    try { await downloads.save(file); } catch (error) { if (error && error.code !== 'declined') toast(`Couldn’t save it (${error.code || 'error'}).`); }
+  });
+  $('learnSheetClose').addEventListener('click', () => $('learnSheetDialog').close());
+
+  // Chord patterns and the circle of fifths: the same analysis, to read
+  function learnInfo(title, html) {
+    $('learnDialog').close();
+    $('learnInfoTitle').textContent = title;
+    $('learnInfoBody').innerHTML = html;
+    $('learnInfoDialog').showModal();
+  }
+  $('learnInfoClose').addEventListener('click', () => $('learnInfoDialog').close());
+  $('learnPatternsBtn').addEventListener('click', () => {
+    const L = learnSong();
+    const r = L.analysis;
+    if (!r.key || !r.chords.length) { learnInfo('Chord patterns', '<p>No chords to look at yet.</p>'); return; }
+    let map = { parts: [] };
+    try { map = U.learn.chordMap(L.ir, U.buildSchedule(L.ir, scheduleOptions(false)), r); } catch (_e) { /* without the map */ }
+    const mp = (letter) => map.parts.find((x) => x.letter === letter) || {};
+    const told = new Set();
+    let h = `<p class="muted">In ${esc(U.keys.describe(r.key))}. Each chord is numbered by where it sits in the key: I is home.</p>`;
+    h += `<div class="chips">${r.chords.map((c) => `<div class="chip"><span class="num">${esc(c.numeral)}</span><span class="ch">${esc(c.chord)}</span><span class="role">${esc(c.role)}</span></div>`).join('')}</div>`;
+    const bits = map.parts.filter((x) => x.like && x.like.letter && x.like.how !== 'one');
+    h += [...r.summary.slice(1), bits.length ? `Not as much to learn as it looks: ${bits.map((x) => `${x.letter} is ${x.like.text}`).join('; ')}.` : ''].filter(Boolean).map((t) => `<p class="muted">${esc(t)}</p>`).join('');
+    h += `<h3>The song, part by part</h3><div class="route">${r.route.map((st, n) => `${n ? '<span>→</span>' : ''}<span class="step"><strong>${esc(st.letter)} ${esc(st.name)}${st.times > 1 ? ` ×${st.times}` : ''}</strong>${st.words ? `<small>${esc(st.words)}</small>` : ''}</span>`).join('')}</div>`;
+    for (const part of r.parts) {
+      const m = mp(part.letter);
+      const like = m.like ? ` <span style="color:#0e6b64;font-weight:600">= ${esc(m.like.text)}</span>` : '';
+      const marks = (m.marks || []).map((x) => { const first = !told.has(x.name); told.add(x.name); return `<div><strong>${esc(x.name)}</strong>: ${esc(x.chords.join(' '))}${x.round ? ' (back to the start)' : ''}, ${esc(x.steps.join(' – '))}${x.words && first ? `, in the line “${esc(x.words)}”` : ''}${first ? `. ${esc(x.hint.charAt(0).toUpperCase() + x.hint.slice(1))}` : ' (as before).'}</div>`; }).join('');
+      h += `<div class="part"><div><span class="letter">${esc(part.letter)}</span><strong>${esc(m.name || part.name)}</strong><span class="muted">${part.times > 1 ? ` · ${part.times} times${esc(U.learn.wordsText(m.wordsEach))}` : ''}</span>${like}</div><div class="lines">${esc(part.lines.join('  |  '))}</div>${(part.chordLines || []).length ? `<div class="muted">${esc(part.chordLines.join('  |  '))}</div>` : ''}${marks ? `<div class="muted" style="margin-top:4px">${marks}</div>` : ''}</div>`;
+    }
+    h += '<p class="muted">To remember it: learn each letter once, then the order of the letters. Say the numbers as you play: the same numbers work in any key.</p>';
+    learnInfo('Chord patterns', h);
+  });
+  $('learnCircleBtn').addEventListener('click', () => {
+    const L = learnSong();
+    const notes = U.learn.circleNotes(L.ir, L.key);
+    learnInfo('The circle of fifths', `<p class="muted">Twelve chords round the outside, each a fifth from the next, and their relative minors inside. It's turned so the song's home chord is at the top.</p><div class="circle">${U.learn.circleSvg(L.ir, L.key)}</div><ul>${(notes.length ? notes : ['No chords in this song yet.']).map((n) => `<li>${esc(n)}</li>`).join('')}</ul>`);
+  });
 
   // ── Starter songs: public-domain-songs.json beside the page (the public web player) ──
   async function loadStarters() {

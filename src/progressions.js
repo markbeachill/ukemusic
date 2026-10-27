@@ -48,6 +48,7 @@ const PATTERNS = [
   { name: 'Three-chord trick', steps: ['I', 'IV', 'V', 'I'], hint: 'one, four, five, home. Folk, country and rock and roll.' },
   { name: 'Three-chord trick', steps: ['I', 'IV', 'I', 'V'], hint: 'one, four, back home, five: wants to go home again.' },
   { name: 'Turnaround (ii–V–I)', steps: ['ii', 'V', 'I'], hint: 'two, five, home: the classic way back to the key chord.' },
+  { name: 'Five of five (II7–V7–I)', steps: ['II', 'V', 'I'], hint: 'a major two leads to five, five leads home: each chord a fifth above the next. Old-time and music-hall songs love it.' },
   { name: 'Circle', steps: ['vi', 'ii', 'V', 'I'], hint: 'each chord a fourth up from the last, round to home.' },
   { name: 'Ragtime', steps: ['III', 'VI', 'II', 'V'], hint: 'dominant sevenths round the circle back home ("Five Foot Two", "Alice\'s Restaurant").' },
   { name: 'Rhythm turnaround', steps: ['I', 'vi', 'ii', 'V'], hint: 'one, six, two, five: the jazz-standard loop.' },
@@ -65,6 +66,26 @@ const ROLES = {
   vi: 'the sad home', ii: 'leads to five', iii: 'a soft step', 'vii°': 'leads home', bVII: 'rock / Celtic colour',
   VI: 'away (minor key)', VII: 'leads back (minor key)', III: 'the bright side (minor key)', II: 'leads to five', bIII: 'borrowed colour', bVI: 'borrowed colour'
 };
+// 4.41: what a chord does depends on whether the key is major or minor ("VI" in C is A major,
+// which leads to Dm; in A minor, VI is F, the warm away chord)
+const ROLES_MAJOR = {
+  I: 'home', IV: 'away', V: 'tension (wants to go home)', vi: 'the sad home', ii: 'leads to five', iii: 'a soft step',
+  'vii°': 'leads home', bVII: 'rock / Celtic colour', iv: 'the sad four, borrowed from the minor key',
+  bVI: 'a big, dark colour, borrowed from the minor key', bIII: 'borrowed from the minor key', i: 'home, turned minor',
+  II: 'the five of five: leads to V', III: 'leads to the sad six (vi)', VI: 'leads to two (ii)', VII: 'leads to three (iii)', v: 'a soft five, borrowed'
+};
+const ROLES_MINOR = {
+  i: 'home', iv: 'away', v: 'soft tension', V: 'tension (wants to go home)', III: 'the bright side (its relative major)',
+  VI: 'away, warm', VII: 'leads back', 'ii°': 'leads to five', ii: 'leads to five', IV: 'a brighter four, borrowed (Dorian)',
+  I: 'home, turned major', II: 'the five of five: leads to V', bII: 'a dark step down to home'
+};
+/** What a chord does in the key: "the sad home", "leads to five"… */
+function roleOf(n, key) {
+  if (n === 'I7') return 'home, leaning on to four';
+  const c = core(n);
+  const table = key && key.mode === 'minor' ? ROLES_MINOR : ROLES_MAJOR;
+  return table[c] || ROLES[c] || '';
+}
 
 /**
  * Sections with their chord changes, line by line: [{ name, lines: [['C','G7'], ['F','C']], chords }]
@@ -265,13 +286,28 @@ function compactLines(lines) {
  * lines, chordLines, linesTimes, patterns, sameWords }], route: [{ letter, name, times }],
  * sections (each block, for older callers), letters, shape, summary }
  */
+/** The first chord of each part of the song (4.41: a clue to where home is) */
+function partStarts(irNodes) {
+  try {
+    return songBlocks(irNodes).map((b) => (b.lines.find((l) => l.chords.length) || { chords: [] }).chords[0]).filter(Boolean);
+  } catch (_e) { return []; }
+}
+
+/** 4.41: the app's guess at a song's key, from its chords and how its parts start */
+function songKeyGuess(irNodes) {
+  const all = (irNodes || []).filter((n) => n.type === 'chord' && !n.noChord && n.content).map((n) => n.content);
+  if (!all.length) return null;
+  const ranked = rankKeys(all, { starts: partStarts(irNodes) });
+  return ranked.length ? ranked[0].key : null;
+}
+
 function analyse(irNodes, { key = null } = {}) {
   const all = (irNodes || []).filter((n) => n.type === 'chord' && !n.noChord).map((n) => n.content);
   let k = key && !key.guessed ? key : null;
   if (!k && all.length) {
     // Guessing: the likeliest key, unless its home chord neither starts nor ends the song and a
     // close runner-up's does (a song in D with C and F chords can look like G)
-    const ranked = rankKeys(all);
+    const ranked = rankKeys(all, { starts: partStarts(irNodes) });
     const top = ranked[0];
     const close = ranked.filter((r) => top && r.score >= Math.min(top.score - 2.5, top.score * 0.9));
     k = top && (top.starts || top.ends) ? top.key : ((close.find((r) => r.ends) || close.find((r) => r.starts) || top || {}).key || null);
@@ -281,7 +317,7 @@ function analyse(irNodes, { key = null } = {}) {
   for (const c of all) counts.set(c, (counts.get(c) || 0) + 1);
   const chords = [...counts.keys()].map((chord) => {
     const n = numeral(chord, k);
-    return { chord, numeral: n, role: ROLES[core(n)] || '', count: counts.get(chord) };
+    return { chord, numeral: n, role: roleOf(n, k), count: counts.get(chord) };
   });
 
   const blocks = songBlocks(irNodes).map((b) => {
@@ -340,7 +376,10 @@ function analyse(irNodes, { key = null } = {}) {
       part.name = 'Verse';
       // The verse and chorus can share chords ("Stand by Me"): the blocks whose words come back
       // are the chorus (if no other part is)
-      if (repeating.length >= 2 && !firstAndLastOnly) part.chorusCandidates = true;
+      // (4.41: not when the words that come back are just the first verse sung again at the end)
+      const bookends = repeating.length === 2 && blocks.indexOf(repeating[0]) === 0 && blocks.indexOf(repeating[1]) === lastIndex;
+      if (bookends) part.firstAgain = true;
+      else if (repeating.length >= 2 && !firstAndLastOnly) part.chorusCandidates = true;
     } else if (part.times >= 2) part.name = 'Riff';
     else if (where === 0 && (short || words.length === 0)) part.name = 'Intro';
     else if (short && where < firstLong) part.name = 'Intro';
@@ -402,7 +441,10 @@ function analyse(irNodes, { key = null } = {}) {
   const big = parts.filter((p) => p.blocks[0].numLines.length > 1 || p.times > 1);
   summary.push(`${blocks.length} part${blocks.length === 1 ? '' : 's'} in the song, but only ${parts.length} different chord pattern${parts.length === 1 ? '' : 's'} to learn${big.length < parts.length ? ` (${big.length} of them more than a chord or two)` : ''}.`);
   const most = [...parts].sort((a, b) => b.times - a.times)[0];
-  if (most && most.times >= 2) summary.push(`The ${most.name.toLowerCase()} (${most.letter}) comes ${most.times} times: learn that first.`);
+  // 4.41: one pattern for the whole song says something different from "learn that first"
+  if (parts.length === 1 && most && most.times >= 2) summary.push('One chord pattern for the whole song: learn it once, then it\'s the words.');
+  else if (most && most.times >= 2) summary.push(`The ${most.name.toLowerCase()} (${most.letter}) comes ${most.times} times: learn that first.`);
+  if (parts.some((p) => p.firstAgain)) summary.push('The first verse comes back at the end.');
 
   const sections = blocks.map((b) => ({ line: b.first, labelled: Boolean(plainLabel(b.label)), name: b.label ? String(b.label).replace(/[:：]\s*$/, '').trim() : b.shownName, letter: b.letter, chords: b.chordLines, numerals: b.numLines, lines: compactLines(b.numLines).lines, chordLines: compactLines(b.chordLines).lines, patterns: parts.find((p) => p.letter === b.letter).patterns, sameAs: '' }));
   return {
@@ -445,4 +487,4 @@ function addLabels(text, result) {
   return { text: lines.join('\n'), added: todo.length };
 }
 
-module.exports = { numeral, addLabels, openingWords, analyse, analysisText, sectionChords, songBlocks, findPatterns, lineSummary, repeatUnit, PATTERNS };
+module.exports = { roleOf, songKeyGuess, partStarts, numeral, addLabels, openingWords, analyse, analysisText, sectionChords, songBlocks, findPatterns, lineSummary, repeatUnit, PATTERNS };

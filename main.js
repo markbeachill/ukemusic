@@ -797,6 +797,19 @@ function registerIpc() {
     return songs.writeExport(folder, fileName, pdf, subfolder);
   });
 
+  // 4.40: the song's trouble spots (learn/trouble-spots.json)
+  handle('song:learnRead', async (_event, { folder, fileName } = {}) => songs.readLearn(folder, fileName));
+  handle('song:learnWrite', async (_event, { folder, fileName, content } = {}) => songs.writeLearn(folder, fileName, String(content || '')));
+
+  // 4.39: the learn sheet, as a web page and a PDF, in the song's learn/ folder
+  handle('song:learnSheet', async (_event, { folder, baseName, html, pageSize = 'A4' } = {}) => {
+    const htmlFile = songs.writeLearn(folder, `${baseName}.html`, html);
+    const pdf = await renderPdf(html, pageSize, 'standard');
+    const pdfFile = songs.writeLearn(folder, `${baseName}.pdf`, pdf);
+    log.info('song', `Learn sheet written: ${pdfFile}`);
+    return { htmlFile, pdfFile, folder: path.dirname(pdfFile) };
+  });
+
   // ── Setlists (src/setlists.js) ──
   handle('setlists:list', async (_event, songsFolder) => setlists.listSetlists(songsFolder));
   handle('setlists:validateName', async (_event, { songsFolder, name, except } = {}) => setlists.validateName(name, songsFolder, { except }));
@@ -851,6 +864,8 @@ function registerIpc() {
       for (const f of files) await toBin(f.path);
     } else {
       await toBin(path.join(folder, exportsMap.EXPORTS_DIR));
+      // 4.40.5: and the learn sheets (the trouble spots stay)
+      for (const f of files.filter((x) => x.learn)) await toBin(f.path);
     }
     log.info('library', `Deleted ${files.length} exported files of ${folder}`);
     return { deleted: files.length };

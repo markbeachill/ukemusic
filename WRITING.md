@@ -319,6 +319,7 @@ When some lines are a harmony part sung with (or over) the main line, put `{harm
 - Songbook marks in the brackets (`[C↓]`, `[x]`, `[.]`, `[Gs4]`…) are part of ukemusic's own format, so they come in as written; strum boxes of arrows over counts become strum patterns, and `[Riff 1]` a label.
 - Saved as ChordPro, ukemusic's shorthand goes out as ChordPro notes, which other apps print above the words: `[C][*×3]`, `[Em][*2 beats]`, `[*stop][C]`. They come back exactly as they were.
 - Everything about ChordPro (what comes in, what goes out, and what ukemusic adds to it) is in [ukemusic and ChordPro](CHORDPRO.md).
+- **Words templates:** a line where each letter is a dot and the chords sit in brackets at their letter, `[Dm:2]······· [F:1][G:1]····`. Paste the line of words underneath and **File → Tidy chords above words** fills them in, each chord on its syllable. Handy when you have the chords and their places, and the words are in another document.
 
 ---
 
@@ -353,6 +354,22 @@ The same choice is in **Settings → How the chord sheet looks**, and it applies
 - **Short lines** wrap less. A long line still wraps with the chords above the right words.
 
 **Library → Check songs fit one screen…** tells you which songs need a page turn before the night.
+
+
+---
+
+## Learning a song
+
+The **Learn** tab is for getting a song into your head and your fingers, so you can play it without the sheet:
+
+- **From memory:** karaoke with the chords fading. *First time only* shows each part's chords the first time it comes and a `?` after that; *As numbers only* shows I, IV, V…; *None* hides them all. Click a `?` to see the chord: the ones you needed go in your trouble spots. Press **⚑ Trouble here** (or T) when a line trips you up.
+- **Next chord?:** the song's changes one at a time, with the words either side: you're playing C, which chord comes next? Four choices, and ▶ under each to hear it before you choose. After you answer you hear the real change. The ones you miss go in your trouble spots.
+- **Trouble:** your trouble spots, with how often and where they came from. **Loop it** plays that line round and round, slower to start and a little faster each time; **Got it ✓** takes it off. They're kept in the song's learn folder (`trouble-spots.json`) and follow the words if you edit the song.
+- **The changes…:** every chord change in the song, the hardest first, with what each finger does (stays, slides, moves, goes down, lifts) and **Practise** or **One minute** for that change in Free Practice. **Shapes** runs the shapes drill with the song's chords.
+- **Numbers:** the chords on the sheet as numbers in the key. I is home; IV and V are away and back. A song in numbers is the same in every key.
+- **Another key → Play it:** play from memory in another key, with the chords as numbers and what each number is in that key ("I = G · IV = C · V7 = D7"). If you can, you know the song, not just the shapes.
+- **Circle:** the circle of fifths, with the song's chords lit, the key's family shaded (home, its neighbours either side, and their relative minors inside), and arrows for how the song moves. Most songs live in that family, and most of their changes are one step round the circle: one step anticlockwise into home (V → I) is the strongest pull in music.
+- **Learn sheet:** one page to learn the song from, as a PDF and a web page in the song's **learn** folder (also from Export → More formats → Learn sheet, and Library → Export every song… for them all): the song's parts in order, a chord map (each part once, bar by bar, a row per line with its first words, the numbers, the familiar patterns shaded and named where they happen, and a note when a part is only the start of another), the chords, the changes to practise, the patterns in it, the circle of fifths, and your trouble spots.
 
 ---
 

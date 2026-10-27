@@ -15,6 +15,7 @@ ChordPro (what ukemusic reads and writes, and its additions): see [CHORDPRO.md](
   - **Write**: tab, strums, suggest the key, chords into words (for songs copied from websites), How to write (the guide);
   - **This song**: key, capo, instrument, tempo, time, strum;
   - **Play**: play (beside the editor, with the chord, strum and next shapes above the preview), play along (full-screen karaoke with chord shapes), Session screen (the whole song on one screen, on the TV if one is plugged in, for playing as a group; a setlist song by song), stop, practice (strum, 12-bar blues, chord change), tempo (change it while playing), tap tempo, practice (loop a section, slower, speeding up), sound;
+  - **Learn**: play from memory (the chords fading), a what-comes-next quiz, trouble spots to loop, the circle of fifths, the song's changes with what each finger does (and practice for each), numbers on the sheet, play it in another key, and a learn sheet (PDF and web page in the song's learn folder). How it works out a song, and how far to trust it: [How ukemusic helps you learn a song](docs/explanation/learning-a-song.md);
   - **Settings**: opens Settings.
 - The hint line under the tabs explains whatever the mouse is over.
 - **Practice** (from the library or the Play tab): a menu of 39 exercises in seven categories (warm-ups, chords, strumming, fingerpicking, scales and melody, noodling, routines), with difficulty badges, an animated fretboard, a visual metronome, one-minute-change scores, your progress and streak, and timed routines.

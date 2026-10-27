@@ -109,3 +109,7 @@
       .k-text { display: block; }
       .k-progress { position: absolute; left: 0; bottom: 0; height: 4px; width: 0; border-radius: 2px; background: var(--accent); }
       .k-piece.done .k-progress { width: 100%; opacity: 0.35; }
+      /* from memory (Learn) */
+      .k-chord.k-hidden { color: #888; cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+      .k-chord.k-revealed { color: #c2410c; }
+      .k-chord.k-number { font-style: normal; }

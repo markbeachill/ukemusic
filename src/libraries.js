@@ -135,7 +135,7 @@ function copySong(songFolder, library, { move = false, keepBoth = false } = {}) 
       fs.rmSync(songFolder, { recursive: true, force: true });
     }
   } else {
-    copyFolder(songFolder, target, { skip: (e) => e.isDirectory() && ['exports', '.history'].includes(e.name.toLowerCase()) });
+    copyFolder(songFolder, target, { skip: (e) => e.isDirectory() && ['exports', 'learn', '.history'].includes(e.name.toLowerCase()) });
   }
   matchSongFile(target);
   return { folder: target };
