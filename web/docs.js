@@ -18,7 +18,7 @@ const PAGES = [
   { md: 'WRITING.md', html: 'guide.html', title: 'How to write songs', nav: 'Song guide', blurb: 'Everything you can type in a ukemusic song, with examples. The same guide is in the app: Write → How to write.', ownIntro: true },
   { md: 'CHORDPRO.md', html: 'chordpro.html', title: 'ukemusic and ChordPro', nav: 'ChordPro', blurb: 'What ukemusic does with ChordPro files, what it writes, and what it adds.' },
   { md: 'CHANGELOG.md', html: 'changes.html', title: "What's new", nav: "What's new", blurb: 'The changes in each version, newest first.' },
-  { md: 'docs/explanation/how-learn-works.md', html: 'learn.html', title: 'How Learn works', nav: 'Learn', blurb: 'What the Learn tab works out from a song, how it helps you practise, and how far to trust it.' }
+  { md: 'docs/explanation/how-learn-works.md', html: 'how-learn-works.html', title: 'How Learn works', nav: 'How Learn works', blurb: 'What the Learn tab works out from a song, how it helps you practise, and how far to trust it.' }
 ];
 const BY_MD = Object.fromEntries(PAGES.map((p) => [p.md, p.html]));
 
@@ -35,7 +35,8 @@ function href(url, base = '') {
 const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 function page(p, html, sections, siteCss) {
-  const nav = PAGES.map((x) => `<a href="${x.html}"${x === p ? ' aria-current="page"' : ''}>${esc(x.nav)}</a>`).join('');
+  // the menu and footer every page shares (web/pages.js)
+  const { siteHeader, siteFooter } = require('./pages');
   // the changelog's contents list is its versions; the others, their sections
   const toc = sections.length > 2 ? `<nav class="toc" aria-label="On this page"><p>On this page</p>${sections.map((s) => `<a href="#guide-${s.id}">${esc(s.title)}</a>`).join('')}</nav>` : '';
   return `<!doctype html>
@@ -54,8 +55,7 @@ ${siteCss}
 /* documents */
 .doc-wrap { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; padding: 40px 0 72px; }
 @media (max-width: 900px) { .doc-wrap { grid-template-columns: 1fr; gap: 0; padding-top: 24px; } .toc { display: none; } }
-@media (max-width: 720px) { .top .wrap { gap: 12px; } nav.links { gap: 14px; font-size: 14px; } nav.links .opt { display: none; } }
-@media (max-width: 420px) { .brand { font-size: 0; gap: 0; } }
+@media (max-width: 720px) { nav.links { font-size: 14px; } }
 .toc { position: sticky; top: 84px; align-self: start; max-height: calc(100vh - 110px); overflow-y: auto; display: grid; gap: 2px; font-size: 14px; }
 .toc p { margin: 0 0 6px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .toc a { color: var(--muted); text-decoration: none; padding: 3px 0; line-height: 1.35; }
@@ -77,15 +77,13 @@ ${siteCss}
 .doc th { font-weight: 700; background: var(--paper); }
 nav.links a[aria-current] { color: var(--ink); }
 .source { margin-top: 48px; font-size: 14px; color: var(--muted); }
+footer .ref a { color: var(--muted); }
+@media (max-width: 900px) { .toc { display: none; } }
+@media (min-width: 861px) and (max-width: 980px) { nav.links { gap: 14px; } }
 </style>
 </head>
 <body>
-<header class="top">
-  <div class="wrap">
-    <a class="brand" href="./"><img src="img/icon-64.png" alt="">ukemusic</a>
-    <nav class="links">${nav}<a class="opt" href="./#download">Download</a></nav>
-  </div>
-</header>
+${siteHeader(p.html)}
 <main class="wrap doc-wrap">
   ${toc || '<div></div>'}
   <article class="doc">
@@ -93,12 +91,7 @@ ${p.ownIntro ? html : html.replace(/^<h1[^>]*>.*?<\/h1>/, (h) => `${h}\n<p class
     <p class="source">This page is made from <a href="${REPO}/blob/main/${p.md}">${p.md}</a> in the ukemusic repository.</p>
   </article>
 </main>
-<footer>
-  <div class="wrap">
-    <span>ukemusic by Mark Beachill · MIT licence · <a href="${REPO}">ukemusic on GitHub</a></span>
-    <button class="theme" id="theme" type="button">Light / dark</button>
-  </div>
-</footer>
+${siteFooter()}
 <script>
 (() => {
   const root = document.documentElement;

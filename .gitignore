@@ -7,7 +7,13 @@ web/out/
 site/guide.html
 site/chordpro.html
 site/changes.html
+site/how-learn-works.html
 site/learn.html
+site/practise.html
+site/perform.html
+site/teach.html
+site/chord-sheets.html
+site/songs.html
 *.AppImage
 *.dmg
 *.exe

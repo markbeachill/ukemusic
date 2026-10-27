@@ -36,3 +36,41 @@ test('the web player\'s learn sheet names the web player\'s menus', () => {
 test('on a phone the play bar wraps (Learn made it too wide)', () => {
   assert.ok(/@media \(max-width: 600px\) \{\s*\.player-row \{ flex-wrap: wrap/.test(app));
 });
+
+// ── The website: a page for each purpose, Your songs, and the AI prompt ──
+const ROOT = path.join(__dirname, '..');
+
+test('the website: a page for each purpose and Your songs, built with the doc pages', () => {
+  const pages = require('../web/pages');
+  assert.deepStrictEqual(pages.PAGES.map((p) => p.file), ['learn.html', 'practise.html', 'perform.html', 'teach.html', 'chord-sheets.html']);
+  assert.strictEqual(pages.SONGS_PAGE.file, 'songs.html');
+  for (const p of pages.PAGES) {
+    for (const k of ['h1', 'lede', 'solo', 'group', 'features', 'web', 'desk']) assert.ok(p[k] && p[k].length, `${p.file}: ${k}`);
+    for (const f of p.features) if (f.img) assert.ok(fs.existsSync(path.join(ROOT, 'site', 'img', f.img)), f.img);
+  }
+  assert.ok(fs.readFileSync(path.join(ROOT, 'web', 'make.js'), 'utf8').includes("require('./pages.js').build()"));
+  const ignore = fs.readFileSync(path.join(ROOT, '.gitignore'), 'utf8');
+  for (const f of ['learn.html', 'practise.html', 'perform.html', 'teach.html', 'chord-sheets.html', 'songs.html', 'how-learn-works.html']) assert.ok(ignore.includes(`site/${f}`), f);
+  const header = pages.siteHeader('teach.html');
+  assert.ok(header.includes('href="teach.html" aria-current="page"') && header.includes('href="./#get"'));
+});
+
+test('the front page: the doors, browser or computer, and every link goes somewhere', () => {
+  const site = fs.readFileSync(path.join(ROOT, 'site', 'index.html'), 'utf8');
+  assert.ok(site.includes('id="doors"') && site.includes('id="choose"') && site.includes('<section id="get">') && site.includes('id="download"'));
+  const local = [...site.matchAll(/href="([a-z-]+\.html)(#[^"]*)?"/g)].map((m) => m[1]);
+  const made = [...require('../web/pages').PAGES.map((p) => p.file), 'songs.html', ...require('../web/docs').PAGES.map((p) => p.html)];
+  for (const f of new Set(local)) assert.ok(made.includes(f), `${f} is linked but not made`);
+  for (const img of [...site.matchAll(/src="img\/([^"]+)"/g)].map((m) => m[1])) assert.ok(fs.existsSync(path.join(ROOT, 'site', 'img', img)), img);
+});
+
+test('the AI prompt describes the format the app reads', () => {
+  const { AI_PROMPT } = require('../src/ai-prompt');
+  for (const bit of ['--START MUSIC--', '[C]Oh my [G7]darling', '[[Chorus]]', '{D-DU-UDU}', '{3/4 D-DUDU}', '[Em:2]', '[C x3]', '| C | G | Am | F |', '(x2)', '[C↓]', '[N.C.]']) assert.ok(AI_PROMPT.includes(bit), bit);
+  // a song written by its rules reads with no warnings
+  const parse = require('../src/parser');
+  const song = '--START MUSIC--\n{D-DU-UDU}\n[[Intro]] | C | G | Am | F |\n\n[[Verse 1]]\n[C]Oh my [G7]darling, [Em:2]oh my [Am]darling\n[C x3] (x2)\n\n[[Chorus]]\n[C↓]Gone for [N.C.]ever | C G |\n--END MUSIC--\n';
+  const warnings = parse(song).flatMap((n) => n.warnings || []);
+  assert.deepStrictEqual(warnings, []);
+  assert.ok(require('../web/pages').SONGS_PAGE.body().includes('id="aiPrompt"'));
+});

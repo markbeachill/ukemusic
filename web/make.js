@@ -21,6 +21,8 @@ require('./build.js');
 
 // 2b. The documents as website pages (site/guide.html, chordpro.html, changes.html)
 console.log('pages:', require('./docs.js').build().join(', '));
+// 2c. The pages for each purpose (Learn, Practise, Perform, Teach, Chord sheets) and Your songs
+console.log('pages:', require('./pages.js').build().join(', '));
 
 // 3. The samples as WAV (Safari can't decode FLAC)
 const sounds = path.join(WEB, 'out', 'sounds');

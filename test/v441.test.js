@@ -122,10 +122,10 @@ test('the Time menu has 6/8 (and 2/4): a 6/8 song showed a blank time', () => {
 test('the explanation docs, and the website page made from the short one', () => {
   for (const f of ['learning-a-song.md', 'how-learn-works.md']) assert.ok(fs.existsSync(path.join(ROOT, 'docs', 'explanation', f)), f);
   const docs = require('../web/docs');
-  assert.ok(docs.PAGES.some((p) => p.md === 'docs/explanation/how-learn-works.md' && p.html === 'learn.html'));
+  assert.ok(docs.PAGES.some((p) => p.md === 'docs/explanation/how-learn-works.md' && p.html === 'how-learn-works.html'));
   assert.strictEqual(docs.href('learning-a-song.md', 'docs/explanation'), 'https://github.com/markbeachill/ukemusic/blob/main/docs/explanation/learning-a-song.md');
-  assert.strictEqual(docs.href('how-learn-works.md', 'docs/explanation'), 'learn.html', 'the paper links to the page on the site');
+  assert.strictEqual(docs.href('how-learn-works.md', 'docs/explanation'), 'how-learn-works.html', 'the paper links to the page on the site');
   assert.strictEqual(docs.href('CHORDPRO.md'), 'chordpro.html', 'links from the root documents as before');
   const site = fs.readFileSync(path.join(ROOT, 'site', 'index.html'), 'utf8');
-  assert.ok(site.includes('id="learn"') && site.includes('href="learn.html"') && fs.existsSync(path.join(ROOT, 'site', 'img', 'learn.webp')));
+  assert.ok(site.includes('id="learn"') && site.includes('href="how-learn-works.html"') && fs.existsSync(path.join(ROOT, 'site', 'img', 'learn.webp')));
 });

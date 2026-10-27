@@ -12,6 +12,12 @@ The web player has a **Learn** button beside Karaoke, with the same analysis as 
 
 Trouble spots, exporting learn sheets and the Exports tab stay in the desktop app: the web player plays songs rather than keeping files.
 
+### A new website
+- **The front page** now starts from what you want to do, not just chord sheets: *Bring your songs. Learn them, practise them, play them together.* Six doors (Learn, Practise, Perform, Teach, Chord sheets and Bring your songs) and a plain choice between the web player and the desktop app.
+- **A page for each purpose:** Learn, Practise, Perform, Teach and Chord sheets, each with what it does on your own and in a group, pictures, and which version suits it best.
+- **Bring your songs:** every way to get songs in (websites, club songbooks, ChordPro, typing) and **how to tidy a difficult chord sheet with an AI chat**, with a prompt to copy that describes ukemusic's format.
+- How Learn works moved to `how-learn-works.html`; the song guide, ChordPro, How Learn works and What's new are linked from every page's footer. On a phone, the menu is a row under the name.
+
 ## v4.41.0
 
 ### Learn sheets, checked against eight songs

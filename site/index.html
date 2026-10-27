@@ -6,7 +6,7 @@
 <title>ukemusic: chord sheets for ukulele</title>
 <meta name="description" content="Type the words with the chords in square brackets; ukemusic draws the chord sheet, the shapes and the strum, plays it with you, and prints it for the gig. Free for Windows, Mac and Linux, with a web player for phones.">
 <meta property="og:title" content="ukemusic: chord sheets for ukulele">
-<meta property="og:description" content="Type the words and chords; ukemusic draws the sheet, plays it with you and prints it for the gig. Free and open source.">
+<meta property="og:description" content="Bring your songs: learn them by heart, practise them, play them together and print them for the gig. Free and open source, in your browser or on your computer.">
 <meta property="og:image" content="img/editor.webp">
 <link rel="icon" href="img/icon-64.png">
 <link rel="apple-touch-icon" href="img/icon-192.png">
@@ -59,7 +59,12 @@ header.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srg
 nav.links { margin-left: auto; display: flex; gap: 22px; font-size: 15px; font-weight: 600; }
 nav.links a { color: var(--muted); text-decoration: none; }
 nav.links a:hover { color: var(--ink); }
-@media (max-width: 720px) { nav.links .opt { display: none; } }
+/* a phone: the menu is a row of its own under the name, scrolling sideways if it must */
+@media (max-width: 860px) {
+  .top .wrap { flex-wrap: wrap; height: auto; padding: 10px 0 0; row-gap: 6px; }
+  nav.links { margin-left: 0; width: 100%; overflow-x: auto; gap: 18px; padding-bottom: 10px; scrollbar-width: none; white-space: nowrap; }
+  nav.links::-webkit-scrollbar { display: none; }
+}
 
 /* Buttons */
 .btn { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 20px; border-radius: 12px; font-weight: 700; font-size: 16px; text-decoration: none; border: 1px solid var(--line); background: var(--paper); color: var(--ink); cursor: pointer; }
@@ -72,7 +77,7 @@ nav.links a:hover { color: var(--ink); }
 
 /* Hero */
 .hero { padding: 64px 0 24px; }
-.hero h1 { font-size: clamp(36px, 6vw, 62px); line-height: 1.22; letter-spacing: -0.03em; margin: 0 0 18px; max-width: 14ch; }
+.hero h1 { font-size: clamp(34px, 5.4vw, 58px); line-height: 1.18; letter-spacing: -0.03em; margin: 0 0 18px; max-width: 19ch; }
 .hero h1 .chorded { position: relative; display: inline-block; }
 .hero h1 .chorded::before { content: attr(data-c); position: absolute; left: 0.04em; top: -0.5em; color: var(--chord); font: 700 0.5em/1 var(--mono); letter-spacing: 0; }
 .hero p.lede { font-size: clamp(18px, 2.2vw, 21px); color: var(--muted); max-width: 46ch; margin: 0 0 28px; }
@@ -132,6 +137,8 @@ h3 { font-size: 21px; margin: 0 0 6px; letter-spacing: -0.01em; }
 .card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
 .card h3 { font-size: 17px; }
 .card p { margin: 0; color: var(--muted); font-size: 15px; }
+.grid.two { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 560px) { .grid.two { grid-template-columns: 1fr; } }
 
 /* Download */
 .dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
@@ -150,6 +157,26 @@ pre.cmd { background: var(--paper); border: 1px solid var(--line); border-radius
 details { margin-top: 18px; }
 summary { cursor: pointer; font-weight: 700; }
 
+/* What do you want to do? */
+.doors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 900px) { .doors { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .doors { grid-template-columns: 1fr; } }
+.door { display: flex; flex-direction: column; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; text-decoration: none; color: var(--muted); font-size: 15px; transition: border-color .15s, transform .15s; }
+.door:hover { border-color: var(--teal); transform: translateY(-2px); }
+.door img { aspect-ratio: 16 / 9; object-fit: cover; object-position: top left; border-bottom: 1px solid var(--line); }
+.door > span { padding: 14px 16px 16px; display: grid; gap: 4px; }
+.door strong { color: var(--ink); font-size: 19px; }
+.door-songs { justify-content: space-between; background: var(--teal-soft); border-color: transparent; }
+.door-songs .go { color: var(--teal-ink); font-weight: 700; }
+.choose { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 760px) { .choose { grid-template-columns: 1fr; } }
+.choose .card { display: flex; flex-direction: column; gap: 10px; }
+.choose .card ul { margin: 0; padding-left: 20px; color: var(--muted); font-size: 15.5px; }
+.choose .card .btn { align-self: flex-start; margin-top: auto; }
+footer .ref a { color: var(--muted); }
+nav.links a[aria-current] { color: var(--ink); }
+@media (min-width: 861px) and (max-width: 980px) { nav.links { gap: 14px; } }
+
 /* Footer */
 footer { border-top: 1px solid var(--line); padding: 36px 0 48px; color: var(--muted); font-size: 15px; }
 footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; }
@@ -163,12 +190,13 @@ footer a { color: var(--muted); }
   <div class="wrap">
     <a class="brand" href="#"><img src="img/icon-64.png" alt="">ukemusic</a>
     <nav class="links">
-      <a class="opt" href="#how">How it works</a>
-      <a class="opt" href="#features">Features</a>
-      <a class="opt" href="#learn">Learn</a>
-      <a class="opt" href="changes.html">What's new</a>
-      <a href="#download">Download</a>
-      <a class="repo-link" href="#source">GitHub</a>
+      <a class="opt" href="learn.html">Learn</a>
+      <a class="opt" href="practise.html">Practise</a>
+      <a class="opt" href="perform.html">Perform</a>
+      <a class="opt" href="teach.html">Teach</a>
+      <a class="opt" href="chord-sheets.html">Chord sheets</a>
+      <a class="opt" href="songs.html">Your songs</a>
+      <a href="#get">Get it</a>
     </nav>
   </div>
 </header>
@@ -176,22 +204,50 @@ footer a { color: var(--muted); }
 <main>
   <div class="hero">
     <div class="wrap">
-      <h1>Chord sheets for <span class="chorded" data-c="C">ukulele</span>, from the words you type</h1>
-      <p class="lede">Write the song with the chords in square brackets. ukemusic draws the chord sheet, the shapes and the strum, plays it along with you, puts it on the big screen for your club night, and prints a clear copy for the gig.</p>
+      <h1>Bring your <span class="chorded" data-c="C">songs</span>. Learn them, practise them, play them together.</h1>
+      <p class="lede">Paste a chord sheet from a website, import your club's songbook, or type the words with the chords in square brackets. ukemusic turns it into everything else: the chord sheet and shapes, playback and karaoke, a way to learn it by heart, and a clear copy for the gig.</p>
       <div class="cta">
-        <a id="heroDownload" class="btn primary" href="#download">Download for free</a>
-        <a class="btn" href="app/">Try the web player</a>
-        <span class="note">Windows, Mac and Linux · works offline · open source</span>
+        <a class="btn primary" href="app/">Try it in your browser</a>
+        <a id="heroDownload" class="btn" href="#get">Download for free</a>
+        <span class="note">Free and open source · Windows, Mac, Linux, phones and tablets</span>
       </div>
       <div class="shot"><img src="img/editor.webp" width="1360" height="860" alt="ukemusic: the song typed on the left, the finished chord sheet with chord shapes and the strum pattern on the right"></div>
     </div>
   </div>
 
+  <section id="doors">
+    <div class="wrap">
+      <p class="eyebrow">What do you want to do?</p>
+      <h2>One app for the whole life of a song</h2>
+      <p class="intro">On your own or with a group, from the first strum to the club night.</p>
+      <div class="doors">
+        <a class="door" href="learn.html"><img src="img/learn-memory.webp" loading="lazy" width="1360" height="860" alt=""><span><strong>Learn</strong>Get a song by heart: the chords fade as you play, a quiz on what comes next, and a learn sheet.</span></a>
+        <a class="door" href="practise.html"><img src="img/practice.webp" loading="lazy" width="1360" height="860" alt=""><span><strong>Practise</strong>Warm-ups, chord changes, strumming and picking, and your songs slowed down and looped.</span></a>
+        <a class="door" href="perform.html"><img src="img/session.webp" loading="lazy" width="1360" height="765" alt=""><span><strong>Perform</strong>Stage copies, setlists, and the Session screen on the TV for a club night.</span></a>
+        <a class="door" href="teach.html"><img src="img/learn.webp" loading="lazy" width="1360" height="860" alt=""><span><strong>Teach</strong>Run a club or a class: the screen at the front, handouts and learn sheets from one song file.</span></a>
+        <a class="door" href="chord-sheets.html"><img src="img/editor.webp" loading="lazy" width="1360" height="860" alt=""><span><strong>Chord sheets</strong>Clear sheets with shapes and the strum, in any key, capo or instrument.</span></a>
+        <a class="door door-songs" href="songs.html"><span><strong>Bring your songs</strong>From websites, songbooks, ChordPro files and PDFs, with an AI prompt for the difficult ones.</span><span class="go">How to get them in →</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="choose">
+    <div class="wrap">
+      <p class="eyebrow">Two ways to use it</p>
+      <h2>In your browser, or on your computer</h2>
+      <p class="intro">Start in the browser: nothing to install, songs ready to play. Move to the desktop app when you want your own songs, setlists and printing. Both are free.</p>
+      <div class="choose">
+        <div class="card"><h3>The web player</h3><ul><li>Runs in any browser, on a phone, tablet or computer</li><li>Comes with public-domain songs to try straight away</li><li>Play along, karaoke, learn by heart, the Session screen, Free Practice</li><li>Takes your songs from the desktop app with one file</li></ul><a class="btn primary" href="app/">Try it in your browser</a></div>
+        <div class="card"><h3>The desktop app</h3><ul><li>Windows, Mac and Linux; works offline</li><li>Write, paste and import your own songs, kept as files you own</li><li>Setlists, songbooks, Stage copies, learn sheets, every export</li><li>Everything the web player does, and more</li></ul><a class="btn" href="#get">Download for free</a></div>
+      </div>
+    </div>
+  </section>
+
   <section id="how">
     <div class="wrap">
       <p class="eyebrow">How it works</p>
-      <h2>Type it once. ukemusic does the rest.</h2>
-      <p class="intro">A song is a plain text file you can read and change anywhere. Put each chord in square brackets just before the word where it changes. Everything else follows from that: the sheet, the shapes, the playback and the printing.</p>
+      <h2>Bring it in once. ukemusic does the rest.</h2>
+      <p class="intro">Paste a chord sheet from a website, import ChordPro files, or type it. However it comes in, a song is a plain text file you can read and change anywhere, with each chord in square brackets just before the word where it changes. Everything else follows from that: the sheet, the shapes, the playback, the learning and the printing. <a href="songs.html">All the ways to bring your songs, and an AI prompt for difficult sheets</a>.</p>
       <div class="write">
         <div class="pane">
           <span class="label">What you type</span>
@@ -231,7 +287,7 @@ oh don't you cry for me</pre>
 
   <section id="features">
     <div class="wrap">
-      <p class="eyebrow">What it does</p>
+      <p class="eyebrow">A closer look</p>
       <h2>From the first strum to the gig</h2>
       <p class="intro">Everything a ukulele player needs around a song, in one place.</p>
 
@@ -311,7 +367,7 @@ oh don't you cry for me</pre>
             <li>The circle of fifths, turned so the song's home is at the top</li>
             <li>A one-page learn sheet to keep on your music stand</li>
           </ul>
-          <p style="font-size:15px"><a href="learn.html">How Learn works, and how far to trust it</a></p>
+          <p style="font-size:15px"><a href="learn.html">More about learning with ukemusic</a> · <a href="how-learn-works.html">How Learn works, and how far to trust it</a></p>
         </div>
         <div class="shot"><img src="img/learn.webp" loading="lazy" width="1360" height="860" alt="A learn sheet for Danny Boy: the chords in C with their numbers and what each one does, the song's parts, and the chord map"></div>
       </div>
@@ -344,8 +400,8 @@ oh don't you cry for me</pre>
     </div>
   </section>
 
-  <section id="download">
-    <div class="wrap">
+  <section id="get">
+    <div class="wrap" id="download">
       <p class="eyebrow">Download</p>
       <h2>Free for Windows, Mac and Linux</h2>
       <p class="version" id="version">The latest version is on the releases page.</p>
@@ -402,6 +458,7 @@ npm run package      # make an installer for this computer, in dist/</pre>
 <footer>
   <div class="wrap">
     <span>ukemusic by Mark Beachill · MIT licence · <a class="repo-file" data-path="THIRD_PARTY_NOTICES.md" href="#">Thanks and third-party notices</a></span>
+    <span class="ref">Reference: <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a> · <a class="repo-link" href="#">GitHub</a></span>
     <button class="theme" id="theme" type="button">Light / dark</button>
   </div>
 </footer>
@@ -431,9 +488,10 @@ npm run package      # make an installer for this computer, in dist/</pre>
     document.querySelector(`.dl .card[data-os="${os}"]`).classList.add('here');
     document.getElementById('heroDownload').textContent = `Download for ${names[os]}`;
   } else if (/iPhone|iPad|Android/.test(ua) || navigator.maxTouchPoints > 1) {
+    // a phone or tablet: the browser button is the one to press; this one is for later
     const hero = document.getElementById('heroDownload');
-    hero.textContent = 'Try the web player';
-    hero.href = 'app/';
+    hero.textContent = 'For your computer';
+    hero.href = '#get';
   }
 
   // The latest release's files, straight from GitHub
