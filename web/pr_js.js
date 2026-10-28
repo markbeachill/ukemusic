@@ -540,7 +540,9 @@
           if (mode === 'drill') {
             const set = chordList($p('prDrillSet').value);
             const n = Math.max(1, Math.round((endless ? 32 : count) / 2));
-            const picks = PL.drillChords(set.length ? set : T.EASY_CHORDS, n);
+            const order = set.length ? $p('prDrillOrder').value : 'mix';
+            // in turn: whole rounds of the chords as typed
+            const picks = PL.drillChords(set.length ? set : T.EASY_CHORDS, order === 'order' && !endless ? Math.ceil(n / set.length) * set.length : n, order);
             const barList = [];
             for (const c of picks) {
               barList.push({ chords: ['N.C.'], pattern: 'D', label: 'form', target: c });

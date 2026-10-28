@@ -189,9 +189,11 @@ function tapTempo(times) {
 
 // ── Shape drill ──
 /** The chords for the drill, in a random order without the same one twice running */
-function drillChords(set, count, rand = Math.random) {
+function drillChords(set, count, rand = Math.random, { order = 'mix' } = {}) {
   const list = set.filter(Boolean);
   if (!list.length) return [];
+  // 4.45: in turn, as typed (a song's changes: Dm Dm F G, round and round)
+  if (order === 'order') return Array.from({ length: Math.max(count, list.length) }, (_, i) => list[i % list.length]);
   const out = [];
   for (let i = 0; i < count; i += 1) {
     // never the same chord twice running: pick from the others

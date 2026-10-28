@@ -307,7 +307,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
     applyDynamics: (schedule, levels) => practiceCatalog.applyDynamics(schedule, levels),
     metronomeSchedule: (o) => practiceCatalog.metronomeSchedule(o),
     tapTempo: (times) => practiceCatalog.tapTempo(times),
-    drillChords: (set, count) => practiceCatalog.drillChords(set, count),
+    drillChords: (set, count, order) => practiceCatalog.drillChords(set, count, Math.random, { order }),
     chordTones: (name) => practiceCatalog.chordTones(name),
     safeNotes: (o) => practiceCatalog.safeNotes(o),
     qaPhrase: (o) => practiceCatalog.qaPhrase(o),

@@ -78,6 +78,8 @@ test('shape drill never repeats a chord straight away (even with a fixed random)
   assert.strictEqual(picks.length, 20);
   for (let i = 1; i < picks.length; i += 1) assert.notStrictEqual(picks[i], picks[i - 1]);
   assert.deepStrictEqual(c.drillChords(['C'], 3), ['C', 'C', 'C']);
+  // 4.45: in turn, as typed (a song's changes), round and round
+  assert.deepStrictEqual(c.drillChords(['Dm', 'Dm', 'F', 'G'], 8, Math.random, { order: 'order' }), ['Dm', 'Dm', 'F', 'G', 'Dm', 'Dm', 'F', 'G']);
 });
 test('noodling: safe notes, chord tones, the key note', () => {
   assert.deepStrictEqual(c.chordTones('C'), [0, 4, 7]);
