@@ -183,6 +183,7 @@ button { cursor: pointer; }
 .sheet .tab .tab-string { opacity: 0.7; }
 .sheet .line-group { border-radius: 6px; scroll-margin: 160px 0 220px; }
 .sheet .line-group.playing { background: var(--playing); box-shadow: 0 0 0 4px var(--playing); }
+.sheet .line-group.playing .w.sung { background: var(--accent-soft); box-shadow: 0 0 0 1px var(--accent-soft); border-radius: 3px; color: var(--accent); }
 .sheet .chord-diagram { --diagram-size: 64px; }
 .sheet .section { font-size: 1.05em; }
 .sheet { --stage-font: var(--font-sheet); --stage-size: 19px; --stage-color: #000000; }
@@ -1564,6 +1565,8 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     const schedule = U.buildSchedule(currentIr(), { ...scheduleOptions(fromLine === 0), startLine: fromLine });
     if (!schedule.bars.length) { $('status').textContent = 'Nothing to play: the song has no chords.'; return; }
     play.schedule = schedule;
+    // 4.45: the words' timing (as karaoke has it), to colour them as they're sung
+    try { play.lines = U.buildKaraoke(currentIr(), schedule, { startLine: fromLine }).lines.filter((l) => l.kind === 'words' && !l.instrumental); } catch (_e) { play.lines = []; }
     play.userStopped = false;
     play.line = null;
     play.barKey = null;
@@ -1577,8 +1580,63 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     try { await player.play(schedule, { onEnd: ended }); }
     catch (error) { $('status').textContent = `Couldn’t play: ${error.message}`; ended(); }
   }
+
+  // 4.45: the words being sung, coloured one by one (a word as soon as it's begun), so a line
+  // that wraps onto two rows fills along the first row and then the second, as you read it.
+  // The words of a line are put in spans the first time it plays (again after the sheet redraws).
+  const SUNG_SKIP = '.ichord, .inline-label, .repeat-mark, .bar, .chord';
+  function sungWordsOf(root, lineNo) {
+    const doc = root.ownerDocument || root;
+    const words = [];
+    for (const group of root.querySelectorAll(`.line-group[data-line="${lineNo}"]`)) {
+      for (const box of group.querySelectorAll('.lyrics, .inline-line')) {
+        if (!box.dataset.words) {
+          const walker = doc.createTreeWalker(box, 4 /* text */, { acceptNode: (n) => (n.parentElement && n.parentElement.closest(SUNG_SKIP) ? 2 : 1) });
+          const texts = [];
+          while (walker.nextNode()) texts.push(walker.currentNode);
+          for (const t of texts) {
+            const parts = t.textContent.split(/([\s ]+)/).filter(Boolean);
+            if (!parts.some((x) => x.trim())) continue;
+            const frag = doc.createDocumentFragment();
+            for (const part of parts) {
+              if (!part.replace(/[\s ]+/g, '')) { frag.appendChild(doc.createTextNode(part)); continue; }
+              const span = doc.createElement('span');
+              span.className = 'w';
+              span.textContent = part;
+              frag.appendChild(span);
+            }
+            t.replaceWith(frag);
+          }
+          box.dataset.words = '1';
+        }
+        words.push(...box.querySelectorAll('.w'));
+      }
+    }
+    return words;
+  }
+  const sung = { key: '', words: [], letters: 0 };
+  function sungWords(root, lineNo, fraction) {
+    if (!root) return;
+    if (sung.key !== String(lineNo) || !sung.words.length || !sung.words[0].isConnected) {
+      sung.key = String(lineNo);
+      sung.words = sungWordsOf(root, lineNo);
+      sung.letters = sung.words.reduce((a, w) => a + w.textContent.length, 0);
+    }
+    const reach = Math.max(0, Math.min(1, fraction)) * sung.letters;
+    let at = 0;
+    for (const w of sung.words) {
+      w.classList.toggle('sung', at < reach - 1e-6);
+      at += w.textContent.length;
+    }
+  }
+  function clearSung(root) {
+    if (root) for (const w of root.querySelectorAll('.w.sung')) w.classList.remove('sung');
+    sung.key = '';
+    sung.words = [];
+  }
   function ended() {
     cancelAnimationFrame(play.raf);
+    clearSung($('sheet'));
     $('playBtn').textContent = '▶ Play';
     document.querySelectorAll('.line-group.playing').forEach((el) => el.classList.remove('playing'));
     [...$('strip').children].forEach((c) => c.classList.remove('on'));
@@ -1644,6 +1702,22 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
               el.classList.add('playing');
               el.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
             }
+          }
+        }
+        // 4.45: the words being sung, word by word
+        {
+          let line = null;
+          for (const l of play.lines || []) if (l.start !== null && l.start <= t) line = l;
+          if (line && t < line.end + 0.05) {
+            const len = (p) => p.text.replace(/\s+/g, '').length;
+            const total = line.pieces.reduce((sum, p) => sum + len(p), 0);
+            let reached = 0;
+            for (const p of line.pieces) {
+              if (p.start === null) continue;
+              if (t >= p.end) reached += len(p);
+              else if (t > p.start) reached += len(p) * ((t - p.start) / (p.end - p.start));
+            }
+            if (total) sungWords($('sheet'), line.line, reached / total);
           }
         }
         // 4.44: the tune as notes: light up the note being sung

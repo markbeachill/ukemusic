@@ -12,6 +12,9 @@ The web player (ukemusic in the browser: iPad, iPhone, Android, or any computer)
 - **A proper web app.** It has a web app manifest and icons, so **Add to Home Screen** (iPhone, iPad) and **Install app** (Android, Chrome and Edge on a computer) give it its own icon and window. And it **works offline**: once opened with a connection, the page, the songs, the sounds and the fonts are kept on the device, so it opens and plays with no signal; a new version arrives the next time it opens online.
 - **Website: Phone and tablet**, a new page: putting it on your Home Screen (iPad and iPhone, Android, a computer), bringing songs in, writing and changing them, keeping them safe, and taking them back to the computer, with a warning that on iPad and iPhone the Home Screen app keeps its own songs, separate from Safari's. Linked from the home page, Bring your songs, the footer and the web player. The Teach page uses the new names (Add songs from files…, Phone and tablet…).
 
+### Playing beside the editor
+- **The words being sung colour in word by word**, in the desktop preview and now in the web player too. Before, a coloured band swept across the line's whole box, so a line that wraps onto two rows (a long line, or Chords in the words) filled both rows at once. Now each word is coloured as it's begun, along the first row and on into the second, as you read it.
+
 ### Practice
 - **Chord shapes drill: Order.** **In turn, as typed** (now the usual) goes through the chords as you typed them, round and round, so a song's changes (`Dm Dm F G`) can be drilled in its order; **Mixed up** is the old way (any order, never the same chord twice running). Learn's "practise the shapes" still mixes them up.
 

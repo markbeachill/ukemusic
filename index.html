@@ -3947,7 +3947,7 @@
   .line-group[data-line]:hover { background: rgba(14, 107, 100, 0.05); }
   .line-group.cursor-line { background: rgba(14, 107, 100, 0.09); box-shadow: -6px 0 0 #0e6b64; }
   .line-group.playing { background: rgba(250, 204, 21, 0.28); border-radius: 6px; box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.28); }
-  .line-group.playing .lyrics, .line-group.playing .inline-line { width: fit-content; background-image: linear-gradient(to right, rgba(14, 107, 100, 0.32) var(--sung, 0%), transparent var(--sung, 0%)); border-radius: 3px; }`;
+  .line-group.playing .w.sung { background: rgba(14, 107, 100, 0.32); border-radius: 3px; box-shadow: 0 0 0 1px rgba(14, 107, 100, 0.32); }`;
 
         const state = {
           currentPath: null,
@@ -6834,7 +6834,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           playBand.schedule = null;
           playBand.el.hidden = true;
           const doc = preview.contentDocument;
-          if (doc) doc.querySelectorAll('.line-group[style*="--sung"]').forEach((el) => el.style.removeProperty('--sung'));
+          clearSung(doc);
           if (doc) doc.querySelectorAll('.tune-note.now').forEach((el) => el.classList.remove('now'));
           playBand.tuneNow = null;
         }
@@ -6884,6 +6884,60 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           playBand.tuneNow = found;
           if (found) found.classList.add('now');
         }
+
+        // 4.45: the words being sung, coloured one by one (a word as soon as it's begun), so a line
+        // that wraps onto two rows fills along the first row and then the second, as you read it.
+        // The words of a line are put in spans the first time it plays (again after the sheet redraws).
+        const SUNG_SKIP = '.ichord, .inline-label, .repeat-mark, .bar, .chord';
+        function sungWordsOf(root, lineNo) {
+          const doc = root.ownerDocument || root;
+          const words = [];
+          for (const group of root.querySelectorAll(`.line-group[data-line="${lineNo}"]`)) {
+            for (const box of group.querySelectorAll('.lyrics, .inline-line')) {
+              if (!box.dataset.words) {
+                const walker = doc.createTreeWalker(box, 4 /* text */, { acceptNode: (n) => (n.parentElement && n.parentElement.closest(SUNG_SKIP) ? 2 : 1) });
+                const texts = [];
+                while (walker.nextNode()) texts.push(walker.currentNode);
+                for (const t of texts) {
+                  const parts = t.textContent.split(/([\s ]+)/).filter(Boolean);
+                  if (!parts.some((x) => x.trim())) continue;
+                  const frag = doc.createDocumentFragment();
+                  for (const part of parts) {
+                    if (!part.replace(/[\s ]+/g, '')) { frag.appendChild(doc.createTextNode(part)); continue; }
+                    const span = doc.createElement('span');
+                    span.className = 'w';
+                    span.textContent = part;
+                    frag.appendChild(span);
+                  }
+                  t.replaceWith(frag);
+                }
+                box.dataset.words = '1';
+              }
+              words.push(...box.querySelectorAll('.w'));
+            }
+          }
+          return words;
+        }
+        const sung = { key: '', words: [], letters: 0 };
+        function sungWords(root, lineNo, fraction) {
+          if (!root) return;
+          if (sung.key !== String(lineNo) || !sung.words.length || !sung.words[0].isConnected) {
+            sung.key = String(lineNo);
+            sung.words = sungWordsOf(root, lineNo);
+            sung.letters = sung.words.reduce((a, w) => a + w.textContent.length, 0);
+          }
+          const reach = Math.max(0, Math.min(1, fraction)) * sung.letters;
+          let at = 0;
+          for (const w of sung.words) {
+            w.classList.toggle('sung', at < reach - 1e-6);
+            at += w.textContent.length;
+          }
+        }
+        function clearSung(root) {
+          if (root) for (const w of root.querySelectorAll('.w.sung')) w.classList.remove('sung');
+          sung.key = '';
+          sung.words = [];
+        }
         function playBandTick() {
           const schedule = playBand.schedule;
           if (!schedule || !player) return;
@@ -6915,20 +6969,19 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               pbLight(Math.min(steps.length - 1, Math.floor((t - bar.time) / (barTime / steps.length))));
             }
             tuneLight(t, bars, index);
-            // the words being sung: fill the line in, letter by letter, as its time passes
+            // the words being sung: coloured word by word as its time passes (letters, not spaces)
             let line = null;
             for (const l of playBand.lines) if (l.start !== null && l.start <= t) line = l;
             if (line && t < line.end + 0.05) {
-              const total = line.pieces.reduce((sum, p) => sum + p.text.length, 0);
+              const len = (p) => p.text.replace(/\s+/g, '').length;
+              const total = line.pieces.reduce((sum, p) => sum + len(p), 0);
               let reached = 0;
               for (const p of line.pieces) {
                 if (p.start === null) continue;
-                if (t >= p.end) reached += p.text.length;
-                else if (t > p.start) reached += p.text.length * ((t - p.start) / (p.end - p.start));
+                if (t >= p.end) reached += len(p);
+                else if (t > p.start) reached += len(p) * ((t - p.start) / (p.end - p.start));
               }
-              const doc = preview.contentDocument;
-              const el = doc && doc.querySelector(`.line-group[data-line="${line.line}"]`);
-              if (el && total) el.style.setProperty('--sung', `${Math.min(100, (reached / total) * 100).toFixed(1)}%`);
+              if (total) sungWords(preview.contentDocument, line.line, reached / total);
             }
           }
           playBand.raf = requestAnimationFrame(playBandTick);
