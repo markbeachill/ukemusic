@@ -36,6 +36,7 @@ const SONG_FACT_PATHS = [
   'song.difficulty',      // beginner, intermediate or advanced
   'song.tags',            // "folk, singalong" (searched in the library)
   'song.licence',         // public-domain, own, permission or personal (4.25: what may be shared)
+  'song.first_note',      // 4.44: the first note sung, in the written key: "E" (sounded in the count-in)
   'shapes.<instrument>',  // chord shapes chosen for this song: "Am 2000, F 2010" (src/shapes.js)
   'song.transpose',
   'song.tempo',
@@ -57,7 +58,10 @@ const SONG_OVERRIDE_PATHS = [
   'playback.default_strum',
   'playback.custom_strum',
   'playback.swing',        // 4.25: these two were lost when a song was saved
+  'playback.pick',         // 4.44: picked instead of strummed (a src/picking.js pattern id)
+  'playback.tune',         // 4.44: play the song's {melody} quietly over it
   'export.section_names',  // 4.25: the song's own export setting (show, small or hide)
+  'export.tune_notation',  // 4.44: the tune as notes: strip, lines or off
   'export.stage_format',   // 4.29: the song's own Stage format (clear, brackets, compact, heavy)
   'export.stage_chorus',   // 4.30: Stage: repeated choruses in full (full) or once (once)
   'export.stage_diagrams'  // 4.32: Stage: chord diagrams as the song has them (song) or none
@@ -152,6 +156,8 @@ function pickSongSettings(config) {
   if (tags) setPath(out, 'song.tags', tags);
   const licence = String(getPath(config, 'song.licence') || '').toLowerCase();
   if (['public-domain', 'own', 'permission', 'personal'].includes(licence)) setPath(out, 'song.licence', licence);
+  const firstNote = require('./picking').normalizeNote(getPath(config, 'song.first_note'));
+  if (firstNote) setPath(out, 'song.first_note', firstNote);
   // Chord shapes chosen for this song, per instrument
   for (const id of INSTRUMENTS) {
     const shapes = getPath(config, `shapes.${id}`);
@@ -168,9 +174,12 @@ function pickSongSettings(config) {
     if (p === 'rhythm.style' && !['comic', 'clean', 'compact', 'plain'].includes(value)) continue;
     if (p === 'playback.default_strum' && !['simple', 'island', 'custom'].includes(value) && !require('./strums').strum(value)) continue;
     if (p === 'export.section_names' && !['show', 'small', 'hide'].includes(value)) continue;
+    if (p === 'export.tune_notation' && !['strip', 'lines', 'off'].includes(value)) continue;
     if (p === 'export.stage_format' && !['clear', 'brackets', 'compact', 'heavy'].includes(value)) continue;
     if (p === 'export.stage_chorus' && !['full', 'once'].includes(value)) continue;
     if (p === 'export.stage_diagrams' && !['song', 'none'].includes(value)) continue;
+    if (p === 'playback.pick' && !require('./picking').pattern(value)) continue;
+    if (p === 'playback.tune') { if (value !== true && value !== 'true') continue; value = true; }
     if (p === 'playback.swing' && !['auto', 'straight', 'light', 'swing', 'shuffle'].includes(value)) continue;
     if (p === 'playback.custom_strum') value = String(value).replace(/[^DUXdux>\- ↓↑✕]/g, '').trim() || undefined;
     if (p === 'font.size') value = Math.max(8, Math.min(40, Math.round(Number(value) || 0))) || undefined;

@@ -451,7 +451,8 @@ function wrapTab(text, maxChars) {
  * columns is used — the most common gap counts as half a beat (an eighth note), wider
  * gaps proportionally longer (up to 2 beats). Returns { steps: [{ beat, notes:[note…] }], beats }.
  */
-function tabTiming(model) {
+function tabTiming(model, { barBeats = 0 } = {}) {
+  if (barBeats > 0) return barTiming(model, barBeats);
   const steps = [];
   let beat = 0;
   for (const system of model.systems) {
@@ -470,9 +471,42 @@ function tabTiming(model) {
   return { steps, beats: beat };
 }
 
+/**
+ * 4.44: timing for tab whose bars are exact (a ```tab 4/4 block, as ukemusic writes picking out):
+ * each |…| is one bar of `barBeats` beats, and a note's place in its bar is its time. Long held
+ * notes and bars of quarter notes come out right, which the spacing rule can't know.
+ */
+function barTiming(model, barBeats) {
+  const steps = [];
+  let base = 0;
+  for (const system of model.systems) {
+    const body = system.lines[0] ? system.lines[0].body : '';
+    const edges = [-1];
+    for (let i = 0; i < body.length; i += 1) if (body[i] === '|') edges.push(i);
+    if (edges[edges.length - 1] < body.replace(/\s+$/, '').length - 1) edges.push(body.replace(/\s+$/, '').length);
+    for (let e = 0; e + 1 < edges.length; e += 1) {
+      const start = edges[e] + 1;
+      const width = edges[e + 1] - start;
+      if (width <= 0) continue;
+      const cols = [...new Set(system.notes.filter((n) => n.midi !== null && n.column >= start && n.column < edges[e + 1]).map((n) => n.column))].sort((a, b) => a - b);
+      for (const column of cols) {
+        steps.push({ beat: base + ((column - start) / width) * barBeats, strings: system.tuning.strings.length, notes: system.notes.filter((n) => n.column === column && n.midi !== null) });
+      }
+      base += barBeats;
+    }
+  }
+  return { steps, beats: base };
+}
+
+/** "```tab 3/4" -> 3 beats a bar (6 counts in 6/8); "```tab" -> 0 (timed by its spacing) */
+function tabBarBeats(fence) {
+  const m = String(fence || '').match(/^\s*```\s*tab\s+(\d+)\s*\/\s*(\d+)\s*$/i);
+  return m ? Number(m[1]) : 0;
+}
+
 /** How many whole bars a tab block takes in playback (0 if it has no playable notes). */
-function tabBars(text, beatsPerBar = 4) {
-  const { steps, beats } = tabTiming(parseTab(text));
+function tabBars(text, beatsPerBar = 4, { barBeats = 0 } = {}) {
+  const { steps, beats } = tabTiming(parseTab(text), { barBeats });
   return steps.length ? Math.max(1, Math.ceil(beats / beatsPerBar - 1e-9)) : 0;
 }
 
@@ -494,6 +528,7 @@ function findTabRuns(lines) {
 }
 
 module.exports = {
+  barTiming, tabBarBeats,
   TUNINGS,
   MAX_FRET,
   isStringLine,

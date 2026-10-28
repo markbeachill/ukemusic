@@ -529,7 +529,8 @@
       .setlist-menu .sm-new { display: flex; gap: 6px; padding: 6px 4px 2px; border-top: 1px solid var(--border); margin-top: 4px; }
       .setlist-menu .sm-new input { flex: 1; min-width: 0; font: inherit; font-size: 13px; padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; }
       .setlist-columns h3 { margin: 0 0 8px; font-size: 15px; }
-      .setlist-songs { margin: 0; padding: 0; list-style: none; counter-reset: song; display: grid; gap: 4px; }
+      .setlist-songs { margin: 0; padding: 0; list-style: none; counter-reset: song; display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
+      .setlist-songs li { min-width: 0; } /* 4.42: a long title or artist made the rows run under "Adding songs" */
       .setlist-songs li { counter-increment: song; display: flex; align-items: center; gap: 6px; border: 1px solid var(--border); border-radius: 9px; padding: 6px 8px; background: #fff; }
       .setlist-songs li::before { content: counter(song) "."; min-width: 1.6em; color: var(--muted); font-variant-numeric: tabular-nums; }
       .setlist-songs li .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -1455,7 +1456,7 @@
       .rib-fields .rib-button-inline { min-height: 52px; align-self: flex-end; }
       #viewStyleSet { width: auto; min-width: 0; max-width: 140px; }
       #viewStrumSize { max-width: 110px; }
-      #viewLayout { max-width: 130px; }
+      #viewLayout, #viewTune { max-width: 130px; }
       [data-ribbon-panel="play"] select { max-width: 125px; }
       .rib-stack { display: grid; gap: 4px; align-self: center; }
       .rib-stack .rib-field { display: grid; grid-template-columns: 44px auto; align-items: center; gap: 6px; }
@@ -1485,6 +1486,25 @@
       .k-chord.k-hidden { color: var(--muted, #888); cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
       .k-chord.k-revealed { color: #c2410c; }
       .k-chord.k-number { font-style: normal; }
+      .export-sub { margin-left: 22px; font-size: 13px; }
+      .pick-h { font-size: 14px; margin: 14px 0 2px; }
+      .rib-button.dim { opacity: 0.5; }
+      .pick-pattern-text { display: block; font: 600 11.5px system-ui, sans-serif; color: var(--muted, #5b6662); max-width: 230px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      [data-ribbon-panel="pick"] select { max-width: 230px; }
+      #pickWritePatternNote { display: block; margin-top: 4px; }
+      .pick-help-dialog { width: min(680px, 94vw); max-height: calc(100vh - 32px); }
+      .pick-write-dialog { width: min(620px, 94vw); }
+      .pick-write-grid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px 14px; align-items: start; margin: 10px 0; }
+      .pick-write-grid > label:first-child, .pick-write-grid > label[for] { padding-top: 4px; font-weight: 600; }
+      .pick-write-grid .details-label { font-weight: 600; padding-top: 2px; }
+      .pick-write-grid div > label { display: block; margin-bottom: 4px; }
+      #pickWriteTitle { width: 100%; }
+      .pick-help { max-height: calc(100vh - 190px); overflow: auto; font-size: 14px; line-height: 1.5; }
+      .pick-help p, .pick-help ol { margin: 0 0 10px; }
+      .pick-help-code { font: 12.5px/1.4 Consolas, "Courier New", monospace; background: var(--panel, #f4f6f5); padding: 8px 10px; border-radius: 6px; white-space: pre-wrap; margin: 0 0 10px; }
+      .k-pick { font: 600 0.75em var(--font-family, system-ui); color: var(--muted, #667); padding: 4px 0; }
+      .k-pick.k-hidden { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+      .k-pick.k-revealed { color: #c2410c; }
       .k-line.k-trouble::before { content: '⚑'; position: absolute; margin-left: -1.4em; color: #c2410c; font-size: 0.8em; }
       .learn-circle-dialog { width: min(860px, 96vw); }
       .learn-circle { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: start; }
@@ -1782,6 +1802,7 @@
             <button id="ribbonTabExport" class="ribbon-tab" type="button" role="tab" data-ribbon="export" title="PDFs, web pages, lyrics and ChordPro files, into the song's exports folder">Export</button>
             <button id="ribbonTabPlay" class="ribbon-tab" type="button" role="tab" data-ribbon="play" title="Play, stop, karaoke, tempo and how playback sounds">Play</button>
             <button id="ribbonTabLearn" class="ribbon-tab" type="button" role="tab" data-ribbon="learn" title="Learn the song: play it from memory, practise its changes, think in numbers, and make a learn sheet">Learn</button>
+            <button id="ribbonTabPick" class="ribbon-tab" type="button" role="tab" data-ribbon="pick" title="Fingerpick the song instead of strumming: choose a pattern, play it, make a pick sheet, and learn any tab in steps">Pick</button>
             <button id="ribbonTabSettings" class="ribbon-tab" type="button" role="tab" data-ribbon="settings" title="Settings for this song and the defaults for all songs">Settings</button>
             <span class="ribbon-end">
               <button id="ribbonHide" class="ribbon-close ribbon-hide" type="button" title="Hide the tools, for more room (click any tab, or this again, to show them)" aria-label="Hide the tools"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -1928,9 +1949,9 @@
                     <option value="6">6/8</option>
                   </select>
                 </div>
-                <div class="rib-field" title="The strum played where the song has no {pattern} of its own. Saved with the song; Default follows Settings → All songs.">
+                <div class="rib-field" title="The strum played where the song has no {pattern} of its own, or a picking pattern instead (Pick: …). Saved with the song; Default follows Settings → All songs.">
                   <label for="songStrumSelect">Strum</label>
-                  <select id="songStrumSelect" title="The strum played where the song has no {pattern} of its own. Saved with the song; Default follows Settings → All songs."></select>
+                  <select id="songStrumSelect" title="The strum played where the song has no {pattern} of its own, or a picking pattern instead (Pick: …). Saved with the song; Default follows Settings → All songs."></select>
                 </div>
               </div>
               <span class="rib-label">Timing</span>
@@ -1983,8 +2004,16 @@
                     <button id="viewTextReset" class="rib-small" type="button" title="Back to the usual size">Usual</button>
                   </div>
                 </div>
+                <div class="rib-field" title="Songs with their tune written in ({melody} lines): the tune as music on a staff. A strip at the top shows each tune once, with its chords; Over every line puts a staff above each line, like a printed songbook">
+                  <label for="viewTune">The tune</label>
+                  <select id="viewTune" title="The tune as notes on a staff (songs with {melody} lines): once, at the top; over every line, songbook style; or hidden. Saved with the song, and used in its PDFs and web pages">
+                    <option value="strip">A strip at the top</option>
+                    <option value="lines">Over every line</option>
+                    <option value="off">Hidden</option>
+                  </select>
+                </div>
               </div>
-              <span class="rib-label">Text</span>
+              <span class="rib-label">Text and tune</span>
             </div>
             <div class="rib-group">
               <div class="rib-items rib-fields">
@@ -2208,7 +2237,7 @@
             </div>
             <div class="rib-group">
               <div class="rib-items">
-                <button id="learnChangesButton" class="rib-button" type="button" data-icon="convert" title="The song's chord changes, the hardest first, with what each finger does, and practice for each">The changes…</button>
+                <button id="learnChangesButton" class="rib-button" type="button" data-icon="convert" title="The song's chord changes, the hardest first, with what each finger does, and practice for each">Changes…</button>
                 <button id="learnDrillButton" class="rib-button" type="button" data-icon="sliders" title="Free Practice's shapes drill, with this song's chords">Shapes</button>
               </div>
               <span class="rib-label">Fingers</span>
@@ -2231,6 +2260,58 @@
                 <button id="learnPatternsButton" class="rib-button" type="button" data-icon="patterns" title="The song's chords as numbers, the familiar progressions in it, and which parts share them">Patterns</button>
               </div>
               <span class="rib-label">Understand it</span>
+            </div>
+          </div>
+
+          <div class="ribbon-panel" data-ribbon-panel="pick" role="tabpanel" hidden>
+            <div class="rib-group">
+              <div class="rib-items rib-fields">
+                <div class="rib-field" title="How this song is picked instead of strummed. Saved with the song: playback, karaoke and the pick sheet all use it">
+                  <label for="pickPattern">Pattern</label>
+                  <select id="pickPattern" title="How this song is picked instead of strummed. Saved with the song: playback, karaoke and the pick sheet all use it"></select>
+                  <span id="pickPatternText" class="pick-pattern-text"></span>
+                </div>
+                <label class="rib-check" title="Play the song's tune quietly over the chords, to learn how it goes (it needs {melody} lines in the song). Saved with the song"><input id="pickTune" type="checkbox" /> Play the tune</label>
+              </div>
+              <span class="rib-label">Picking pattern</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <button id="pickPlayButton" class="rib-button" type="button" data-icon="play" title="Play the song picked, beside the editor (the strip shows the strings to pick). Slower: Play → Practice speed">Play</button>
+                <button id="pickStopButton" class="rib-button" type="button" data-icon="stop" title="Stop playing (Shift+F5)" disabled>Stop</button>
+                <button id="pickKaraokeButton" class="rib-button" type="button" data-icon="karaoke" title="Karaoke, picked: the strip at the top shows each string as it's picked">Karaoke</button>
+                <button id="pickFirstNoteButton" class="rib-button" type="button" data-icon="metronome" title="Hear the first note you sing (set it in Info → First note). It's also sounded with the first click of the count-in">First note</button>
+              </div>
+              <span class="rib-label">Play it</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <button id="pickSheetButton" class="rib-button" type="button" data-icon="export" title="The pick sheet: the pattern counted out, the chord shapes, and the song as tab with the chords over it and the words under it. A PDF and a web page in the song's learn folder (also in Export)">Pick sheet</button>
+                <button id="learnPickButton" class="rib-button" type="button" data-icon="tab" title="For a song with its own tab: learn the tab in steps (the chords under it, then the picking on open strings, then both)">Tab in steps…</button>
+              </div>
+              <span class="rib-label">Sheet and tab</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <details class="rib-menu" id="pickChangeMenu" title="Change the pattern from the line the cursor is on: adds a {pick} line to the song, which you can edit">
+                  <summary class="rib-button" data-icon="sliders">Change here ▾</summary>
+                  <div class="rib-menu-items" id="pickChangeItems"></div>
+                </details>
+                <details class="rib-menu" id="pickWriteMenu" title="Write the picking out as tab you can change note by note: just the line the cursor is on, or the whole song as a new song">
+                  <summary class="rib-button" data-icon="plus">Write out ▾</summary>
+                  <div class="rib-menu-items">
+                    <button id="pickWriteLineButton" type="button" title="The line the cursor is on becomes tab, here in this song: change any note of it, while the rest stays chords and patterns. Edit → Undo takes it back"><b>This line</b>, as tab here</button>
+                    <button id="pickWriteButton" type="button" title="Write the picking out as a new song in your library: every line as tab you can edit note by note"><b>The whole song</b>, as a new song…</button>
+                  </div>
+                </details>
+              </div>
+              <span class="rib-label">In the song</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <button id="pickHelpButton" class="rib-button" type="button" data-icon="help" title="How picking works: tab, chord shapes and the fingers, the patterns, and songs with their own tab">How it works</button>
+              </div>
+              <span class="rib-label">Help</span>
             </div>
           </div>
 
@@ -2358,6 +2439,8 @@
                       <select id="detailsKey" data-config-path="song.key" data-scope="song" data-key-select></select>
                       <button id="detailsGuessKey" type="button" title="Suggest the key from the chords, with the reasons and how sure it is">Guess the key…</button>
                     </div>
+                    <label for="detailsFirstNote" title="The first note you sing, in the written key: E, F#, Bb. It's sounded with the first click of the count-in (in the key you're playing in), and shown on the pick and learn sheets">First note</label>
+                    <input id="detailsFirstNote" class="short" type="text" maxlength="4" placeholder="E" data-config-path="song.first_note" data-scope="song" title="The first note you sing, in the written key: E, F#, Bb. It's sounded with the first click of the count-in (in the key you're playing in), and shown on the pick and learn sheets" />
                     <span class="details-label">Tempo and time</span>
                     <div class="details-row">
                       <span id="detailsPlay" class="details-value"></span>
@@ -2519,6 +2602,15 @@
                           <option value="hide">Hide (prints fewer pages)</option>
                         </select>
                         <p class="help">The default for every song. A song can have its own choice: Export → Section names. Hidden, the sections are just a line apart; a heading with nothing under it (a cue like "Chorus x2") always stays.</p>
+                      </div>
+                      <div class="field">
+                        <label for="export-tune_notation">The tune as notes (songs with {melody} lines)</label>
+                        <select id="export-tune_notation" data-config-path="export.tune_notation">
+                          <option value="strip">A strip at the top: each tune once, with its chords</option>
+                          <option value="lines">Over every line, like a printed songbook</option>
+                          <option value="off">Hidden</option>
+                        </select>
+                        <p class="help">The default for every song (a song can have its own: View → The tune). The strip shows the verse tune, the chorus tune and so on once each, so the sheet stays short. Over every line puts a staff above each line it's sung on: the most like a songbook, but about twice as long. Stage copies never show it.</p>
                       </div>
                       <div class="field">
                         <label for="rhythm-style">Strum patterns: style</label>
@@ -2847,8 +2939,9 @@
           </div>
         </div>
         <p id="convertReport" class="dialog-note"></p>
+        <p class="dialog-note" id="convertAiNote">A difficult sheet (a PDF, a scan, the timing written in words)? <b>Copy AI prompt</b>, paste it into an AI chat such as Claude, ChatGPT or Gemini with the chord sheet, then paste its answer here. Check the timing when you play it.</p>
         <div class="dialog-actions">
-          <span></span>
+          <button id="convertAiPrompt" type="button" title="Copy a prompt that tells an AI chat ukemusic's song format, to tidy a difficult chord sheet">Copy AI prompt</button>
           <div class="right">
             <button id="convertCancel" type="button">Cancel</button>
             <button id="convertInsert" type="button">Insert at cursor</button>
@@ -2916,6 +3009,7 @@
               <label><input type="checkbox" name="format" value="sheet_html" /> Web page (HTML)</label>
               <label><input type="checkbox" name="format" value="sheet_md" /> Text with formatting (Markdown), for notes apps</label>
               <label><input type="checkbox" name="format" value="sheet_cho" /> ChordPro (.cho), for other chord apps</label>
+              <label class="export-sub" title="Songs with their tune written in ({melody} lines) also get it as music notation (an ABC block in each section), which ChordPro apps that draw ABC show as a stave. Apps that don't may show the ABC as text, so it's off unless you want it"><input type="checkbox" data-config-path="export.chordpro_abc" /> with the tune as notation (ABC), for apps that draw it</label>
             </fieldset>
             <fieldset>
               <legend>Words only</legend>
@@ -2926,11 +3020,12 @@
             <fieldset>
               <legend>To learn from</legend>
               <label title="The chords and how they feel, the song's parts with their words, the chord map with its patterns, the changes to practise, the circle of fifths and your trouble spots. In the song's learn folder"><input type="checkbox" name="format" value="learn_sheet" /> Learn sheet (PDF and web page)</label>
+              <label title="The song set out for fingerpicking: the pattern counted out, the chord shapes, and the song as tab with the chords over it and the words under it. Uses the song's picking pattern (Pick → Pattern), or One string a beat. In the song's learn folder"><input type="checkbox" name="format" value="pick_sheet" /> Pick sheet (PDF and web page)</label>
             </fieldset>
           </div>
         </details>
         <fieldset>
-          <legend>Key (chord sheets and learn sheets)</legend>
+          <legend>Key (chord sheets, learn and pick sheets)</legend>
           <label><input type="radio" name="exportScope" value="current" /> <span id="exportCurrentLabel">Current key</span></label>
           <label><input type="radio" name="exportScope" value="all" /> <span id="exportAllLabel">Original and every saved version</span></label>
         </fieldset>
@@ -3162,6 +3257,86 @@
           </div>
         </div>
       </form>
+    </dialog>
+
+    <dialog id="learnPickDialog" class="learn-changes-dialog">
+      <h2>The tab, in steps</h2>
+      <p class="dialog-note">This song has its own tab, so it's played as written (the picking pattern is only for the chords). Tab is easier to learn in layers: the chords under it first, then your picking hand on its own, then both together, slowly before in time. Each step plays in karaoke; tap a line to start from there.</p>
+      <div id="learnPickSteps" class="learn-changes"></div>
+      <div id="learnPickBars" class="dialog-note"></div>
+      <div class="dialog-actions"><span></span><div class="right"><button id="learnPickClose" class="primary" type="button">Close</button></div></div>
+    </dialog>
+
+    <dialog id="pickWriteDialog" class="pick-write-dialog">
+      <form id="pickWriteForm" method="dialog">
+        <h2>Write it out as a new song</h2>
+        <p class="dialog-note">This makes a <b>new song</b> in your library with every picked line written out as tab, the chords over it and the words under it. It's yours to edit: change any note, add a fill, change a bar. It plays exactly as written (no pattern any more).</p>
+        <p class="dialog-note"><b>The original song isn't changed</b>, and the two are separate from now on: a change to one doesn't reach the other. To try another pattern, write it out again as another song.</p>
+        <div class="pick-write-grid">
+          <label for="pickWriteTitle">Name</label>
+          <input id="pickWriteTitle" type="text" maxlength="120" />
+          <label for="pickWritePattern">Pattern</label>
+          <div><select id="pickWritePattern"></select> <span id="pickWritePatternNote" class="dialog-note"></span></div>
+          <span class="details-label">Key</span>
+          <div id="pickWriteKeys">
+            <label><input type="radio" name="pickWriteKey" value="played" checked /> <span id="pickWriteKeyPlayed"></span></label>
+            <label><input type="radio" name="pickWriteKey" value="original" /> <span id="pickWriteKeyOriginal"></span></label>
+          </div>
+          <span class="details-label">For</span>
+          <span id="pickWriteInstrument" class="dialog-note"></span>
+          <span class="details-label">On the tab</span>
+          <div>
+            <label><input id="pickWriteChords" type="checkbox" checked /> Chord names over the bars</label>
+            <label><input id="pickWriteWords" type="checkbox" checked /> Words under the bars</label>
+          </div>
+          <span class="details-label">Then</span>
+          <label><input id="pickWriteOpen" type="checkbox" checked /> Open the new song</label>
+        </div>
+        <p id="pickWriteKept" class="dialog-note"></p>
+        <p id="pickWriteError" class="error-text" role="alert"></p>
+        <div class="dialog-actions">
+          <button id="pickWriteCancel" type="button">Cancel</button>
+          <div class="right"><button id="pickWriteOk" class="primary" type="submit">Make the song</button></div>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="pickHelpDialog" class="pick-help-dialog">
+      <h2>How picking works</h2>
+      <div class="pick-help">
+        <p><b>Picking to sing along to.</b> Your left hand holds the chords just as it does to strum. Your right hand picks the strings one (or two) at a time, in a pattern, instead of brushing across them all. Choose a pattern here and the song plays picked; the strip at the top of karaoke shows each string as it comes.</p>
+        <p>This is <b>accompaniment</b>: the tune is your voice's job, just as when you strum. Published picking for songs like House of the Rising Sun or Scarborough Fair is just this. A picked <b>solo</b> (a "chord melody", where the tune itself is on the top strings) is different, and needs the tune written out: the Chord melody pattern makes one when the song has its tune written in (below).</p>
+        <p><b>Singing over it.</b> Get the pattern going on its own first, until you can play it while thinking about something else; then add the words. The easier patterns leave more of you free to sing. Picking is quieter than strumming, so find your first note before you start: set it in <b>Info → First note</b> and it's sounded with the first click of the count-in (or press <b>First note</b> here).</p>
+        <p><b>The fingers.</b> On a ukulele each finger has its own string: the thumb (p) plays g, the index finger (i) C, the middle finger (m) E and the ring finger (a) A. The letters are the usual ones in fingerpicking books. On a guitar the thumb takes the chord's bass note and the fingers the top three strings.</p>
+        <p><b>The patterns</b>, easiest first:</p>
+        <ol>
+          <li><b>One string a beat</b> (g C E A): slow and steady, to get used to holding a chord while you pick.</li>
+          <li><b>Up, twice a bar</b> (g C E A g C E A): the same, twice as fast.</li>
+          <li><b>Up and back</b> (g C E A E C): across and back. Lovely in 3/4 and 6/8.</li>
+          <li><b>Pinch and roll</b> (g+A C E C): thumb and ring finger together on the beat.</li>
+          <li><b>Alternating thumb</b> (Travis): the thumb on every beat, swapping g and C, the fingers in between.</li>
+          <li><b>Chord melody</b>: a picked solo, the tune itself on top, when the song has its tune written in (see below).</li>
+        </ol>
+        <p><b>Tab and chord boxes.</b> Tab is the usual way to write picking: one line per string (the top line is the A string), and a number says which fret to hold as you pick that string (0 is open). Chord boxes show the shape for your left hand. With picked chords, the two go together: hold the whole chord shape, and every number in the tab is already under a finger. So you read the chord, and let the tab tell your right hand which strings and when.</p>
+        <p><b>The pick sheet</b> sets the song out like a fingerstyle songbook: the pattern counted out, the chord boxes, then each line as tab with the chord over the bar where it starts and the words underneath. It's in the song's learn folder, and in Export.</p>
+        <p><b>Changing the pattern part-way.</b> The pattern chosen here is where the song starts. To change it for a verse, a chorus or a single line, put the cursor there and use <b>Change here</b>: it adds a line to the song, which you can edit like a strum line:</p>
+        <pre class="pick-help-code">{pick: up and back}        a pattern by name
+{pick: g C E A E C}        your own, by string (g+A together, - a rest)
+{pick: p i m a m i}        your own, by finger
+{pick V: g+A C E C}        named V, to use again later with {pick V}
+{pick: strum}              back to strumming</pre>
+        <p>The chords stay chords, so you can still change them, move the key and use Learn. Your own pattern repeats to fill each bar (8 steps in 4/4, 6 in 3/4).</p>
+        <p><b>Changing single notes.</b> For a fill or a reworked bar, put the cursor on the line and choose <b>Write out ▾ → This line</b>: just that line becomes tab, here in the song, and every note of it is yours to change; the rest stays chords and patterns. Edit → Undo takes it back.</p>
+        <p><b>Write it out to change it.</b> A pattern is the same everywhere; to make a whole fixed arrangement you can rework anywhere, choose <b>Write out ▾ → The whole song</b>. It makes a <b>new song</b> in your library with every picked line written out as tab (chords over it, words under it), in a <code>```tab 4/4</code> block that plays exactly as written. Edit it like any other song. The original isn't changed, and the two stay separate from then on.</p>
+                <p><b>Songs with their own tab.</b> Tab written in the song (an intro, a riff) is always played as written; the pattern is only for the chords around it. <b>Tab in steps…</b> helps you learn that tab: the chords under it, then the picking on open strings, then both.</p>
+        <p><b>The tune, and chord melody.</b> A song can carry its tune, a line at a time, on a line of its own just above the words:</p>
+        <pre class="pick-help-code">{melody: E E F G | G F E D | C C D E | E. D/2 D2}
+[C]Joyful, joyful, [G7]we adore Thee, [C]God of glory, [G7]Lord of love;</pre>
+        <p>Write the notes by name (E, F#, Bb), in the song's written key. Each note lasts a beat unless it says otherwise: <b>E2</b> two beats, <b>E/2</b> half a beat, <b>E.</b> a beat and a half; <b>r</b> is a rest. Each note is taken as the nearest one to the note before; add <b>'</b> for an octave higher or <b>,</b> for lower. The bars (|) just make it easier to read; a short first bar is a pickup (the "A-" of "A-mazing"). A line without a tune of its own borrows the tune of an earlier line with the same chords, so you usually only write the first verse. If you have a tune in ABC (the folk tune format), write <b>{melody abc: …}</b> instead.</p>
+        <p>With a tune, <b>Play the tune</b> plays it quietly over the chords while you learn the song, and the <b>Chord melody</b> pattern turns it into a picked solo: the tune on the top strings, picked from the chord you're holding, with a chord note under it on beat 1. Tune notes higher than about the 7th fret are a stretch: try the song in another key.</p>
+        <p><b>Learning it.</b> Hold one chord and play the pattern until your picking hand does it on its own. Then change chords on beat 1. Then the song, slowly (Play → Practice speed), a little faster each day. Then sing over it.</p>
+      </div>
+      <div class="dialog-actions"><span></span><div class="right"><button id="pickHelpClose" class="primary" type="button">Close</button></div></div>
     </dialog>
 
     <dialog id="learnCircleDialog" class="learn-circle-dialog">
@@ -3772,6 +3947,7 @@
             all_versions: false,
             print_style: 'standard',
             section_names: 'show',
+            tune_notation: 'strip',
             gig_folder: '',
             gig_copy: true,
             usual_formats: '',
@@ -4069,6 +4245,7 @@
             const numbers = state.learnNumbers && !stageLook;
             const shownIr = numbers ? window.ukemusic.learn.numberedIR(transposedIr, window.ukemusic.progressions.analyse(transposedIr, { key: learnKey(state.transpose - songCapo()) }).key) : transposedIr;
             const baseOptions = numbers ? { ...renderOptions(), diagrams: { ...(renderOptions().diagrams || {}), enable: false } } : renderOptions();
+            baseOptions.tune = { ...(baseOptions.tune || {}), shift: state.transpose, key: keyAfter(state.transpose)?.name || '', keyGuessed: songKey()?.guessed === true };
             const html = window.ukemusic.renderHTML(shownIr, stageLook ? stageRenderOptions(baseOptions) : baseOptions);
             if (previewLook() === 'stage' && !state.stageCss) state.stageCss = (await window.ukemusic.stageStyleRead())?.content || '';
             preview.srcdoc = buildPreviewDocument(html, docCss(previewLook() === 'stage', PREVIEW_CSS), undefined, '', docAttrs(undefined, { stage: previewLook() === 'stage' }));
@@ -4613,7 +4790,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             tempo: Number(config?.song?.tempo) || 0,
             swing: config?.playback?.swing || 'auto',
             diagrams: config?.diagrams || {},
-            chordLibrary: chordLibraryFor(instrument, config)
+            chordLibrary: chordLibraryFor(instrument, config),
+            // 4.44: the tune as notation: a strip at the top, over every line, or hidden
+            tune: { notation: ['strip', 'lines', 'off'].includes(config?.export?.tune_notation) ? config.export.tune_notation : 'strip' }
           };
         }
 
@@ -4716,6 +4895,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const tabInPrint = config?.tablature?.in_print !== false && config?.tablature?.in_print !== 'false';
           if (forPrint && !tabInPrint) transposedIr = withoutTab(transposedIr);
           let options = renderOptions(config);
+          options.tune = { ...(options.tune || {}), shift: semitones, key: keyAfter(semitones)?.name || '', keyGuessed: songKey()?.guessed === true };
           // Split long lines for anything meant for paper: PDFs, and stage-style HTML
           if ((forPrint || stage) && options.layout === 'lines') options.maxLineChars = maxLineChars(printStyle);
           if (stage) options = stageRenderOptions(options, config);
@@ -4884,7 +5064,11 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
                   kept: await window.ukemusic.readChordPro(state.song.folder),
                   key: keyAfter(semitones)?.name || '',
                   tempo: config?.song?.tempo || '',
-                  time: timeLabel(Number(config?.song?.beats_per_bar) || 4)
+                  time: timeLabel(Number(config?.song?.beats_per_bar) || 4),
+                  // 4.44: the tune, in the key the chords are written in here (and as notation, if asked)
+                  tuneShift: semitones - songCapo(config),
+                  tuneSound: semitones,
+                  abc: [true, 'true'].includes(config?.export?.chordpro_abc ?? state.config?.export?.chordpro_abc)
                 });
                 await writeExport(subfolder, name('cho'), content, written);
               }
@@ -4896,6 +5080,14 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             const shifts = allVersions ? [0, ...getVersions().map((v) => v.semitones)] : [state.transpose];
             for (const semitones of [...new Set(shifts)]) {
               const r = await writeLearnSheet(semitones);
+              written.push(`..\\learn\\${r.baseName}.pdf`, `..\\learn\\${r.baseName}.html`);
+            }
+          }
+          // 4.44: pick sheets, the same way (the song's pattern, or the first one)
+          if (formats.includes('pick_sheet')) {
+            const shifts = allVersions ? [0, ...getVersions().map((v) => v.semitones)] : [state.transpose];
+            for (const semitones of [...new Set(shifts)]) {
+              const r = await writePickSheet(songPick() || 'up', semitones);
               written.push(`..\\learn\\${r.baseName}.pdf`, `..\\learn\\${r.baseName}.html`);
             }
           }
@@ -4999,7 +5191,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             const written = await runExport(choice);
             showToast(
               `Export complete — ${written.length} file${written.length === 1 ? '' : 's'} saved`,
-              { detail: written.length === 1 ? `exports\\${written[0]}` : `in this song's exports folder${choice.formats.includes('learn_sheet') ? ' (learn sheets in its learn folder)' : ''}`, action: 'Open folder', onAction: openExports }
+              { detail: written.length === 1 ? `exports\\${written[0]}` : `in this song's exports folder${(choice.formats.includes('learn_sheet') || choice.formats.includes('pick_sheet')) ? ' (learn and pick sheets in its learn folder)' : ''}`, action: 'Open folder', onAction: openExports }
             );
           } catch (err) {
             setStatusMessage(`Export failed: ${err.message}`);
@@ -5038,7 +5230,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           }
           await showLibrary();
           showToast(failed.length ? `Exported ${list.length - failed.length} of ${list.length} songs` : `Exported every song (${list.length})`, {
-            detail: failed.length ? `Not done: ${failed.join(', ')} (see Help → Open Log File)` : `${files} files, each in its song's exports folder${choice.formats.includes('learn_sheet') ? ' (learn sheets in its learn folder)' : ''}.`,
+            detail: failed.length ? `Not done: ${failed.join(', ')} (see Help → Open Log File)` : `${files} files, each in its song's exports folder${(choice.formats.includes('learn_sheet') || choice.formats.includes('pick_sheet')) ? ' (learn and pick sheets in its learn folder)' : ''}.`,
             error: failed.length > 0
           });
         }
@@ -5801,7 +5993,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               report.textContent = `ChordPro file: ${r.sections} section${r.sections === 1 ? '' : 's'}`
                 + (r.strums ? `, ${r.strums} strum pattern${r.strums > 1 ? 's' : ''}` : '')
                 + (details.length ? `. Details kept: ${details.join(', ')}` : '')
-                + (r.ignored.length || result.kept ? '. Everything else is kept on the song\'s ChordPro tab' : '') + '.';
+                + (r.ignored.length || result.kept ? '. Everything else is kept on the song\'s ChordPro tab' : '') + '.'
+                + (r.tunes ? ` ${r.tunes.notes.join(' ')}` : '');
               replace.disabled = !input.value.trim();
               insert.disabled = replace.disabled;
               return;
@@ -6254,6 +6447,14 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
 
         // No song open (from Your songs): the paste becomes a new song; otherwise into this one
         document.getElementById('pasteSheetButton').addEventListener('click', () => (state.song ? pasteChordSheet() : pasteNewSong()));
+        // 4.42: the AI prompt (src/ai-prompt.js, the same as the website's)
+        document.getElementById('convertAiPrompt').addEventListener('click', async (event) => {
+          const button = event.currentTarget;
+          let done = window.ukemusic.copyText(window.ukemusic.aiPrompt);
+          if (!done) { try { await navigator.clipboard.writeText(window.ukemusic.aiPrompt); done = true; } catch (_e) { /* no clipboard */ } }
+          button.textContent = done ? 'Copied ✓' : 'Couldn\'t copy';
+          setTimeout(() => { button.textContent = 'Copy AI prompt'; }, 2200);
+        });
         warningLabel.addEventListener('click', () => {
           if (warningLabel.classList.contains('clickable')) convertCurrentSong();
         });
@@ -6267,6 +6468,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           { path: 'rhythm.style', label: 'Strum patterns: style' },
           { path: 'rhythm.notation', label: 'Plain style shows' },
           { path: 'export.section_names', label: 'Section names' },
+          { path: 'export.tune_notation', label: 'The tune as notes' },
           { path: 'export.stage_format', label: 'Stage: format' },
           { path: 'export.stage_chorus', label: 'Stage: repeated choruses' },
           { path: 'export.stage_diagrams', label: 'Stage: chord diagrams' },
@@ -6361,6 +6563,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const width = ((state.config?.export?.pdf_page_size === 'Letter' ? 8.5 : 8.27) - 1.2) * 96;
           out.maxLineChars = out.layout === 'lines' ? maxLineChars('stage') : window.ukemusic.stageFormats.charsAcross(stageFormatId(config), { pageWidthPx: width, sizePx: stageSettings().size, monospaceChars: maxLineChars('stage') });
           if (out.layout === 'inline') delete out.maxLineChars; // words in a line wrap by themselves
+          out.tune = { ...(out.tune || {}), notation: 'off' };   // 4.44: Stage copies are words and chords
           return out;
         }
         function docAttrs(config = effectiveConfig(), { stage = false } = {}) {
@@ -6555,6 +6758,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         function setPlayingUi(playing) {
           playButton.disabled = playing;
           stopButton.disabled = !playing;
+          document.getElementById('pickStopButton').disabled = !playing;   // 4.44: and on the Pick tab
           if (!playing) {
             nowPlaying.textContent = '';
             playingLine = null;
@@ -6590,6 +6794,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           playBand.el.hidden = true;
           const doc = preview.contentDocument;
           if (doc) doc.querySelectorAll('.line-group[style*="--sung"]').forEach((el) => el.style.removeProperty('--sung'));
+          if (doc) doc.querySelectorAll('.tune-note.now').forEach((el) => el.classList.remove('now'));
+          playBand.tuneNow = null;
         }
         function pbStrip(key, chordText, counting, steps) {
           if (playBand.stripKey === key) return;
@@ -6613,6 +6819,30 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             cell.classList.toggle('past', i < index);
           });
         }
+        // 4.44: the tune as notes: light up the note being sung (data-line, data-at in counts from
+        // the line's first chord; a line sung to an earlier line's tune lights that one: data-also)
+        function tuneLight(t, bars, index) {
+          const doc = preview.contentDocument;
+          const bar = bars[index];
+          if (!doc || !doc.querySelector('.tune-note')) return;
+          let found = null;
+          if (bar && !bar.tab) {
+            let k = index;
+            while (k > 0 && bars[k - 1].line === bar.line && (bars[k - 1].pass || 1) === (bar.pass || 1)) k -= 1;
+            const counts = (t - bars[k].time) / (bar.unit || 1);
+            let notes = [...doc.querySelectorAll(`.tune-note[data-line="${bar.line}"]`)];
+            if (!notes.length) notes = [...doc.querySelectorAll(`.tune-row[data-also~="${bar.line}"] .tune-note[data-at]`)];
+            let bestAt = -Infinity;
+            for (const n of notes) {
+              const at = Number(n.dataset.at);
+              if (at <= counts + 0.02 && at > bestAt) { bestAt = at; found = n; }
+            }
+          }
+          if (found === playBand.tuneNow) return;
+          if (playBand.tuneNow) playBand.tuneNow.classList.remove('now');
+          playBand.tuneNow = found;
+          if (found) found.classList.add('now');
+        }
         function playBandTick() {
           const schedule = playBand.schedule;
           if (!schedule || !player) return;
@@ -6635,11 +6865,15 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             if (bar && bar.tab) pbStrip(`bar${index}`, 'Tab', false, []);
             else if (bar && bar.rest) pbStrip(`bar${index}`, 'N.C.', false, []);
             else if (bar) {
-              const steps = stripSteps(bar.pattern, bar.beats || schedule.beatsPerBar);
+              // picked (4.44): the strings in order instead of the strokes
+              const steps = bar.pickSteps
+                ? stripSteps(bar.pickSteps.map((sym) => (sym === '·' ? '-' : 'P')).join(''), bar.beats || schedule.beatsPerBar).map((st, i) => ({ ...st, symbol: bar.pickSteps[i] }))
+                : stripSteps(bar.pattern, bar.beats || schedule.beatsPerBar);
               pbStrip(`bar${index}`, bar.chord, false, steps);
               const barTime = bar.duration / (bar.share || 1);
               pbLight(Math.min(steps.length - 1, Math.floor((t - bar.time) / (barTime / steps.length))));
             }
+            tuneLight(t, bars, index);
             // the words being sung: fill the line in, letter by letter, as its time passes
             let line = null;
             for (const l of playBand.lines) if (l.start !== null && l.start <= t) line = l;
@@ -6680,6 +6914,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const karaoke = options.karaoke === true;
           // 4.39: Learn → Play from memory (chords fading). A click on a line keeps the mode going.
           const learn = 'learn' in options ? options.learn : (karaoke && !karaokeEl.hidden && karaokeView.learn ? karaokeView.learn.opts : null);
+          // 4.43: a picking step plays the song with its tab rewritten (kept on line clicks)
+          const textTransform = 'textTransform' in options ? options.textTransform : (karaoke && !karaokeEl.hidden ? karaokeView.textTransform || null : null);
+          const stepNow = options.label ? { label: options.label, speed: options.speed, pick: options.pick } : ('textTransform' in options || !karaoke || karaokeEl.hidden ? null : karaokeView.step || null);
           if (!player) {
             setStatusMessage('Playback is not available.');
             return;
@@ -6693,13 +6930,13 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const instrument = songInstrument(config).id;
           const capo = songCapo(config);
           const ir = window.ukemusic.transposeIR(
-            window.ukemusic.parseSong(getEditorValue(), getParserOptions()),
+            window.ukemusic.parseSong(textTransform ? textTransform(getEditorValue()) : getEditorValue(), getParserOptions()),
             (learn && Number.isFinite(learn.transpose) ? learn.transpose : state.transpose) - capo,   // the shapes; playback raises them by the capo
             transposeOptions()
           );
           const practice = practiceSettings();
           const range = options.range || (practice.loop ? sectionRangeAt(ir, getEditorCursor().line) : null);
-          const speed = Math.max(40, Math.min(100, options.speed ?? practice.speed));
+          const speed = Math.max(40, Math.min(100, options.speed ?? (stepNow ? stepNow.speed : undefined) ?? practice.speed));
           const songTempo = Number(config?.song?.tempo) || 100;
           const tempo = Math.max(40, Math.round(songTempo * speed / 100));
           const startLine = options.startLine ?? (range ? range.start : (config?.playback?.from_cursor ? getEditorCursor().line : 0));
@@ -6714,6 +6951,10 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             defaultStrum: config?.playback?.default_strum || 'simple',
             customStrum: config?.playback?.custom_strum || '',
             swing: config?.playback?.swing || 'auto',
+            pick: options.pick !== undefined ? options.pick : (stepNow && stepNow.pick !== undefined ? stepNow.pick : (config?.playback?.pick || '')),   // 4.44: picked instead of strummed
+            firstNote: window.ukemusic.picking.noteMidi(config?.song?.first_note, state.transpose) ?? undefined,   // 4.44: the note to sing from, in the count-in
+            tune: config?.playback?.tune === true || config?.playback?.tune === 'true',   // 4.44: the {melody}, played quietly over it
+            tuneShift: state.transpose,
             startLine,
             endLine
           });
@@ -6735,7 +6976,15 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           player.setSound(instrument === 'guitar'
             ? (state.config?.playback?.guitar_sound === 'nylon' ? 'nylon' : 'steel')
             : (['hollow', 'sampled'].includes(state.config?.playback?.sound) ? state.config.playback.sound : 'standard'));
-          if (karaoke) karaokeStart(ir, schedule, startLine, endLine, learn);
+          if (karaoke) {
+            karaokeStart(ir, schedule, startLine, endLine, learn);
+            karaokeView.textTransform = textTransform;
+            // a picking step says which one, and keeps its speed on a line click
+            karaokeView.step = stepNow;
+            if (stepNow) document.getElementById('karaokeInfo').textContent += ` · ${stepNow.label}`;
+            else if (config?.playback?.pick && window.ukemusic.picking.pattern(config.playback.pick)) document.getElementById('karaokeInfo').textContent += ` · Picked: ${window.ukemusic.picking.pattern(config.playback.pick).name}`;
+            if (config?.song?.first_note && window.ukemusic.picking.noteName(config.song.first_note, state.transpose)) document.getElementById('karaokeInfo').textContent += ` · First note ${window.ukemusic.picking.noteName(config.song.first_note, state.transpose)}`;
+          }
           else startPlayBand(ir, schedule, startLine, endLine);
           startVoice(ir, schedule, config);
           state.lastSchedule = schedule;
@@ -6960,7 +7209,10 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             drawStrip(`bar${index}`, 'N.C.', false, []);
             return;
           }
-          const steps = stripSteps(bar.pattern, bar.beats || schedule.beatsPerBar);
+          // picked (4.44): the strings in order instead of the strokes
+          const steps = bar.pickSteps
+            ? stripSteps(bar.pickSteps.map((sym) => (sym === '·' ? '-' : 'P')).join(''), bar.beats || schedule.beatsPerBar).map((st, i) => ({ ...st, symbol: bar.pickSteps[i] }))
+            : stripSteps(bar.pattern, bar.beats || schedule.beatsPerBar);
           const learnShown = learnMode(bar.line);
           drawStrip(`bar${index}`, learnShown === 'hide' ? '?' : (learnShown === 'number' ? learnNumeral(bar.chord) : bar.chord), false, steps);
           // a chord shorter than a bar (share < 1) plays the start of the pattern at the usual speed
@@ -7069,10 +7321,32 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               });
               const bar = document.createElement('span');
               bar.className = 'k-progress';
-              span.append(pre, bar);
+              // 4.43: from memory, the tab fades too: each bar as its chord shape and the order the
+              // strings are picked, then nothing (tap to see it)
+              const tabMode = learnMode(line.line);
+              const passage = karaokeView.learn && karaokeView.learn.picking ? karaokeView.learn.picking[line.line] : null;
+              if (tabMode !== 'show' && karaokeView.learn) {
+                const box = document.createElement('div');
+                box.className = 'k-pick';
+                const summary = passage ? window.ukemusic.learn.passageText(passage, '  ·  ') : 'Picking';
+                if (tabMode === 'number') box.textContent = summary;
+                else {
+                  box.textContent = '? Picking, from memory';
+                  box.classList.add('k-hidden');
+                  box.title = 'Tap to see the shapes and the picking';
+                  box.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    box.textContent = summary;
+                    box.classList.remove('k-hidden');
+                    box.classList.add('k-revealed');
+                    karaokeView.learn.needed.set(`${line.line}:tab`, { line: line.line, chord: 'the picking' });
+                  }, { once: true });
+                }
+                span.append(box, bar);
+              } else span.append(pre, bar);
               el.appendChild(span);
               karaokeLines.appendChild(el);
-              karaokeView.lines.push({ line, el, pieces: [{ piece: line.pieces[0], span, bar, done: false }], played: line.start === null && line.line < startLine, tabMarks, tabStep: -2 });
+              karaokeView.lines.push({ line, el, pieces: [{ piece: line.pieces[0], span, bar, done: false }], played: line.start === null && line.line < startLine, tabMarks: tabMode !== 'show' && karaokeView.learn ? [] : tabMarks, tabStep: -2 });
               continue;
             }
             // Chords with no words (an instrumental): the chords read along the line like words,
@@ -7194,6 +7468,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             const shift = (Number.isFinite(learn.transpose) ? learn.transpose : state.transpose) - songCapo();
             const analysis = window.ukemusic.progressions.analyse(ir, { key: learnKey(shift) });
             karaokeView.learn = { opts: learn, plan: window.ukemusic.learn.fadePlan(ir, analysis, learn.stage), key: analysis.key, needed: keep || new Map() };
+            // 4.43: the tab's bars as shapes and picking patterns, by line
+            const instrumentId = songInstrument(effectiveConfig()).id;
+            karaokeView.learn.picking = Object.fromEntries(window.ukemusic.learn.pickingSummary(ir, chordLibraryFor(instrumentId), { instrument: instrumentId }).map((x) => [x.line, x]));
           } else karaokeView.learn = null;
           karaokeView.library = chordLibraryFor(songInstrument(effectiveConfig()).id);
           karaokeView.shapesKey = null;
@@ -7282,6 +7559,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         // From the start (4.22): from the top, whatever the cursor; while playing it jumps back
         document.getElementById('playFromStartButton').addEventListener('click', () => playSong({ startLine: 0, fromStart: true }));
         stopButton.addEventListener('click', stopPlayback);
+        document.getElementById('pickStopButton').addEventListener('click', stopPlayback);
         window.addEventListener('beforeunload', () => player && player.stop());
 
         // ── Practice: a menu of exercises, and one player for them all ──────────────
@@ -9290,6 +9568,48 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
 
         document.getElementById('learnPlayButton').addEventListener('click', () => playSong({ karaoke: true, learn: { stage: document.getElementById('learnStage').value } }));
         document.getElementById('learnPatternsButton').addEventListener('click', openPatterns);
+        // 4.43: the tab in steps: the chords strummed, the picking on open strings, then both
+        function openPicking() {
+          const L = learnSong();
+          if (!/^\s*```\s*tab(?:\s+\d+\s*\/\s*\d+)?\s*$/im.test(getEditorValue())) {
+            setStatusMessage('This song has no tab of its own. To pick its chords, choose a pattern (Pick → Pattern); Tab in steps is for songs with a ```tab block.');
+            return;
+          }
+          const opts = { instrument: L.instrument.id };
+          const learnApi = window.ukemusic.learn;
+          const steps = [
+            { id: 'chords', title: '1  The chords, strummed', tip: 'Tab that sits on chord shapes is played as those chords, strummed: get the changes into your fretting hand first.', label: 'Step 1: the chords under the tab, strummed', transform: (t) => learnApi.tabStepText(t, 'chords', L.library, opts), speed: 85 },
+            { id: 'open', title: '2  The picking on open strings', tip: 'The same picking, every string open: your picking hand learns the pattern on its own.', label: 'Step 2: the picking on open strings', transform: (t) => learnApi.tabStepText(t, 'open', L.library, opts), speed: 75 },
+            { id: 'slow', title: '3  Both, slowly', tip: 'The tab as written, at two-thirds speed.', label: 'Step 3: both, slowly', transform: null, speed: 65 },
+            { id: 'full', title: '4  Both, in time', tip: 'The tab as written, at the song\'s tempo.', label: 'Step 4: both, in time', transform: null, speed: 100 }
+          ];
+          const list = document.getElementById('learnPickSteps');
+          list.replaceChildren(...steps.map((st) => {
+            const row = document.createElement('div');
+            row.className = 'learn-change trouble-row';
+            const text = document.createElement('div');
+            text.append(Object.assign(document.createElement('div'), { className: 'lc-title', textContent: st.title }), Object.assign(document.createElement('div'), { className: 'lc-tip', textContent: st.tip }));
+            const actions = document.createElement('div');
+            actions.className = 'lc-actions';
+            const play = Object.assign(document.createElement('button'), { type: 'button', textContent: '▶ Play' });
+            play.dataset.step = st.id;
+            play.addEventListener('click', () => {
+              document.getElementById('learnPickDialog').close();
+              playSong({ karaoke: true, learn: null, textTransform: st.transform, speed: st.speed, label: st.label });
+            });
+            actions.appendChild(play);
+            row.append(text, actions);
+            return row;
+          }));
+          // each passage once (an intro played twice is one thing to learn)
+          const passages = learnApi.pickingSummary(L.ir, L.library, opts).filter((p, i, all) => all.findIndex((q) => learnApi.passageText(q) === learnApi.passageText(p)) === i);
+          document.getElementById('learnPickBars').textContent = passages.map((p) => `${p.heading || 'Tab'}: ${learnApi.passageText(p)}`).join('  —  ')
+            + (passages.some((p) => !p.chordal) ? '  (a tune stays as written in step 1, played slowly)' : '');
+          const dialog = document.getElementById('learnPickDialog');
+          if (!dialog.open) dialog.showModal();
+        }
+        document.getElementById('learnPickButton').addEventListener('click', openPicking);
+        document.getElementById('learnPickClose').addEventListener('click', () => document.getElementById('learnPickDialog').close());
         document.getElementById('learnNumbers').addEventListener('change', (event) => {
           state.learnNumbers = event.target.checked;
           renderPreviewNow();
@@ -9632,6 +9952,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             ['Tempo', `${tempo} bpm`],
             ['Strum', strum ? `${strum.strumName ? `${strum.strumName}: ` : ''}${strum.content}` : ''],
             ['Starts on', firstChord ? `${firstChord}${key ? ` (${learn.numeral(firstChord, key)})` : ''}` : ''],
+            ['First note', window.ukemusic.picking.noteName(cfg?.song?.first_note, transpose)],
             ['Plays', L.instrument.id !== 'soprano' ? L.instrument.name : '']
           ];
           const html = learn.learnSheetHtml({
@@ -9644,6 +9965,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             changes: learn.songChanges(L.ir, L.library, { tuningName: L.instrument.tuningName }),
             patterns,
             circle: learn.circleSvg(L.ir, key, { size: 300 }),
+            picking: learn.pickingSummary(L.ir, L.library, { instrument: L.instrument.id }),
             circleNotes: learn.circleNotes(L.ir, key),
             trouble: learn.placeTrouble(await learnLoadTrouble(), getEditorValue()).filter((t) => !t.gone).sort((a, b) => a.line - b.line),
             made: new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
@@ -9654,6 +9976,301 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           return { ...r, baseName };
         }
         document.getElementById('learnSheetButton').addEventListener('click', makeLearnSheet);
+        // 4.44: the pick sheet: the song set out for fingerpicking (src/pick-sheet.js), beside the
+        // learn sheet; from Pick → Pick sheet, Export and Export every song
+        async function writePickSheet(patternId, transpose = state.transpose) {
+          const L = learnSong(transpose);
+          const cfg = L.config;
+          const beats = Number(cfg?.song?.beats_per_bar) || 4;
+          const tempo = Number(cfg?.song?.tempo) || 100;
+          const schedule = window.ukemusic.buildSchedule(L.ir, {
+            library: L.library, instrument: L.instrument.id, capo: L.capo, tempo, beatsPerBar: beats, countIn: false,
+            defaultStrum: cfg?.playback?.default_strum || 'simple', customStrum: cfg?.playback?.custom_strum || '', swing: cfg?.playback?.swing || 'auto',
+            pick: patternId
+          });
+          const key = L.analysis.key;
+          const html = window.ukemusic.pickSheet.pickSheetHtml({
+            title: state.song.title,
+            sub: creditText(cfg),
+            facts: [
+              ['Key', key ? window.ukemusic.keys.describe(key) : ''],
+              ['Capo', L.capo ? String(L.capo) : ''],
+              ['Time', beats === 6 ? '6/8' : `${beats}/4`],
+              ['Tempo', `${tempo} bpm`],
+              ['First note', window.ukemusic.picking.noteName(cfg?.song?.first_note, transpose)],
+              ['Plays', L.instrument.id !== 'soprano' ? L.instrument.name : '']
+            ],
+            patternId, instrument: L.instrument.id, beats, ir: L.ir, schedule,
+            chordDef: (name) => window.ukemusic.chordDefinition(L.library, name),
+            diagramOptions: { left_handed: cfg?.diagrams?.left_handed },
+            made: new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
+          });
+          const keyPart = transpose && key ? ` in ${key.name}` : '';
+          const baseName = `${state.song.title} (pick${keyPart})`;
+          const r = await window.ukemusic.learnSheet({ folder: state.song.folder, baseName, html, pageSize: cfg?.export?.pdf_page_size || 'A4' });
+          return { ...r, baseName };
+        }
+        /** The song's picking pattern, or '' (strummed) */
+        function songPick() {
+          const id = effectiveConfig()?.playback?.pick || '';
+          return window.ukemusic.picking.pattern(id) ? id : '';
+        }
+        // ── The Pick tab ──
+        function refreshPickTab() {
+          const sel = document.getElementById('pickPattern');
+          const pk = window.ukemusic.picking;
+          const own = songPick();
+          sel.replaceChildren(new Option('None: strummed', ''), ...pk.PATTERNS.map((p) => new Option(`${p.level}  ${p.name}`, p.id)));
+          sel.value = own;
+          sel.disabled = !state.song;
+          // the pattern on the song's first chord: "g C E A on C"
+          let text = '';
+          if (own) {
+            try {
+              const L = learnSong();
+              const first = L.ir.find((n) => n.type === 'chord' && !n.noChord && n.content);
+              const def = first ? window.ukemusic.chordDefinition(L.library, first.content) : null;
+              const beats = Number(L.config?.song?.beats_per_bar) || 4;
+              const shown = def ? pk.pickText(own, { frets: def.frets, chord: first.content, instrument: L.instrument.id, beats, compound: beats === 6 }).split(' ') : [];
+              const half = shown.length % 2 === 0 && shown.slice(0, shown.length / 2).join(' ') === shown.slice(shown.length / 2).join(' ') ? shown.slice(0, shown.length / 2) : shown;
+              text = half.length ? `${half.join(' ')} (${pk.fingerText(own, beats, beats === 6).split(' ').slice(0, half.length).join(' ')})` : pk.pattern(own).strings;
+            } catch (_e) { text = pk.pattern(own).strings; }
+          } else text = 'Choose one to pick the song';
+          const tuned = window.ukemusic.melody.hasMelody(window.ukemusic.parseSong(getEditorValue(), getParserOptions()));
+          if (own === 'melody') text = tuned ? 'The tune on top, the chord under it' : 'Needs the tune: add {melody} lines (Pick → How it works)';
+          if (own && /^\s*```\s*tab\s+\d+\s*\/\s*\d+\s*$/im.test(getEditorValue())) text = 'Tab plays as written; the pattern picks the chords';
+          if (/^\s*\{\s*pick\b/im.test(getEditorValue())) text = `${own ? text.replace(/\.$/, '') + '; ' : ''}changes at its {pick} lines`;
+          const tuneBox = document.getElementById('pickTune');
+          tuneBox.checked = effectiveConfig()?.playback?.tune === true || effectiveConfig()?.playback?.tune === 'true';
+          tuneBox.disabled = !state.song || !tuned;
+          tuneBox.parentElement.title = tuned ? 'Play the song\'s tune quietly over the chords, to learn how it goes. Saved with the song' : 'This song has no tune yet: add {melody} lines (Pick → How it works)';
+          document.getElementById('pickPatternText').textContent = text;
+          document.getElementById('learnPickButton').classList.toggle('dim', !/^\s*```\s*tab(?:\s+\d+\s*\/\s*\d+)?\s*$/im.test(getEditorValue()));
+        }
+        document.getElementById('ribbonTabPick').addEventListener('click', refreshPickTab);
+        document.getElementById('pickTune').addEventListener('change', async (event) => {
+          if (!state.song) return;
+          if (event.target.checked) setAt(state.songSettings, 'playback.tune', true);
+          else deleteAt(state.songSettings, 'playback.tune');
+          await saveSongSettingChange();
+        });
+        document.getElementById('pickPattern').addEventListener('change', async (event) => {
+          if (!state.song) return;
+          if (event.target.value) setAt(state.songSettings, 'playback.pick', event.target.value);
+          else deleteAt(state.songSettings, 'playback.pick');
+          await saveSongSettingChange();
+          refreshPickTab();
+        });
+        const needPattern = () => {
+          if (songPick()) return false;
+          setStatusMessage('Choose a picking pattern first (Pick → Pattern): start with 1, One string a beat.');
+          document.getElementById('pickPattern').focus();
+          return true;
+        };
+        document.getElementById('pickPlayButton').addEventListener('click', () => { if (!needPattern()) playSong({}); });
+        document.getElementById('pickKaraokeButton').addEventListener('click', () => { if (!needPattern()) playSong({ karaoke: true, learn: null, textTransform: null }); });
+        document.getElementById('pickSheetButton').addEventListener('click', async () => {
+          if (!state.song && !(await requireSongForExport())) return;
+          if (needPattern()) return;
+          showToast('Making the pick sheet…', { busy: true });
+          try {
+            const r = await writePickSheet(songPick());
+            showToast(`Pick sheet made: ${r.baseName}.pdf`, { detail: 'In the song\'s learn folder, as a PDF and a web page.', action: 'Open', onAction: () => window.ukemusic.exportsOpen(r.pdfFile) });
+          } catch (error) {
+            showToast('Could not make the pick sheet', { detail: String(error.message || error), error: true });
+          }
+        });
+        // 4.44: write the picking out as a new song (src/pick-song.js): tab you can edit
+        async function openPickWrite() {
+          if (!state.song) { setStatusMessage('Save the song first: the written-out version is made from it.'); return; }
+          const dialog = document.getElementById('pickWriteDialog');
+          const pk = window.ukemusic.picking;
+          const sel = document.getElementById('pickWritePattern');
+          sel.replaceChildren(...pk.PATTERNS.map((p) => new Option(`${p.level}  ${p.name}`, p.id)));
+          sel.value = songPick() || 'up';
+          const tuned = window.ukemusic.melody.hasMelody(window.ukemusic.parseSong(getEditorValue(), getParserOptions()));
+          const notePattern = () => {
+            const pat = pk.pattern(sel.value);
+            document.getElementById('pickWritePatternNote').textContent = sel.value === 'melody' && !tuned ? 'This song has no tune written in: its lines will be picked One string a beat.' : (pat ? pat.tip : '');
+          };
+          // what it will write, worked out now (and again when the choices change)
+          const preview = () => {
+            notePattern();
+            const transpose = document.querySelector('input[name="pickWriteKey"]:checked')?.value === 'original' ? 0 : state.transpose;
+            try {
+              const made = pickedSongFor(sel.value, transpose);
+              document.getElementById('pickWriteKept').textContent = made.picked
+                ? `${made.picked} line${made.picked === 1 ? '' : 's'} will be written out as tab${made.kept ? `; ${made.kept} kept as chords, as they are (a stop, N.C. or a strum marked in the song)` : ''}. The song's own tab, headings and blank lines stay as they are.`
+                : 'Nothing to write out: no line of this song can be picked.';
+            } catch (_e) { document.getElementById('pickWriteKept').textContent = ''; }
+          };
+          sel.onchange = preview;
+          for (const r of document.querySelectorAll('input[name="pickWriteKey"]')) r.onchange = preview;
+          document.getElementById('pickWriteTitle').value = `${state.song.title} (picked)`;
+          const inst = songInstrument(effectiveConfig());
+          document.getElementById('pickWriteInstrument').textContent = `${inst.label}: the song's instrument (This song → Instrument). The tab's frets are for it.`;
+          const capo = songCapo(effectiveConfig());
+          const played = keyAfter(state.transpose);
+          const original = keyAfter(0);
+          const capoText = capo ? `, capo ${capo}` : '';
+          document.getElementById('pickWriteKeyPlayed').textContent = `In the key you're playing it in${played ? `: ${played.name}` : ''}${capoText}`;
+          document.getElementById('pickWriteKeyOriginal').textContent = `In the song's own key${original ? `: ${original.name}` : ''}${capoText}`;
+          document.getElementById('pickWriteKeys').closest('div').hidden = false;
+          document.getElementById('pickWriteKeys').previousElementSibling.hidden = !state.transpose;
+          document.getElementById('pickWriteKeys').hidden = !state.transpose;
+          document.querySelector('input[name="pickWriteKey"][value="played"]').checked = true;
+          document.getElementById('pickWriteError').textContent = '';
+          preview();
+          dialog.showModal();
+          document.getElementById('pickWriteTitle').select();
+        }
+        /** The written-out song: { text, settings, picked, kept, transpose } */
+        function pickedSongFor(patternId, transpose, { words = true, chordNames = true } = {}) {
+          const L = learnSong(transpose);
+          const cfg = L.config;
+          const beats = Number(cfg?.song?.beats_per_bar) || 4;
+          const shift = transpose - L.capo;   // the chord shapes it's written in
+          const schedule = window.ukemusic.buildSchedule(L.ir, {
+            library: L.library, instrument: L.instrument.id, capo: L.capo, tempo: Number(cfg?.song?.tempo) || 100, beatsPerBar: beats, countIn: false,
+            defaultStrum: cfg?.playback?.default_strum || 'simple', customStrum: cfg?.playback?.custom_strum || '', swing: cfg?.playback?.swing || 'auto',
+            pick: patternId, tuneShift: transpose
+          });
+          const original = getEditorValue();
+          const key = songKey();
+          const text = shift ? window.ukemusic.rekey.rewriteText(original, shift, { key, instrument: L.instrument.id }) : original;
+          const out = window.ukemusic.pickSong.writePickedSong(text, L.ir, schedule, { instrument: L.instrument.id, beats, compound: beats === 6, words, chordNames });
+          // its settings: the song's own, in the new key, with no pattern (the tab is the picking)
+          const settings = JSON.parse(JSON.stringify(state.songSettings || {}));
+          settings.song = { ...(settings.song || {}), transpose: 0 };
+          const setKey = window.ukemusic.keys.parse(settings.song.key);
+          if (setKey) settings.song.key = window.ukemusic.keys.transpose(setKey, shift).name;
+          if (settings.song.first_note) settings.song.first_note = window.ukemusic.picking.noteName(settings.song.first_note, transpose) || settings.song.first_note;
+          settings.song.tags = [settings.song.tags, 'picked'].filter(Boolean).join(', ');
+          // the pattern it was written out with stays with it (shown on the Pick tab; it picks any line
+          // still written as chords), the tune doesn't (the tab is the tune now)
+          settings.playback = { ...(settings.playback || {}), pick: patternId };
+          delete settings.playback.tune;
+          settings.versions = { list: '' };
+          return { ...out, settings: window.ukemusic.pickSongSettings(settings), shift };
+        }
+        document.getElementById('pickWriteButton').addEventListener('click', () => { document.getElementById('pickWriteMenu').open = false; openPickWrite(); });
+        document.getElementById('pickWriteCancel').addEventListener('click', () => document.getElementById('pickWriteDialog').close());
+        document.getElementById('pickWriteForm').addEventListener('submit', async (event) => {
+          event.preventDefault();
+          const error = document.getElementById('pickWriteError');
+          const title = document.getElementById('pickWriteTitle').value.trim();
+          const songsFolder = await ensureSongsFolder();
+          if (!songsFolder) return;
+          const check = await window.ukemusic.validateSongTitle({ title, songsFolder });
+          if (!check.ok) { error.textContent = check.error; return; }
+          const patternId = document.getElementById('pickWritePattern').value;
+          const transpose = document.querySelector('input[name="pickWriteKey"]:checked')?.value === 'original' ? 0 : state.transpose;
+          let made;
+          try {
+            made = pickedSongFor(patternId, transpose, { words: document.getElementById('pickWriteWords').checked, chordNames: document.getElementById('pickWriteChords').checked });
+          } catch (e) { error.textContent = `Couldn't write it out: ${e.message || e}`; return; }
+          if (!made.picked) { error.textContent = 'Nothing to write out: no line of this song can be picked (it needs chords with shapes).'; return; }
+          const from = state.song.title;
+          const pattern = window.ukemusic.picking.pattern(patternId);
+          let song;
+          try {
+            song = await window.ukemusic.createSong({ songsFolder, title: check.title, content: made.text, settings: made.settings });
+            await window.ukemusic.writeNotes({ folder: song.folder, text: `${song.title}\n\nWritten out from "${from}" with the ${pattern.name} picking pattern${made.shift ? ', in a new key' : ''}. Every picked line is tab you can edit${made.kept ? `; ${made.kept} line${made.kept === 1 ? ' was' : 's were'} kept as chords (a stop, N.C. or a strum marked in the song)` : ''}. The original song isn't changed.\n\n\nHistory\n${new Date().toISOString().slice(0, 10)}  Written out from "${from}"\n` });
+          } catch (e) { error.textContent = String(e.message || e).replace(/^Error invoking remote method '[^']+': (Error: )?/, ''); return; }
+          document.getElementById('pickWriteDialog').close();
+          await refreshLibrary();
+          const open = document.getElementById('pickWriteOpen').checked;
+          if (open && (await confirmLoseChanges())) {
+            await loadSong(song.folder);
+            showToast(`Made "${song.title}"`, { detail: 'Every picked line is now tab: edit any note. The original song is unchanged.' });
+          } else {
+            showToast(`Made "${song.title}"`, { detail: 'It\'s in your library. The original song is unchanged.', action: 'Open', onAction: async () => { if (await confirmLoseChanges()) await loadSong(song.folder); } });
+          }
+        });
+
+        // the first note to sing: heard here, and with the first click of every count-in
+        document.getElementById('pickFirstNoteButton').addEventListener('click', async () => {
+          const cfg = effectiveConfig();
+          const midi = window.ukemusic.picking.noteMidi(cfg?.song?.first_note, state.transpose);
+          if (midi === null) {
+            setStatusMessage('No first note set: add it in Info → First note (the first note you sing, e.g. E).');
+            return;
+          }
+          if (!player) return;
+          if (player.playing) { state.userStopped = true; player.stop(); }
+          const notes = [];
+          notes[0] = midi;
+          setStatusMessage(`First note: ${window.ukemusic.picking.noteName(cfg.song.first_note, state.transpose)}. Hum it, then sing from there.`);
+          await player.play({ events: [{ time: 0.05, kind: 'strum', direction: 'down', notes, velocity: 0.9, barIndex: 0, ring: true }], bars: [], duration: 2, countInDuration: 0, tempo: 100, beatsPerBar: 4, warnings: [] }, {});
+        });
+        // ── 4.44: change the pattern part-way through ({pick} lines), and write out one line ──
+        function fillPickChangeMenu() {
+          const pk = window.ukemusic.picking;
+          const box = document.getElementById('pickChangeItems');
+          const names = pk.stringNames(songInstrument(effectiveConfig()).id);
+          const own = [...names, ...names.slice(1, -1).reverse()].join(' ');
+          const items = [
+            ...pk.PATTERNS.map((p) => ({ label: `${p.level}  ${p.name}`, line: `{pick: ${p.name.replace(/\s*\(.*\)$/, '').toLowerCase()}}` })),
+            { label: 'Strum from here', line: '{pick: strum}' },
+            { label: 'My own pattern…', line: `{pick: ${own}}`, own: true }
+          ];
+          box.replaceChildren(...items.map((it) => {
+            const b = Object.assign(document.createElement('button'), { type: 'button', textContent: it.label });
+            b.addEventListener('click', () => {
+              document.getElementById('pickChangeMenu').open = false;
+              insertPickLine(it.line, it.own);
+            });
+            return b;
+          }));
+        }
+        /** A {pick} line above the cursor's line: the pattern changes from there */
+        function insertPickLine(line, own) {
+          if (!state.song && !getEditorValue().trim()) return;
+          showTab('song');
+          const lines = getEditorValue().split('\n');
+          const at = Math.max(0, Math.min(lines.length, getEditorCursor().line - 1));
+          lines.splice(at, 0, line);
+          setEditorProgrammatically(lines.join('\n'));
+          updateDirtyState();
+          renderPreviewNow();
+          setNotice(own
+            ? `Added ${line} on line ${at + 1}: change it to your own pattern, by string (g+A for two together, - for a rest) or by finger (p i m a). It repeats to fill each bar.`
+            : `Added ${line} on line ${at + 1}: the picking changes there. Edit or delete the line to change it back; {pick: strum} goes back to strumming.`);
+          focusEditor();
+        }
+        document.getElementById('pickChangeMenu').addEventListener('toggle', (event) => { if (event.target.open) fillPickChangeMenu(); });
+        document.getElementById('pickWriteLineButton').addEventListener('click', () => {
+          document.getElementById('pickWriteMenu').open = false;
+          showTab('song');
+          const text = getEditorValue();
+          const lines = text.split('\n');
+          let lineNo = getEditorCursor().line;
+          // from a {melody} or {pick} line, the line it belongs to
+          while (lineNo <= lines.length && /^\s*\{\s*(melody|tune|pick)\b/i.test(lines[lineNo - 1] || '')) lineNo += 1;
+          const L = learnSong(0);   // the song as written (shapes under any capo)
+          const cfg = L.config;
+          const beats = Number(cfg?.song?.beats_per_bar) || 4;
+          const schedule = window.ukemusic.buildSchedule(L.ir, {
+            library: L.library, instrument: L.instrument.id, capo: L.capo, tempo: Number(cfg?.song?.tempo) || 100, beatsPerBar: beats, countIn: false,
+            defaultStrum: cfg?.playback?.default_strum || 'simple', customStrum: cfg?.playback?.custom_strum || '', swing: cfg?.playback?.swing || 'auto',
+            pick: songPick()
+          });
+          const playedHere = schedule.bars.filter((b) => b.line === lineNo);
+          if (!playedHere.length) { setStatusMessage('Put the cursor on a line of chords to write it out.'); return; }
+          if (!playedHere.every((b) => b.pickNotes && b.pickNotes.length)) {
+            setStatusMessage('This line is strummed (or has a stop or N.C.): choose a pattern first (Pick → Pattern, or Change here), then write it out.');
+            return;
+          }
+          const out = window.ukemusic.pickSong.writePickedSong(text, L.ir, schedule, { instrument: L.instrument.id, beats, compound: beats === 6, only: new Set([lineNo]) });
+          if (!out.picked) { setStatusMessage('Couldn\'t write this line out.'); return; }
+          setEditorProgrammatically(out.text);
+          updateDirtyState();
+          renderPreviewNow();
+          setNotice(`Line ${lineNo} is now tab, here in the song: change any note. The rest of the song is as it was. Edit → Undo takes it back.`);
+          focusEditor();
+        });
+        document.getElementById('pickHelpButton').addEventListener('click', () => document.getElementById('pickHelpDialog').showModal());
+        document.getElementById('pickHelpClose').addEventListener('click', () => document.getElementById('pickHelpDialog').close());
         // Write the guessed names in as [[headings]] (4.24): then they show on the sheet, can be
         // corrected, and the analysis goes by them from then on
         document.getElementById('patternsLabels').addEventListener('click', () => {
@@ -9875,6 +10492,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           quiz: 'M9 9a3 3 0 1 1 4 2.8c-.7.3-1 1-1 1.7V15M12 18.5v.5M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z',
           flag: 'M5 21V4M5 4h11l-2 4 2 4H5',
           circle: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM12 3v4M21 12h-4',
+          pick: 'M7 4v16M11 4v16M15 4v16M19 4v16M4 9l4 3-4 3',
           restart: 'M6 5v14M18 5L9 12l9 7z',
           pdf: 'M14 3H7v18h10V7zM14 3v4h4M9 13h6M9 17h4',
           web: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',
@@ -9952,7 +10570,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         }
         window.ukemusicReveal = (selector) => revealElement(document.querySelector(selector));
         document.addEventListener('click', (event) => {
-          for (const id of ['tabMenu', 'voiceMenu']) {
+          for (const id of ['tabMenu', 'voiceMenu', 'pickChangeMenu', 'pickWriteMenu']) {
             const menu = document.getElementById(id);
             if (menu && menu.open && !menu.contains(event.target)) menu.open = false;
           }
@@ -10114,6 +10732,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         const songInfoLabel = document.getElementById('songInfoLabel');
         function refreshRibbon(config = effectiveConfig()) {
           refreshSongStrum(config);
+          if (!document.querySelector('[data-ribbon-panel="pick"]').hidden) refreshPickTab();
           const guitar = songInstrument(config).id === 'guitar';
           document.getElementById('playSoundField').hidden = guitar;
           document.getElementById('playGuitarSoundField').hidden = !guitar;
@@ -10568,6 +11187,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           if (r.setlists.length) bits.push(`Setlists made from its folders: ${r.setlists.map((s) => s.name).join(', ')}.`);
           if (already.length) bits.push(`Already here, left alone: ${already.map((s) => s.title || s.file).join(', ')}.`);
           if (problems.length) bits.push(`Not imported: ${problems.map((s) => `${s.file} (${s.reason})`).join('; ')}.`);
+          if (r.tunes && r.tunes.matched.length) bits.push(`Tunes (ABC) made into {melody} lines: ${r.tunes.matched.join(', ')}.`);
+          if (r.tunes && r.tunes.kept.length) bits.push(`Tunes (ABC) that didn't fit the lines, kept on their ChordPro tab: ${r.tunes.kept.join(', ')}.`);
           bits.push('They\'re marked "Copyrighted: for my own use" (Info → Licence), so they stay out of shared library packs.');
           showToast(r.files ? `Imported ${r.added.length} song${r.added.length === 1 ? '' : 's'}` : 'No ChordPro files in that folder', { detail: bits.join(' ') });
         }
@@ -11716,6 +12337,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             const shown = window.ukemusic.transposeIR(ir, semitones - capo, { spelling: 'key', key, instrument: instrument.id });
             let options = renderOptions(config);
             if (options.layout === 'lines') options.maxLineChars = maxLineChars(printStyle, { ignoreSongFont: true });
+            const keyThen = key ? window.ukemusic.keys.transpose(key, semitones) : null;
+            options.tune = { ...(options.tune || {}), shift: semitones, key: keyThen?.name || '', keyGuessed: !chosen };
             // a songbook is one document: its Stage copy uses the Stage format from Settings
             if (stage) options = stageRenderOptions(options, state.config);
             const keyNow = key ? window.ukemusic.keys.transpose(key, semitones) : null;
@@ -11882,6 +12505,7 @@ ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or del
         });
         document.getElementById('viewStrumStyle').addEventListener('change', (event) => setLookSetting([['rhythm.style', event.target.value]]));
         document.getElementById('viewLayout').addEventListener('change', (event) => setLookSetting([['export.layout', event.target.value]]));
+        document.getElementById('viewTune').addEventListener('change', (event) => setLookSetting([['export.tune_notation', event.target.value]]));
         // A song's own Stage format (4.29), or Default (Settings)
         document.getElementById('exportStageFormat').addEventListener('change', async (event) => {
           state.songSettings = state.songSettings || {};
@@ -11937,6 +12561,7 @@ ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or del
           document.getElementById('viewSkipCommon').checked = state.config?.diagrams?.skip_common === true || state.config?.diagrams?.skip_common === 'true';
           document.getElementById('viewStrumStyle').value = config?.rhythm?.style || 'comic';
           document.getElementById('viewLayout').value = config?.export?.layout || 'lines';
+          document.getElementById('viewTune').value = ['strip', 'lines', 'off'].includes(config?.export?.tune_notation) ? config.export.tune_notation : 'strip';
           document.getElementById('playFeel').value = ['straight', 'light', 'swing', 'shuffle'].includes(config?.playback?.swing) ? config.playback.swing : 'auto';
           {
             const own = state.song || state.songSettings ? getAt(state.songSettings || {}, 'export.section_names') : undefined;
@@ -11951,7 +12576,7 @@ ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or del
             stageSelect.value = window.ukemusic.stageFormats.FORMATS.some((f) => f.id === ownFormat) ? ownFormat : 'default';
           }
           // 4.33: a ribbon setting this song has its own value for is marked "this song"
-          const ownMarks = [['viewDiagrams', ['diagrams.enable', 'diagrams.placement']], ['viewStrumStyle', ['rhythm.style']], ['viewLayout', ['export.layout']], ['playFeel', ['playback.swing']], ['exportSections', ['export.section_names']], ['exportStageFormat', ['export.stage_format']]];
+          const ownMarks = [['viewDiagrams', ['diagrams.enable', 'diagrams.placement']], ['viewStrumStyle', ['rhythm.style']], ['viewLayout', ['export.layout']], ['viewTune', ['export.tune_notation']], ['playFeel', ['playback.swing']], ['exportSections', ['export.section_names']], ['exportStageFormat', ['export.stage_format']]];
           for (const [id, paths] of ownMarks) {
             const el = document.getElementById(id);
             if (!el) continue;

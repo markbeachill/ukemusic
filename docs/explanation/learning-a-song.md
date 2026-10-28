@@ -2,7 +2,7 @@
 
 *An explanation of the Learn tab: what it works out from a song, where the ideas come from, and how far they can be trusted.*
 
-Mark Beachill · ukemusic 4.41 · October 2026
+Mark Beachill · ukemusic 4.43 · October 2026
 
 ## Summary
 
@@ -95,7 +95,30 @@ The changes are ranked, and the hardest five are printed with plain instructions
 
 **Where it comes from.** Practising a hard change on its own is standard teaching advice: drill the difficult transitions separately, then put them back in context. The scoring weights, though, are our own judgement and have not been measured against what players find hard.
 
-## 8. Turning the analysis into practice
+## 8. Tab: shapes and picking patterns
+
+Since 4.43, ukemusic also reads tab. Each bar is split off at its `|` and read two ways:
+
+- **The shape.** The bar's fretted notes are compared with the shapes of the song's chords (and any chord written above the tab). If at least 70% of the notes sit in one shape (an open string counts when the shape leaves it open), the bar is "in" that shape. Only when every bar of a passage is in a shape is the passage read as picked chords. Otherwise it is a tune, and no shapes are named: half-labelling a tune would mislead more than it helps.
+- **The picking pattern.** The strings in the order they are picked, by name as players say them (g C E A on a ukulele, with the high g in lower case), with notes picked together joined by +: "g-C-E-g+A".
+
+That allows **part practice**: the tab is learned in layers. First the chords under it, strummed, so the fretting hand knows the changes. Then the picking pattern on open strings, so the picking hand learns it alone. Then both, slowly, and then in time. For a tune, step 1 plays its notes slowly instead. From memory fades the tab like the chords: "Hold C, pick g-C-E-A" in place of the tab, then nothing.
+
+Teachers commonly describe fingerpicking as a chord held and a pattern picked, but tab never says which chord a bar sits on. Naming it automatically is our own addition. It only helps with one kind of tab, picked chords under a song, which is common for beginners. Much ukulele fingerstyle is melody, or melody over chords, and there the app says no more than "a tune".
+
+**Where it comes from.** Teaching fingerpicking as "a chord shape held, a pattern picked" is standard for guitar and ukulele. Splitting a skill into parts and slowing it down is long-standing advice; research suggests it helps most when the parts can be practised on their own, as the two hands can here (Wightman & Lintern, 1985). The 70% threshold is our own and has been checked only on a few songs.
+
+### Picking a strummed song
+
+Since 4.44, any song can be picked instead of strummed (the **Pick** tab). The chord in each bar and its shape are already known, so the app only has to decide which string each finger picks. On a ukulele it follows the usual teaching, a finger to a string (thumb g, index C, middle E, ring A); on a guitar the thumb takes the chord's bass note, as guitar teachers advise. The five patterns are the standard ones, from one string a beat to the alternating thumb (Travis picking), which is the same part-practice idea: one new thing at a time.
+
+This is picked **accompaniment**: the tune is left to the singer, as with strumming. Published picking for songs like House of the Rising Sun and Scarborough Fair is exactly this; we checked four songs against published ukulele arrangements. A picked **solo** ("chord melody", with the tune on the top strings and the chord under it) is different and needs the tune itself, which a chord sheet doesn't hold. To help the singer, a song can say its first note; it's sounded with the first click of the count-in.
+
+A song can also carry its tune (`{melody}` lines, by note name). Then ukemusic can play the tune quietly while you learn, and make a simple chord melody: each tune note placed on the chord shape you're holding (its own fret if the shape has the note, otherwise the nearest fret, on the top strings first), with a chord note under it on beat 1. That's the first level of a published chord-melody arrangement; real arrangers also fill in harmony between tune notes and choose keys and positions by ear, which ukemusic doesn't attempt.
+
+The pick sheet is laid out the way fingerstyle songbooks are: chord boxes for the left hand, then tab for the right, with the chord over the bar where it starts and the words under it. With picked chords the two say the same thing in two ways: hold the shape, and every fret number in the tab is already under a finger. Tab written in the song itself is always kept as written.
+
+## 9. Turning the analysis into practice
 
 The analysis feeds four ways of practising, each based on well-supported findings about memory:
 
@@ -104,7 +127,7 @@ The analysis feeds four ways of practising, each based on well-supported finding
 - **Trouble spots**, collected from the chords you looked at while playing from memory, the quiz answers you missed, and the lines you marked. You then loop them slowly. Practice is most useful where the errors are.
 - **The learn sheet's last advice**: come back in a day or two, then in a week. Spacing practice out over days beats doing it all at once: the **spacing effect** (Cepeda et al., 2006). Both this and retrieval practice are rated among the most effective study methods in a large review (Dunlosky et al., 2013).
 
-## 9. How sound is it?
+## 10. How sound is it?
 
 | Part | Basis | How far to trust it |
 |---|---|---|
@@ -114,6 +137,7 @@ The analysis feeds four ways of practising, each based on well-supported finding
 | Splitting into parts, naming them, "mostly the same words" | Our own rules of thumb | Checked by hand on 8 songs; unusual layouts will confuse it |
 | Named patterns | Common songwriting practice | Reliable for the patterns on the list; others go unnamed |
 | Difficulty of changes | Our own scoring | Plausible, not measured |
+| Tab as shapes and patterns | Standard fingerpicking teaching; our own 70% rule | Right on simple picked chords; anything else is treated as a tune, with no shapes named |
 
 **Known limits.** ukemusic counts a chord written in the words as one bar unless you give it a length (`[C:2]`), so a chord map is only as accurate as the song file. A song that changes key part-way, or sits between two keys, will be numbered from one key throughout. Patterns not on the list get numbers but no name.
 
@@ -127,6 +151,7 @@ The analysis feeds four ways of practising, each based on well-supported finding
 - Chaffin, R., & Imreh, G. (2002). Practicing perfection: Piano performance as expert memory. *Psychological Science*, 13(4), 342–349.
 - Chase, W. G., & Simon, H. A. (1973). Perception in chess. *Cognitive Psychology*, 4(1), 55–81.
 - Dunlosky, J., Rawson, K. A., Marsh, E. J., Nathan, M. J., & Willingham, D. T. (2013). Improving students' learning with effective learning techniques. *Psychological Science in the Public Interest*, 14(1), 4–58.
+- Wightman, D. C., & Lintern, G. (1985). Part-task training for tracking and manual control. *Human Factors*, 27(3), 267–283.
 - Krumhansl, C. L. (1990). *Cognitive Foundations of Musical Pitch*. Oxford University Press.
 - Miller, G. A. (1956). The magical number seven, plus or minus two. *Psychological Review*, 63(2), 81–97.
 - Roediger, H. L., & Karpicke, J. D. (2006). Test-enhanced learning: Taking memory tests improves long-term retention. *Psychological Science*, 17(3), 249–255.

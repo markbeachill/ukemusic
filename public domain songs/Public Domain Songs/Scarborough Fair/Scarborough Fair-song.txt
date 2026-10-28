@@ -1,38 +1,42 @@
 --START MUSIC--
 {D>-DUDU}
 [[Verse 1]]
-[Am]Are you going to [G]Scarborough [Am]Fair?
-[C]Parsley, [Am]sage, rose[D]mary and [Am]thyme.
-Re[Am]member me to [C]one who lives [G]there,
-For [Am]once she [G]was a true love of [Am]mine.
+{melody: A2 A | E' E E | B. C/2 B | A3}
+[Amx2]Are you going to [G]Scarborough [Am]Fair?
+{melody: r E' G | A2 G | E F# D | E4 r}
+[C]Parsley, [Am]sage, rose[D]mary and [Amx2]thyme.
+{melody: A | A2 A | G2 E/2 E/2 | E D C | B G4 r}
+Re[Am]member me to [Cx2]one who lives [Gx2]there,
+{melody: A2 E' | D2 C | B A G | A5 r}
+For [Am]once she [Gx2]was a true love of [Amx2]mine.
 
 [[Verse 2]]
-[Am]Tell her to make me a [G]cambric [Am]shirt,
-[C]Parsley, [Am]sage, rose[D]mary and [Am]thyme,
-With[Am]out any [C]seam or [G]needlework,
-And [Am]then she'll [G]be a true love of [Am]mine.
+[Amx2]Tell her to make me a [G]cambric [Am]shirt,
+[C]Parsley, [Am]sage, rose[D]mary and [Amx2]thyme,
+With[Am]out any [Cx2]seam or [Gx2]needlework,
+And [Am]then she'll [Gx2]be a true love of [Amx2]mine.
 
 [[Verse 3]]
-[Am]Tell her to wash it in [G]yonder dry [Am]well,
-[C]Parsley, [Am]sage, rose[D]mary and [Am]thyme,
-Where [Am]never sprung [C]water nor [G]rain ever fell,
-And [Am]then she'll [G]be a true love of [Am]mine.
+[Amx2]Tell her to wash it in [G]yonder dry [Am]well,
+[C]Parsley, [Am]sage, rose[D]mary and [Amx2]thyme,
+Where [Am]never sprung [Cx2]water nor [Gx2]rain ever fell,
+And [Am]then she'll [Gx2]be a true love of [Amx2]mine.
 
 [[Verse 4]]
-[Am]Tell her to dry it on [G]yonder [Am]thorn,
-[C]Parsley, [Am]sage, rose[D]mary and [Am]thyme,
-Which [Am]never bore [C]blossom since [G]Adam was born,
-And [Am]then she'll [G]be a true love of [Am]mine.
+[Amx2]Tell her to dry it on [G]yonder [Am]thorn,
+[C]Parsley, [Am]sage, rose[D]mary and [Amx2]thyme,
+Which [Am]never bore [Cx2]blossom since [Gx2]Adam was born,
+And [Am]then she'll [Gx2]be a true love of [Amx2]mine.
 
 [[Verse 5]]
-[Am]Ask her to find me an [G]acre of [Am]land,
-[C]Parsley, [Am]sage, rose[D]mary and [Am]thyme,
-Be[Am]tween the salt [C]water and the [G]sea strand,
-And [Am]then she'll [G]be a true love of [Am]mine.
+[Amx2]Ask her to find me an [G]acre of [Am]land,
+[C]Parsley, [Am]sage, rose[D]mary and [Amx2]thyme,
+Be[Am]tween the salt [Cx2]water and the [Gx2]sea strand,
+And [Am]then she'll [Gx2]be a true love of [Amx2]mine.
 
 [[Verse 6]]
-[Am]Are you going to [G]Scarborough [Am]Fair?
-[C]Parsley, [Am]sage, rose[D]mary and [Am]thyme.
-Re[Am]member me to [C]one who lives [G]there,
-For [Am]once she [G]was a true love of [Am]mine.
+[Amx2]Are you going to [G]Scarborough [Am]Fair?
+[C]Parsley, [Am]sage, rose[D]mary and [Amx2]thyme.
+Re[Am]member me to [Cx2]one who lives [Gx2]there,
+For [Am]once she [Gx2]was a true love of [Amx2]mine.
 --END MUSIC--

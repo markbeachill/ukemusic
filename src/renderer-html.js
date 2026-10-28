@@ -669,7 +669,8 @@ function sheetCss() {
   .inline-line .ichord .ib { font-weight: 400; opacity: 0.7; }
   .inline-line .bar { margin: 0 0.3em; }
   .chords-only { white-space: pre-wrap; }
-  @media print { .inline-line .ichord { color: #000; } }`;
+  @media print { .inline-line .ichord { color: #000; } }`
+    + require('./notation-svg').tuneCss();
 }
 
 function renderHtml(irNodes, options = {}) {
@@ -695,6 +696,19 @@ function renderHtml(irNodes, options = {}) {
     }
   }
   if (named.length >= 2) output.push(renderStrumLegend(named, { style: normalizedOptions.strumStyle }));
+
+  // 4.44: the tune as notation ({melody} lines): a strip at the top with each tune once, or a
+  // staff over every line it's sung on (songbook style). options.tune: { notation, shift, key }
+  const tuneOpt = options.tune || {};
+  const tuneMode = ['strip', 'lines', 'off'].includes(tuneOpt.notation) ? tuneOpt.notation : 'strip';
+  let staves = null;
+  if (tuneMode !== 'off' && irNodes.some((n) => n.type === 'melody')) {
+    const notation = require('./notation-svg');
+    const beats = normalizedOptions.beatsPerBar;
+    const tuneArgs = { beats, compound: isCompoundTime(beats), shift: Number(tuneOpt.shift) || 0, key: tuneOpt.key || '', keyGuessed: tuneOpt.keyGuessed === true };
+    if (tuneMode === 'strip') output.push(notation.tuneStripHtml(irNodes, tuneArgs));
+    else staves = notation.lineStaves(irNodes, tuneArgs);
+  }
 
   // Each [[Section]] starts a <section class="song-section"> (kept together when printing);
   // every other line is wrapped in <div class="line-group" data-line="N"> (N = source line,
@@ -729,7 +743,9 @@ function renderHtml(irNodes, options = {}) {
       continue;
     }
     if (html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim()) sectionHasLines = true;
-    const line = group.find((node) => typeof node.line === 'number')?.line;
+    // (a {melody} or {pick} line takes no room: the group is the line of words after it)
+    const line = (group.find((node) => typeof node.line === 'number' && node.type !== 'melody' && node.type !== 'pick') || group.find((node) => typeof node.line === 'number'))?.line;
+    if (staves && line && staves.has(line)) { html = staves.get(line) + html; staves.delete(line); }
     output.push(`<div class="line-group"${line ? ` data-line="${line}"` : ''}>${html}</div>`);
   }
   closeSection();

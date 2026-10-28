@@ -113,3 +113,7 @@
       .k-chord.k-hidden { color: #888; cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
       .k-chord.k-revealed { color: #c2410c; }
       .k-chord.k-number { font-style: normal; }
+
+.k-pick { font: 600 0.75em var(--font-family, system-ui); color: var(--muted, #667); padding: 4px 0; }
+.k-pick.k-hidden { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+.k-pick.k-revealed { color: #c2410c; }

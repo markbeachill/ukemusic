@@ -232,7 +232,7 @@ function fenceRawTab(lines) {
   lines.forEach((line, i) => {
     const t = line.trim();
     if (inside) { fenced.add(i); if (/^```\s*$/.test(t)) inside = false; }
-    else if (/^```tab\s*$/i.test(t)) { inside = true; fenced.add(i); }
+    else if (/^```tab(?:\s+\d+\s*\/\s*\d+)?\s*$/i.test(t)) { inside = true; fenced.add(i); }
   });
   let runs = findTabRuns(lines).filter((r) => !fenced.has(r.start));
   // Join systems separated only by blank lines or chord-name lines into one block
@@ -296,7 +296,7 @@ function convertChordSheet(input) {
       if (/^```\s*$/.test(trimmed)) inTab = false;
       continue;
     }
-    if (/^```tab\s*$/i.test(trimmed)) {
+    if (/^```tab(?:\s+\d+\s*\/\s*\d+)?\s*$/i.test(trimmed)) {
       inTab = true;
       out.push(line);
       continue;

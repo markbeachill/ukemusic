@@ -20,6 +20,8 @@ const { getChordDefinition } = require('./chord-library');
 const { noteIndex } = require('./transpose');
 const { parseChordName, SUFFIX_INTERVALS } = require('./chord-names');
 const { parseTab, tabTiming, tabBars } = require('./tab');
+const picking = require('./picking');
+const { songMelody } = require('./melody');
 
 // MIDI note of each open string, in diagram order (string 0 = left of the diagram)
 const { INSTRUMENTS, instrument: profile } = require('./instruments');
@@ -158,6 +160,10 @@ function songSlots(irNodes, options = {}) {
   let ownFeel = null;        // {swing …} / {straight …} in the song, from there on
   let pos = 0;               // beats into the current bar
   const barPattern = () => patterns[(Math.max(turn, 1) - 1) % patterns.length];
+  // 4.44: picking: the song's pattern (options.pick), changed by {pick} lines
+  const startPick = options.pick ? picking.resolvePick(options.pick, instrument) : null;
+  let curPick = startPick && !startPick.error && !startPick.off ? startPick : null;
+  const namedPicks = new Map();
 
   // A chord (or rest) lasting `total` beats from here, split at bar lines
   const addSlots = (index, node, total, { stopped = false, strokes = 'D' } = {}) => {
@@ -168,6 +174,7 @@ function songSlots(irNodes, options = {}) {
       const len = Math.min(left, room);
       const pattern = pos < EPS ? patterns[turn++ % patterns.length] : barPattern();
       const slot = { chord: currentChord, line: node.line, pattern: stopped ? (first ? strokes : '-') : pattern, beats, len, node: index };
+      if (curPick) slot.pick = curPick;   // 4.44: picked, with this pattern
       if (compound) slot.compound = true;
       slot.feel = feelFor(pattern, ownFeel, options.swing || 'straight'); // the app passes Play → Feel ('auto' by default)
       if (stopped) slot.stop = true;
@@ -182,6 +189,19 @@ function songSlots(irNodes, options = {}) {
   };
 
   nodes.forEach((node, index) => {
+    // 4.44: {pick …}: the picking pattern from here on (a named one kept for {pick V})
+    if (node.type === 'pick') {
+      if (node.pass > 1) return;
+      let next = node.content ? picking.resolvePick(node.content, instrument) : (namedPicks.get((node.pickName || '').toLowerCase()) || { error: `no pattern called ${node.pickName || '?'} yet` });
+      if (next.error) {
+        const message = `Line ${node.line}: {pick}: ${next.error}.`;
+        if (!warnings.includes(message)) warnings.push(message);
+        return;
+      }
+      if (node.pickName && node.content) namedPicks.set(node.pickName.toLowerCase(), next);
+      curPick = next.off ? null : next;
+      return;
+    }
     if (node.type === 'rhythm') {
       if (node.stop) {
         stopNext = true;
@@ -206,13 +226,14 @@ function songSlots(irNodes, options = {}) {
         turn = 0;
       }
     } else if (node.type === 'tab') {
-      const bars = tabBars(node.content, beats);
+      const barBeats = node.barBeats || 0;   // 4.44: ```tab 4/4: timed by its bars
+      const bars = tabBars(node.content, beats, { barBeats });
       if (bars) {
         pos = 0;
         const model = parseTab(node.content, { instrument });
         // the tab's first bar is the slot; the rest follow as 'hold' slots so bar counts line up
         const c = compound ? { compound: true } : {};
-        slots.push({ tab: tabTiming(model), line: node.line, bars, beats, len: beats, node: index, ...c });
+        slots.push({ tab: tabTiming(model, { barBeats }), line: node.line, bars, beats, len: beats, node: index, ...c });
         for (let b = 1; b < bars; b += 1) slots.push({ tabHold: true, line: node.line, beats, len: beats, node: index, ...c });
       }
     } else if (node.type === 'chord') {
@@ -253,7 +274,10 @@ function buildSchedule(irNodes, options = {}) {
   const capo = Math.max(0, Math.min(11, Number(options.capo) || 0));
 
   // 1. Walk the song: which chord plays when, and with which pattern
-  const { slots, warnings } = songSlots(irNodes, { ...options, beatsPerBar, instrument });
+  const { nodes: walked, slots, warnings } = songSlots(irNodes, { ...options, beatsPerBar, instrument });
+  // 4.44: each bar's node as an index into the song (the first time through; a repeat's later
+  // passes are copies, so they have none): the pick sheet puts the words under their bars
+  const srcOf = new Map((irNodes || []).map((n, i) => [n, i]));
   const playable = slots.filter((s) => (!startLine || s.line >= startLine) && (!endLine || s.line <= endLine));
 
   // 2. Lay the bars out in time
@@ -272,13 +296,45 @@ function buildSchedule(irNodes, options = {}) {
       events.push(click);
     }
     time = unit * countBeats;
+    // 4.44: the first note to sing, sounded with the first click and left to ring
+    if (Number.isFinite(options.firstNote)) {
+      const notes = [];
+      notes[0] = options.firstNote;
+      events.push({ time: 0, kind: 'strum', direction: 'down', notes, velocity: 0.8, barIndex: -1, ring: true, cue: true });
+    }
   }
   const countInDuration = time;
 
   const voicings = new Map();
+  // 4.44: options.pick: the chords picked in a pattern (src/picking.js) instead of strummed
+  // each slot carries its pattern (options.pick, changed by {pick} lines: songSlots)
+  const anyMelody = playable.some((sl) => sl.pick && sl.pick.id === 'melody');
+  const tuning = TUNINGS[instrument] || TUNINGS.soprano;
+  // 4.44: the tune ({melody} lines), by the line of words it belongs to; played quietly over the
+  // song (options.tune), or as the song itself (pick 'melody': chord melody)
+  const tunes = (options.tune || anyMelody) ? songMelody(irNodes, { beatsPerBar, beats: beatsPerBar, compound: isCompound(beatsPerBar) }) : new Map();
+  const tuneShift = Number(options.tuneShift) || 0;
+  const TUNE_VOICE = 8;   // the tune's own "string", so the picking doesn't stop it
+  let run = { key: null, start: 0 };   // the line being played (each time round is a new run)
+  let prevMelodyString = null;
   playable.forEach((slot, barIndex) => {
     const slotBeats = slot.beats || beatsPerBar;
     const unit = unitOf(slot);
+    // a new run of a line: its tune is timed from here
+    const runKey = `${slot.line}:${(walked[slot.node] && walked[slot.node].pass) || 1}`;
+    if (runKey !== run.key) {
+      run = { key: runKey, start: time, line: slot.line, first: barIndex };
+      const tune = tunes.get(slot.line);
+      if (tune && options.tune && !(slot.pick && slot.pick.id === 'melody')) {
+        for (const nt of tune.notes) {
+          const at = time + nt.at * unit;
+          if (nt.midi === null || at < -1e-6) continue;
+          const notes = [];
+          notes[TUNE_VOICE] = nt.midi + tuneShift;
+          events.push({ time: at, kind: 'strum', direction: 'down', notes, velocity: 0.55, barIndex, tune: true });
+        }
+      }
+    }
     const pulse = slot.compound ? 3 : 1;   // counts per beat of the tempo
     const barLength = unit * slotBeats;   // eslint-disable-line no-shadow
     if (slot.tabHold) {
@@ -301,7 +357,7 @@ function buildSchedule(irNodes, options = {}) {
     const len = slot.len || slotBeats;
     const length = unit * len;
     const share = len / slotBeats;
-    const barInfo = { time, duration: length, chord: slot.chord, line: slot.line, pattern: slot.pattern, beats: slotBeats, unit, pulse };
+    const barInfo = { time, duration: length, chord: slot.chord, line: slot.line, pattern: slot.pattern, beats: slotBeats, unit, pulse, src: srcOf.get(walked[slot.node]), pass: (walked[slot.node] && walked[slot.node].pass) || 1 };
     if (share < 1 - EPS) barInfo.share = share;
     if (slot.stop) barInfo.stop = true;
     if (slot.rest) {
@@ -318,6 +374,105 @@ function buildSchedule(irNodes, options = {}) {
       return;
     }
     bars.push(barInfo);
+    // Picked (4.44): a marked strum ([C↓↓], {stop}) is still strummed
+    const slotPick = slot.pick || null;
+    const pickId = slotPick ? (slotPick.id || 'custom') : '';
+    const def = slotPick && !slot.stop && options.library ? getChordDefinition(options.library, slot.chord) : null;
+    const tuneHere = pickId === 'melody' ? tunes.get(slot.line) : null;
+    if (def && Array.isArray(def.frets) && def.frets.length === tuning.length && tuneHere) {
+      // Chord melody: the tune's notes in this bar, placed on the shape, a chord note under the
+      // first beat. Steps are eighths (for the strip and the tab).
+      const perCount = slot.compound ? 1 : 2;
+      const len = slot.len || slotBeats;
+      const from = (time - run.start) / unit;
+      const stepsN = Math.max(1, Math.round(len * perCount));
+      const steps = Array.from({ length: stepsN }, () => []);
+      const names = picking.stringNames(instrument);
+      const place = (nt) => picking.placeNote(nt.midi + tuneShift - capo, def.frets, instrument, prevMelodyString);
+      const emit = (nt, at, stepList, withBass) => {
+        const spot = place(nt);
+        if (!spot) return;
+        prevMelodyString = spot.string;
+        const notes = new Array(tuning.length);
+        notes[spot.string] = tuning[spot.string] + spot.fret + capo;
+        const list = [{ string: spot.string, fret: spot.fret }];
+        const bs = withBass ? picking.bassUnder(def.frets, slot.chord, instrument, spot.string) : null;
+        if (bs !== null && bs !== undefined) {
+          notes[bs] = tuning[bs] + def.frets[bs] + capo;
+          list.push({ string: bs, fret: def.frets[bs] });
+        }
+        events.push({ time: at, kind: 'strum', direction: 'down', notes, velocity: 0.9, barIndex, picked: true, strings: list.map((x) => x.string) });
+        if (stepList) stepList.push(...list);
+      };
+      let bassDone = false;
+      for (const nt of tuneHere.notes) {
+        if (nt.midi === null || nt.at < from - 1e-6 || nt.at >= from + len - 1e-6) continue;
+        const k = Math.min(stepsN - 1, Math.max(0, Math.round((nt.at - from) * perCount)));
+        emit(nt, time + (nt.at - from) * unit, steps[k], k === 0);
+        if (k === 0) bassDone = true;
+      }
+      // beat 1 with no tune note starting on it (a held note, a rest): the chord note alone
+      if (!bassDone) {
+        const bs = picking.bassUnder(def.frets, slot.chord, instrument, tuning.length);
+        if (bs !== null && bs !== undefined) {
+          const notes = new Array(tuning.length);
+          notes[bs] = tuning[bs] + def.frets[bs] + capo;
+          events.push({ time, kind: 'strum', direction: 'down', notes, velocity: 0.7, barIndex, picked: true, strings: [bs] });
+          steps[0].push({ string: bs, fret: def.frets[bs] });
+        }
+      }
+      // the pickup (the notes before the line's first chord), with the line's first bar
+      if (barIndex === run.first && tuneHere.pickup) {
+        // on the same eighth grid as the bars: the pickup's own steps, the notes where they fall
+        const pick = Array.from({ length: Math.max(1, Math.round(tuneHere.pickup * perCount)) }, () => []);
+        for (const nt of tuneHere.notes) {
+          if (nt.midi === null || nt.at >= 0) continue;
+          const at = time + nt.at * unit;
+          const k = Math.min(pick.length - 1, Math.max(0, Math.round((nt.at + tuneHere.pickup) * perCount)));
+          if (at >= -1e-6) emit(nt, at, pick[k], false);
+          else { const spot = place(nt); if (spot) pick[k].push(spot); }
+        }
+        barInfo.pickupNotes = pick;
+      }
+      barInfo.pick = pickId;
+      barInfo.pickLabel = slotPick.label || 'Chord melody (the tune)';
+      barInfo.pickNotes = steps;
+      barInfo.pickSteps = steps.map((st) => st.map((x) => names[x.string]).join('+') || '·');
+      barInfo.pickText = barInfo.pickSteps.filter((x) => x !== '·').join(' ');
+      time += length;
+      return;
+    }
+    if (def && Array.isArray(def.frets) && def.frets.length === tuning.length) {
+      const tokens = picking.pickTokens(pickId === 'melody' ? { id: 'melody' } : slotPick, slotBeats, slot.compound);
+      const roles = picking.roleStrings(def.frets, slot.chord, instrument);
+      const stepLength = barLength / Math.max(1, tokens.length);
+      const perBeat = tokens.length / slotBeats;
+      const ratio = FEELS[slot.feel] || 0.5;
+      const swung = !slot.compound && ratio > 0.5 + EPS && (perBeat === 2 || perBeat === 4);
+      if (swung) barInfo.feel = slot.feel;
+      barInfo.pick = pickId;
+      barInfo.pickLabel = slotPick.label || '';
+      barInfo.pickText = picking.pickText(pickId, { frets: def.frets, chord: slot.chord, instrument, tokens });
+      // for the strum strip: each step's string(s) by name, '·' for a rest
+      const names = picking.stringNames(instrument);
+      barInfo.pickSteps = tokens.map((t) => picking.tokenStrings(t, roles).map((st) => names[st]).join('+') || '·');
+      // for tab on the pick sheet: each step's strings and frets (the shape's frets: capo shapes)
+      barInfo.pickNotes = tokens.map((t, k) => (k > 0 && k * stepLength >= length - EPS ? null
+        : picking.tokenStrings(t, roles).filter((st) => typeof def.frets[st] === 'number' && def.frets[st] >= 0).map((st) => ({ string: st, fret: def.frets[st] })))).filter(Boolean);
+      tokens.forEach((token, k) => {
+        if (k > 0 && k * stepLength >= length - EPS) return;     // a shorter chord: its first steps
+        const at = swung ? time + Math.floor(k / 2) * 2 * stepLength + (k % 2 ? ratio * 2 * stepLength : 0) : time + k * stepLength;
+        const strings = picking.tokenStrings(token, roles).filter((st) => typeof def.frets[st] === 'number' && def.frets[st] >= 0);
+        if (!strings.length) return;
+        const notes = new Array(tuning.length);
+        for (const st of strings) notes[st] = tuning[st] + def.frets[st] + capo;
+        const thumb = /^[pP]/.test(token);
+        const velocity = k === 0 ? 0.95 : thumb ? 0.85 : 0.65;
+        events.push({ time: at, kind: 'strum', direction: 'down', notes, velocity, barIndex, picked: true, strings });
+      });
+      time += length;
+      return;
+    }
     const notes = voicings.get(slot.chord).map((midi) => midi + capo);
     // The pattern is spread over a whole bar; a shorter chord plays its first strokes
     // (every chord starts the pattern afresh: a 2-beat chord with D-DU-UDU plays D-DU)
@@ -365,6 +520,7 @@ function buildSchedule(irNodes, options = {}) {
     time += length;
   });
 
+  if (tunes.size) events.sort((a, b) => a.time - b.time);
   return { events, bars, duration: time, countInDuration, tempo, beatsPerBar, warnings };
 }
 

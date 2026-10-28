@@ -17,6 +17,7 @@ The **Learn** tab helps you get a song into your head and your fingers, so you c
 - **From memory:** karaoke where the chords fade: first shown, then as numbers, then gone. Remembering something fixes it far better than reading it again.
 - **Next chord?:** a quick quiz on each change in the song. You can hear each answer before you choose.
 - **Trouble:** the chords you looked at, the answers you missed and the lines you marked, ready to loop slowly.
+- **Pick** (its own tab): pick a strummed song instead: the chords stay, the strum becomes one of five standard picking patterns, from one string a beat to Travis picking, with a pick sheet laid out like a fingerstyle songbook. It's picking to sing along to: the tune is still your voice's job, and the song's first note (Info → First note) is sounded in the count-in. And for songs with their own tab, **Tab in steps**: When the tab sits on chord shapes, it says which, bar by bar ("Hold C, pick g-C-E-A"); a tune picked note by note is left as a tune. You learn it in layers: the chords strummed, then the picking on open strings, then both, slowly and then in time. From memory fades the tab like the chords.
 - **Learn sheet:** one page (PDF and web page) with all of the above, to keep on your music stand.
 - **Come back to it.** Playing a song again after a day, then after a week, keeps it far better than one long session.
 

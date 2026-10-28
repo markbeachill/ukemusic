@@ -103,7 +103,7 @@ function versionsBlock(best, web, desk) {
 }
 function featureRow(f, flip) {
   const list = f.list ? `<ul>${f.list.map((x) => `<li>${x}</li>`).join('')}</ul>` : '';
-  const shot = f.img ? `<div class="shot"><img src="img/${f.img}" loading="lazy" width="1360" height="860" alt="${esc(f.alt || '')}"></div>` : (f.html || '');
+  const shot = f.img ? `<div class="shot"><img src="img/${f.img}" loading="lazy" width="1360" height="${f.h || 860}" alt="${esc(f.alt || '')}"></div>` : (f.html || '');
   return `<div class="feature${flip && shot ? ' flip' : ''}${shot ? '' : ' text-only'}"><div class="text"><h3>${f.h3}</h3>${(f.p || []).map((x) => `<p>${x}</p>`).join('')}${list}</div>${shot}</div>`;
 }
 
@@ -113,16 +113,20 @@ const PAGES = [
     file: 'learn.html', title: 'Learn a song by heart', blurb: 'Get a song into your head and your fingers, so you can play it without the sheet.',
     eyebrow: 'Learn', h1: 'Learn a song by heart, not just the shapes',
     lede: 'ukemusic works out how your song is put together (its key, its chords as numbers, its parts and the patterns in them) and then helps you practise it the way memory works best.',
-    solo: ['Play along with the chords fading away: shown the first time, then as numbers, then gone', 'A quick quiz on each change: which chord comes next?', 'The hardest changes first, with what each finger does', 'Your trouble spots, collected as you go, to loop slowly'],
+    solo: ['Play along with the chords fading away: shown the first time, then as numbers, then gone', 'A quick quiz on each change: which chord comes next?', 'The hardest changes first, with what each finger does', 'Your trouble spots, collected as you go, to loop slowly', 'Fingerpick any song instead of strumming: five standard patterns and a pick sheet', 'Fingerpicking tab in layers: the chords, then the picking on open strings, then both'],
     group: ['A one-page learn sheet for everyone, to print or send round', 'Next chord? on the big screen, as a game for the room', 'Play it in the group\'s key, thinking in numbers', 'Chord patterns: "the chorus is the verse\'s first line": less to learn'],
     features: [
       { h3: 'Play from memory', p: ['Karaoke with the chords fading out. Each part shows its chords the first time it comes, then a <b>?</b>; next time try the numbers only, then nothing at all. Tap a <b>?</b> if you need it: the ones you looked at become your trouble spots.', 'Remembering beats re-reading: that\'s one of the best-tested findings about memory.'], img: 'learn-memory.webp', alt: 'The Wild Rover playing from memory: the first verse with its chords, the rest to come as question marks' },
       { h3: 'Next chord?', p: ['The song\'s changes one at a time, with the words either side: you\'re playing C, what comes next? Hear each answer before you choose, and hear the real change after. The ones you miss go on your list.'], img: 'learn-quiz.webp', alt: 'The Next chord? quiz: four chords to choose from, each with a button to hear it' },
       { h3: 'The learn sheet', p: ['One page to keep on your music stand: the chords and how each one feels ("home", "tension", "the sad home"), the song\'s parts with their first words, a chord map with the familiar patterns marked, the five hardest changes with finger tips, and the song on the circle of fifths.'], img: 'learn.webp', alt: 'A learn sheet for Danny Boy' },
+      { h3: 'The hardest changes first', p: ['Every chord change in the song, hardest first, with both shapes and what each finger does: which one stays put, which slides, which moves to another string. Practise any of them on its own, or see how many clean changes you can make in a minute.'], img: 'changes.webp', h: 765, alt: 'The changes in It\'s a Long Way to Tipperary, hardest first, with the two shapes and finger tips for each' },
+      { h3: 'Pick it instead of strumming', p: ['Any song can be fingerpicked to sing along to: the chords stay, your right hand picks a pattern. Five standard ukulele patterns, easiest first: one string a beat, up twice a bar, up and back, pinch and roll, and the alternating thumb. Play along in karaoke with each string shown as it comes, and your first note sounded in the count-in.', 'Write the tune in ({melody: E E F G …}) and ukemusic plays it quietly while you learn, or makes a picked solo from it: the tune on top of the chords, a chord melody.', 'The pick sheet lays the song out like a fingerstyle songbook: the pattern counted out, the chord boxes, then each line as tab with the chord over the bar where it starts and the words underneath.'], img: 'pick-sheet.webp', h: 1416, alt: 'A pick sheet: the Alternating thumb pattern counted out, the chord boxes, and the song as tab with the chords over it and the words under it' },
+      { h3: 'Fingerpicking, in layers', p: ['A song with tab? When it sits on chord shapes, ukemusic says which, bar by bar ("Hold C, pick g-C-E-A"). Learn it in four steps, each played along: the chords strummed, the picking on open strings, both slowly, then both in time. From memory fades the tab like the chords.'], img: 'picking.webp', h: 821, alt: 'Picking in steps: four steps to play, and the intro read as hold C, then G7, with the picking pattern' },
+      { h3: 'Think in numbers', p: ['Turn on Numbers and the sheet shows the chords as numbers in the key: I is home, IV and V are away. Then play it in another key from memory, with the numbers to guide you.'], img: 'learn-numbers.webp', h: 765, alt: 'The Learn tab with the song\'s chords shown as numbers: I, V7, IV, II7' },
       { h3: 'Understand it, and it sticks', list: ['<b>Numbers:</b> a song in numbers (I, IV, V…) is the same in every key. Learn it once, play it anywhere', '<b>Patterns:</b> four-chord pop, the 50s progression, the three-chord trick, named where they happen, so you spot them in the next song', '<b>The circle of fifths:</b> turned so the song\'s home is at the top, with how it moves', '<b>Another key:</b> play it from memory in a different key: if you can, you know the song'] }
     ],
     best: 'web',
-    web: ['From memory, Next chord?, the learn sheet, Chord patterns, the circle'],
+    web: ['From memory, Next chord?, Pick (the patterns, the pick sheet, tab in steps), the learn sheet, Chord patterns, the circle'],
     desk: ['Everything on the left, plus trouble spots kept with each song', 'The hardest changes, each with a drill', 'Learn sheets saved for every song at once'],
     more: '<p>How it works things out, and how far to trust it: <a href="how-learn-works.html">How Learn works</a>.</p>'
   },
@@ -135,7 +139,7 @@ const PAGES = [
     features: [
       { h3: 'Free Practice', p: ['Exercises for every stage, marked beginner, improver or intermediate: warm-ups, chord switching, strumming patterns, fingerpicking, scales and noodling. Each one shows a moving fretboard and keeps time.'], img: 'practice.webp', alt: 'Free Practice: exercise cards by category and level' },
       { h3: 'Practise your songs', p: ['Press Play and hear the song on a real ukulele, the way it\'s written. Slow it down, loop the part you\'re learning, or have it speed up a little each time round.'], list: ['Waltzes, swing and shuffle feel, picked out from the strum', 'Tap the tempo, or count yourself in', 'The strum lit up as it plays, with the next chord shapes'], img: 'playing.webp', alt: 'A song playing, the current line and its strum lit' },
-      { h3: 'Practise the hard changes', p: ['Learn → The changes lists every change in the song, hardest first, with what each finger does. One click turns any of them into a drill, or a one-minute challenge with your best score kept.'] }
+      { h3: 'Practise the hard changes', p: ['Learn → The changes lists every change in the song, hardest first, with what each finger does. One click turns any of them into a drill, or a one-minute challenge with your best score kept.'], img: 'changes.webp', h: 765, alt: 'The changes in a song, hardest first, each with Practise and One minute buttons' }
     ],
     best: 'web',
     web: ['All of Free Practice, routines and progress', 'Play along with your songs: slower, looped, faster'],
@@ -149,8 +153,9 @@ const PAGES = [
     solo: ['A Stage copy: big, bold and easy to scan', 'The web player on a tablet on your music stand', 'Setlists, and a songbook PDF of the whole set', 'Stage PDFs copied to your gig folder as you export'],
     group: ['The Session screen: the whole song on one TV or projector, laid out so nobody scrolls', 'Arrow keys, a presentation clicker or a tap for the next song', 'Karaoke for the room: big words that light up as you sing', 'Check the whole library fits one screen before the night'],
     features: [
-      { h3: 'The Session screen', p: ['For a club night or a jam: the whole song on one screen, as big as it will go. Verses and choruses in columns, never split, with the chord shapes down the side. With a TV plugged in, the song fills it while the laptop shows what\'s next.'], img: 'session.webp', alt: 'The Session screen showing Danny Boy in two columns' },
-      { h3: 'Stage copies', p: ['Print the song sheet for practice and a Stage copy for the gig, in the format that suits your eyes: Clear, Brackets, Compact or Heavy. Choruses printed every time, or once and then "as before".'], img: 'stage.webp', alt: 'A Stage copy: bold chords above plain words' },
+      { h3: 'The Session screen', p: ['For a club night or a jam: the whole song on one screen, as big as it will go. Verses and choruses in columns, never split, with the chord shapes down the side. With a TV plugged in, the song fills it while the laptop shows what\'s next.'], img: 'session-setlist.webp', h: 765, alt: 'The Session screen: It\'s a Long Way to Tipperary in two columns, song 2 of 5 in the setlist' },
+      { h3: 'Setlists and songbooks', p: ['Put the night\'s songs in order, in the keys you play them. Run the setlist on the Session screen, make one songbook PDF of the whole set, or a folder with a PDF per song for a tablet.'], img: 'setlist.webp', h: 765, alt: 'A setlist called Club night with five songs, and buttons for the Session screen and a songbook PDF' },
+      { h3: 'Stage copies', p: ['Print the song sheet for practice and a Stage copy for the gig, in the format that suits your eyes: Clear, Brackets, Compact or Heavy. Choruses printed every time, or once and then "as before".'], img: 'stage.webp', h: 765, alt: 'A Stage copy: bold chords above plain words' },
       { h3: 'Karaoke for the whole room', p: ['Full screen, big words that light up as you sing, with the chord above each word and the shapes down the side. Tap any line to start from there.'], img: 'karaoke.webp', alt: 'The karaoke view' }
     ],
     best: 'desktop',
@@ -165,7 +170,8 @@ const PAGES = [
     solo: ['Prepare at home: the song in the group\'s key, with the shapes you teach', 'Make handouts: song sheet, Stage copy, words only, learn sheet', 'A songbook PDF for the term from a setlist', 'Bring in a whole folder of the club\'s ChordPro songs at once'],
     group: ['The song on the screen at the front, chords and shapes for all to see', 'Next chord? as a quiz for the room', 'Everyone loops the tricky bit together, slowly', 'Players take the songs home in the web player and practise'],
     features: [
-      { h3: 'The screen at the front', p: ['The Session screen puts the song on the TV or projector, big enough for the back row, and goes through a setlist with a clicker. Karaoke lights up the words as the group sings.'], img: 'session.webp', alt: 'The Session screen' },
+      { h3: 'The screen at the front', p: ['The Session screen puts the song on the TV or projector, big enough for the back row, and goes through a setlist with a clicker. Karaoke lights up the words as the group sings.'], img: 'session-setlist.webp', h: 765, alt: 'The Session screen, song 2 of 5 in a club night setlist' },
+      { h3: 'Teach the tricky changes', p: ['For each song, the changes that will trip the group up, hardest first, with what each finger does. Drill one together before you play the song.'], img: 'changes.webp', h: 765, alt: 'The changes in a song, hardest first, with finger tips' },
       { h3: 'Handouts that teach', p: ['A learn sheet for each song: the chords and how they feel, the parts with their first words, the patterns marked, the hardest changes with finger tips. Players learn the song, not just the shapes.'], img: 'learn.webp', alt: 'A learn sheet for Danny Boy' },
       { h3: 'Suit the room', list: ['Any key for the group\'s voices, with the chords spelled right', 'A capo, and the shapes to finger', 'Ukulele (high or low G), baritone and guitar, each with its own shapes', 'Choose the shape you teach for a chord, kept with the song'] }
     ],
@@ -182,7 +188,7 @@ const PAGES = [
     group: ['One file, the same sheet for everyone', 'Stage copies, words-only sheets and songbooks', 'ChordPro in and out, for other chord apps', 'A library you can share as a single pack file'],
     features: [
       { h3: 'Type it once', p: ['A song is a plain text file you can read anywhere. Put each chord in square brackets just before the word where it changes, and everything else follows: the sheet, the shapes, the strum, the playback and the printing.'], img: 'editor.webp', alt: 'The song typed on the left, the chord sheet on the right' },
-      { h3: 'Every format you need', list: ['PDF and web page, in your own style or a Stage format', 'Words only, Markdown for notes apps, ChordPro for other chord apps', 'A songbook PDF from a setlist', 'Tab and melody beside the words'], img: 'stage.webp', alt: 'A Stage copy' },
+      { h3: 'Every format you need', list: ['PDF and web page, in your own style or a Stage format', 'Words only, Markdown for notes apps, ChordPro for other chord apps', 'A songbook PDF from a setlist', 'Tab and melody beside the words'], img: 'stage.webp', h: 765, alt: 'A Stage copy' },
       { h3: 'Your songs, in libraries', p: ['Songs live in ordinary folders on your computer. Keep several libraries, search by artist, tag or key, and put songs into setlists. ukemusic comes with a library of public-domain songs to start you off.'], img: 'library.webp', alt: 'The library of songs' }
     ],
     best: 'desktop',
@@ -216,7 +222,7 @@ const SONGS_PAGE = {
   <p class="intro">ukemusic's own import handles most chord sheets. For the awkward ones (a PDF where the chords have lost their places, a sheet that says "two bars of Dm" in words, chords at the top and words somewhere else), an AI chat such as Claude, ChatGPT or Gemini can do the tidying.</p>
   <ol class="steps">
     <li><span><strong>Open an AI chat</strong> and paste the chord sheet in (or attach the PDF).</span></li>
-    <li><span><strong>Copy the prompt below</strong> into the same message, so the AI knows ukemusic's format.</span></li>
+    <li><span><strong>Copy the prompt below</strong> into the same message, so the AI knows ukemusic's format. (In the desktop app it's there too: <b>File → Paste from website → Copy AI prompt</b>.)</span></li>
     <li><span><strong>Copy its answer into ukemusic</strong> with <b>File → Paste from website</b>, and save.</span></li>
     <li><span><strong>Press Play and check it</strong> against the original. The chords are usually right; the timing (how many bars each chord lasts) is the part to listen for.</span></li>
   </ol>

@@ -225,6 +225,15 @@ contextBridge.exposeInMainWorld('ukemusic', {
   learnRead: (payload) => ipcRenderer.invoke('song:learnRead', payload),
   learnWrite: (payload) => ipcRenderer.invoke('song:learnWrite', payload),
   learn: require('./learn'),
+  picking: require('./picking'),
+  melody: require('./melody'),
+  pickSheet: require('./pick-sheet'),
+  pickSong: require('./pick-song'),
+  // 4.42: the prompt for tidying a chord sheet with an AI chat (also on the website), and a copy
+  aiPrompt: require('./ai-prompt').AI_PROMPT,
+  copyText: (text) => {
+    try { require('electron').clipboard.writeText(String(text)); return true; } catch (_e) { return false; }
+  },
   renderLyricsText: (irNodes, options) => lyrics.renderLyricsText(irNodes, options),
   renderLyricsHtml: (irNodes, options) => lyrics.renderLyricsHtml(irNodes, options),
   lyricsCss: () => lyrics.LYRICS_CSS,

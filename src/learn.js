@@ -321,6 +321,14 @@ function fadePlan(ir, analysis, stage = 'repeats') {
     const mode = stage === 'none' ? 'hide' : stage === 'numbers' ? 'number' : (repeat ? 'hide' : 'show');
     for (const line of [b.first, ...b.lines]) lines[line] = mode;
   });
+  // 4.43: tab fades too: a passage heard before (the same tab) is from memory
+  const seenTab = new Set();
+  for (const n of ir || []) {
+    if (n.type !== 'tab' || !n.content) continue;
+    const k = String(n.content).replace(/\s+$/gm, '');
+    lines[n.line] = stage === 'none' ? 'hide' : stage === 'numbers' ? 'number' : (seenTab.has(k) ? 'hide' : 'show');
+    seenTab.add(k);
+  }
   return { lines, fallback: stage === 'none' ? 'hide' : stage === 'numbers' ? 'number' : 'show' };
 }
 
@@ -747,6 +755,7 @@ table.map .n{color:#5b6662;font-size:12px;white-space:nowrap}
 .circle svg{width:220px;height:auto;flex:none}
 .circle ul{margin:0;padding-left:18px;font-size:13px}
 .circle li{margin:3px 0}
+.pick-key{font-size:12.5px;color:#5b6662}
 .trouble{margin:0 0 6px;padding-left:18px}
 .trouble li{margin:2px 0}
 .trouble b{color:#b22222}
@@ -760,13 +769,149 @@ table.map .n{color:#5b6662;font-size:12px;white-space:nowrap}
  *         circle (circleSvg), circleNotes: [text], trouble: [{ line, chord, words, count }],
  *         summary: [text] (Chord patterns' summary), shapes[].role ("the sad home") }
  */
+// ── 4.43: fingerstyle (tab) ──
+// A tab passage is learned in layers: the chords under it strummed, then the picking pattern on
+// open strings (the picking hand alone), then both. Each bar of tab is read as "a chord shape,
+// picked in this order", which is easier to remember than a stream of fret numbers.
+
+/** Bar lines in a tab system: the columns of '|' in its first string line's body */
+function barColumns(system) {
+  const body = system.lines[0] ? system.lines[0].body : '';
+  const cols = [];
+  for (let i = 0; i < body.length; i += 1) if (body[i] === '|') cols.push(i);
+  return cols;
+}
+
+/**
+ * Each bar of a tab block: the chord shape the fretted notes sit in (if they do), and the order
+ * the strings are picked, as string numbers (1 is the top line of the tab: A on a ukulele;
+ * notes picked together are joined with +: "4+1").
+ *   -> [{ system, bar, notes: n, shape: 'C' | '', fit, pattern: '4-3-2-1', melody }]
+ * candidates: chord names to try (the song's chords, and any written above the tab).
+ */
+function tabBarShapes(tabText, library, candidates = [], { instrument = 'soprano' } = {}) {
+  const { parseTab } = require('./tab');
+  const { getChordDefinition } = require('./chord-library');
+  const model = parseTab(tabText, { instrument });
+  const above = [];
+  for (const item of model.items) if (item.kind === 'text') for (const w of String(item.text).trim().split(/\s+/)) if (/^[A-G][#b]?[a-z0-9#+°]*$/.test(w)) above.push(w);
+  const names = [...new Set([...above, ...candidates])];
+  const defs = names.map((name) => ({ name, def: library ? getChordDefinition(library, name) : null })).filter((x) => x.def && Array.isArray(x.def.frets));
+  const out = [];
+  model.systems.forEach((system, s) => {
+    const strings = system.tuning.strings.length;
+    // each string by name, as players say them: a re-entrant (high) bottom string in lower case (g C E A)
+    const tun = system.tuning.strings;
+    const nameOf = (k) => {
+      const [label, midi] = tun[k] || ['?', 0];
+      const reentrant = k === tun.length - 1 && tun.length > 1 && midi > tun[k - 1][1];
+      return reentrant ? String(label).toLowerCase() : String(label).toUpperCase();
+    };
+    const cols = barColumns(system);
+    const edges = [-1, ...cols, Infinity];
+    let bar = 0;
+    for (let e = 0; e + 1 < edges.length; e += 1) {
+      const notes = system.notes.filter((n) => n.fret !== null && n.column > edges[e] && n.column < edges[e + 1]);
+      if (!notes.length) continue;
+      bar += 1;
+      // the order the strings are picked: by column, notes in one column picked together
+      const byCol = new Map();
+      for (const n of notes) { if (!byCol.has(n.column)) byCol.set(n.column, []); byCol.get(n.column).push(n.string + 1); }
+      const order = [...byCol.keys()].sort((x, y) => x - y).map((c) => byCol.get(c).sort((x, y) => y - x));
+      const pattern = order.map((g) => g.join('+')).join('-');
+      const pick = order.map((g) => g.map((n) => nameOf(n - 1)).join('+')).join('-');
+      // the shape: the chord whose frets the most notes match (an open string counts when the
+      // shape leaves it open)
+      let best = { name: '', fit: 0 };
+      for (const { name, def } of defs) {
+        if (def.frets.length !== strings) continue;
+        const ok = notes.filter((n) => def.frets[strings - 1 - n.string] === n.fret).length;
+        const fit = ok / notes.length;
+        if (fit > best.fit) best = { name, fit };
+      }
+      const shape = best.fit >= 0.7 ? best.name : '';
+      out.push({ system: s, bar, notes: notes.length, shape, fit: Number(best.fit.toFixed(2)), pattern, pick, melody: !shape });
+    }
+  });
+  return out;
+}
+
+/** The tab passages in a song, each with its bars read as shapes and patterns */
+function pickingSummary(ir, library, { instrument = 'soprano' } = {}) {
+  const chords = [...new Set(chordSequence(ir))];
+  const passages = [];
+  let heading = '';
+  for (const n of ir || []) {
+    if (n.type === 'structure') heading = String(n.content || '').replace(/[:：]\s*$/, '').trim();
+    if (n.type !== 'tab' || !n.content) continue;
+    const bars = tabBarShapes(n.content, library, chords, { instrument });
+    if (!bars.length) continue;
+    // a passage is read as chords only when every bar clearly sits on one; otherwise it's a tune,
+    // and no bar is labelled with a shape
+    const chordal = isChordal(bars);
+    passages.push({ line: n.line, heading, chordal, bars: chordal ? bars : bars.map((b) => ({ ...b, shape: '', melody: true })) });
+  }
+  return passages;
+}
+
+/** Every bar of a passage in a chord shape: the passage is picked chords, not a tune */
+function isChordal(bars) {
+  return bars.length > 0 && bars.every((b) => b.shape);
+}
+
+/** One bar in words: "Hold C, pick g-C-E-A" (or "pick A-A-E" for a bar of tune) */
+function barText(b) {
+  return b.shape ? `Hold ${b.shape}, pick ${b.pick || b.pattern}` : `pick ${b.pick || b.pattern}`;
+}
+
+/** A passage in words: its bars as shapes and picking, or that it's a tune */
+function passageText(p, sep = ' · ') {
+  return p.chordal ? p.bars.map(barText).join(sep) : 'A tune, picked note by note';
+}
+
+/** The song's tab blocks rewritten: 'open' (the frets as 0: the picking hand alone) or
+ *  'chords' (each block as a line of bars with the chord shape of each bar, to strum) */
+function tabStepText(songText, mode, library, { instrument = 'soprano' } = {}) {
+  const lines = String(songText || '').split('\n');
+  const out = [];
+  const chordsInText = [...new Set((String(songText).match(/\[([A-G][^\]\s:]*)/g) || []).map((x) => x.slice(1)))];
+  let lastChord = '';
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
+    for (const m of line.matchAll(/\[([A-G][^\]\s:x]*)/g)) lastChord = m[1];
+    if (!/^\s*```\s*tab(?:\s+\d+\s*\/\s*\d+)?\s*$/i.test(line)) { out.push(line); continue; }
+    let j = i + 1;
+    while (j < lines.length && !/^\s*```\s*$/.test(lines[j])) j += 1;
+    const body = lines.slice(i + 1, j);
+    if (mode === 'open') {
+      out.push(line, ...body.map((l) => (require('./tab').isStringLine(l, { strict: false })
+        ? l.replace(/^(\s*[A-Ga-g][#♯b♭]?\s*[|:])(.*)$/, (m0, head, rest) => head + rest.replace(/\d+/g, (d) => `0${'-'.repeat(d.length - 1)}`))
+        : l)));
+      if (j < lines.length) out.push(lines[j]);
+    } else {
+      const bars = tabBarShapes(body.join('\n'), library, chordsInText, { instrument });
+      // a tune (not every bar on a chord) stays as written: its notes, played slowly
+      if (!isChordal(bars)) { out.push(line, ...body); if (j < lines.length) out.push(lines[j]); i = j; continue; }
+      // a bar in no shape: the chord before it, or else the next one the song plays
+      const nextChord = (() => { for (const l of lines.slice(j + 1)) { const m = l.match(/\[([A-G][^\]\s:x]*)/); if (m) return m[1]; } return ''; })();
+      const names = bars.map((b) => b.shape || lastChord || nextChord || 'N.C.');
+      // the bars on the block's first line, blank lines for the rest: the song keeps its line numbers
+      out.push(names.length ? `| ${names.join(' | ')} |` : '');
+      for (let k = i + 1; k <= Math.min(j, lines.length - 1); k += 1) out.push('');
+      if (names.length) lastChord = names[names.length - 1];
+    }
+    i = j;
+  }
+  return out.join('\n');
+}
+
 /** 4.41: how the words go when a part comes more than once */
 function wordsText(each) {
   return { same: ', the same words each time', mostly: ', mostly the same words', some: ', new words, with some coming back', new: ', new words each time' }[each] || '';
 }
 
 function learnSheetHtml(info) {
-  const { title = 'Song', sub = '', facts = [], map = { route: [], parts: [] }, shapes = [], changes = [], patterns = [], made = '', circle = '', circleNotes: cNotes = [], trouble = [], summary = [] } = info || {};
+  const { title = 'Song', sub = '', facts = [], map = { route: [], parts: [] }, shapes = [], changes = [], patterns = [], made = '', circle = '', circleNotes: cNotes = [], trouble = [], summary = [], picking = [] } = info || {};
   // 4.40.3: each step with its first words, as Chord patterns shows it
   const route = map.route.map((r, i) => `${i ? '<span class="arrow">→</span>' : ''}<span class="step"><b>${esc(r.letter)}</b> ${esc(r.name)}${r.times > 1 ? ` ×${r.times}` : ''}${r.words ? `<small>${esc(r.words)}</small>` : ''}</span>`).join('');
   const CIRCLED = '①②③④⑤⑥⑦⑧⑨';
@@ -807,6 +952,17 @@ function learnSheetHtml(info) {
   const hard = changes.filter((c) => !c.missing).slice(0, 5);
   const changesHtml = hard.map((c) => `<li><b>${esc(c.from)} → ${esc(c.to)}</b>${c.count > 1 ? ` (×${c.count})` : ''}: ${esc(c.tip)}</li>`).join('');
   const patternsHtml = patterns.map((p) => `<li><b>${esc(p.name)}</b>: ${esc(p.hint)}</li>`).join('');
+  // 4.43: the tab, bar by bar, as shapes and picking patterns, and how to learn it in steps
+  // each passage once, with how many times it comes
+  const passages = [];
+  for (const p of picking) {
+    const sig = `${p.chordal}|${p.bars.map(barText).join('|')}`;
+    const hit = passages.find((x) => x.sig === sig);
+    if (hit) hit.times += 1; else passages.push({ ...p, sig, times: 1 });
+  }
+  const pickingHtml = passages.length ? `<h2>Picking</h2>${passages.map((p) => `<div class="part"><h3>${esc(p.heading || 'Tab')} <span class="times">(line ${esc(p.line)}${p.times > 1 ? `, ×${p.times}` : ''})</span></h3>${p.chordal
+    ? `<ol class="changes">${p.bars.map((b) => `<li><b>Hold ${esc(b.shape)}</b>, pick ${esc(b.pick || b.pattern)}</li>`).join('')}</ol>`
+    : '<p>A tune, picked note by note rather than on chord shapes. Learn it slowly, a bar at a time.</p>'}</div>`).join('')}<p class="pick-key">Strings by name, as on the tab (g C E A on a ukulele); g+A means picked together. Learn it in steps (Learn → Picking…): the chords strummed, then the pattern on open strings, then both, slowly first.</p>` : '';
   const circleHtml = circle ? `<h2>On the circle of fifths</h2><div class="circle">${circle}<ul>${cNotes.map((n) => `<li>${esc(n)}</li>`).join('')}</ul></div>` : '';
   const troubleHtml = trouble.filter((t) => !t.gone).slice(0, 12).map((t) => `<li>Line ${esc(t.line)}${t.chord ? `, <b>${esc(t.chord)}</b>` : ''}${t.words ? `: “${esc(t.words)}”` : ''}${t.count > 1 ? ` (×${t.count})` : ''}</li>`).join('');
   const factsHtml = facts.filter(([, v]) => v).map(([k, v]) => `<span>${esc(k)}: <b>${esc(v)}</b></span>`).join('');
@@ -819,9 +975,10 @@ ${shortHtml ? `<ul class="short">${shortHtml}</ul>` : (most && most.times > 1 ? 
 ${parts ? `<h2>Chord map</h2>${parts}` : ''}
 ${changesHtml ? `<h2>Changes to practise</h2><ol class="changes">${changesHtml}</ol>` : ''}
 ${patternsHtml && !marked ? `<h2>Patterns in it</h2><ul class="changes">${patternsHtml}</ul>` : ''}
+${pickingHtml}
 ${circleHtml}
 <h2>Learning it</h2><ol class="steps">
-<li>Practise the hardest changes above until they're smooth (Learn → The changes…).</li>
+<li>Practise the hardest changes above until they're smooth (Learn → Changes…).</li>
 <li>Play along with the chords, then <b>from memory</b>: the chords hidden after the first time each part comes, then as numbers only, then none (Learn → From memory).</li>
 <li>Play it in another key, thinking in numbers. If you can, you know the song, not just the shapes.</li>
 <li>Come back to it in a day or two, and again in a week.</li>
@@ -831,4 +988,4 @@ ${circleHtml}
 </body></html>`;
 }
 
-module.exports = { wordsText, outsideWhy, circlePlace, keyFamily, circleMoves, circleNotes, circleSvg, quizSteps, quizQuestions, quizOptions, addTrouble, placeTrouble, removeTrouble, plainWords, numeral, songChanges, fingerMoves, changeTip, chordSequence, barsOf, chordMap, fadePlan, numberedIR, keyLegend, learnSheetHtml };
+module.exports = { tabBarShapes, pickingSummary, barText, passageText, isChordal, tabStepText, wordsText, outsideWhy, circlePlace, keyFamily, circleMoves, circleNotes, circleSvg, quizSteps, quizQuestions, quizOptions, addTrouble, placeTrouble, removeTrouble, plainWords, numeral, songChanges, fingerMoves, changeTip, chordSequence, barsOf, chordMap, fadePlan, numberedIR, keyLegend, learnSheetHtml };

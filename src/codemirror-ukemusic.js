@@ -144,7 +144,7 @@ function createHighlighter(codemirror) {
           if (/^```\s*$/.test(text.trim())) {
             inTabBlock = false;
           }
-        } else if (/^```tab\s*$/i.test(text.trim())) {
+        } else if (/^```tab(?:\s+\d+\s*\/\s*\d+)?\s*$/i.test(text.trim())) {
           inTabBlock = true;
           builder.add(line.from, line.to, Decoration.mark({ class: TOKENS.tab }));
         } else if (/^--(?:START|END) MUSIC--\s*$/.test(text.trim())) {
@@ -211,7 +211,7 @@ const TAB_LINE_PREFIX_RE = /^\s*[A-Ga-g][#b]?\s*[|:]/;
 function inTabBlock(state, lineNumber) {
   for (let n = lineNumber - 1, steps = 0; n >= 1 && steps < 400; n -= 1, steps += 1) {
     const text = state.doc.line(n).text.trim();
-    if (/^```tab\s*$/i.test(text)) return true;
+    if (/^```tab(?:\s+\d+\s*\/\s*\d+)?\s*$/i.test(text)) return true;
     if (/^```/.test(text)) return false;
   }
   return false;
@@ -511,7 +511,7 @@ function renderHighlightedHtml(source) {
       continue;
     }
 
-    if (/^```tab\s*$/i.test(line.trim())) {
+    if (/^```tab(?:\s+\d+\s*\/\s*\d+)?\s*$/i.test(line.trim())) {
       inTabBlock = true;
       output.push(`<span class="${TOKENS.tab}">${escapeHtml(line)}</span>`);
       continue;

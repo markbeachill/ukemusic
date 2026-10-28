@@ -45,9 +45,11 @@ const DEFAULT_CONFIG = {
     all_versions: false,
     print_style: 'standard',
     section_names: 'show',
+    tune_notation: 'strip',   // 4.44: the tune as notes: strip (each tune once, at the top), lines, off
     gig_folder: '',
     gig_copy: true,
     usual_formats: '',
+    chordpro_abc: false,   // 4.44: ChordPro exports carry the tune as notation ({start_of_abc})
     stage_font: 'Consolas',
     stage_size: 18,
     stage_fit: true,

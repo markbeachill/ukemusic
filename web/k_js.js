@@ -133,7 +133,10 @@
             drawStrip(`bar${index}`, 'N.C.', false, []);
             return;
           }
-          const steps = stripSteps(bar.pattern, bar.beats || schedule.beatsPerBar);
+          // picked (4.44): the strings in order instead of the strokes
+          const steps = bar.pickSteps
+            ? stripSteps(bar.pickSteps.map((sym) => (sym === '·' ? '-' : 'P')).join(''), bar.beats || schedule.beatsPerBar).map((st, i) => ({ ...st, symbol: bar.pickSteps[i] }))
+            : stripSteps(bar.pattern, bar.beats || schedule.beatsPerBar);
           drawStrip(`bar${index}`, learnStripName(bar), false, steps);
           // a chord shorter than a bar (share < 1) plays the start of the pattern at the usual speed
           const barTime = bar.duration / (bar.share || 1);
@@ -229,10 +232,33 @@
               });
               const bar = document.createElement('span');
               bar.className = 'k-progress';
-              span.append(pre, bar);
+              // 4.43: from memory, the tab fades too: each bar as its chord shape and the order the
+              // strings are picked, then nothing (tap to see it)
+              const tabMode = learnMode(line.line);
+              const passage = karaokeView.learn && karaokeView.learn.picking ? karaokeView.learn.picking[line.line] : null;
+              const faded = tabMode !== 'show' && Boolean(karaokeView.learn);
+              if (faded) {
+                const box = document.createElement('div');
+                box.className = 'k-pick';
+                const summary = passage ? window.ukemusic.learn.passageText(passage, '  ·  ') : 'Picking';
+                if (tabMode === 'number') box.textContent = summary;
+                else {
+                  box.textContent = '? Picking, from memory';
+                  box.classList.add('k-hidden');
+                  box.title = 'Tap to see the shapes and the picking';
+                  box.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    box.textContent = summary;
+                    box.classList.remove('k-hidden');
+                    box.classList.add('k-revealed');
+                    karaokeView.learn.needed.set(`${line.line}:tab`, { line: line.line, chord: 'the picking' });
+                  }, { once: true });
+                }
+                span.append(box, bar);
+              } else span.append(pre, bar);
               el.appendChild(span);
               karaokeLines.appendChild(el);
-              karaokeView.lines.push({ line, el, pieces: [{ piece: line.pieces[0], span, bar, done: false }], played: line.start === null && line.line < startLine, tabMarks, tabStep: -2 });
+              karaokeView.lines.push({ line, el, pieces: [{ piece: line.pieces[0], span, bar, done: false }], played: line.start === null && line.line < startLine, tabMarks: faded ? [] : tabMarks, tabStep: -2 });
               continue;
             }
             // Chords with no words (an instrumental): the chords read along the line like words,
@@ -354,6 +380,10 @@
             karaokeView.learn = { opts: learn, plan: window.ukemusic.learn.fadePlan(ir, analysis, learn.stage), key: learn.key, needed: keep || new Map() };
           } else karaokeView.learn = null;
           karaokeView.library = chordLibraryFor(songInstrument(effectiveConfig()).id);
+          if (karaokeView.learn) {
+            const instrumentId = songInstrument(effectiveConfig()).id;
+            karaokeView.learn.picking = Object.fromEntries(window.ukemusic.learn.pickingSummary(ir, karaokeView.library, { instrument: instrumentId }).map((x) => [x.line, x]));
+          }
           karaokeView.shapesKey = null;
           karaokeView.shapesIndex = -1;
           document.getElementById('karaokeShapesToggle').setAttribute('aria-pressed', String(karaokeShapesOn()));

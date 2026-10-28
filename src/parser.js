@@ -1,11 +1,13 @@
 const { parseTab } = require('./tab');
+const { melodyLine } = require('./melody');
 const { scanMarkers } = require('./rich-text');
 const { parseChordToken, splitRepeat, parseGridLine, gridNodes, resolveStrums } = require('./song-syntax');
 const INFORMAL_LABEL_RE = /^\s*((?:intro|verse|chorus|refrain|pre-?chorus|bridge|middle 8|solo|instrumental|interlude|break|riff|outro|ending|coda|tag)\b[^:[\]\n]{0,40}:)\s*(?=\[|\||$)/i;
 const STRUCTURE_RE = /^\s*\[\[(.*?)\]\]\s*$/; // 4.26: spaces around a heading line are ignored
 const RHYTHM_RE = /^\{([^}]*)\}$/;
 const VOICE_RE = /^\s*\{\s*(harmony|lead)\s*\}\s*$/i; // 4.34: harmony lines (in italics) until {lead}
-const TAB_START_RE = /^```tab\s*$/;
+const PICK_RE = /^\s*\{\s*pick(?:\s+([A-Za-z][\w-]*))?\s*(?::\s*(.*?))?\s*\}\s*$/i; // 4.44: {pick: …}
+const TAB_START_RE = /^```tab(?:\s+(\d+)\s*\/\s*(\d+))?\s*$/; // 4.44: ```tab 4/4: timed by its bars
 const TAB_END_RE = /^```\s*$/;
 
 function createNode(type, content, line, offset = null, warnings = []) {
@@ -61,7 +63,10 @@ function parseTabBlock(lines, startIndex, nodes) {
   }
   warnings.push(...model.warnings);
 
-  nodes.push(createNode('tab', contentLines.join('\n'), startLine, null, warnings));
+  const tabNode = createNode('tab', contentLines.join('\n'), startLine, null, warnings);
+  const fence = lines[startIndex].content.match(TAB_START_RE);
+  if (fence && fence[1]) tabNode.barBeats = Number(fence[1]);   // ```tab 4/4: timed by its bars
+  nodes.push(tabNode);
 
   if (i >= lines.length) {
     nodes[nodes.length - 1].warnings.push(`Line ${startLine}: tab block was not closed with \`\`\`.`);
@@ -89,6 +94,22 @@ function parseLineContent(lineText, lineNumber, nodes, options) {
   const voice = lineText.match(VOICE_RE);
   if (voice) {
     options.harmony = voice[1].toLowerCase() === 'harmony';
+    return;
+  }
+
+  // 4.44: {pick: up and back} / {pick: g C E A} / {pick V: …} / {pick V}: the picking pattern
+  // from here on (src/picking.js resolvePick). Like {melody}, it takes no room on the sheet.
+  const pick = lineText.match(PICK_RE);
+  if (pick) {
+    nodes.push({ ...createNode('pick', (pick[2] || '').trim(), lineNumber, null, []), pickName: pick[1] || '' });
+    return;
+  }
+
+  // 4.44: {melody: E E F G | …}: the tune of the next line (src/melody.js). It takes no room on
+  // the sheet; playback and the Pick tab use it.
+  const tune = melodyLine(lineText);
+  if (tune) {
+    nodes.push({ ...createNode('melody', tune.text, lineNumber, null, []), format: tune.format });
     return;
   }
 

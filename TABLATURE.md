@@ -149,6 +149,8 @@ Plain tab doesn't say how long each note lasts, so the app uses the spacing:
 
 Speed is set by the song's **tempo** on the **This song** tab, as for chords. If a riff sounds too fast, lower the tempo or space the notes out more.
 
+**Timed by its bars (4.44).** Write a time after the word tab, `` ```tab 4/4 `` (or `3/4`, `6/8`), and the block is timed by its bar lines instead: each `|…|` is one whole bar, and a note's place across its bar is when it's played (a note halfway across a bar of 4/4 is on beat 3). Held notes, rests and slow patterns then come out exactly. **Pick → Write out…** writes its tab this way. Plain `` ```tab `` blocks are timed by their spacing as before.
+
 In **karaoke**:
 - The tab shows as written, in a fixed-width font, with a progress line under it.
 - **Each note lights up as it's played**, and notes already played turn blue.

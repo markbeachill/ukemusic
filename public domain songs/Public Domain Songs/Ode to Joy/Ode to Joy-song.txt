@@ -1,0 +1,17 @@
+--START MUSIC--
+{D-DU-UDU}
+[[Verse 1]]
+{melody: E E F G | G F E D | C C D E | E. D/2 D2}
+[C]Joyful, joyful, [G7]we adore Thee, [C]God of glory, [G7]Lord of love;
+{melody: E E F G | G F E D | C C D E | D. C/2 C2}
+[C]Hearts unfold like [G7]flow'rs before Thee, [C]op'ning to the [G7:2]sun a[C:2]bove.
+{melody: D D E C | D E/2 F/2 E C | D E/2 F/2 E D | C D G2}
+[G7]Melt the clouds of [C]sin and sadness; [G7]drive the dark of [C:2]doubt a[G7:2]way;
+[C]Giver of im[G7]mortal gladness, [C]fill us with the [G7:2]light of [C:2]day!
+
+[[Verse 2]]
+[C]All Thy works with [G7]joy surround Thee, [C]earth and heaven re[G7]flect Thy rays,
+[C]stars and angels [G7]sing around Thee, [C]centre of un[G7:2]broken [C:2]praise.
+[G7]Field and forest, [C]vale and mountain, [G7]flow'ry meadow, [C:2]flashing [G7:2]sea,
+[C]singing bird and [G7]flowing fountain [C]call us to re[G7:2]joice in [C:2]Thee.
+--END MUSIC--

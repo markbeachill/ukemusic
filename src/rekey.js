@@ -9,6 +9,8 @@ const { transposeTab } = require('./tab');
 const { isChordName } = require('./chord-names');
 const { transposeKey, parseKey } = require('./keys');
 const { parseChordToken, parseGridLine, splitRepeat } = require('./song-syntax');
+const { melodyLine, transposeMelodyLine } = require('./melody');
+const { noteName } = require('./picking');
 
 /**
  * The song text with every [chord] and every ```tab block moved by `semitones`.
@@ -31,9 +33,14 @@ function rewriteText(text, semitones, { key = null, instrument = 'soprano' } = {
       }
       continue;
     }
-    if (/^```tab\s*$/i.test(line.trim())) {
+    if (/^```tab(?:\s+\d+\s*\/\s*\d+)?\s*$/i.test(line.trim())) {
       out.push(line);
       tab = [];
+      continue;
+    }
+    // 4.44: the tune moves too
+    if (melodyLine(line)) {
+      out.push(transposeMelodyLine(line, semitones, (n) => transposeName(n, semitones, key)));
       continue;
     }
     // A bar line, "[[Intro]] | C | G7 C | % | (x2)": the chords aren't in brackets
@@ -86,6 +93,8 @@ function rekeySettings(settings, semitones, { chords = [], key = null } = {}) {
   next.song = { ...(next.song || {}), transpose: 0 };
   const setKey = parseKey(next.song.key);
   if (setKey) next.song.key = transposeKey(setKey, semitones).name;
+  // 4.44: the first note to sing moves with it
+  if (next.song.first_note && noteName(next.song.first_note, semitones)) next.song.first_note = transposeName(String(next.song.first_note).replace(/\d$/, ''), semitones, key);
   return next;
 }
 

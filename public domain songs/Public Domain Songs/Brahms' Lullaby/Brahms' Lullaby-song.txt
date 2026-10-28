@@ -1,0 +1,12 @@
+--START MUSIC--
+{D>DD}
+[[Verse]]
+{melody: E/2 E/2 | G. E/2 E | G2 E/2 G/2 | C B. A/2 | A G D/2 E/2}
+Lulla[Cx3]by, and good night, with roses be[G7]dight, with
+{melody: F D D/2 E/2 | F2 D/2 F/2 | B'/2 A/2 G B | C2}
+[G7x3]lilies o'erspread is baby's wee [C]bed.
+{melody: C,/2 C/2 | C'2 A/2 F/2 | G2 E/2 C/2 | F G A | G2}
+Lay thee [F]down now and [C]rest, may thy [G7]slumber be [C]blessed.
+{melody: C,/2 C/2 | C'2 A/2 F/2 | G2 E/2 C/2 | F E D | C3}
+Lay thee [F]down now and [C]rest, may thy [G7]slumber be [C]blessed.
+--END MUSIC--

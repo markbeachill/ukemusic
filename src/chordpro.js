@@ -186,8 +186,12 @@ function chordProToUkemusic(input) {
   // 4.27: everything else in the file is kept for the song's ChordPro tab (chordpro.txt)
   const keptFields = [];
   const keptOther = [];
+  let tabTimeNext = '';   // 4.44: {x_ukemusic_tab_time: 4/4} before {start_of_tab}
   let inTab = false;
   let inGrid = false;
+  let inAbc = null;              // 4.44: inside {start_of_abc} … {end_of_abc}: { label, lines }
+  const abcBlocks = [];          // ABC tunes found, matched to the lines after them at the end
+  const hasOwnTune = lines.some((l) => /^\s*\{\s*x_ukemusic_melody/.test(l));
   let inStrum = null;            // 4.34: inside {start_of_strum} … {end_of_strum}
   const strumNames = [];        // every named strum so far ({comment: Strum Verse} recalls one)
   const boxNames = [];           // named strum boxes: used again after headings of that name
@@ -203,6 +207,19 @@ function chordProToUkemusic(input) {
 
   let verseCount = 0; // unlabelled ChordPro verses are numbered: Verse 1, Verse 2 …
   for (const line of lines) {
+    if (inAbc) {
+      const d = parseDirective(line);
+      if (d && d.name === 'end_of_abc') {
+        const text = inAbc.lines.join('\n');
+        // ukemusic's own (made from the {melody} lines, which come in instead) is left out
+        if (!hasOwnTune && !/%\s*made by ukemusic/.test(text)) {
+          out.push(`\u0000ABC${abcBlocks.length}`);
+          abcBlocks.push({ text, label: inAbc.label });
+        }
+        inAbc = null;
+      } else inAbc.lines.push(line);
+      continue;
+    }
     if (inTab) {
       const d = parseDirective(line);
       if (d && d.name === 'end_of_tab') {
@@ -213,6 +230,7 @@ function chordProToUkemusic(input) {
       }
       continue;
     }
+    if (/^\s*#\s*ukemusic:/.test(line)) continue;   // 4.44: ukemusic's own note on its directives (written again on export)
     if (/^\s*#/.test(line)) { keptOther.push(line.trim()); continue; } // ChordPro comment line: kept
 
     const d = parseDirective(line);
@@ -253,7 +271,13 @@ function chordProToUkemusic(input) {
     } else if (name === 'x_voice') {
       // 4.34: harmony lines (in italics) until {x_voice: lead}
       out.push(/^harmony/i.test(value) ? '{harmony}' : '{lead}');
-    } else if (/^x_/.test(name) && name !== 'x_ukemusic_strum') {
+    } else if (name === 'x_ukemusic_pick') {
+      // 4.44: {x_ukemusic_pick: up and back} / {x_ukemusic_pick: V: g C E A} / {x_ukemusic_pick: V:}
+      const named = value.match(/^([A-Za-z][\w-]*):\s*(.*)$/);
+      out.push(named ? `{pick ${named[1]}${named[2] ? `: ${named[2]}` : ''}}` : `{pick: ${value}}`);
+    } else if (name === 'x_ukemusic_melody' || name === 'x_ukemusic_melody_abc') {
+      out.push(`{melody${name.endsWith('_abc') ? ' abc' : ''}: ${value}}`);
+    } else if (/^x_/.test(name) && name !== 'x_ukemusic_strum' && name !== 'x_ukemusic_tab_time') {
       keptFields.push({ name, value });
     } else if (name === 'define' || name === 'chord' || name === 'define-baritone' || name === 'define-guitar') {
       // {define: Am base-fret 1 frets 2 0 0 0}: a chord shape for this song
@@ -270,10 +294,15 @@ function chordProToUkemusic(input) {
       heading(value || 'Chorus');
     } else if (name === 'start_of_bridge') {
       heading(value || 'Bridge');
+    } else if (name === 'start_of_abc') {
+      inAbc = { label: value, lines: [] };
+    } else if (name === 'x_ukemusic_tab_time') {
+      tabTimeNext = /^\d+\s*\/\s*\d+$/.test(value) ? value.replace(/\s+/g, '') : '';
     } else if (name === 'start_of_tab') {
       if (value) heading(value);
       else blank();
-      out.push('```tab');
+      out.push(tabTimeNext ? `\`\`\`tab ${tabTimeNext}` : '```tab');
+      tabTimeNext = '';
       inTab = true;
     } else if (name === 'start_of_grid') {
       heading(value || 'Instrumental');
@@ -336,11 +365,115 @@ function chordProToUkemusic(input) {
       if (nameFor && !/^\{/.test(out[i + 1] || '')) out.splice(i + 1, 0, `{${nameFor}}`);
     }
   }
+  // 4.44: ABC tunes -> {melody} lines, where their bars match the lines after them
+  if (abcBlocks.length) matchAbcTunes(out, abcBlocks, { capo: Number(String(meta.capo || '').match(/\d+/)?.[0]) || 0, report, kept: keptOther });
   while (out.length && out[0] === '') out.shift();
   while (out.length && out[out.length - 1] === '') out.pop();
   const collapsed = out.filter((l, i) => !(l === '' && out[i - 1] === ''));
   const kept = chordProFields.formatFields({ fields: keptFields, other: keptOther });
   return { text: `--START MUSIC--\n${collapsed.join('\n')}\n--END MUSIC--\n`, meta, report, kept };
+}
+
+/**
+ * 4.44: each ABC tune in an imported song (a placeholder line in `out`) is shared out over the
+ * lines of chords after it, bar for bar: a line of 4 bars takes the tune's next 4 bars (the
+ * tune's pickup goes with the first). When the bars come out even it becomes {melody} lines
+ * above them (a later verse with the same chords is then sung to it); when they don't, the ABC is
+ * kept on the song's ChordPro tab, to place by hand, and the report says so.
+ */
+function matchAbcTunes(out, blocks, { capo = 0, report, kept }) {
+  const melody = require('./melody');
+  const { parse } = require('./parser');
+  const { buildSchedule } = require('./playback-schedule');
+  report.tunes = report.tunes || { matched: 0, kept: 0, notes: [] };
+  for (let k = 0; k < blocks.length; k += 1) {
+    const at = out.indexOf(`\u0000ABC${k}`);
+    if (at < 0) continue;
+    const tune = melody.parseAbcTune(blocks[k].text);
+    const flats = melody.keySignature(tune.key).flats;
+    const bars = tune.pickup ? tune.bars.slice(1) : tune.bars;
+    const want = bars.length;
+    // the lines of chords after it, and how many bars each takes
+    const targets = [];
+    let got = 0;
+    for (let i = at + 1; i < out.length && got < want; i += 1) {
+      const line = out[i];
+      if (/^\u0000ABC/.test(line)) break;
+      if (!/\[[A-G][^\]]*\]/.test(line) || /^\s*\{/.test(line) || /^\s*```/.test(line)) continue;
+      let n = 0;
+      try {
+        const s = buildSchedule(parse(`--START MUSIC--\n${line}\n--END MUSIC--\n`), { beatsPerBar: tune.perBar, countIn: false });
+        n = s.bars.reduce((a, b) => a + (b.share || 1), 0);
+      } catch (_e) { n = 0; }
+      if (!n || Math.abs(n - Math.round(n)) > 0.01) { got = -1; break; }
+      targets.push({ index: i, bars: Math.round(n) });
+      got += Math.round(n);
+    }
+    const label = blocks[k].label ? ` (${blocks[k].label})` : '';
+    if (got === want && targets.length) {
+      // the {melody} lines, each line's bars with the pickup on the first
+      let b = 0;
+      let prev = 65;
+      const inserts = targets.map((t, ti) => {
+        const notes = [];
+        if (ti === 0 && tune.pickup) notes.push(...tune.bars[0]);
+        for (let j = 0; j < t.bars; j += 1) notes.push(...bars[b + j]);
+        b += t.bars;
+        const moved = notes.map((n) => ({ len: n.len, midi: n.midi === null ? null : n.midi - capo }));
+        const r = melody.notesToMelodyText(moved, { perBar: tune.perBar, start: ti === 0 ? -tune.pickup : 0, prev, flats });
+        prev = r.prev;
+        return { index: t.index, line: `{melody: ${r.text}}` };
+      });
+      for (const ins of inserts.reverse()) out.splice(ins.index, 0, ins.line);
+      out.splice(at, 1);
+      report.tunes.matched += 1;
+      report.tunes.notes.push(`A tune${label} became {melody} lines over ${targets.length} line${targets.length === 1 ? '' : 's'} (${want} bars).`);
+    } else {
+      out.splice(at, 1);
+      kept.push('{start_of_abc}', ...blocks[k].text.split('\n'), '{end_of_abc}');
+      report.tunes.kept += 1;
+      report.tunes.notes.push(`A tune${label} has ${want} bars, which didn't match the lines after it, so it's kept on the song's ChordPro tab (Song → ChordPro), to write into the song by hand as {melody} lines.`);
+    }
+  }
+}
+
+/** 4 -> "4/4"; 6 -> "6/8" (a bar of 6 eighths) */
+function tabTime(beats) {
+  return [6, 9, 12].includes(Number(beats)) ? `${beats}/8` : `${beats}/4`;
+}
+
+/**
+ * 4.44: # comment lines (ChordPro never shows them) saying what ukemusic's own directives in
+ * this song mean, for anyone reading the file or another app. Each starts "# ukemusic:", so
+ * ukemusic leaves them out when it reads the file back.
+ */
+function ownDirectivesNote(nodes, { abc = false } = {}) {
+  const uses = {
+    pick: nodes.some((n) => n.type === 'pick'),
+    melody: nodes.some((n) => n.type === 'melody' && n.format !== 'abc'),
+    abc: nodes.some((n) => n.type === 'melody' && n.format === 'abc'),
+    tab: nodes.some((n) => n.type === 'tab' && n.barBeats),
+    voice: nodes.some((n) => n.type === 'lyric' && n.harmony)
+  };
+  if (!Object.values(uses).some(Boolean)) return [];
+  const lines = ['# ukemusic: this song uses ukemusic\'s own directives (ChordPro custom directives, x_…).',
+    '# ukemusic: Other ChordPro apps ignore them; ukemusic reads them back. What they mean:'];
+  if (uses.pick) {
+    lines.push('# ukemusic:   {x_ukemusic_pick: up and back}   pick, don\'t strum, from here on: a pattern by name,');
+    lines.push('# ukemusic:       or by string (g C E A E C; g+A together, - a rest) or by finger (p i m a);');
+    lines.push('# ukemusic:       "V: …" names a pattern, "V:" uses it again, "strum" goes back to strumming');
+  }
+  if (uses.melody) {
+    lines.push('# ukemusic:   {x_ukemusic_melody: E E F G | …}   the tune of the next line, by note name in the');
+    lines.push('# ukemusic:       written key: a note is a beat, E2 two, E/2 half, E. one and a half, r a rest;');
+    lines.push('# ukemusic:       each note is the nearest to the one before (\' an octave up, , down)');
+  }
+  if (uses.abc) lines.push('# ukemusic:   {x_ukemusic_melody_abc: …}   the tune of the next line, in ABC notation');
+  if (abc && (uses.melody || uses.abc)) lines.push('# ukemusic:   {start_of_abc} blocks show the same tune as notation, for apps that draw ABC; ukemusic reads the lines above instead');
+  if (uses.tab) lines.push('# ukemusic:   {x_ukemusic_tab_time: 4/4}   the next tab is timed by its bars: each |…| is a whole bar');
+  if (uses.voice) lines.push('# ukemusic:   {x_voice: harmony} … {x_voice: lead}   the words between are a harmony part');
+  lines.push('# ukemusic: More: WRITING.md in ukemusic, or https://github.com/markbeachill/ukemusic');
+  return lines;
 }
 
 function groupLines(nodes) {
@@ -382,6 +515,8 @@ function ukemusicToChordPro(irNodes, info = {}) {
   out.push(...chordProFields.headerLines(info.kept || '', linked));
   // The song's own chord shapes
   for (const [chord, frets] of Object.entries(info.defines || {})) out.push(formatDefine(chord, frets));
+  // 4.44: a note (ChordPro # comment lines: never shown) on the ukemusic directives this song uses
+  out.push(...ownDirectivesNote(irNodes || [], { abc: Boolean(info.abc) }));
   out.push('');
   let open = null;
   const close = () => {
@@ -394,7 +529,54 @@ function ukemusicToChordPro(irNodes, info = {}) {
   };
 
   let harmony = false; // 4.34: {x_voice: harmony} … {x_voice: lead}
-  for (const group of groupLines(irNodes || [])) {
+  // 4.44: the tune as notation (info.abc): one ABC block per section with a tune of its own (a
+  // verse sung to verse 1's tune doesn't repeat it), after the section's start
+  const melody = require('./melody');
+  const time = String(info.time || '4/4').match(/(\d+)\s*\/\s*(\d+)/);
+  const beats = time ? Number(time[1]) : 4;
+  const compound = time ? Number(time[2]) === 8 && [6, 9, 12].includes(beats) : false;
+  const allGroups = groupLines(irNodes || []);
+  const abcFor = new Map();   // group index (-1: before any heading) -> ABC text
+  if (info.abc && melody.hasMelody(irNodes || [])) {
+    const tunes = melody.songMelody(irNodes || [], { beats, compound });
+    let section = -1;
+    let label = info.title || '';
+    const bySection = new Map();
+    allGroups.forEach((g, gi) => {
+      if (g.length === 1 && g[0].type === 'structure') { section = gi; label = g[0].content.trim(); return; }
+      const line = (g.find((n) => n.type === 'chord' || n.type === 'lyric') || {}).line;
+      const t = line !== undefined ? tunes.get(line) : null;
+      if (!t) return;
+      if (!bySection.has(section)) bySection.set(section, { label, lines: [] });
+      bySection.get(section).lines.push(t);
+    });
+    for (const [gi, sec] of bySection) {
+      if (sec.lines.every((t) => t.borrowed)) continue;
+      abcFor.set(gi, melody.tuneToAbc(sec.lines, { title: sec.label, key: info.key || 'C', beats, compound, shift: Number(info.tuneSound) || 0 }));
+    }
+    if (abcFor.has(-1)) out.push('{start_of_abc}', abcFor.get(-1), '{end_of_abc}', '');
+  }
+  const nameNote = (shift) => (n) => require('./versions').transposeName(n, shift, null);
+  let groupIndex = -1;
+  for (let group of allGroups) {
+    groupIndex += 1;
+    // 4.44: {pick} and {melody} lines are ukemusic's own: ChordPro's custom directives (x_), which
+    // other ChordPro apps ignore and ukemusic reads back
+    const own = group.filter((n) => n.type === 'pick' || n.type === 'melody');
+    if (own.length) {
+      for (const n of own) {
+        if (n.type === 'pick') out.push(`{x_ukemusic_pick: ${n.pickName ? `${n.pickName}: ` : ''}${n.content}}`.replace(/: \}$/, ':}'));
+        else {
+          // in the key the chords are written in for this export
+          const shift = Number(info.tuneShift) || 0;
+          const line = `{melody${n.format === 'abc' ? ' abc' : ''}: ${n.content}}`;
+          const moved = shift ? melody.transposeMelodyLine(line, shift, nameNote(shift)) : line;
+          out.push(`{x_ukemusic_melody${n.format === 'abc' ? '_abc' : ''}: ${moved.slice(moved.indexOf(':') + 1).replace(/\}\s*$/, '').trim()}}`);
+        }
+      }
+      group = group.filter((n) => n.type !== 'pick' && n.type !== 'melody');
+      if (!group.length) continue;
+    }
     const lyrics = group.filter((n) => n.type === 'lyric' && n.content.trim());
     if (lyrics.length && lyrics.every((n) => n.harmony) !== harmony) {
       harmony = !harmony;
@@ -414,9 +596,12 @@ function ukemusicToChordPro(irNodes, info = {}) {
       } else {
         out.push(`{comment: ${label}}`);
       }
+      if (abcFor.has(groupIndex)) out.push('{start_of_abc}', abcFor.get(groupIndex), '{end_of_abc}');
       continue;
     }
     if (group.length === 1 && group[0].type === 'tab') {
+      // 4.44: ```tab 4/4 (timed by its bars) keeps its time in a custom directive
+      if (group[0].barBeats) out.push(`{x_ukemusic_tab_time: ${tabTime(group[0].barBeats)}}`);
       out.push('{start_of_tab}', group[0].content, '{end_of_tab}');
       continue;
     }

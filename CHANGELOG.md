@@ -1,5 +1,52 @@
 # Changelog
 
+## v4.44.0
+
+### Pick: fingerpick a song instead of strumming
+A new **Pick** tab. The chords stay; your right hand picks a pattern instead of strumming.
+- **Pattern** (saved with the song): five standard ukulele patterns, easiest first, played a finger to a string (thumb g, index C, middle E, ring A):
+  1. **One string a beat:** g C E A.
+  2. **Up, twice a bar:** g C E A g C E A.
+  3. **Up and back:** g C E A E C (made for 3/4 and 6/8).
+  4. **Pinch and roll:** g+A, C, E, C.
+  5. **Alternating thumb (Travis):** the thumb on every beat, swapping g and C, the fingers on E and A in between.
+  Each has a 3/4 and a 6/8 version. On a guitar the thumb takes the chord's bass note and the fingers the top three strings. Marked strums ([C↓], {stop}) stay strummed, and a chord that changes mid-bar starts the pattern again.
+- **Play** and **Karaoke** play the song picked; the strip shows each string as it's picked.
+- **Pick sheet:** the song laid out like a fingerstyle songbook: the pattern counted out (count, finger, string), the chord boxes, then each line as tab with the chord over the bar where it starts and the words under it. A PDF and a web page in the song's learn folder, and in **Export** (under *To learn from*, also for every song).
+- **Tab in steps…** (moved here from Learn): for a song with its own tab. Tab written in the song is always played and shown as written; the pattern is only for the chords.
+- **How it works:** a short explainer: picking to sing along to (the pattern is the accompaniment; a picked solo, with the tune on top, needs the song's tune written in: then the Chord melody pattern makes one), singing over it, the fingers, the patterns, how tab and chord boxes go together, and songs with their own tab.
+- **The tune.** A song can carry its melody, a line at a time: `{melody: E E F G | G F E D | C C D E | E. D/2 D2}` above the words, by note name in the written key (E2 two beats, E/2 half, E. dotted, r a rest; each note the nearest to the one before, ' and , for octaves; a short first bar is a pickup). Or in ABC: `{melody abc: …}`. Verses share the tune: a line without one borrows it from an earlier line with the same chords. Tunes move with the key, and when a song is rewritten in another key.
+  - **Pick → Play the tune** plays it quietly over the chords while you learn.
+  - **The tune as notes.** A song with its tune written in shows it as music on a staff: by default **a strip at the top**, each tune once (verse 2 isn't drawn again) with its chords above the staff; or **over every line**, like a printed songbook; or hidden (**View → The tune**, saved with the song; the default in Settings → All songs). Treble clef, at the pitch sung, with the key signature of the key you're playing in (or, when the key is only guessed from the chords, the one that fits the tune), ties across bar lines, beamed eighths, triplets and pickups. In PDFs, web pages and the web version too; not on Stage copies. The note being sung lights up as the song plays. The music symbols are the Bravura font's (SIL Open Font License).
+  - **Chord melody**, a sixth pattern: a picked solo, the tune on the top strings from the chord you're holding with a chord note under it on beat 1. The pick sheet shows it as tab, pickup and all.
+  - Ode to Joy, Amazing Grace, Brahms' Lullaby and Scarborough Fair have their tunes written in. (Scarborough Fair's held chords are now as long as the tune holds them: `[Amx2]`, `[Gx2]`, so it plays at the pace it's sung.)
+- **Write out ▾ → The whole song** (Pick): makes a new song in your library with the picking written out as tab you can edit note by note: each picked line in a `` ```tab 4/4 `` block, chords over the bars, words under them, pickups at the end of the bar before. The dialog sets the name, pattern, key, chord names and words, says how many lines it will write, and opens the new song. Lines that aren't picked (N.C., a marked strum), headings and the song's own tab are kept as they are. The original isn't changed. The new song keeps the pattern it was written out with (shown on its Pick tab).
+- **Stop** on the Pick tab, beside Play.
+- **ChordPro:** `{pick}` and `{melody}` lines are exported as ChordPro custom directives (`{x_ukemusic_pick: …}`, `{x_ukemusic_melody: …}`), which other ChordPro apps ignore and ukemusic reads back. (Before, their contents leaked into the words of the export.) Tab written out by its bars keeps its time (`{x_ukemusic_tab_time: 4/4}`), and a song using any of ukemusic's own directives starts with `# ukemusic:` comment lines (which ChordPro never shows) explaining each one; ukemusic leaves them out on import. See CHORDPRO.md.
+- **ChordPro and ABC tunes.** Export → ChordPro has a new option, **with the tune as notation (ABC)**: a song with its tune written in also gets it as an ABC block in each section with a tune of its own, which ChordPro apps that draw ABC show as a stave (off by default, as other apps may show it as text). Bringing ChordPro in, an ABC tune in the file is shared out over the lines after it, bar for bar, and becomes `{melody}` lines when the bars match; when they don't, it's kept on the song's ChordPro tab and the import says so. Exports in another key now move the `{melody}` lines with the chords.
+- **Change the pattern as the song goes:** a `{pick}` line changes it from there on, like a strum line: by name (`{pick: up and back}`, `{pick: travis}`), your own by string (`{pick: g C E A E C}`, `g+A` together, `-` a rest) or by finger (`{pick: p i m a m i}`), named to use again (`{pick V: …}`, then `{pick V}`), or `{pick: strum}`. The chords stay chords. **Pick → Change here** adds the line at the cursor; the pick sheet marks where the pattern changes.
+- **Pick → Write out ▾ → This line:** just the line at the cursor becomes tab, there in the song, to change single notes; the rest stays chords and patterns (a tune it had moves to the next line that was sung to it). Edit → Undo takes it back.
+- **`` ```tab 4/4 ``**: tab with a time after the word tab is timed by its bars (each |…| a whole bar) instead of by the spacing, so held notes and slow patterns play exactly. Plain `` ```tab `` blocks play as before.
+- **First note** (Info → The music): the first note you sing. It's sounded with the first click of the count-in, in the key you're playing in, shown in karaoke and on the pick and learn sheets, and there's a **First note** button on the Pick tab. Set for Amazing Grace, Ode to Joy, Brahms' Lullaby and Scarborough Fair.
+- **Two classical songs** in Public Domain Songs: **Ode to Joy** (Beethoven, with Henry van Dyke's words) and **Brahms' Lullaby**, set to be picked. Four songs now link to published picking arrangements.
+- **Web player:** Learn → **Pick** has the patterns, the pick sheet and the same explainer; the Strum menu can pick too.
+
+## v4.43.0
+
+### Fingerstyle: learning tab
+- **Learn → Picking…** (and **Learn → Picking in steps** in the web player) learns a song's tab in layers, each step played in karaoke:
+  1. **The chords, strummed:** each bar of tab played as the chord shape it sits in, so your fretting hand learns the changes first.
+  2. **The picking on open strings:** the same picking with every string open, so your picking hand learns the pattern on its own.
+  3. **Both, slowly:** the tab as written at two-thirds speed.
+  4. **Both, in time.**
+  Tap a line to start from there; the step is kept.
+- When a passage of tab sits on chord shapes, ukemusic says so, bar by bar: "Hold C, pick g-C-E-A" (strings by name; g+A means picked together). A passage that doesn't (a tune, picked note by note) is left as a tune: no shapes are named, and step 1 plays its notes slowly instead of strumming chords that aren't there.
+- **From memory** fades the tab too: "first time only" shows a passage the first time and hides it after (tap to see the shapes and picking); "as numbers" shows the shapes and patterns instead of the tab.
+- The **learn sheet** has a **Picking** section: each passage once (with ×2 when it comes twice), bar by bar.
+
+### Changed
+- **Learn → The changes…** is now **Changes…**, so the Learn tab still fits on one row.
+
 ## v4.42.0
 
 ### Learn in the web player
@@ -12,10 +59,17 @@ The web player has a **Learn** button beside Karaoke, with the same analysis as 
 
 Trouble spots, exporting learn sheets and the Exports tab stay in the desktop app: the web player plays songs rather than keeping files.
 
+### Copy AI prompt
+- **File → Paste from website** has a **Copy AI prompt** button: it copies a prompt that tells an AI chat (Claude, ChatGPT, Gemini…) ukemusic's song format. Paste it into the chat with a difficult chord sheet (a PDF, a scan, the timing written in words), then paste the answer back here. It's the same prompt as on the website's *Bring your songs* page.
+
+### Fixed
+- A setlist with long song names or artists ran its rows under "Adding songs" beside it. Long names are now cut short with "…".
+
 ### A new website
 - **The front page** now starts from what you want to do, not just chord sheets: *Bring your songs. Learn them, practise them, play them together.* Six doors (Learn, Practise, Perform, Teach, Chord sheets and Bring your songs) and a plain choice between the web player and the desktop app.
 - **A page for each purpose:** Learn, Practise, Perform, Teach and Chord sheets, each with what it does on your own and in a group, pictures, and which version suits it best.
 - **Bring your songs:** every way to get songs in (websites, club songbooks, ChordPro, typing) and **how to tidy a difficult chord sheet with an AI chat**, with a prompt to copy that describes ukemusic's format.
+- New pictures from the app: a setlist, the Session screen going through it, the changes with finger tips, the chords as numbers, and a real Stage copy.
 - How Learn works moved to `how-learn-works.html`; the song guide, ChordPro, How Learn works and What's new are linked from every page's footer. On a phone, the menu is a row under the name.
 
 ## v4.41.0

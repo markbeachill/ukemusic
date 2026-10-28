@@ -29,8 +29,8 @@ test('the analysis is the desktop app\'s own (src/learn.js through the bundle)',
 });
 
 test('the web player\'s learn sheet names the web player\'s menus', () => {
-  assert.ok(app.includes(".replace(' (Learn → The changes…)', ' (Free Practice → Chord switching)')"));
-  assert.ok(require('../src/learn').learnSheetHtml({ title: 'T' }).includes(' (Learn → The changes…)'), 'the text it replaces is still there');
+  assert.ok(app.includes(".replace(' (Learn → Changes…)', ' (Free Practice → Chord switching)')"));
+  assert.ok(require('../src/learn').learnSheetHtml({ title: 'T' }).includes(' (Learn → Changes…)'), 'the text it replaces is still there');
 });
 
 test('on a phone the play bar wraps (Learn made it too wide)', () => {
@@ -73,4 +73,17 @@ test('the AI prompt describes the format the app reads', () => {
   const warnings = parse(song).flatMap((n) => n.warnings || []);
   assert.deepStrictEqual(warnings, []);
   assert.ok(require('../web/pages').SONGS_PAGE.body().includes('id="aiPrompt"'));
+});
+
+test('Copy AI prompt in Paste from website: the same prompt as the website', () => {
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  assert.ok(html.includes('id="convertAiPrompt"') && html.includes('window.ukemusic.copyText(window.ukemusic.aiPrompt)'));
+  const preload = fs.readFileSync(path.join(ROOT, 'src', 'preload.js'), 'utf8');
+  assert.ok(preload.includes("aiPrompt: require('./ai-prompt').AI_PROMPT") && preload.includes('copyText: (text)'));
+  assert.ok(fs.readFileSync(path.join(ROOT, 'WRITING.md'), 'utf8').includes('**Copy AI prompt**'));
+});
+
+test('a setlist with long names stays in its column', () => {
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  assert.ok(html.includes('grid-template-columns: minmax(0, 1fr); gap: 4px; }') && html.includes('.setlist-songs li { min-width: 0; }'));
 });

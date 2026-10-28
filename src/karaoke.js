@@ -77,7 +77,7 @@ function buildKaraoke(irNodes, schedule, options = {}) {
       // Where each note sits in the text, and when it's played (beats from the tab's start),
       // so the karaoke view can light the notes as they sound
       const model = parseTab(node.content);
-      const steps = tabTiming(model).steps.map((step) => ({
+      const steps = tabTiming(model, { barBeats: node.barBeats || 0 }).steps.map((step) => ({
         beat: step.beat,
         time: null,
         pitches: step.notes.map((n) => n.pitch),

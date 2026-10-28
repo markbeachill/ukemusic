@@ -85,7 +85,7 @@ function findFiles(source) {
 function importFolder(source, songsFolder, options = {}) {
   const instrumentId = options.instrument || 'soprano';
   const groups = findFiles(source);
-  const report = { added: [], skipped: [], setlists: [], files: 0 };
+  const report = { added: [], skipped: [], setlists: [], files: 0, tunes: { matched: [], kept: [] } };
   const makeSetlists = options.setlists !== false && groups.length > 1;
   for (const group of groups) {
     const inGroup = [];
@@ -110,6 +110,10 @@ function importFolder(source, songsFolder, options = {}) {
         if (converted.kept) songs.writeChordPro(song.folder, converted.kept);
         if ((converted.meta.links || []).length) links.writeLinks(song.folder, converted.meta.links);
         report.added.push(check.title);
+        // 4.44: ABC tunes in the file: made {melody} lines, or kept on the ChordPro tab
+        const t = converted.report.tunes;
+        if (t && t.matched) report.tunes.matched.push(check.title);
+        if (t && t.kept) report.tunes.kept.push(check.title);
         inGroup.push(check.title);
       } catch (error) {
         report.skipped.push({ file: path.basename(file), title, reason: error.message });

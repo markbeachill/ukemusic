@@ -127,6 +127,10 @@ Export → ChordPro (or the download menu in the web player) writes the song in 
 | `| C | G | % |` | `| [C] | [G] | % |` |
 | `(x2)` at the end of a line | `(x2)` |
 | ` ```tab ` blocks | `{start_of_tab}` … `{end_of_tab}` |
+| ` ```tab 4/4 ` (timed by its bars) | `{x_ukemusic_tab_time: 4/4}`, then the tab section |
+| The tune (`{melody}` lines), when you tick "with the tune as notation" | Also `{start_of_abc}` … `{end_of_abc}`, one block per section |
+| `{pick: up and back}`, `{pick V: g C E A}`, `{pick V}` | `{x_ukemusic_pick: up and back}`, `{x_ukemusic_pick: V: g C E A}`, `{x_ukemusic_pick: V:}` |
+| `{melody: E E F G …}`, `{melody abc: …}` | `{x_ukemusic_melody: E E F G …}`, `{x_ukemusic_melody_abc: …}` |
 | The song's own chord shapes | `{define: …}` |
 | `{harmony}` … `{lead}` | `{x_voice: harmony}` … `{x_voice: lead}` |
 
@@ -149,6 +153,19 @@ Everything ukemusic writes is valid ChordPro, so other apps open the files. A fe
 | `[C↓]`, `[x]`, `[G…]`, `[Bm7.Am7]` | As written, as chord names | Songbook marks (see Chords) |
 | `{x_voice: harmony}` / `{x_voice: lead}` | Nothing (`x_` directives are for apps that know them) | A harmony part |
 | `{define-baritone: …}`, `{define-guitar: …}` | Usually nothing | Shapes for those instruments |
+| `{x_ukemusic_pick: …}` | Nothing | The picking pattern from there on |
+| `{x_ukemusic_melody: …}`, `{x_ukemusic_melody_abc: …}` | Nothing | The tune of the next line |
+| `{x_ukemusic_tab_time: 4/4}` | Nothing | The next tab is timed by its bars |
+| `# ukemusic: …` lines at the top | Nothing (`#` lines are comments ChordPro never shows) | Nothing: it writes them again each time |
+
+**The note at the top.** When a song uses any of ukemusic's own `x_` directives, the file starts with a few `# ukemusic:` comment lines saying what each one means, so anyone opening the file (or the makers of another app) can see what they are. ChordPro never shows `#` lines, and ukemusic leaves them out when it reads the file back (it writes them fresh on the next export).
+
+**The tune as notation (ABC).** ChordPro 6 can carry music notation in `{start_of_abc}` … `{end_of_abc}` sections, in ABC (the text format for folk tunes); ChordPro apps that support it draw it as a stave. ukemusic uses these both ways:
+
+- **Saving:** tick **Export → ChordPro → with the tune as notation (ABC)** and a song with its tune written in (`{melody}` lines) also gets an ABC block at the start of each section with a tune of its own (a verse sung to verse 1's tune doesn't repeat it). It's off unless you tick it, because apps that don't draw ABC may show it as text. The ABC is in the key of the export, with the key signature; the `{x_ukemusic_melody}` lines go too, and they're what ukemusic reads back.
+- **Bringing in:** an ABC tune in someone else's ChordPro file is shared out over the lines of chords after it, bar for bar (the tune's pickup with the first line). If the bars come out even, it becomes `{melody}` lines above those lines, and later verses with the same chords are sung to it. If they don't, the ABC is kept on the song's ChordPro tab and the import says so, so you can write it in by hand. Key signatures, accidentals, lengths, dotted pairs (`>` `<`), triplets and ties are read; a note tied across a bar line comes in as two notes.
+
+**Why `x_`:** ChordPro sets aside directives starting `x_` for an app's own additions; other apps ignore the ones they don't know, so the song still opens and shows its chords and words everywhere. ChordPro has no way to write a picking pattern (it shows picking only as tab, in `{start_of_tab}` sections), so a picked song opened in another app shows as plain chords; one written out as tab (Pick → Write out) shows its tab.
 
 And it reads two things from other songbooks that standard ChordPro doesn't have: **strum boxes** (`{start_of_strum}` … `{end_of_strum}`) and **custom sections** (`{start_of_x_intro}` and the like).
 
