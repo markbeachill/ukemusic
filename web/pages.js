@@ -1,5 +1,5 @@
-// The website's pages for each purpose (Learn, Practise, Perform, Teach, Chord sheets) and
-// "Bring your songs": run by web/make.js (so on every website build), they're written into site/
+// The website's pages for each purpose (Learn, Practise, Perform, Teach, Chord sheets),
+// "Bring your songs" and "Phone and tablet": run by web/make.js (so on every website build), they're written into site/
 // in the home page's own look, and aren't kept in git. The words are here, as data; each page
 // stands on its own, so some things are said on more than one page.
 const fs = require('fs');
@@ -33,7 +33,7 @@ function siteFooter() {
   return `<footer>
   <div class="wrap">
     <span>ukemusic by Mark Beachill · MIT licence · <a class="repo-link" href="https://github.com/markbeachill/ukemusic">ukemusic on GitHub</a></span>
-    <span class="ref">Reference: <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a></span>
+    <span class="ref">Reference: <a href="phone.html">Phone and tablet</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a></span>
     <button class="theme" id="theme" type="button">Light / dark</button>
   </div>
 </footer>`;
@@ -176,8 +176,8 @@ const PAGES = [
       { h3: 'Suit the room', list: ['Any key for the group\'s voices, with the chords spelled right', 'A capo, and the shapes to finger', 'Ukulele (high or low G), baritone and guitar, each with its own shapes', 'Choose the shape you teach for a chord, kept with the song'] }
     ],
     best: 'desktop',
-    web: ['For your players: practise at home, play along, learn by heart', 'Load the songs you send them with "Update songs"'],
-    desk: ['Write and import songs; ChordPro songbooks in one go', 'Handouts, learn sheets and songbooks', '"Songs for the web…" saves your songs in one file to share with the group'],
+    web: ['For your players: practise at home, play along, learn by heart', 'They bring in the songs you send with "Add songs from files…"'],
+    desk: ['Write and import songs; ChordPro songbooks in one go', 'Handouts, learn sheets and songbooks', '"Phone and tablet…" saves your songs in one file to share with the group'],
     more: '<div class="note-box"><p><b>What it doesn\'t do yet:</b> there are no student accounts and no sharing server. You share songs as a file (or printouts), and players load them into the web player. Ideas for teaching features are welcome on <a class="repo-link" href="https://github.com/markbeachill/ukemusic">GitHub</a>.</p></div>'
   },
   {
@@ -215,6 +215,7 @@ const SONGS_PAGE = {
     <div class="card"><h3>Type it</h3><p>Words and chords in square brackets: <code>[C]Oh my [G7]darling</code>. The <a href="guide.html">song guide</a> has everything else: strums, timings, tab.</p></div>
     <div class="card"><h3>A difficult sheet? Ask an AI</h3><p>PDFs, scans and sheets where the spacing is lost: an AI chat can tidy them into ukemusic's format. <a href="#ai">How, with a prompt to copy</a>.</p></div>
   </div>
+  <div class="note-box" style="margin-top:20px"><p><b>On a phone or tablet?</b> The web player takes song files, ChordPro, a zipped songs folder or the desktop app's file, and you can write songs there too. <a href="phone.html">How to put it on your Home Screen and keep your songs safe</a>.</p></div>
 </div></section>
 <section id="ai"><div class="wrap">
   <p class="eyebrow">Using AI</p>
@@ -234,6 +235,94 @@ const SONGS_PAGE = {
   <h2>Then what?</h2>
   <p class="intro">Once a song is in, it's ready for everything.</p>
   <div class="next-pages"><a class="btn" href="learn.html">Learn it</a><a class="btn" href="practise.html">Practise it</a><a class="btn" href="perform.html">Perform it</a><a class="btn" href="teach.html">Teach it</a><a class="btn" href="chord-sheets.html">Print it</a></div>
+</div></section>`
+};
+
+// "Phone and tablet" (4.45): the web player as an app, getting songs in, keeping them safe
+const PHONE_PAGE = {
+  file: 'phone.html', title: 'Phone and tablet', blurb: 'ukemusic on an iPad, iPhone, Android or Chromebook: put it on your Home Screen, bring your songs in, write and change them, and keep them safe.',
+  body: () => `
+<div class="page-hero"><div class="wrap">
+  <p class="eyebrow">Phone and tablet</p>
+  <h1>ukemusic on your iPad, phone or Chromebook</h1>
+  <p class="lede">The web player runs in the browser, with nothing to download from an app store. Put it on your Home Screen and it opens like an app, works without a connection, and keeps your songs on the device: play them, sing them, learn them, and write new ones.</p>
+  <div class="cta"><a class="btn primary" href="app/">Open the web player</a><span class="note">Free · Safari, Chrome, Edge, Firefox</span></div>
+</div></div>
+<section><div class="wrap">
+  <h2>1. Put it on your Home Screen</h2>
+  <p class="intro">Open the web player first, then:</p>
+  <div class="grid two">
+    <div class="card"><h3>iPad and iPhone</h3><ol class="steps">
+      <li><span>In <strong>Safari</strong>, press the <strong>Share</strong> button (the square with an arrow).</span></li>
+      <li><span>Choose <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</span></li>
+      <li><span>From now on, open ukemusic from its <strong>icon</strong>, not from Safari.</span></li>
+    </ol></div>
+    <div class="card"><h3>Android</h3><ol class="steps">
+      <li><span>In <strong>Chrome</strong>, press the <strong>⋮</strong> menu.</span></li>
+      <li><span>Choose <strong>Install app</strong> (or <strong>Add to Home screen</strong>), then <strong>Install</strong>.</span></li>
+      <li><span>ukemusic is with your other apps, and opens in its own window.</span></li>
+    </ol></div>
+    <div class="card"><h3>A computer or Chromebook</h3><p>In <strong>Chrome</strong> or <strong>Edge</strong>, press the install button at the end of the address bar (or the menu → <strong>Install ukemusic</strong>). On a Mac, Safari's <strong>File → Add to Dock</strong> does the same. For writing lots of songs, the <a href="./#get">desktop app</a> does more.</p></div>
+    <div class="card"><h3>Without a connection</h3><p>Once it has opened with a connection, ukemusic opens and plays with none, at a gig or on a train: the songs, the sounds and everything else are kept on the device. When there's a new version, it arrives the next time it opens with a connection.</p></div>
+  </div>
+  <div class="note-box" style="margin-top:20px"><p><b>On iPad and iPhone, the Home Screen app keeps its own songs.</b> They're separate from Safari's: songs you add in a Safari tab don't appear in the icon, and the other way round. So add it to your Home Screen first, and bring your songs in there.</p></div>
+</div></section>
+<section><div class="wrap">
+  <h2>2. Bring your songs in</h2>
+  <p class="intro">It starts with the public-domain songs to try. They become yours, to keep and change, as soon as you add or write a song.</p>
+  <div class="grid two">
+    <div class="card"><h3>From files</h3><p>Press <strong>Add songs from files…</strong> and choose one or more from the Files app, iCloud Drive, Google Drive, OneDrive or Downloads:</p><ul>
+      <li>ukemusic songs (<code>…-song.txt</code>)</li>
+      <li>ChordPro (<code>.cho</code>, <code>.chopro</code>, <code>.pro</code>)</li>
+      <li>chord sheets with the chords above the words</li>
+      <li>a <strong>zipped songs folder</strong>, with each song's key, tempo and notes (on an iPad, press and hold a folder in Files and choose <strong>Compress</strong>)</li>
+      <li>a backup, or the desktop app's file</li>
+    </ul><p>You see what's new, what's changed and what's the same before anything comes in.</p></div>
+    <div class="card"><h3>From the desktop app</h3><ol class="steps">
+      <li><span>In the desktop app's library, press <strong>Phone and tablet… → Save songs for the web player…</strong></span></li>
+      <li><span>Save the file somewhere the tablet can reach: iCloud Drive, OneDrive or Google Drive, or email it to yourself.</span></li>
+      <li><span>In the web player, press <strong>Add songs from files…</strong> and choose it.</span></li>
+    </ol><p>Do it again whenever you like: new songs are added and changed ones updated, and anything you've changed on the tablet is kept unless you say so.</p></div>
+  </div>
+</div></section>
+<section><div class="wrap">
+  <h2>3. Write and change songs</h2>
+  <div class="feature text-only"><div class="text">
+    <p><strong>New song</strong> starts one; <strong>Edit</strong> on any song changes it. Type the words with the chords in square brackets, as in the <a href="guide.html">song guide</a>. On an iPad the chord sheet is beside the words as you type; on a phone, press <strong>Preview</strong>.</p>
+    <ul>
+      <li>Buttons type what touch keyboards hide: <code>[&nbsp;]</code> a chord, <code>[[&nbsp;]]</code> a heading, <code>{&nbsp;}</code> a strum, <code>|</code> a bar line, ♪ a tune line</li>
+      <li><strong>Details</strong>: title, artist, year, key, capo, tempo, time and tags</li>
+      <li><strong>Notes</strong>, <strong>Make a copy</strong> and <strong>Delete</strong></li>
+      <li>Everything is saved as you type</li>
+      <li>Songs changed here are marked <strong>changed here</strong> in the list, until the desktop app has them</li>
+    </ul>
+  </div></div>
+</div></section>
+<section><div class="wrap">
+  <h2>4. Keep them safe</h2>
+  <div class="grid two">
+    <div class="card"><h3>Back up all songs</h3><p>Every song in one file. On an iPad or phone the share sheet opens: choose <strong>Save to Files</strong> (iCloud Drive is a good place), Google Drive, or Mail. Do it now and then, and after writing something you'd hate to lose.</p><p>To bring songs back, choose the backup with <strong>Add songs from files…</strong></p></div>
+    <div class="card"><h3>Where they're kept</h3><p>On the device, in the browser's own storage. They don't go anywhere else, and they don't appear on your other devices by themselves.</p><p><strong>Deleting the Home Screen icon, or clearing the browser's website data, deletes them</strong>, so keep a backup.</p></div>
+  </div>
+</div></section>
+<section><div class="wrap">
+  <h2>5. Back to your computer</h2>
+  <ol class="steps">
+    <li><span>In the web player, press <strong>Back up all songs</strong> and save the file where the computer can reach it.</span></li>
+    <li><span>In the desktop app's library, press <strong>Phone and tablet… → Bring in songs from the web player…</strong> and choose that file.</span></li>
+    <li><span>Tick the songs to bring in: the ones you wrote or changed on the tablet. Changed songs keep their earlier version in the song's history, and a song you've changed on the computer since is left alone.</span></li>
+  </ol>
+</div></section>
+<section><div class="wrap">
+  <h2>Good to know</h2>
+  <div class="feature text-only"><div class="text"><ul>
+    <li>Key, capo, instrument and tempo changes you make while playing are kept on each device</li>
+    <li>Practice progress is kept on each device too</li>
+    <li>Sound needs a tap first (browsers don't play sound by themselves); on an iPhone, the silent switch can mute it</li>
+    <li>It works in Safari, Chrome, Edge and Firefox; installing works in Safari, Chrome and Edge, and Firefox on Android</li>
+    <li>For big jobs (a whole club songbook, printing, PDFs, setlist songbooks) the <a href="./#get">desktop app</a> does more</li>
+  </ul></div></div>
+  <div class="next-pages" style="margin-top:20px"><a class="btn primary" href="app/">Open the web player</a><a class="btn" href="songs.html">Bring your songs</a><a class="btn" href="guide.html">The song guide</a></div>
 </div></section>`
 };
 
@@ -299,8 +388,9 @@ function build() {
   const siteCss = index.slice(index.indexOf('<style>') + 7, index.indexOf('</style>'));
   for (const p of PAGES) fs.writeFileSync(path.join(SITE, p.file), wrapPage(p, pageBody(p), siteCss));
   fs.writeFileSync(path.join(SITE, SONGS_PAGE.file), wrapPage(SONGS_PAGE, SONGS_PAGE.body(), siteCss));
-  return [...PAGES.map((p) => p.file), SONGS_PAGE.file];
+  fs.writeFileSync(path.join(SITE, PHONE_PAGE.file), wrapPage(PHONE_PAGE, PHONE_PAGE.body(), siteCss));
+  return [...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file];
 }
 
-module.exports = { build, PAGES, SONGS_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
+module.exports = { build, PAGES, SONGS_PAGE, PHONE_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
 if (require.main === module) console.log('pages:', build().join(', '));

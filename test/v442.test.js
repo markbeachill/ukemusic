@@ -50,7 +50,7 @@ test('the website: a page for each purpose and Your songs, built with the doc pa
   }
   assert.ok(fs.readFileSync(path.join(ROOT, 'web', 'make.js'), 'utf8').includes("require('./pages.js').build()"));
   const ignore = fs.readFileSync(path.join(ROOT, '.gitignore'), 'utf8');
-  for (const f of ['learn.html', 'practise.html', 'perform.html', 'teach.html', 'chord-sheets.html', 'songs.html', 'how-learn-works.html']) assert.ok(ignore.includes(`site/${f}`), f);
+  for (const f of ['learn.html', 'practise.html', 'perform.html', 'teach.html', 'chord-sheets.html', 'songs.html', 'how-learn-works.html', 'phone.html']) assert.ok(ignore.includes(`site/${f}`), f);
   const header = pages.siteHeader('teach.html');
   assert.ok(header.includes('href="teach.html" aria-current="page"') && header.includes('href="./#get"'));
 });
@@ -59,7 +59,7 @@ test('the front page: the doors, browser or computer, and every link goes somewh
   const site = fs.readFileSync(path.join(ROOT, 'site', 'index.html'), 'utf8');
   assert.ok(site.includes('id="doors"') && site.includes('id="choose"') && site.includes('<section id="get">') && site.includes('id="download"'));
   const local = [...site.matchAll(/href="([a-z-]+\.html)(#[^"]*)?"/g)].map((m) => m[1]);
-  const made = [...require('../web/pages').PAGES.map((p) => p.file), 'songs.html', ...require('../web/docs').PAGES.map((p) => p.html)];
+  const made = [...require('../web/pages').PAGES.map((p) => p.file), 'songs.html', require('../web/pages').PHONE_PAGE.file, ...require('../web/docs').PAGES.map((p) => p.html)];
   for (const f of new Set(local)) assert.ok(made.includes(f), `${f} is linked but not made`);
   for (const img of [...site.matchAll(/src="img\/([^"]+)"/g)].map((m) => m[1])) assert.ok(fs.existsSync(path.join(ROOT, 'site', 'img', img)), img);
 });

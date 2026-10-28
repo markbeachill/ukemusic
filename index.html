@@ -333,6 +333,15 @@
       @media (max-width: 900px) { .library-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
       .lib-folder-button { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; padding: 5px 10px; }
       .lib-folder-button svg { width: 16px; height: 16px; color: var(--accent); }
+      .phone-dialog { width: min(760px, 94vw); }
+      .phone-ways { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 10px 0; }
+      .phone-ways section { border: 1px solid var(--border, #ccc); border-radius: 10px; padding: 10px 14px 14px; }
+      .phone-ways h3 { margin: 4px 0 6px; font-size: 15px; }
+      .phone-ways p { font-size: 13px; line-height: 1.45; margin: 0 0 10px; }
+      .phone-plan { border-top: 1px solid var(--border, #ccc); padding-top: 8px; }
+      .phone-plan-list { display: grid; gap: 4px; max-height: 40vh; overflow: auto; font-size: 13px; }
+      .phone-plan-list label { display: flex; gap: 8px; align-items: baseline; }
+      .phone-plan-list .what { color: var(--muted-text, #666); }
       .library-heading { display: flex; align-items: center; gap: 18px; }
       /* Session screen (4.35) */
       .session-cta { border-color: #0e6b64; color: #0e6b64; }
@@ -2866,6 +2875,7 @@
             <h2>All songs <span id="libCount" class="muted"></span></h2>
             <button id="libOpenFolder" class="lib-folder-button" type="button" title="See your song folders and exports in Explorer"><span data-icon="folder" aria-hidden="true"></span>Open library folder</button>
             <button id="libExportAll" class="lib-folder-button" type="button" title="Export every song again: PDFs, web pages, lyrics… (after you change a style, say)"><span data-icon="export" aria-hidden="true"></span>Export every song…</button>
+            <button id="libPhone" class="lib-folder-button" type="button" title="Your songs on a phone or tablet (the web player): send them there in one file, and bring back the songs you write or change there"><span data-icon="screen" aria-hidden="true"></span>Phone and tablet…</button>
             <span class="appbar-spacer"></span>
             <label for="libSearch">Find</label>
             <input id="libSearch" type="search" placeholder="Title, artist, tag or key…" autocomplete="off" />
@@ -2979,6 +2989,31 @@
             <button id="cssSave" class="primary" type="button">Save</button>
           </div>
         </div>
+      </form>
+    </dialog>
+
+    <dialog id="phoneDialog" class="wide phone-dialog">
+      <form method="dialog">
+        <h2>Phone and tablet</h2>
+        <p class="dialog-note">The web player (ukemusic in the browser on a phone, a tablet or another computer) keeps its own copy of your songs, and you can write and change songs there too. Songs go back and forth in a file: put it somewhere both can reach, like iCloud Drive, OneDrive or Google Drive, or email it to yourself.</p>
+        <div class="phone-ways">
+          <section>
+            <h3>To the web player</h3>
+            <p>Every song in this library, in one file. In the web player, press <strong>Add songs from files…</strong> and choose it: new songs are added and changed ones updated (anything you changed there is kept unless you say).</p>
+            <button id="phoneSave" type="button" class="primary">Save songs for the web player…</button>
+          </section>
+          <section>
+            <h3>Back from the web player</h3>
+            <p>The songs you wrote or changed there. In the web player, press <strong>Back up all songs</strong>; here, choose that file. You see what's new and changed before anything comes in, and each song keeps its history.</p>
+            <button id="phoneBring" type="button">Bring in songs from the web player…</button>
+          </section>
+        </div>
+        <div id="phonePlan" class="phone-plan" hidden>
+          <p id="phonePlanText" class="dialog-note"></p>
+          <div id="phonePlanList" class="phone-plan-list"></div>
+          <div class="dialog-actions"><button id="phoneApply" type="button" class="primary">Bring them in</button></div>
+        </div>
+        <div class="dialog-actions"><div class="right"><button id="phoneClose" type="button">Close</button></div></div>
       </form>
     </dialog>
 
@@ -11748,15 +11783,65 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         document.getElementById('libExportAll').addEventListener('click', () => openExportDialog({ everySong: true }));
         document.getElementById('libPaste')?.addEventListener('click', () => fromLibrary(pasteNewSong));
         document.getElementById('libImport')?.addEventListener('click', () => fromLibrary(() => importTextFile()));
-        document.getElementById('libWebSongs')?.addEventListener('click', async () => {
+        // 4.45: Phone and tablet: songs to the web player in one file, and back from it
+        const phoneDialog = document.getElementById('phoneDialog');
+        document.getElementById('libPhone').addEventListener('click', async () => {
+          const folder = await ensureSongsFolder();
+          if (!folder) return;
+          document.getElementById('phonePlan').hidden = true;
+          phoneDialog.showModal();
+        });
+        document.getElementById('phoneClose').addEventListener('click', () => phoneDialog.close());
+        document.getElementById('phoneSave').addEventListener('click', async () => {
           const folder = songsFolder();
           if (!folder) return;
           try {
             const result = await window.ukemusic.exportWebSongs(folder);
-            if (result) showToast(`Saved ${result.count} songs for the web`, { detail: `${result.file}: on your iPhone or iPad, press Update songs and choose this file.` });
+            if (result) showToast(`Saved ${result.count} songs for the web player`, { detail: `${result.file}: in the web player, press Add songs from files… and choose this file.` });
           } catch (error) {
-            showToast('Couldn’t save the songs for the web', { detail: error.message, error: true });
+            showToast('Couldn’t save the songs for the web player', { detail: error.message, error: true });
             window.ukemusicLogError('Songs for the web failed', error);
+          }
+        });
+        document.getElementById('phoneBring').addEventListener('click', async () => {
+          const folder = songsFolder();
+          if (!folder) return;
+          let plan;
+          try {
+            plan = await window.ukemusic.planWebImport(folder);
+          } catch (error) {
+            showToast('That file couldn’t be read', { detail: String(error.message || error).replace(/^Error invoking remote method '[^']+': (Error: )?/, ''), error: true });
+            return;
+          }
+          if (!plan) return;
+          const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+          const offered = plan.add.length + plan.update.length;
+          const bits = [];
+          if (plan.add.length) bits.push(`${plan.add.length} new`);
+          if (plan.update.length) bits.push(`${plan.update.length} changed`);
+          let text = offered ? `From the web player: ${bits.join(' and ')}.` : 'Nothing written or changed on the web player that isn’t here already.';
+          if (plan.same) text += ` ${plan.same} the same as here.`;
+          if (plan.newerHere) text += ` ${plan.newerHere} changed here since (left as they are here).`;
+          document.getElementById('phonePlanText').textContent = text;
+          document.getElementById('phonePlanList').innerHTML = [
+            ...plan.add.map((s) => `<label><input type="checkbox" checked data-title="${esc(s.title)}"> <span><strong>${esc(s.title)}</strong> <span class="what">new</span></span></label>`),
+            ...plan.update.map((u) => `<label><input type="checkbox" checked data-title="${esc(u.title)}"> <span><strong>${esc(u.title)}</strong> <span class="what">changed: ${esc(u.what.join(', '))}</span></span></label>`)
+          ].join('');
+          document.getElementById('phoneApply').hidden = !offered;
+          document.getElementById('phonePlan').hidden = false;
+        });
+        document.getElementById('phoneApply').addEventListener('click', async () => {
+          const titles = [...document.querySelectorAll('#phonePlanList input:checked')].map((i) => i.dataset.title);
+          if (!titles.length) { showToast('Nothing ticked'); return; }
+          try {
+            const done = await window.ukemusic.applyWebImport({ titles });
+            phoneDialog.close();
+            await refreshLibrary();
+            const said = [done.added.length ? `${done.added.length} added` : '', done.updated.length ? `${done.updated.length} updated` : ''].filter(Boolean).join(', ');
+            showToast(`From the web player: ${said || 'nothing changed'}`, { detail: done.errors.length ? `Couldn’t bring in: ${done.errors.join('; ')}` : 'Each changed song keeps its earlier version in its history.', error: done.errors.length > 0 });
+          } catch (error) {
+            showToast('Couldn’t bring the songs in', { detail: String(error.message || error), error: true });
+            window.ukemusicLogError('From the web player failed', error);
           }
         });
         document.getElementById('libOpenFolder').addEventListener('click', async () => {

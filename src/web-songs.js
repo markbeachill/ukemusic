@@ -1,5 +1,6 @@
 // "Songs for the web": every song in the songs folder in one file, which the web version
-// (iPhone/iPad) loads with "Update songs". The desktop stays the master copy. Pure: unit tested.
+// (iPhone/iPad) loads with "Update songs". 4.45: the web player saves its backups in the same
+// format, so songs changed there come back to the desktop the same way. Pure: unit tested.
 const FORMAT = 'ukemusic-web-songs';
 
 /** The same id the web version uses for a song: "Oh! Susanna" -> "oh-susanna" */
@@ -18,7 +19,11 @@ function buildWebSongs(songs, { appVersion = '', exported = new Date().toISOStri
     used.add(id);
     const settings = JSON.parse(JSON.stringify(song.settings || {}));
     if (settings.song) delete settings.song.settings_format;
-    out.push({ id, title: song.title, text: song.content || '', settings, notes: song.notes || '' });
+    const entry = { id, title: song.title, text: song.content ?? song.text ?? '', settings, notes: song.notes || '' };
+    // 4.45: a backup from the web player says which songs were changed there, and when
+    if (song.edited) entry.edited = true;
+    if (song.updated) entry.updated = String(song.updated);
+    out.push(entry);
   }
   out.sort((a, b) => a.title.localeCompare(b.title));
   return { format: FORMAT, version: 1, app: appVersion, exported, songs: out };
@@ -33,11 +38,11 @@ function readWebSongs(text) {
     return { ok: false, error: 'This isn’t a songs file from ukemusic (it couldn’t be read).' };
   }
   if (!data || data.format !== FORMAT || !Array.isArray(data.songs)) {
-    return { ok: false, error: 'This isn’t a “Songs for the web” file from the ukemusic desktop app.' };
+    return { ok: false, error: 'This isn’t a ukemusic songs file (a backup from the web player, or Songs for the web from the desktop app).' };
   }
   const songs = data.songs
     .filter((s) => s && typeof s.title === 'string' && typeof s.text === 'string')
-    .map((s) => ({ id: songId(s.id || s.title), title: s.title, text: s.text, settings: s.settings && typeof s.settings === 'object' ? s.settings : {}, notes: typeof s.notes === 'string' ? s.notes : '' }));
+    .map((s) => ({ id: songId(s.id || s.title), title: s.title, text: s.text, settings: s.settings && typeof s.settings === 'object' ? s.settings : {}, notes: typeof s.notes === 'string' ? s.notes : '', ...(s.edited === true ? { edited: true } : {}), ...(typeof s.updated === 'string' ? { updated: s.updated } : {}) }));
   return { ok: true, songs, exported: data.exported || '' };
 }
 

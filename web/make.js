@@ -51,3 +51,19 @@ if (fs.existsSync(root)) {
   fs.writeFileSync(path.join(WEB, 'out', 'public-domain-songs.json'), JSON.stringify(web.buildWebSongs(songs, { appVersion: version })));
   console.log('starter songs:', songs.length);
 }
+
+// 5. The offline copy (4.45): sw.js, with every file the player needs and a version that changes
+// whenever any of them does (so a new website build replaces the old copy)
+{
+  const crypto = require('crypto');
+  const out = path.join(WEB, 'out');
+  const files = ['./', 'index.html', 'manifest.webmanifest'];
+  for (const dir of ['icons', 'sounds']) for (const f of fs.readdirSync(path.join(out, dir)).sort()) files.push(`${dir}/${f}`);
+  if (fs.existsSync(path.join(out, 'public-domain-songs.json'))) files.push('public-domain-songs.json');
+  const hash = crypto.createHash('sha1');
+  for (const f of files.slice(1)) hash.update(fs.readFileSync(path.join(out, f)));
+  const version = `${require(path.join(APP, 'package.json')).version}-${hash.digest('hex').slice(0, 10)}`;
+  const sw = fs.readFileSync(path.join(WEB, 'sw-template.js'), 'utf8').replace('__VERSION__', version).replace('__FILES__', JSON.stringify(files));
+  fs.writeFileSync(path.join(out, 'sw.js'), sw);
+  console.log('offline copy:', files.length, 'files,', version);
+}

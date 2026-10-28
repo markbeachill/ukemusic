@@ -662,6 +662,75 @@ function registerIpc() {
     return { file: result.filePath, count: bundle.songs.length };
   });
 
+  // 4.45: songs back from the web player: its "Back up all songs" file. Only the songs written or
+  // changed there come in (a song only different because it changed here since is left alone).
+  let webImport = null;
+  handle('web:planImport', async (_event, songsFolder) => {
+    const { readWebSongs } = require('./src/web-songs');
+    const { planImport } = require('./src/song-files');
+    const result = await dialog.showOpenDialog(mainWindow, {
+      title: 'Bring in songs from the web player',
+      properties: ['openFile'],
+      filters: [{ name: 'ukemusic songs (backup from the web player)', extensions: ['json'] }]
+    });
+    if (result.canceled || !result.filePaths.length) return null;
+    const file = result.filePaths[0];
+    const r = readWebSongs(await fsp.readFile(file, 'utf8'));
+    if (!r.ok) throw new Error(r.error);
+    const current = songs.listSongs(songsFolder).map((s) => {
+      const song = songs.readSong(s.folder);
+      return { title: song.title, text: song.content, settings: song.settings || {}, notes: song.notes || '', folder: s.folder, songFile: song.songFile };
+    });
+    const plan = planImport(current, r.songs.map((s) => ({ ...s, from: 'backup' })));
+    const add = plan.add.filter((s) => s.edited);
+    const update = plan.update.filter((u) => u.song.edited);
+    webImport = { songsFolder, add, update };
+    return {
+      file,
+      exported: r.exported,
+      add: add.map((s) => ({ title: s.title })),
+      update: update.map((u) => ({ title: u.song.title, what: u.what })),
+      same: plan.same.length,
+      // in the file, not changed on the web player, but different here: changed here since
+      newerHere: plan.update.length - update.length,
+      notChanged: plan.add.length - add.length
+    };
+  });
+  handle('web:applyImport', async (_event, { titles = [] } = {}) => {
+    if (!webImport) throw new Error('Choose the file again.');
+    const want = new Set(titles);
+    const { songsFolder, add, update } = webImport;
+    const done = { added: [], updated: [], errors: [] };
+    const merge = (a, b) => {
+      const out = JSON.parse(JSON.stringify(a || {}));
+      for (const [k, v] of Object.entries(b || {})) out[k] = v && typeof v === 'object' && !Array.isArray(v) ? { ...(out[k] && typeof out[k] === 'object' ? out[k] : {}), ...v } : v;
+      return out;
+    };
+    for (const s of add) {
+      if (!want.has(s.title)) continue;
+      try {
+        const song = songs.createSong(songsFolder, s.title, s.text, s.settings || {});
+        if (String(s.notes || '').trim()) songs.writeNotes(song.folder, s.notes);
+        songs.appendNoteLine(song.folder, 'Brought in from the web player');
+        done.added.push(song.title);
+      } catch (error) { done.errors.push(`${s.title}: ${error.message}`); }
+    }
+    for (const u of update) {
+      if (!want.has(u.song.title)) continue;
+      try {
+        const folder = u.current.folder;
+        if (u.what.includes('words and chords')) songs.saveSong(u.current.songFile, u.song.text);
+        if (u.what.includes('details')) songs.writeSongSettings(folder, merge(songs.readSongSettings(folder) || {}, u.song.settings || {}));
+        if (u.what.includes('notes')) songs.writeNotes(folder, u.song.notes || '');
+        songs.appendNoteLine(folder, `Changed on the web player (${u.what.join(', ')}), brought in`);
+        done.updated.push(u.song.title);
+      } catch (error) { done.errors.push(`${u.song.title}: ${error.message}`); }
+    }
+    log.info('library', `From the web player: ${done.added.length} added, ${done.updated.length} updated${done.errors.length ? `, ${done.errors.length} failed` : ''}`);
+    webImport = null;
+    return done;
+  });
+
   handle('songs:fillStarterInfo', async (_event, songsFolder) => starters.fillStarterInfo(songsFolder));
 
   handle('songs:addStarters', async (_event, songsFolder) => {

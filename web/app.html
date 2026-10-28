@@ -146,6 +146,20 @@ button { cursor: pointer; }
 .editor-box .cm-editor { min-height: 55vh; }
 .editor-box textarea { width: 100%; min-height: 55vh; box-sizing: border-box; border: 0; padding: 12px; font-family: var(--font-sheet); font-size: 15px; background: var(--surface); }
 .warnings { font-size: 13px; color: var(--warn); line-height: 1.4; margin: 0; }
+/* 4.45: the edit screen; the preview beside the editor on a wide screen, behind Preview on a narrow one */
+.edit-main { padding-block: 12px 40px; display: grid; gap: 12px; }
+.edit-tools .btn { min-height: 36px; padding: 0 10px; font-size: 14px; font-family: var(--font-ui); }
+.edit-tools [data-ins] { font-family: var(--font-sheet); font-weight: 700; }
+#editPreviewBtn[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+@media (min-width: 900px) { #editPreviewBtn { display: none; } }
+@media (max-width: 899px) { .edit-wrap .edit-preview { display: none; } .edit-wrap.previewing .edit-preview { display: block; } .edit-wrap.previewing .editor-box { display: none; } }
+.import-list { display: grid; gap: 2px; max-height: 40vh; overflow: auto; font-size: 14px; }
+.import-list .grp { font-weight: 700; margin-top: 6px; }
+.import-list .it { color: var(--muted); }
+.import-list .it.mine { color: var(--warn); }
+.check-row { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; line-height: 1.4; }
+.check-row input { margin-top: 3px; }
+.song-row .changed { color: var(--accent); font-weight: 600; }
 
 /* Info and Notes */
 .fields { display: grid; gap: 12px; max-width: 640px; }
@@ -326,23 +340,29 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <button id="libPractice" class="practice-cta" type="button" title="Warm-ups, chords, strumming, picking, scales and routines: no song needed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l4 18H5z"/><path d="m12 15 5-9"/><path d="M7.5 15h9"/></svg>Free Practice</button>
         <div>
         <h1 id="libTitle">Your songs</h1>
-        <p id="libSub" class="sub">Play along and practise. The songs come from the desktop app: there, the library’s <strong>Songs for the web…</strong> saves them in one file; here, <strong>Update songs</strong> loads it.</p>
+        <p id="libSub" class="sub">Play along, practise, and write your own. Your songs are kept on this device: add them from files, and back them up.</p>
         </div>
       </div>
       <div id="storeBanner" class="banner" hidden></div>
       <input id="search" class="search" type="search" placeholder="Find a song, artist, tag or key…" autocomplete="off" aria-label="Find a song">
       <div id="songList" class="songs"><div class="empty">Loading your songs…</div></div>
       <div class="add-row">
-        <label class="btn" for="updateInput" title="Load the file made by Songs for the web… in the desktop app's library">Update songs</label>
-        <input id="updateInput" type="file" accept=".json,application/json" hidden>
+        <button id="newSongBtn" class="btn primary" type="button" title="Write a new song: words with the chords in square brackets">+ New song</button>
+        <label class="btn" for="updateInput" title="Song files (ukemusic, ChordPro, or chords above the words), a zipped songs folder, or a backup">Add songs from files…</label>
+        <input id="updateInput" type="file" multiple hidden>
+        <button id="backupBtn" class="btn" type="button" title="Every song in one file, to keep somewhere safe (iCloud Drive, Google Drive, your computer) and to bring changes back into the desktop app">Back up all songs</button>
       </div>
       <div id="updatePanel" class="card-form" hidden>
         <p id="updateText" class="note" style="color:var(--ink)"></p>
-        <div class="add-row"><button id="updateGo" class="btn primary" type="button">Replace the songs</button><button id="updateCancel" class="btn" type="button">Cancel</button></div>
+        <div id="updateList" class="import-list"></div>
+        <label id="updateEditedRow" class="check-row" hidden><input id="updateEdited" type="checkbox"> <span id="updateEditedText"></span></label>
+        <label id="updateRemoveRow" class="check-row" hidden><input id="updateRemove" type="checkbox"> <span id="updateRemoveText"></span></label>
+        <div class="add-row"><button id="updateGo" class="btn primary" type="button">Bring them in</button><button id="updateCancel" class="btn" type="button">Cancel</button></div>
       </div>
+      <p class="note">The songs here stay on this device: <strong>Back up all songs</strong> now and then, and keep the file somewhere safe. To take songs you've changed here back to the desktop app, open the backup there with <strong>Phone and tablet → Bring in songs from the web player</strong>.</p>
       <p id="starterNote" class="note" hidden><button id="starterBtn" class="link-button" type="button">Bring back the public-domain songs</button> (they replace the songs here)</p>
       <p class="note"><button id="aboutBtn" class="link-button" type="button">About ukemusic and thanks</button></p>
-      <p class="note">On iPhone and iPad, Safari's Share button → <strong>Add to Home Screen</strong> gives ukemusic its own icon. Key, capo, instrument and tempo changes are kept on each device.</p>
+      <p class="note">On iPhone and iPad, Safari's Share button → <strong>Add to Home Screen</strong> gives ukemusic its own icon, and then it works without a connection. Its songs are separate from Safari's, so bring your songs in from the icon. On Android, Chrome's menu → <strong>Install app</strong>. Key, capo, instrument and tempo changes are kept on each device.<span id="phoneHelp" hidden> <a href="../phone.html">More about using ukemusic on a phone or tablet</a>.</span></p>
     </main>
   </section>
 
@@ -354,6 +374,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div class="song-head"><div id="songTitle" class="title"></div><div id="songArtist" class="artist"></div></div>
         <span class="spacer"></span>
         <span id="saveState" class="sync"></span>
+        <button id="editBtn" class="btn" type="button" title="Change the words and chords, the details and the notes">Edit</button>
         <button id="downloadBtn" class="btn ghost icon" type="button" title="Download" aria-label="Download this song">⤓</button>
       </div>
       <div id="tools" class="tools gutter" role="toolbar" aria-label="How the song is shown">
@@ -400,7 +421,66 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
       </div>
     </div>
   </section>
+
+  <!-- Edit (4.45): the words and chords, the details and the notes, saved as you go -->
+  <section id="editView" hidden>
+    <header class="bar">
+      <div class="bar-row gutter">
+        <button id="editDone" class="btn primary" type="button" title="Back to the song (your changes are saved as you go)">Done</button>
+        <div class="song-head"><div id="editTitleShown" class="title"></div><div class="artist">Editing</div></div>
+        <span class="spacer"></span>
+        <span id="editSaved" class="sync"></span>
+        <button id="editUndo" class="btn ghost icon" type="button" title="Undo" aria-label="Undo">↶</button>
+        <button id="editRedo" class="btn ghost icon" type="button" title="Redo" aria-label="Redo">↷</button>
+        <button id="editHelp" class="btn ghost icon" type="button" title="How to write songs" aria-label="How to write songs">?</button>
+      </div>
+      <div class="tabs gutter" role="tablist">
+        <button id="editTabWords" type="button" role="tab" aria-selected="true">Words &amp; chords</button>
+        <button id="editTabInfo" type="button" role="tab" aria-selected="false">Details</button>
+        <button id="editTabNotes" type="button" role="tab" aria-selected="false">Notes</button>
+      </div>
+    </header>
+    <main class="panel gutter edit-main">
+      <div id="editWordsPanel">
+        <div class="edit-tools" role="toolbar" aria-label="Type">
+          <button class="btn" type="button" data-ins="[]" data-back="1" title="A chord: [C] just before the word it changes on">[ ] Chord</button>
+          <button class="btn" type="button" data-ins="[[]]" data-back="2" title="A heading on its own line: [[Verse 1]], [[Chorus]]">[[ ]] Heading</button>
+          <button class="btn" type="button" data-ins="{}" data-back="1" title="A strum on its own line: {D-DU-UDU}">{ } Strum</button>
+          <button class="btn" type="button" data-ins="|" data-back="0" title="A bar line">|</button>
+          <button class="btn" type="button" data-ins="{melody: }" data-back="1" title="The tune of the next line, by note name: {melody: E E F G | G F E D}">♪ Tune</button>
+          <button id="editPreviewBtn" class="btn" type="button" aria-pressed="false" title="See the chord sheet">Preview</button>
+        </div>
+        <div id="editWrap" class="edit-wrap">
+          <div class="editor-box"><div id="editorHost"></div><textarea id="editorFallback" spellcheck="false" autocapitalize="off" autocomplete="off" hidden aria-label="The song: words with the chords in square brackets"></textarea></div>
+          <div id="editSheet" class="sheet edit-preview"></div>
+        </div>
+      </div>
+      <div id="editInfoPanel" class="fields" hidden>
+        <div class="row"><label for="fTitle">Title</label><input id="fTitle" autocomplete="off"></div>
+        <div class="pair"><div class="row"><label for="fArtist">Artist</label><input id="fArtist" autocomplete="off"></div><div class="row"><label for="fYear">Year</label><input id="fYear" inputmode="numeric" autocomplete="off"></div></div>
+        <div class="row"><label for="fWriter">Written by</label><input id="fWriter" autocomplete="off"></div>
+        <div class="pair"><div class="row"><label for="fKey">Key</label><select id="fKey"></select></div><div class="row"><label for="fCapo">Capo</label><select id="fCapo"></select></div></div>
+        <div class="pair"><div class="row"><label for="fTempo">Tempo (beats a minute)</label><input id="fTempo" type="number" min="40" max="240" inputmode="numeric"></div><div class="row"><label for="fTime">Time</label><select id="fTime"><option value="2">2/4</option><option value="3">3/4</option><option value="4">4/4</option><option value="6">6/8</option></select></div></div>
+        <div class="row"><label for="fTags">Tags (commas between them)</label><input id="fTags" autocomplete="off"></div>
+        <h2>This song</h2>
+        <div class="add-row"><button id="editDuplicate" class="btn" type="button">Make a copy</button><button id="editDelete" class="btn danger" type="button">Delete this song</button></div>
+        <p class="note">Deleting can't be undone here. If the song came from the desktop app, it's still there.</p>
+      </div>
+      <div id="editNotesPanel" hidden>
+        <textarea id="fNotes" class="notes-box" aria-label="Notes" placeholder="Anything about the song: where it's from, how you play it…"></textarea>
+      </div>
+    </main>
+  </section>
 </div>
+
+<dialog id="newSongDialog">
+  <h2>New song</h2>
+  <form id="newSongForm" method="dialog" class="fields">
+    <div class="row"><label for="newTitle">Title</label><input id="newTitle" autocomplete="off" required></div>
+    <p id="newSongError" class="form-error"></p>
+    <div class="dialog-actions"><button id="newSongCancel" class="btn" type="button">Cancel</button><button id="newSongGo" class="btn primary" type="submit">Write it</button></div>
+  </form>
+</dialog>
 
 <dialog id="downloadDialog">
   <h2>Download</h2>
@@ -599,16 +679,53 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   });
 
   // ── Where songs are kept: the artifact's private store (synced between devices), or this browser ──
-  const songs = new Map();   // id -> { id, title, text, settings, notes, updated }
+  const songs = new Map();   // id -> { id, title, text, settings, notes, updated, edited }
   let db = null;
+  // 4.45: on this device the songs are kept in IndexedDB (room for thousands, and kept by a Home
+  // Screen app); older versions kept them in localStorage, moved across the first time
+  const idb = {
+    handle: null,
+    open() {
+      return new Promise((resolve) => {
+        if (typeof indexedDB === 'undefined') { resolve(null); return; }
+        let req;
+        try { req = indexedDB.open('ukemusic', 1); } catch (_e) { resolve(null); return; }
+        req.onupgradeneeded = () => { if (!req.result.objectStoreNames.contains('songs')) req.result.createObjectStore('songs', { keyPath: 'id' }); };
+        req.onsuccess = () => { idb.handle = req.result; resolve(req.result); };
+        req.onerror = () => resolve(null);
+        req.onblocked = () => resolve(null);
+      });
+    },
+    run(mode, fn) {
+      return new Promise((resolve, reject) => {
+        const tx = idb.handle.transaction('songs', mode);
+        const out = fn(tx.objectStore('songs'));
+        tx.oncomplete = () => resolve(out && out.result);
+        tx.onerror = () => reject(tx.error);
+        tx.onabort = () => reject(tx.error);
+      });
+    },
+    all() { return idb.run('readonly', (st) => st.getAll()); },
+    put(song) { return idb.run('readwrite', (st) => st.put(song)); },
+    del(id) { return idb.run('readwrite', (st) => st.delete(id)); },
+    clear() { return idb.run('readwrite', (st) => st.clear()); }
+  };
+  let askedToKeep = false;
   const store = {
     mode: 'local',
-    async save(song) {
+    async save(song, { edited } = {}) {
       song.updated = new Date().toISOString();
+      if (edited !== undefined) { if (edited) song.edited = true; else delete song.edited; }
       songs.set(song.id, song);
       if (db) {
         try { await db.doc('songs/' + song.id).set(clean(song)); setSync(''); return true; }
         catch (error) { setSync(error.code === 'quota_exceeded' ? 'Storage is full' : 'Not saved: offline?', true); return false; }
+      }
+      // ask the browser to keep the songs (not to clear them when space runs low)
+      if (!askedToKeep && navigator.storage && navigator.storage.persist) { askedToKeep = true; navigator.storage.persist().catch(() => {}); }
+      if (idb.handle) {
+        try { await idb.put({ id: song.id, ...clean(song) }); return true; }
+        catch (error) { setSync(/quota/i.test(String(error && error.name)) ? 'This device is out of space' : 'Not saved', true); return false; }
       }
       local.set('songs', [...songs.values()]);
       return true;
@@ -616,10 +733,16 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     async remove(id) {
       songs.delete(id);
       if (db) { try { await db.doc('songs/' + id).delete(); } catch (_e) { setSync('Not deleted: offline?', true); } }
+      else if (idb.handle) { try { await idb.del(id); } catch (_e) { setSync('Not deleted', true); } }
       else local.set('songs', [...songs.values()]);
+    },
+    async clear() {
+      songs.clear();
+      if (idb.handle) { try { await idb.clear(); } catch (_e) { /* next time */ } }
+      local.set('songs', []);
     }
   };
-  function clean(song) { return JSON.parse(JSON.stringify({ title: song.title, text: song.text, settings: song.settings || {}, notes: song.notes || '', updated: song.updated || '' })); }
+  function clean(song) { return JSON.parse(JSON.stringify({ title: song.title, text: song.text, settings: song.settings || {}, notes: song.notes || '', updated: song.updated || '', ...(song.edited ? { edited: true } : {}) })); }
   function setSync(text, warn = false) {
     for (const el of [$('syncState'), $('saveState')]) { el.textContent = text; el.classList.toggle('warn', warn); }
   }
@@ -630,6 +753,8 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     return id;
   }
 
+  // the website's Phone and tablet page, beside the player (on the website, not here in claude.ai)
+  if (/\/app\/(index\.html)?$/.test(location.pathname)) $('phoneHelp').hidden = false;
   // ── Library ──
   const parserOptions = { useDelimiters: true, rhythmEnabled: true, tablatureEnabled: true };
   const keyCache = new Map();
@@ -650,7 +775,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     const list = [...songs.values()].sort((a, b) => a.title.localeCompare(b.title));
     const shown = list.filter((s) => !q || `${s.title} ${s.settings?.song?.artist || ''} ${s.settings?.song?.tags || ''} ${songKey(s)?.name || ''}`.toLowerCase().includes(q));
     if (!list.length) {
-      $('songList').innerHTML = `<div class="empty">No songs yet. Use <strong>Update songs</strong> to load the file the desktop app makes with <strong>Songs for the web…</strong></div>`;
+      $('songList').innerHTML = `<div class="empty">No songs yet. Write one with <strong>New song</strong>, or bring yours in with <strong>Add songs from files…</strong></div>`;
     } else {
       $('songList').innerHTML = shown.length ? shown.map((s) => {
         const key = songKey(s);
@@ -658,7 +783,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
         const k = key ? U.keys.transpose(key, tr) : null;
         return `<button class="song-row" type="button" data-id="${esc(s.id)}">
           <span class="t">${esc(s.title)}</span>
-          <span class="a">${esc([s.settings?.song?.artist, s.settings?.song?.year].filter(Boolean).join(', ') || ' ')}</span>
+          <span class="a">${esc([s.settings?.song?.artist, s.settings?.song?.year].filter(Boolean).join(', ') || ' ')}${s.edited ? '<span class="changed" title="Changed on this device since it last came from the desktop app (Back up all songs takes it there)"> · changed here</span>' : ''}</span>
           <span class="k">${k ? esc(U.keys.describe(k)) : ''}</span>
         </button>`;
       }).join('') : '<div class="empty">No songs match.</div>';
@@ -674,33 +799,119 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
       .map((s) => s.id);
   };
 
-  // ── Update songs: the file from the desktop app's "Songs for the web…" replaces the songs here ──
-  window.ukemusicNewSong = () => toast('Save new songs in the desktop app; then Songs for the web… and Update songs here.');
+  // ── Songs in and out (4.45): write new songs, add songs from files, back them all up ──
   let pendingUpdate = null;
+  // The public-domain songs shown at the start aren't kept until you make them yours: write a
+  // song, change one, or add your own
+  async function adoptStarters() {
+    if (!starterShown || store.mode !== 'local') return;
+    for (const s of [...songs.values()]) await store.save(s);
+    showStarterMode(false);
+  }
+  const titleTaken = (title, exceptId = '') => [...songs.values()].some((s) => s.id !== exceptId && U.webSongs.id(s.title) === U.webSongs.id(title));
+  function freeTitle(title) {
+    let t = title;
+    for (let n = 2; titleTaken(t); n += 1) t = `${title} ${n}`;
+    return t;
+  }
+  const NEW_SONG_TEXT = '--START MUSIC--\n{D-DU-UDU}\n[[Verse 1]]\n[C]Type your words here, with [Am]chords in square brackets\n[F]just before the word where they [G]change.\n\n[[Chorus]]\nThe [F]curly brackets at the top set the [C]strum: D down, U up.\n[G]Delete these lines when you\'re [C]ready.\n--END MUSIC--\n';
+  async function createSong(title, text = NEW_SONG_TEXT, settings = { song: { tempo: 100, beats_per_bar: 4 } }) {
+    await adoptStarters();
+    const song = { id: uniqueId(title), title: freeTitle(title), text, settings, notes: '' };
+    await store.save(song, { edited: true });
+    renderLibrary();
+    openSong(song.id);
+    await openEditor();
+    return song;
+  }
+  // Practice → Keep as a song (a melody you made): a new song here
+  window.ukemusicNewSong = (title, text) => createSong(title || 'My melody', text);
+  $('newSongBtn').addEventListener('click', () => {
+    $('newTitle').value = '';
+    $('newSongError').textContent = '';
+    $('newSongDialog').showModal();
+    setTimeout(() => $('newTitle').focus(), 50);
+  });
+  $('newSongCancel').addEventListener('click', () => $('newSongDialog').close());
+  $('newSongForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const title = $('newTitle').value.trim().replace(/\s+/g, ' ');
+    if (!title) { $('newSongError').textContent = 'Give the song a title.'; return; }
+    if (titleTaken(title)) { $('newSongError').textContent = 'There’s already a song called that here.'; return; }
+    $('newSongDialog').close();
+    await createSong(title);
+  });
+
+  // Add songs from files: song files, ChordPro, a zipped songs folder, or a backup (src/song-files.js)
   $('updateInput').addEventListener('change', async (event) => {
-    const file = event.target.files[0];
+    const files = [...event.target.files];
     event.target.value = '';
-    if (!file) return;
-    const r = U.readWebSongs(await file.text());
-    if (!r.ok) { toast(r.error); return; }
-    pendingUpdate = r;
-    const when = r.exported ? new Date(r.exported).toLocaleString() : 'an unknown date';
-    const gone = [...songs.keys()].filter((id) => !r.songs.some((s) => s.id === id)).length;
-    $('updateText').textContent = starterShown
-      ? `This file has ${r.songs.length} song${r.songs.length === 1 ? '' : 's'}, saved by the desktop app on ${when}. They take the place of the public-domain songs. Practice progress is kept.`
-      : `This file has ${r.songs.length} song${r.songs.length === 1 ? '' : 's'}, saved by the desktop app on ${when}. They replace the ${songs.size} here${gone ? ` (${gone} not in the file will be removed)` : ''}. Practice progress is kept.`;
+    if (!files.length) return;
+    let read;
+    try {
+      const list = [];
+      for (const f of files) list.push(/\.zip$/i.test(f.name) ? { name: f.name, bytes: new Uint8Array(await f.arrayBuffer()) } : { name: f.name, text: await f.text() });
+      read = await U.songFiles.songsFromFiles(list);
+    } catch (error) { toast(`Those files couldn’t be read (${error.message}).`); return; }
+    if (!read.songs.length) { toast(read.skipped.length ? `No songs in ${read.skipped.slice(0, 3).join(', ')}${read.skipped.length > 3 ? '…' : ''}.` : 'No songs found.'); return; }
+    const plan = U.songFiles.planImport(starterShown ? [] : [...songs.values()], read.songs);
+    pendingUpdate = { plan, backups: read.backups, skipped: read.skipped };
+    showImportPlan();
+  });
+  const count = (k, word) => `${k} ${word}${k === 1 ? '' : 's'}`;
+  function showImportPlan() {
+    const { plan, backups, skipped } = pendingUpdate;
+    const parts = [];
+    if (plan.add.length) parts.push(count(plan.add.length, 'new song'));
+    if (plan.update.length) parts.push(`${plan.update.length} changed`);
+    if (plan.same.length) parts.push(`${plan.same.length} the same as here`);
+    let text = `${parts.join(', ')}.`.replace(/^./, (c) => c.toUpperCase());
+    if (starterShown) text += ' They take the place of the public-domain songs.';
+    if (!plan.add.length && !plan.update.length) text += ' Nothing new to bring in.';
+    if (skipped.length) text += ` Left out (not songs): ${skipped.slice(0, 4).join(', ')}${skipped.length > 4 ? '…' : ''}.`;
+    $('updateText').textContent = text;
+    const items = [];
+    if (plan.add.length) items.push('<div class="grp">New</div>' + plan.add.map((x) => `<div class="it">${esc(x.title)}</div>`).join(''));
+    if (plan.update.length) items.push('<div class="grp">Changed</div>' + plan.update.map((u) => `<div class="it${u.editedHere ? ' mine' : ''}">${esc(u.song.title)}: ${esc(u.what.join(', '))}${u.editedHere ? ' (you’ve changed it here too)' : ''}</div>`).join(''));
+    $('updateList').innerHTML = items.join('');
+    const mine = plan.update.filter((u) => u.editedHere).length;
+    $('updateEditedRow').hidden = !mine;
+    $('updateEdited').checked = false;
+    $('updateEditedText').textContent = `Replace ${mine === 1 ? 'the song' : `the ${mine} songs`} you’ve changed here as well (otherwise your changes here are kept)`;
+    const gone = backups && !starterShown ? plan.missing.length : 0;
+    $('updateRemoveRow').hidden = !gone;
+    $('updateRemove').checked = false;
+    $('updateRemoveText').textContent = `Remove the ${count(gone, 'song')} here that ${gone === 1 ? 'isn’t' : 'aren’t'} in the backup`;
+    $('updateGo').hidden = false;
+    $('updateGo').textContent = 'Bring them in';
+    // songs changed here that the file now has the same: brought in, they're no longer "changed here"
+    const clears = plan.same.filter((x) => x.from === 'backup' && !x.edited && [...songs.values()].some((c) => c.edited && U.webSongs.id(c.title) === U.webSongs.id(x.title))).length;
+    pendingUpdate.clears = clears;
+    $('updateGo').disabled = !plan.add.length && !plan.update.length && !gone && !clears;
     $('updatePanel').hidden = false;
+    $('updatePanel').scrollIntoView({ block: 'center' });
+  }
+  $('updateRemove').addEventListener('change', () => {
+    const p = pendingUpdate && pendingUpdate.plan;
+    if (p) $('updateGo').disabled = !p.add.length && !p.update.length && !$('updateRemove').checked && !pendingUpdate.clears;
   });
   $('updateCancel').addEventListener('click', () => { pendingUpdate = null; $('updatePanel').hidden = true; });
+  const mergeSettings = (a, b) => {
+    const out = JSON.parse(JSON.stringify(a || {}));
+    for (const [k, v] of Object.entries(b || {})) out[k] = v && typeof v === 'object' && !Array.isArray(v) ? { ...(out[k] && typeof out[k] === 'object' ? out[k] : {}), ...v } : v;
+    return out;
+  };
+  // changed here, not yet in the desktop app: a song from the desktop (its backup or a zipped
+  // songs folder) isn't; a song file from elsewhere is
+  const editedFrom = (x) => (x.from === 'backup' ? x.edited === true : x.from !== 'ukemusic');
   $('updateGo').addEventListener('click', async () => {
     if (!pendingUpdate) return;
     const r = pendingUpdate;
     pendingUpdate = null;
     if (r.starters && store.mode === 'local') {
       // back to the public-domain songs: shown, not saved
-      songs.clear();
-      local.set('songs', []);
-      for (const s of r.songs) songs.set(s.id, s);
+      await store.clear();
+      for (const x of r.songs) songs.set(x.id, x);
       $('updatePanel').hidden = true;
       showStarterMode(true);
       renderLibrary();
@@ -708,20 +919,72 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
       return;
     }
     $('updateGo').disabled = true;
-    $('updateText').textContent = 'Updating…';
+    const { plan } = r;
+    if (starterShown && store.mode === 'local') { songs.clear(); showStarterMode(false); }
+    const total = plan.add.length + plan.update.length;
     let done = 0;
-    for (const song of r.songs) {
-      await store.save({ ...song });
-      done += 1;
-      $('updateText').textContent = `Updating… ${done} of ${r.songs.length}`;
+    const tick = () => { done += 1; $('updateText').textContent = `Bringing them in… ${done} of ${total}`; };
+    for (const x of plan.add) {
+      await store.save({ id: uniqueId(x.title), title: x.title, text: x.text, settings: x.settings || {}, notes: x.notes || '' }, { edited: editedFrom(x) });
+      tick();
     }
-    for (const id of [...songs.keys()]) if (!r.songs.some((s) => s.id === id)) await store.remove(id);
+    const replaceMine = $('updateEdited').checked;
+    let kept = 0;
+    for (const u of plan.update) {
+      if (u.editedHere && !replaceMine) { kept += 1; continue; }
+      await store.save({ ...u.current, title: u.current.title, text: u.song.text, settings: mergeSettings(u.current.settings, u.song.settings), notes: u.song.notes !== undefined ? u.song.notes : u.current.notes }, { edited: editedFrom(u.song) });
+      tick();
+    }
+    // the same as the desktop app's copy now (it took your changes): no longer "changed here"
+    for (const x of plan.same) {
+      const cur = [...songs.values()].find((c) => U.webSongs.id(c.title) === U.webSongs.id(x.title));
+      if (cur && cur.edited && x.from === 'backup' && !x.edited) await store.save(cur, { edited: false });
+    }
+    let removed = 0;
+    if ($('updateRemove').checked) for (const x of plan.missing) { await store.remove(x.id); removed += 1; }
     $('updateGo').disabled = false;
     $('updatePanel').hidden = true;
-    if (store.mode === 'local') showStarterMode(false);
     renderLibrary();
-    toast(`${r.songs.length} songs loaded.`);
+    const said = [];
+    if (plan.add.length) said.push(`${count(plan.add.length, 'song')} added`);
+    if (plan.update.length - kept) said.push(`${plan.update.length - kept} updated`);
+    if (kept) said.push(`${kept} kept as you changed ${kept === 1 ? 'it' : 'them'} here`);
+    if (removed) said.push(`${removed} removed`);
+    toast(said.length ? `${said.join(', ')}.` : 'Nothing changed.');
   });
+
+  // Back up all songs: one file (the format the desktop's Songs for the web uses), to keep safe
+  // and to take changes back to the desktop app
+  $('backupBtn').addEventListener('click', async () => {
+    const list = [...songs.values()];
+    if (!list.length) { toast('No songs to back up yet.'); return; }
+    const data = JSON.stringify(U.webSongs.build(list.map((x) => ({ title: x.title, text: x.text, settings: x.settings, notes: x.notes, edited: x.edited, updated: x.updated })), { appVersion: U.appVersion }));
+    const ok = await saveFile({ filename: `ukemusic songs ${new Date().toISOString().slice(0, 10)}.json`, data, type: 'application/json' });
+    if (ok) toast(`${count(list.length, 'song')} backed up.`);
+  });
+
+  // Saving a file: the share sheet on a phone or tablet (Save to Files, Drive, Mail…), a download
+  // elsewhere (or claude.ai's own downloads, in the artifact)
+  let downloads = null;
+  async function saveFile({ filename, data, type = 'text/plain' }) {
+    downloads = downloads || (window.claude && window.claude.use ? await window.claude.use('downloads').catch(() => null) : null);
+    if (downloads) {
+      try { await downloads.save({ filename, data }); return true; } catch (error) { if (error && error.code !== 'declined') toast(`Couldn’t save it (${error.code || 'error'}).`); return false; }
+    }
+    const touch = matchMedia('(pointer: coarse)').matches;
+    if (touch && navigator.canShare && typeof File !== 'undefined') {
+      const file = new File([data], filename, { type: `${type};charset=utf-8` });
+      if (navigator.canShare({ files: [file] })) {
+        try { await navigator.share({ files: [file], title: filename }); return true; } catch (error) { if (error && error.name === 'AbortError') return false; /* then download it */ }
+      }
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([data], { type: `${type};charset=utf-8` }));
+    a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    return true;
+  }
 
   // ── Song view ──
   const view = { song: null, panel: 'songPanel' };
@@ -795,6 +1058,192 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     renderLibrary();
     window.scrollTo(0, 0);
   });
+  // ── Edit (4.45): the words and chords, the details and the notes; saved as you type ──
+  const edit = { open: false, usingCM: false, last: '', saveTimer: null, previewTimer: null, dirty: false };
+  function editorText() {
+    if (edit.usingCM) { const v = U.editorGetValue(); if (v !== null && v !== undefined) return v; }
+    return $('editorFallback').value;
+  }
+  async function flushEdit() {
+    clearTimeout(edit.saveTimer);
+    if (!edit.dirty || !view.song) return;
+    edit.dirty = false;
+    const ok = await store.save(view.song, { edited: true });
+    $('editSaved').textContent = ok ? 'Saved' : 'Not saved';
+    $('editSaved').classList.toggle('warn', !ok);
+  }
+  function editChanged() {
+    edit.dirty = true;
+    $('editSaved').textContent = 'Saving…';
+    $('editSaved').classList.remove('warn');
+    clearTimeout(edit.saveTimer);
+    edit.saveTimer = setTimeout(flushEdit, 700);
+  }
+  function renderEditPreview() {
+    clearTimeout(edit.previewTimer);
+    edit.previewTimer = setTimeout(() => { if (edit.open && view.song) renderSheet($('editSheet')); }, 250);
+  }
+  function onEditorChange() {
+    if (!edit.open || !view.song) return;
+    const v = editorText();
+    if (v === edit.last) return;
+    edit.last = v;
+    view.song.text = v;
+    keyCache.clear();
+    editChanged();
+    renderEditPreview();
+  }
+  U.onEditorUpdate(onEditorChange);
+  $('editorFallback').addEventListener('input', onEditorChange);
+  function showEditTab(name) {
+    for (const [tab, panel] of [['editTabWords', 'editWordsPanel'], ['editTabInfo', 'editInfoPanel'], ['editTabNotes', 'editNotesPanel']]) {
+      const on = tab === name;
+      $(tab).setAttribute('aria-selected', String(on));
+      $(panel).hidden = !on;
+    }
+  }
+  $('editTabWords').addEventListener('click', () => showEditTab('editTabWords'));
+  $('editTabInfo').addEventListener('click', () => showEditTab('editTabInfo'));
+  $('editTabNotes').addEventListener('click', () => showEditTab('editTabNotes'));
+  // the details: the song's own facts (song.ini in the desktop app)
+  $('fKey').innerHTML = '<option value="auto">Work it out</option>' + U.keys.choices().map((k) => `<option value="${esc(k)}">${esc(k)}</option>`).join('');
+  $('fCapo').innerHTML = Array.from({ length: 12 }, (_, i) => `<option value="${i}">${i ? i : 'None'}</option>`).join('');
+  function fillInfo() {
+    const f = view.song.settings?.song || {};
+    $('fTitle').value = view.song.title;
+    $('fArtist').value = f.artist || '';
+    $('fYear').value = f.year || '';
+    $('fWriter').value = f.writer || '';
+    $('fKey').value = f.key && [...$('fKey').options].some((o) => o.value === f.key) ? f.key : 'auto';
+    $('fCapo').value = String(Math.max(0, Math.min(11, Number(f.capo) || 0)));
+    $('fTempo').value = String(Number(f.tempo) || 100);
+    $('fTime').value = String([2, 3, 4, 6].includes(Number(f.beats_per_bar)) ? Number(f.beats_per_bar) : 4);
+    $('fTags').value = f.tags || '';
+  }
+  const songFacts = () => {
+    view.song.settings = view.song.settings || {};
+    view.song.settings.song = view.song.settings.song || {};
+    return view.song.settings.song;
+  };
+  const setFact = (key, value) => {
+    const f = songFacts();
+    if (value === '' || value === null || value === undefined) delete f[key]; else f[key] = value;
+    keyCache.clear();
+    editChanged();
+  };
+  $('fTitle').addEventListener('input', () => {
+    const t = $('fTitle').value.trim().replace(/\s+/g, ' ');
+    if (!t) return;
+    if (titleTaken(t, view.song.id)) { $('editSaved').textContent = 'Another song has that title'; $('editSaved').classList.add('warn'); return; }
+    view.song.title = t;
+    $('editTitleShown').textContent = t;
+    editChanged();
+  });
+  $('fTitle').addEventListener('blur', () => { $('fTitle').value = view.song.title; });
+  $('fArtist').addEventListener('input', () => setFact('artist', $('fArtist').value.trim()));
+  $('fWriter').addEventListener('input', () => setFact('writer', $('fWriter').value.trim()));
+  $('fTags').addEventListener('input', () => setFact('tags', $('fTags').value.split(',').map((x) => x.trim()).filter(Boolean).join(', ')));
+  $('fYear').addEventListener('input', () => { const y = $('fYear').value.match(/\b(1\d{3}|2[01]\d{2})\b/); setFact('year', y ? Number(y[1]) : ''); });
+  $('fKey').addEventListener('change', () => setFact('key', $('fKey').value));
+  // tempo, time and capo: the song's own now, so this device's own changes to them give way
+  const forgetMine = (key) => { const own = devicePrefs[view.song.id]; if (own) { delete own[key]; saveSoon(); } };
+  $('fTempo').addEventListener('change', () => { const t = Math.round(Number($('fTempo').value)); if (t >= 40 && t <= 240) { setFact('tempo', t); forgetMine('tempo'); } else $('fTempo').value = String(Number(songFacts().tempo) || 100); });
+  $('fTime').addEventListener('change', () => { setFact('beats_per_bar', Number($('fTime').value)); forgetMine('beats_per_bar'); forgetMine('strum'); renderEditPreview(); });
+  $('fCapo').addEventListener('change', () => { setFact('capo', Number($('fCapo').value) || ''); forgetMine('capo'); renderEditPreview(); });
+  $('fNotes').addEventListener('input', () => { view.song.notes = $('fNotes').value; editChanged(); });
+
+  async function openEditor() {
+    if (!view.song) return;
+    stop();
+    await adoptStarters();
+    edit.open = true;
+    edit.dirty = false;
+    $('songView').hidden = true;
+    $('editView').hidden = false;
+    $('editTitleShown').textContent = view.song.title;
+    $('editSaved').textContent = '';
+    $('editSaved').classList.remove('warn');
+    edit.last = view.song.text;
+    let r = null;
+    try { r = U.editorInit('#editorHost', { value: view.song.text, theme: isDark() ? 'dark' : 'light', fallbackSelector: '#editorFallback' }); } catch (_e) { r = null; }
+    edit.usingCM = Boolean(r && r.usingCodeMirror);
+    if (!edit.usingCM) { $('editorFallback').hidden = false; $('editorFallback').style.display = ''; $('editorFallback').value = view.song.text; }
+    fillInfo();
+    $('fNotes').value = view.song.notes || '';
+    showEditTab('editTabWords');
+    $('editWrap').classList.remove('previewing');
+    $('editPreviewBtn').setAttribute('aria-pressed', 'false');
+    renderEditPreview();
+    window.scrollTo(0, 0);
+  }
+  async function closeEditor() {
+    await flushEdit();
+    edit.open = false;
+    $('editView').hidden = true;
+    if (!view.song) return;
+    $('songTitle').textContent = view.song.title;
+    $('songArtist').textContent = [view.song.settings?.song?.artist, view.song.settings?.song?.year].filter(Boolean).join(', ');
+    $('songView').hidden = false;
+    renderSong();
+    window.scrollTo(0, 0);
+  }
+  $('editBtn').addEventListener('click', openEditor);
+  $('editDone').addEventListener('click', closeEditor);
+  $('editUndo').addEventListener('click', () => { if (edit.usingCM) U.editorExecCommand('undo'); else document.execCommand && document.execCommand('undo'); });
+  $('editRedo').addEventListener('click', () => { if (edit.usingCM) U.editorExecCommand('redo'); else document.execCommand && document.execCommand('redo'); });
+  $('editHelp').addEventListener('click', () => openGuide());
+  $('editPreviewBtn').addEventListener('click', () => {
+    const on = !$('editWrap').classList.contains('previewing');
+    $('editWrap').classList.toggle('previewing', on);
+    $('editPreviewBtn').setAttribute('aria-pressed', String(on));
+    $('editPreviewBtn').textContent = on ? 'Back to editing' : 'Preview';
+    if (on) renderSheet($('editSheet'));
+  });
+  // [ ] { } [[ ]] | and {melody: }: hard to find on a phone or tablet keyboard
+  for (const b of document.querySelectorAll('[data-ins]')) {
+    b.addEventListener('pointerdown', (event) => event.preventDefault());   // keep the keyboard up
+    b.addEventListener('click', () => {
+      const text = b.dataset.ins;
+      const back = Number(b.dataset.back) || 0;
+      if (edit.usingCM) { U.editorInsert(text, back); return; }
+      const ta = $('editorFallback');
+      const from = ta.selectionStart;
+      ta.setRangeText(text, from, ta.selectionEnd, 'end');
+      ta.selectionStart = ta.selectionEnd = from + text.length - back;
+      ta.focus();
+      onEditorChange();
+    });
+  }
+  $('editDuplicate').addEventListener('click', async () => {
+    await flushEdit();
+    const title = freeTitle(`${view.song.title} (copy)`);
+    const copy = { ...JSON.parse(JSON.stringify(view.song)), id: uniqueId(title), title };
+    await store.save(copy, { edited: true });
+    edit.open = false;
+    openSong(copy.id);
+    await openEditor();
+    toast(`Made “${title}”.`);
+  });
+  $('editDelete').addEventListener('click', async () => {
+    if (!view.song) return;
+    if (!confirm(`Delete “${view.song.title}” from this device?`)) return;
+    clearTimeout(edit.saveTimer);
+    edit.dirty = false;
+    const id = view.song.id;
+    await store.remove(id);
+    delete devicePrefs[id];
+    saveSoon();
+    edit.open = false;
+    view.song = null;
+    $('editView').hidden = true;
+    $('libraryView').hidden = false;
+    renderLibrary();
+    toast('Deleted.');
+  });
+  // leaving the page (or the app going to the background): save what's typed
+  window.addEventListener('pagehide', () => { flushEdit(); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushEdit(); });
+
   // The sheet
   function library() {
     const p = prefs();
@@ -972,7 +1421,6 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (view.song && !(player && player.playing)) renderSong(); }, 200); });
 
   // ── Downloads ──
-  let downloads = null;
   $('downloadBtn').addEventListener('click', () => $('downloadDialog').showModal());
   $('dlClose').addEventListener('click', () => $('downloadDialog').close());
   function sheetDocument(stage) {
@@ -1005,24 +1453,8 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
         const p = prefs();
         file = { filename: `${t}${keyPart} (ChordPro).txt`, data: U.ukemusicToChordPro(currentIr(), { title: view.song.title, artist: view.song.settings?.song?.artist || '', year: view.song.settings?.song?.year || '', capo: p.capo || '', tempo: p.tempo, time: p.beats === 6 ? '6/8' : `${p.beats}/4`, key: '', tuneShift: p.transpose - p.capo }) };
       }
-      downloads = downloads || (window.claude && window.claude.use ? await window.claude.use('downloads').catch(() => null) : null);
-      if (!downloads) {
-        // Not on claude.ai: the browser saves it
-        const type = file.filename.endsWith('.html') ? 'text/html' : 'text/plain';
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(new Blob([file.data], { type: `${type};charset=utf-8` }));
-        a.download = file.filename;
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-        $('downloadDialog').close();
-        return;
-      }
-      try {
-        await downloads.save(file);
-        $('downloadDialog').close();
-      } catch (error) {
-        if (error && error.code !== 'declined') toast(`Couldn’t save it (${error.code || 'error'}).`);
-      }
+      const type = file.filename.endsWith('.html') ? 'text/html' : 'text/plain';
+      if (await saveFile({ ...file, type })) $('downloadDialog').close();
     });
   }
 
@@ -1579,11 +2011,11 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     $('libTitle').textContent = on ? 'Songs to play' : 'Your songs';
     $('libSub').innerHTML = on
       ? 'Public-domain songs to play along with, sing with karaoke and practise. Change the key, capo, instrument or tempo as you like.'
-      : 'Play along and practise. The songs come from the desktop app: there, the library’s <strong>Songs for the web…</strong> saves them in one file; here, <strong>Update songs</strong> loads it.';
+      : 'Play along, practise, and write your own. Your songs are kept on this device: add them from files, and back them up.';
     $('storeBanner').hidden = false;
     $('storeBanner').innerHTML = on
-      ? 'To play your own songs, write them in the <strong>ukemusic desktop app</strong>, save them with <strong>Songs for the web…</strong> in its library, and load that file here with <strong>Update songs</strong>. They stay in this browser.'
-      : 'Songs are kept in this browser only, so they won’t appear on your other devices. Back them up from the desktop app’s songs folder.';
+      ? 'To play your own songs, write one with <strong>New song</strong>, or bring them in with <strong>Add songs from files…</strong>: song files, ChordPro, a zipped songs folder, or the file the desktop app makes with <strong>Phone and tablet → Save songs for the web player</strong>.'
+      : 'Your songs are kept in this browser, on this device only. <strong>Back up all songs</strong> now and then, and keep the file somewhere safe.';
     setSync(on ? 'Starter songs' : 'On this device only', !on);
     $('starterNote').hidden = on || store.mode !== 'local';
   }
@@ -1623,7 +2055,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
         if (mine && change.doc.metadata.hasPendingWrites) continue;
         const song = { id, ...JSON.parse(JSON.stringify(data)) };
         songs.set(id, song);
-        if (mine && !first) {
+        if (mine && !first && !edit.open) {
           view.song = song;
           renderSong();
         }
@@ -1633,7 +2065,17 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     }, () => { setSync('Not syncing', true); });
   } else {
     store.mode = 'local';
-    for (const s of local.get('songs', [])) songs.set(s.id, s);
+    if (await idb.open()) {
+      try { for (const s of await idb.all()) songs.set(s.id, s); } catch (_e) { /* none yet */ }
+      // songs kept by an older version (in localStorage): moved into IndexedDB once
+      const old = local.get('songs', []);
+      if (!songs.size && old.length) {
+        for (const s of old) { songs.set(s.id, s); try { await idb.put({ id: s.id, ...clean(s) }); } catch (_e) { /* kept below */ } }
+      }
+      if (old.length) { try { localStorage.removeItem('ukeweb.songs'); } catch (_e) { /* fine */ } }
+    } else {
+      for (const s of local.get('songs', [])) songs.set(s.id, s);
+    }
     // No songs of your own here yet: the public-domain songs that come with ukemusic, to play straight away.
     // They aren't saved: Update songs puts your own in their place.
     const starters = songs.size ? null : await loadStarters();

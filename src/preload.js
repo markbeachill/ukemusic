@@ -112,6 +112,9 @@ function ensureEditorManager() {
     goToLine(line) {
       if (editorInstance) editorInstance.goToLine(line);
     },
+    insertText(text, back) {
+      if (editorInstance && editorInstance.insertText) editorInstance.insertText(text, back);
+    },
     topLine() {
       return editorInstance ? editorInstance.topLine() : 1;
     },
@@ -130,6 +133,8 @@ contextBridge.exposeInMainWorld('ukemusic', {
   songsFolderExists: (folder) => ipcRenderer.invoke('library:folderExists', folder),
   listSongs: (songsFolder) => ipcRenderer.invoke('songs:list', songsFolder),
   exportWebSongs: (songsFolder) => ipcRenderer.invoke('web:exportSongs', songsFolder),
+  planWebImport: (songsFolder) => ipcRenderer.invoke('web:planImport', songsFolder),
+  applyWebImport: (choice) => ipcRenderer.invoke('web:applyImport', choice),
   readWebSongs: (text) => require('./web-songs').readWebSongs(text),
   addStarterSongs: (songsFolder) => ipcRenderer.invoke('songs:addStarters', songsFolder),
   fillStarterInfo: (songsFolder) => ipcRenderer.invoke('songs:fillStarterInfo', songsFolder),
@@ -227,6 +232,8 @@ contextBridge.exposeInMainWorld('ukemusic', {
   learn: require('./learn'),
   picking: require('./picking'),
   melody: require('./melody'),
+  songFiles: require('./song-files'),   // 4.45: songs from files (the web player), and import plans
+  webSongs: { build: (songs, o) => require('./web-songs').buildWebSongs(songs, o), read: (t) => require('./web-songs').readWebSongs(t), id: (t) => require('./web-songs').songId(t) },
   pickSheet: require('./pick-sheet'),
   pickSong: require('./pick-song'),
   // 4.42: the prompt for tidying a chord sheet with an AI chat (also on the website), and a copy
@@ -397,6 +404,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
   editorGetCursor: () => ensureEditorManager().getCursor(),
   editorExecCommand: (command) => ensureEditorManager().execCommand(command),
   editorGoToLine: (line) => ensureEditorManager().goToLine(line),
+  editorInsert: (text, back) => ensureEditorManager().insertText(text, back),
   editorTopLine: () => ensureEditorManager().topLine(),
   editorSetTheme: (theme) => ensureEditorManager().setTheme(theme),
   onEditorUpdate: (handler) => {

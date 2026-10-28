@@ -434,6 +434,14 @@ function createUkemusicEditor(options = {}) {
     focus() {
       view.focus();
     },
+    // 4.45: type text at the cursor (over any selection), the cursor ending `back` characters
+    // before its end: the web player's [ ] { } buttons for touch keyboards
+    insertText(text, back = 0) {
+      const sel = view.state.selection.main;
+      const insert = String(text || '');
+      view.dispatch({ changes: { from: sel.from, to: sel.to, insert }, selection: { anchor: sel.from + insert.length - Math.max(0, Number(back) || 0) }, userEvent: 'input.type', scrollIntoView: true });
+      view.focus();
+    },
     getCursor() {
       const head = view.state.selection.main.head;
       const line = view.state.doc.lineAt(head);

@@ -28,6 +28,31 @@ put('/*PLAYER*/', safe(player));
 fs.mkdirSync('out', { recursive: true });
 fs.writeFileSync('out/ukemusic-web.html', html);
 // A standalone page for any web server (GitHub Pages): the same app with a doctype, charset and viewport
-const page = '<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n' + html;
+// 4.45: and a web app: its manifest (Add to Home Screen / Install), icons, and the offline copy (sw.js)
+const head = [
+  '<link rel="manifest" href="manifest.webmanifest">',
+  '<link rel="icon" href="icons/icon-192.png">',
+  '<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">',
+  "<script>if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>"
+].join('\n');
+const page = '<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n' + head + '\n' + html;
+fs.mkdirSync('out/icons', { recursive: true });
+for (const f of fs.readdirSync('icons')) fs.copyFileSync('icons/' + f, 'out/icons/' + f);
+fs.writeFileSync('out/manifest.webmanifest', JSON.stringify({
+  name: 'ukemusic',
+  short_name: 'ukemusic',
+  description: 'Ukulele songs: play along, karaoke, learn by heart, practise, and write your own.',
+  id: './',
+  start_url: './',
+  scope: './',
+  display: 'standalone',
+  background_color: '#f4f7f6',
+  theme_color: '#0e6b64',
+  icons: [
+    { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+    { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+    { src: 'icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+  ]
+}, null, 2));
 fs.writeFileSync('out/index.html', page);
 console.log('ok', (html.length / 1024).toFixed(0) + 'KB');

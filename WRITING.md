@@ -438,6 +438,14 @@ The **Learn** tab is for getting a song into your head and your fingers, so you 
 
 ---
 
+## On a phone or tablet
+
+The web player (ukemusic in the browser) keeps its own songs on the device, and you can write and change them there: **New song**, or **Edit** on a song. The buttons over the editor type the brackets a touch keyboard hides: `[ ]` for a chord, `[[ ]]` for a heading, `{ }` for a strum, `|` for a bar line, and ♪ for a tune line. Changes are saved as you type.
+
+- **Add songs from files…** brings in song files, ChordPro files, chord sheets, a zipped songs folder, or a backup.
+- **Back up all songs** saves every song in one file. Keep it somewhere safe.
+- In the desktop app, **Phone and tablet…** (in the library) sends your songs to the web player, and brings back the ones you wrote or changed there.
+
 ## Tips
 
 - **Write → Guess the key** works out the likeliest key from the chords, with its reasons. It's only needed for spelling chords when you change key (F♯ or G♭).

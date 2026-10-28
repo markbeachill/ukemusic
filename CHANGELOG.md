@@ -1,5 +1,20 @@
 # Changelog
 
+## v4.45.0
+
+### The web player: write and keep your songs on a phone or tablet
+The web player (ukemusic in the browser: iPad, iPhone, Android, or any computer) now keeps your songs on the device and lets you write and change them, not just play them.
+- **New song** and **Edit**: the words and chords in the same editor as the desktop app, with the chord sheet beside it (on a narrow screen, behind **Preview**). Buttons type the brackets that touch keyboards hide: `[ ]` chord, `[[ ]]` heading, `{ }` strum, `|` bar, ♪ tune. **Details** (title, artist, year, written by, key, capo, tempo, time, tags) and **Notes**; **Make a copy** and **Delete**. Changes are saved as you type.
+- **Add songs from files…**: pick song files from the Files app, Google Drive or Downloads: ukemusic's own (`…-song.txt`), ChordPro (`.cho`, `.chopro`, `.pro`, or ChordPro in a `.txt`), chord sheets with the chords above the words, a **zipped songs folder** (each song with its key, tempo and notes), or a backup. You see what's new, what's changed and what's the same before anything comes in; songs you've changed on the device are kept unless you say so.
+- **Back up all songs**: every song in one file, through the share sheet (Save to Files, Drive, Mail…) or as a download. It's the same format as the desktop's file for the web player.
+- Songs are kept in the browser's own database (IndexedDB) and the browser is asked to keep them; songs kept by earlier versions move across by themselves. A song changed on the device is marked **changed here** in the list until the desktop app has it.
+- The public-domain songs shown at the start become yours as soon as you write or change a song.
+- **A proper web app.** It has a web app manifest and icons, so **Add to Home Screen** (iPhone, iPad) and **Install app** (Android, Chrome and Edge on a computer) give it its own icon and window. And it **works offline**: once opened with a connection, the page, the songs, the sounds and the fonts are kept on the device, so it opens and plays with no signal; a new version arrives the next time it opens online.
+- **Website: Phone and tablet**, a new page: putting it on your Home Screen (iPad and iPhone, Android, a computer), bringing songs in, writing and changing them, keeping them safe, and taking them back to the computer, with a warning that on iPad and iPhone the Home Screen app keeps its own songs, separate from Safari's. Linked from the home page, Bring your songs, the footer and the web player. The Teach page uses the new names (Add songs from files…, Phone and tablet…).
+
+### Desktop: Phone and tablet…
+- **Phone and tablet…** in the library (beside Export every song…): **Save songs for the web player…** (every song in one file, as before, when the button had gone missing) and **Bring in songs from the web player…**: choose the web player's backup and see the songs written or changed there, each with a tick box. New songs are added; changed songs are updated, keeping the earlier version in the song's history and a line in its notes. A song that's only different because it changed on the computer since is left alone.
+
 ## v4.44.0
 
 ### Pick: fingerpick a song instead of strumming
