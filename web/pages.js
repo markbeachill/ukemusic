@@ -302,7 +302,7 @@ const PHONE_PAGE = {
   <h2>4. Keep them safe</h2>
   <div class="grid two">
     <div class="card"><h3>Back up all songs</h3><p>Every song in one file. On an iPad or phone the share sheet opens: choose <strong>Save to Files</strong> (iCloud Drive is a good place), Google Drive, or Mail. Do it now and then, and after writing something you'd hate to lose.</p><p>To bring songs back, choose the backup with <strong>Add songs from files…</strong></p></div>
-    <div class="card"><h3>Where they're kept</h3><p>On the device, in the browser's own storage. They don't go anywhere else, and they don't appear on your other devices by themselves.</p><p><strong>Deleting the Home Screen icon, or clearing the browser's website data, deletes them</strong>, so keep a backup.</p></div>
+    <div class="card"><h3>Where they're kept</h3><p>On the device, in the browser's own storage. They don't go anywhere else by themselves (unless you <a href="#dropbox">keep them in Dropbox</a>).</p><p><strong>Deleting the Home Screen icon, or clearing the browser's website data, deletes them</strong>, so keep a backup.</p></div>
   </div>
 </div></section>
 <section><div class="wrap">
@@ -312,6 +312,38 @@ const PHONE_PAGE = {
     <li><span>In the desktop app's library, press <strong>Phone and tablet… → Bring in songs from the web player…</strong> and choose that file.</span></li>
     <li><span>Tick the songs to bring in: the ones you wrote or changed on the tablet. Changed songs keep their earlier version in the song's history, and a song you've changed on the computer since is left alone.</span></li>
   </ol>
+</div></section>
+<section id="dropbox"><div class="wrap">
+  <h2>6. One set of songs, everywhere: Dropbox</h2>
+  <p class="intro">Put the desktop app's songs folder in Dropbox, and the web player reads and writes the same songs. Change a song on the iPad and it's on your computer a moment later; change it on the computer and the iPad has it the next time it syncs. No files to move about.</p>
+  <div class="grid two">
+    <div class="card"><h3>Once, on your computer</h3><ol class="steps">
+      <li><span>Install <strong>Dropbox</strong> (a free account is fine) and put your ukemusic songs folder inside it.</span></li>
+      <li><span>In the desktop app, <strong>Settings → Songs folder</strong>: choose it there.</span></li>
+      <li><span>Make a Dropbox app key for ukemusic (below). It's free and takes about five minutes.</span></li>
+    </ol></div>
+    <div class="card"><h3>Then, on the iPad or phone</h3><ol class="steps">
+      <li><span>In the web player, press <strong>Dropbox…</strong> and <strong>Connect to Dropbox</strong>. On a Home Screen app on iPhone or iPad, press <strong>Connect with a code</strong>: Dropbox shows a code to paste back.</span></li>
+      <li><span>Choose your songs folder (the one with a folder for each song) and press <strong>Use this folder</strong>.</span></li>
+      <li><span>That's it: it syncs when it opens, a few seconds after you change a song, and with <strong>Sync now</strong>.</span></li>
+    </ol></div>
+  </div>
+  <div class="grid two" style="margin-top:16px">
+    <div class="card"><h3>How it behaves</h3><ul>
+      <li>The songs are kept on the device too, so it works offline; changes go when the connection's back</li>
+      <li>Only the song folders are touched (the song, its song.ini and notes); exports, history and setlists are left alone</li>
+      <li>A new song becomes a new folder; renaming a song renames its folder; deleting one moves it to <strong>Archived songs</strong></li>
+      <li>Changed in both places between syncs? Both are kept: the computer's, and "… (changed on this device)"</li>
+      <li>If a song is open in the desktop app while you change it on the iPad, open it again on the computer to see the change</li>
+      <li>iCloud Drive can't do this: Apple doesn't let web apps reach it</li>
+    </ul></div>
+    <div class="card"><h3>Making the Dropbox app key</h3><ol class="steps">
+      <li><span>Go to <a href="https://www.dropbox.com/developers/apps">dropbox.com/developers/apps</a> and press <strong>Create app</strong>: <strong>Scoped access</strong>, <strong>Full Dropbox</strong>, and any name (ukemusic-yourname).</span></li>
+      <li><span><strong>Permissions</strong>: tick <code>files.metadata.read</code>, <code>files.metadata.write</code>, <code>files.content.read</code> and <code>files.content.write</code>, then <strong>Submit</strong>.</span></li>
+      <li><span><strong>Settings → OAuth 2</strong>: add the web player's address as a <strong>Redirect URI</strong> (this site's address with <code>app/</code> on the end), and set <strong>Allow public clients (PKCE)</strong> to <strong>Allow</strong>.</span></li>
+      <li><span>Copy the <strong>App key</strong> into the web player's Dropbox dialog (or, if you run this website, into <code>DROPBOX_APP_KEY</code> in <code>web/app.html</code>, so nobody else needs one). The key isn't a password: it's safe to share.</span></li>
+    </ol></div>
+  </div>
 </div></section>
 <section><div class="wrap">
   <h2>Good to know</h2>

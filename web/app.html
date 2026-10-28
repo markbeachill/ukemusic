@@ -160,6 +160,9 @@ button { cursor: pointer; }
 .check-row { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; line-height: 1.4; }
 .check-row input { margin-top: 3px; }
 .song-row .changed { color: var(--accent); font-weight: 600; }
+.cloud-folders { border: 1px solid var(--line); border-radius: 10px; padding: 4px; max-height: 45vh; }
+.folder-row { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 9px 10px; border-radius: 8px; font-weight: 600; }
+.folder-row:hover { background: var(--accent-soft); }
 
 /* Info and Notes */
 .fields { display: grid; gap: 12px; max-width: 640px; }
@@ -333,6 +336,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
       <div class="brand"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="15.5" r="4.5"/><circle cx="8.5" cy="15.5" r="1.2" fill="currentColor"/><path d="M11.7 12.3 19 5"/><path d="m17.5 3.5 3 3"/></svg>ukemusic</div>
       <span class="spacer"></span>
       <span id="syncState" class="sync"></span>
+      <span id="cloudState" class="sync" hidden></span>
       <button id="guideBtnLib" class="btn ghost icon" type="button" title="How to write songs" aria-label="How to write songs">?</button>
       <button id="themeBtn" class="btn ghost icon" type="button" title="Light or dark" aria-label="Switch light or dark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
     </div></header>
@@ -351,6 +355,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <button id="newSongBtn" class="btn primary" type="button" title="Write a new song: words with the chords in square brackets">+ New song</button>
         <label class="btn" for="updateInput" title="Song files (ukemusic, ChordPro, or chords above the words), a zipped songs folder, or a backup">Add songs from files…</label>
         <input id="updateInput" type="file" multiple hidden>
+        <button id="cloudBtn" class="btn" type="button" hidden title="Keep your songs in Dropbox, in the desktop app's songs folder: changes here go there, and changes there come here">Dropbox…</button>
         <button id="backupBtn" class="btn" type="button" title="Every song in one file, to keep somewhere safe (iCloud Drive, Google Drive, your computer) and to bring changes back into the desktop app">Back up all songs</button>
       </div>
       <div id="updatePanel" class="card-form" hidden>
@@ -473,6 +478,29 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
     </main>
   </section>
 </div>
+
+<dialog id="cloudDialog">
+  <h2>Songs in Dropbox</h2>
+  <p class="note">Keep the desktop app's songs folder in Dropbox, and ukemusic here reads and writes the same songs: change a song here and it's on your computer a moment later, and the other way round. The songs are kept on this device too, so they work without a connection.</p>
+  <div id="cloudConnect" class="fields">
+    <div id="cloudKeyRow" class="row"><label for="cloudKey">Dropbox app key (from dropbox.com/developers: see the Phone and tablet page)</label><input id="cloudKey" autocomplete="off" spellcheck="false"></div>
+    <div class="add-row"><button id="cloudSignIn" class="btn primary" type="button">Connect to Dropbox</button><button id="cloudSignInCode" class="btn" type="button" title="For a Home Screen app on iPhone or iPad: Dropbox shows a code to copy back here">Connect with a code</button></div>
+    <div id="cloudCodeRow" class="row" hidden><label for="cloudCode">The code Dropbox shows you</label><div class="add-row"><input id="cloudCode" autocomplete="off" spellcheck="false" style="flex:1"><button id="cloudCodeGo" class="btn primary" type="button">Use the code</button></div></div>
+  </div>
+  <div id="cloudBrowse" hidden>
+    <p class="note" style="color:var(--ink)">Choose the folder your songs are in: the one the desktop app uses (Settings → Songs folder), with a folder for each song.</p>
+    <p class="note">In: <strong id="cloudPath"></strong></p>
+    <div id="cloudFolders" class="import-list cloud-folders"></div>
+    <div class="add-row" style="margin-top:8px"><button id="cloudUse" class="btn primary" type="button">Use this folder</button></div>
+  </div>
+  <div id="cloudLinked" class="fields" hidden>
+    <p class="note" style="color:var(--ink)">Songs folder: <strong id="cloudFolderShown"></strong></p>
+    <p id="cloudStatusLine" class="note"></p>
+    <div class="add-row"><button id="cloudSyncNow" class="btn primary" type="button">Sync now</button><button id="cloudChange" class="btn" type="button">Change folder</button><button id="cloudDisconnect" class="btn danger" type="button">Disconnect</button></div>
+    <p class="note">It syncs when ukemusic opens, a few seconds after you change a song, and when the connection comes back. A song changed both here and on the computer between syncs is kept twice: the computer's, and this device's as “… (changed on this device)”. A song deleted here goes to Archived songs in the folder.</p>
+  </div>
+  <div class="dialog-actions"><button id="cloudClose" class="btn" type="button">Close</button></div>
+</dialog>
 
 <dialog id="newSongDialog">
   <h2>New song</h2>
@@ -714,9 +742,10 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   let askedToKeep = false;
   const store = {
     mode: 'local',
-    async save(song, { edited } = {}) {
+    async save(song, { edited, cloud: syncIt = true } = {}) {
       song.updated = new Date().toISOString();
       if (edited !== undefined) { if (edited) song.edited = true; else delete song.edited; }
+      if (syncIt && edited && typeof cloudSoon === 'function') cloudSoon();   // 4.47: to Dropbox, soon
       songs.set(song.id, song);
       if (db) {
         try { await db.doc('songs/' + song.id).set(clean(song)); setSync(''); return true; }
@@ -731,7 +760,14 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
       local.set('songs', [...songs.values()]);
       return true;
     },
-    async remove(id) {
+    async remove(id, { cloud: syncIt = true } = {}) {
+      // 4.47: a song in Dropbox, deleted here: moved to Archived songs there at the next sync
+      const gone = songs.get(id);
+      if (syncIt && gone && gone.cloud && gone.cloud.folder && typeof cloudOn === 'function' && cloudOn()) {
+        cloudConf.deleted = [...(cloudConf.deleted || []), { folder: gone.cloud.folder, revs: gone.cloud.revs }];
+        saveCloud();
+        cloudSoon(2000);
+      }
       songs.delete(id);
       if (db) { try { await db.doc('songs/' + id).delete(); } catch (_e) { setSync('Not deleted: offline?', true); } }
       else if (idb.handle) { try { await idb.del(id); } catch (_e) { setSync('Not deleted', true); } }
@@ -743,7 +779,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
       local.set('songs', []);
     }
   };
-  function clean(song) { return JSON.parse(JSON.stringify({ title: song.title, text: song.text, settings: song.settings || {}, notes: song.notes || '', updated: song.updated || '', ...(song.edited ? { edited: true } : {}) })); }
+  function clean(song) { return JSON.parse(JSON.stringify({ title: song.title, text: song.text, settings: song.settings || {}, notes: song.notes || '', updated: song.updated || '', ...(song.edited ? { edited: true } : {}), ...(song.cloud ? { cloud: song.cloud } : {}), ...(song.cloudSkip ? { cloudSkip: true } : {}) })); }
   function setSync(text, warn = false) {
     for (const el of [$('syncState'), $('saveState')]) { el.textContent = text; el.classList.toggle('warn', warn); }
   }
@@ -838,6 +874,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     event.preventDefault();
     const title = $('newTitle').value.trim().replace(/\s+/g, ' ');
     if (!title) { $('newSongError').textContent = 'Give the song a title.'; return; }
+    if (/[\\/:*?"<>|]/.test(title)) { $('newSongError').textContent = 'A title can’t have any of these: \\ / : * ? " < > |'; return; }
     if (titleTaken(title)) { $('newSongError').textContent = 'There’s already a song called that here.'; return; }
     $('newSongDialog').close();
     await createSong(title);
@@ -987,6 +1024,329 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     return true;
   }
 
+  // ── Cloud (4.47): the songs folder in Dropbox, read and written here ──
+  // The desktop's songs folder sits in Dropbox; here, ukemusic signs in to Dropbox (PKCE: no
+  // secret, nothing stored but the sign-in on this device) and syncs the song folders: changes
+  // here go there, changes there come here, and a song changed in both places is kept twice.
+  // The songs are still kept on this device too, so everything works offline (and syncs later).
+  // Planning is src/cloud-sync.js; this is the Dropbox side and the doing.
+  const DROPBOX_APP_KEY = '';   // the app key from dropbox.com/developers (or typed in the Dropbox dialog)
+  const CS = U.cloudSync;
+  const cloudConf = local.get('cloud', null) || {};
+  const saveCloud = () => local.set('cloud', cloudConf);
+  const cloudAllowed = () => /^https?:$/.test(location.protocol) && !(window.claude && window.claude.use);
+  const cloudOn = () => Boolean(cloudAllowed() && cloudConf.refresh && cloudConf.root);
+  const cloud = { busy: false, timer: null, again: false };
+  const DBX = { authorize: 'https://www.dropbox.com/oauth2/authorize', token: 'https://api.dropboxapi.com/oauth2/token', api: 'https://api.dropboxapi.com/2/', content: 'https://content.dropboxapi.com/2/' };
+  const appKey = () => (cloudConf.appKey || DROPBOX_APP_KEY || '').trim();
+  const redirectUri = () => location.origin + location.pathname.replace(/index\.html$/, '');
+  const b64url = (bytes) => btoa(String.fromCharCode(...new Uint8Array(bytes))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const randomText = (n) => b64url(crypto.getRandomValues(new Uint8Array(n)));
+  class CloudError extends Error { constructor(message, { status = 0, signIn = false, conflict = false } = {}) { super(message); this.status = status; this.signIn = signIn; this.conflict = conflict; } }
+
+  async function cloudSignIn({ withCode = false } = {}) {
+    if (!appKey()) { toast('Type the Dropbox app key first.'); return; }
+    const verifier = randomText(48);
+    const challenge = b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
+    const state = randomText(12);
+    local.set('cloudPending', { verifier, state, withCode, appKey: appKey() });
+    const params = new URLSearchParams({ client_id: appKey(), response_type: 'code', code_challenge: challenge, code_challenge_method: 'S256', token_access_type: 'offline' });
+    if (!withCode) { params.set('redirect_uri', redirectUri()); params.set('state', state); }
+    const url = `${DBX.authorize}?${params}`;
+    // With a code: Dropbox shows a code to copy back here (a Home Screen app on an iPhone or
+    // iPad, where coming back from another site doesn't return to the app)
+    if (withCode) window.open(url, '_blank', 'noopener'); else location.href = url;
+  }
+  async function cloudToken(form) {
+    const response = await fetch(DBX.token, { method: 'POST', body: new URLSearchParams(form) });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new CloudError(data.error_description || data.error || `Dropbox said no (${response.status})`, { status: response.status, signIn: true });
+    return data;
+  }
+  async function cloudFinishSignIn(code, { redirected = false } = {}) {
+    const pending = local.get('cloudPending', null);
+    if (!pending) throw new CloudError('Start again: press Connect to Dropbox.');
+    const form = { code: code.trim(), grant_type: 'authorization_code', client_id: pending.appKey, code_verifier: pending.verifier };
+    if (redirected) form.redirect_uri = redirectUri();
+    const t = await cloudToken(form);
+    cloudConf.appKey = pending.appKey;
+    cloudConf.refresh = t.refresh_token;
+    cloudConf.access = t.access_token;
+    cloudConf.expires = Date.now() + (Number(t.expires_in) || 14400) * 1000;
+    saveCloud();
+    try { localStorage.removeItem('ukeweb.cloudPending'); } catch (_e) { /* fine */ }
+  }
+  async function cloudAccess() {
+    if (cloudConf.access && Date.now() < (cloudConf.expires || 0) - 60000) return cloudConf.access;
+    if (!cloudConf.refresh) throw new CloudError('Not signed in to Dropbox.', { signIn: true });
+    const t = await cloudToken({ grant_type: 'refresh_token', refresh_token: cloudConf.refresh, client_id: appKey() });
+    cloudConf.access = t.access_token;
+    cloudConf.expires = Date.now() + (Number(t.expires_in) || 14400) * 1000;
+    saveCloud();
+    return cloudConf.access;
+  }
+  // a header can't carry letters beyond ASCII: Dropbox reads them \u-escaped
+  const argHeader = (obj) => JSON.stringify(obj).replace(/[\u007f-￿]/g, (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, '0')}`);
+  async function dbxCall(url, init, retry = true) {
+    const response = await fetch(url, { ...init, headers: { ...(init.headers || {}), Authorization: `Bearer ${await cloudAccess()}` } });
+    if (response.status === 401 && retry) { cloudConf.access = ''; return dbxCall(url, init, false); }
+    if (!response.ok) {
+      let summary = '';
+      try { const j = await response.clone().json(); summary = j.error_summary || ''; } catch (_e) { summary = await response.text().catch(() => ''); }
+      throw new CloudError(summary || `Dropbox error ${response.status}`, { status: response.status, signIn: response.status === 401, conflict: response.status === 409 && /conflict|not_found|malformed/.test(summary) });
+    }
+    return response;
+  }
+  const dbxApi = async (endpoint, body) => (await dbxCall(DBX.api + endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })).json();
+  async function dbxList(path, { recursive = true } = {}) {
+    const out = [];
+    let r = await dbxApi('files/list_folder', { path: path === '/' ? '' : path, recursive, include_deleted: false, limit: 2000 });
+    for (;;) {
+      for (const e of r.entries) out.push({ tag: e['.tag'], path: e.path_display, rev: e.rev || '', name: e.name });
+      if (!r.has_more) break;
+      r = await dbxApi('files/list_folder/continue', { cursor: r.cursor });
+    }
+    return out;
+  }
+  async function dbxDownload(path) {
+    const response = await dbxCall(`${DBX.content}files/download`, { method: 'POST', headers: { 'Dropbox-API-Arg': argHeader({ path }) } });
+    let rev = '';
+    try { rev = JSON.parse(response.headers.get('Dropbox-API-Result') || '{}').rev || ''; } catch (_e) { /* listed rev used */ }
+    return { text: await response.text(), rev };
+  }
+  async function dbxUpload(path, text, { rev = '', overwrite = false } = {}) {
+    const mode = overwrite ? 'overwrite' : rev ? { '.tag': 'update', update: rev } : 'add';
+    const response = await dbxCall(`${DBX.content}files/upload`, { method: 'POST', headers: { 'Content-Type': 'application/octet-stream', 'Dropbox-API-Arg': argHeader({ path, mode, autorename: false, mute: true, strict_conflict: true }) }, body: new Blob([text]) });
+    return (await response.json()).rev || '';
+  }
+  const dbxMove = (from, to) => dbxApi('files/move_v2', { from_path: from, to_path: to, autorename: true, allow_ownership_transfer: false });
+
+  // ── Syncing ──
+  function setCloudState(text, warn = false) {
+    cloudConf.state = text;
+    $('cloudState').textContent = text;
+    $('cloudState').classList.toggle('warn', warn);
+    $('cloudStatusLine').textContent = text;
+  }
+  const partsOf = (song) => {
+    const { files } = CS.songToFiles(song, cloudConf.root);
+    return { song: CS.hashText(files.song.text), ini: CS.hashText(files.ini.text), notes: CS.hashText(files.notes ? files.notes.text : '') };
+  };
+  function linkSong(song, folder, revs) {
+    song.cloud = { folder, revs, hash: CS.songHash(song), parts: partsOf(song) };
+    delete song.cloudSkip;
+  }
+  async function pullSong(info, existing) {
+    const texts = {};
+    const revs = { song: '', ini: '', notes: '' };
+    for (const k of ['song', 'ini', 'notes']) {
+      if (!info[k]) continue;
+      const d = await dbxDownload(info[k].path);
+      texts[k] = d.text;
+      revs[k] = d.rev || info[k].rev;
+    }
+    const fields = CS.filesToSong(info, texts);
+    const song = existing ? { ...existing, ...fields } : { id: uniqueId(fields.title), ...fields };
+    linkSong(song, info.folder, revs);
+    await store.save(song, { edited: false, cloud: false });
+    return song;
+  }
+  async function pushSong(song, info) {
+    const root = cloudConf.root;
+    let folder = info ? info.folder : (song.cloud && song.cloud.folder) || CS.joinPath(root, song.title);
+    const revs = info ? { ...info.revs } : { song: '', ini: '', notes: '' };
+    let overwrite = false;
+    // renamed here: the folder and the song file take the new name (as the desktop's Rename)
+    if (info && CS.baseName(info.folder).toLowerCase() !== song.title.toLowerCase()) {
+      const to = CS.joinPath(root, song.title);
+      const moved = await dbxMove(info.folder, to);
+      folder = moved.metadata ? moved.metadata.path_display : to;
+      if (info.song) await dbxMove(`${folder}/${info.song.path.split('/').pop()}`, `${folder}/${CS.baseName(folder)}${CS.SONG_SUFFIX}`);
+      if (CS.baseName(folder) !== song.title) song.title = CS.baseName(folder);
+      overwrite = true;
+    }
+    const { files } = CS.songToFiles(song, root);
+    const parts = partsOf(song);
+    const before = (song.cloud && info && !overwrite) ? song.cloud.parts || {} : {};
+    for (const k of ['song', 'ini', 'notes']) {
+      const path = `${folder}/${k === 'song' ? `${CS.baseName(folder)}${CS.SONG_SUFFIX}` : k === 'ini' ? 'song.ini' : 'notes.txt'}`;
+      const text = files[k] ? files[k].text : '';
+      if (!files[k] && !(info && info[k])) continue;          // no notes here or there
+      if (before[k] && before[k] === parts[k] && revs[k]) continue;   // this file hasn't changed
+      revs[k] = await dbxUpload(path, text, { rev: overwrite ? '' : revs[k], overwrite });
+    }
+    linkSong(song, folder, revs);
+    await store.save(song, { edited: false, cloud: false });
+  }
+  function cloudSoon(delay = 8000) {
+    if (!cloudOn()) return;
+    clearTimeout(cloud.timer);
+    cloud.timer = setTimeout(() => cloudSync({ quiet: true }), delay);
+  }
+  async function cloudSync({ quiet = false } = {}) {
+    if (!cloudOn()) return;
+    if (cloud.busy) { cloud.again = true; return; }
+    if (navigator.onLine === false) { setCloudState('Offline: will sync when back online'); return; }
+    cloud.busy = true;
+    setCloudState('Syncing with Dropbox…');
+    const done = { in: 0, out: 0, both: 0, archived: 0, removed: 0, failed: [] };
+    try {
+      if (typeof flushEdit === 'function') await flushEdit();
+      const remote = CS.songFolders(await dbxList(cloudConf.root), cloudConf.root);
+      const plan = CS.planSync({ local: [...songs.values()], remote, deleted: cloudConf.deleted || [] });
+      const editing = () => (edit.open && view.song ? view.song.id : '');
+      const attempt = async (title, fn) => { try { await fn(); } catch (error) { if (error.signIn) throw error; done.failed.push(`${title} (${error.message})`); } };
+      // songs only here: the first time, ask; after that, new songs go to Dropbox as they're made
+      if (plan.newLocal.length && !cloudConf.askedNew) {
+        const send = confirm(`${plan.newLocal.length} song${plan.newLocal.length === 1 ? ' is' : 's are'} only on this device. Add ${plan.newLocal.length === 1 ? 'it' : 'them'} to your Dropbox songs folder too?\n\n(Cancel keeps ${plan.newLocal.length === 1 ? 'it' : 'them'} on this device only.)`);
+        cloudConf.askedNew = true;
+        saveCloud();
+        if (!send) { for (const s of plan.newLocal) { s.cloudSkip = true; await store.save(s, { cloud: false }); } plan.newLocal = []; }
+      }
+      for (const p of plan.pull) {
+        if (p.song && p.song.id === editing()) continue;   // being edited here: next time
+        await attempt(p.info.title, async () => { await pullSong(p.info, p.song || null); done.in += 1; });
+      }
+      for (const m of plan.match) {
+        await attempt(m.song.title, async () => {
+          const texts = {};
+          for (const k of ['song', 'ini', 'notes']) if (m.info[k]) texts[k] = (await dbxDownload(m.info[k].path)).text;
+          const there = CS.filesToSong(m.info, texts);
+          if (CS.songHash(there) === CS.songHash(m.song)) { linkSong(m.song, m.info.folder, m.info.revs); await store.save(m.song, { edited: false, cloud: false }); return; }
+          plan.conflict.push({ song: m.song, info: m.info });
+        });
+      }
+      for (const c of plan.conflict) {
+        if (c.song.id === editing()) continue;
+        await attempt(c.song.title, async () => {
+          // changed in both places: Dropbox's comes in, this device's is kept beside it as a copy
+          const copy = { ...JSON.parse(JSON.stringify(c.song)), id: '', title: '' };
+          delete copy.cloud;
+          copy.title = freeTitle(`${c.song.title} (changed on this device)`);
+          copy.id = uniqueId(copy.title);
+          await store.save(copy, { cloud: false });
+          await pullSong(c.info, c.song);
+          await pushSong(copy, null);
+          done.both += 1;
+        });
+      }
+      for (const p of plan.push) await attempt(p.song.title, async () => { await pushSong(p.song, p.info); done.out += 1; });
+      for (const s of [...plan.recreate, ...plan.newLocal]) await attempt(s.title, async () => { delete s.cloud; await pushSong(s, null); done.out += 1; });
+      for (const s of plan.removeLocal) { if (s.id === editing()) continue; await store.remove(s.id, { cloud: false }); done.removed += 1; }
+      for (const t of plan.archive) {
+        await attempt(CS.baseName(t.folder), async () => { await dbxMove(t.folder, CS.archivePath(cloudConf.root, t.folder)); done.archived += 1; });
+      }
+      // deleted here: done with (archived, gone, or come back because changed there)
+      cloudConf.deleted = [];
+      cloudConf.lastSync = new Date().toISOString();
+      saveCloud();
+      const bits = [];
+      if (done.in) bits.push(`${done.in} in`);
+      if (done.out) bits.push(`${done.out} out`);
+      if (done.removed) bits.push(`${done.removed} removed`);
+      if (done.archived) bits.push(`${done.archived} archived`);
+      const when = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      setCloudState(`Dropbox: synced ${when}${bits.length ? ` (${bits.join(', ')})` : ''}`, done.failed.length > 0);
+      if (done.both) toast(`${count(done.both, 'song')} changed both here and in Dropbox: both are kept (“… (changed on this device)”).`);
+      if (done.failed.length) toast(`Not synced: ${done.failed.slice(0, 3).join('; ')}`);
+      else if (!quiet && (done.in || done.out)) toast(`Synced with Dropbox: ${bits.join(', ')}.`);
+    } catch (error) {
+      if (error.signIn) { setCloudState('Dropbox: sign in again', true); if (!quiet) toast('Dropbox needs you to sign in again (Dropbox…).'); }
+      else setCloudState(`Dropbox: not synced (${navigator.onLine === false ? 'offline' : error.message})`, true);
+    } finally {
+      cloud.busy = false;
+      if (view.song && !edit.open && songs.has(view.song.id)) { const fresh = songs.get(view.song.id); if (fresh !== view.song) { view.song = fresh; renderSong(); } }
+      else if (view.song && !songs.has(view.song.id) && !edit.open) { $('backBtn').click(); }
+      if (!view.song) renderLibrary();
+      if (cloud.again) { cloud.again = false; cloudSoon(1500); }
+    }
+  }
+
+  // ── The Dropbox dialog: connect, choose the songs folder, sync, disconnect ──
+  let browsePath = '';
+  function showCloudDialog() {
+    $('cloudKey').value = appKey();
+    $('cloudKeyRow').hidden = Boolean(DROPBOX_APP_KEY);
+    const signedIn = Boolean(cloudConf.refresh);
+    $('cloudConnect').hidden = signedIn;
+    $('cloudBrowse').hidden = !signedIn || Boolean(cloudConf.root);
+    $('cloudLinked').hidden = !cloudOn();
+    $('cloudFolderShown').textContent = cloudConf.root || '';
+    $('cloudStatusLine').textContent = cloudConf.state || '';
+    $('cloudCodeRow').hidden = !local.get('cloudPending', null)?.withCode;
+    if (signedIn && !cloudConf.root) browseCloud('');
+    if (!$('cloudDialog').open) $('cloudDialog').showModal();
+  }
+  async function browseCloud(path) {
+    browsePath = path;
+    $('cloudPath').textContent = path || 'Dropbox';
+    $('cloudFolders').innerHTML = '<div class="it">Looking…</div>';
+    try {
+      const entries = (await dbxList(path || '', { recursive: false })).filter((e) => e.tag === 'folder').sort((a, b) => a.name.localeCompare(b.name));
+      $('cloudFolders').innerHTML = (path ? '<button type="button" class="folder-row" data-up="1">‹ Up</button>' : '')
+        + (entries.length ? entries.map((e) => `<button type="button" class="folder-row" data-path="${esc(e.path)}">${esc(e.name)}</button>`).join('') : '<div class="it">No folders in here.</div>');
+      for (const b of $('cloudFolders').querySelectorAll('.folder-row')) {
+        b.addEventListener('click', () => browseCloud(b.dataset.up ? path.split('/').slice(0, -1).join('/') : b.dataset.path));
+      }
+    } catch (error) {
+      $('cloudFolders').innerHTML = `<div class="it">Couldn’t look in Dropbox: ${esc(error.message)}</div>`;
+    }
+  }
+  $('cloudBtn').addEventListener('click', showCloudDialog);
+  $('cloudClose').addEventListener('click', () => $('cloudDialog').close());
+  $('cloudKey').addEventListener('change', () => { cloudConf.appKey = $('cloudKey').value.trim(); saveCloud(); });
+  $('cloudSignIn').addEventListener('click', () => { cloudConf.appKey = $('cloudKey').value.trim() || appKey(); saveCloud(); cloudSignIn({ withCode: navigator.standalone === true }); });
+  $('cloudSignInCode').addEventListener('click', async () => { cloudConf.appKey = $('cloudKey').value.trim() || appKey(); saveCloud(); await cloudSignIn({ withCode: true }); $('cloudCodeRow').hidden = false; });
+  $('cloudCodeGo').addEventListener('click', async () => {
+    try { await cloudFinishSignIn($('cloudCode').value); $('cloudCode').value = ''; showCloudDialog(); }
+    catch (error) { toast(`Dropbox: ${error.message}`); }
+  });
+  $('cloudUse').addEventListener('click', async () => {
+    if (!browsePath) { toast('Choose the folder your songs are in (the desktop app’s songs folder), not the whole of Dropbox.'); return; }
+    cloudConf.root = browsePath;
+    cloudConf.askedNew = false;
+    cloudConf.deleted = [];
+    saveCloud();
+    // the public-domain songs shown at the start aren't yours: Dropbox's songs take their place
+    if (starterShown && store.mode === 'local') { await store.clear(); showStarterMode(false); }
+    showCloudDialog();
+    showCloudMode();
+    await cloudSync();
+  });
+  $('cloudSyncNow').addEventListener('click', () => cloudSync());
+  $('cloudChange').addEventListener('click', () => { cloudConf.root = ''; saveCloud(); showCloudMode(); showCloudDialog(); });
+  $('cloudDisconnect').addEventListener('click', () => {
+    if (!confirm('Disconnect from Dropbox? The songs stay on this device, and in Dropbox, but stop syncing.')) return;
+    for (const k of ['refresh', 'access', 'expires', 'root', 'lastSync', 'deleted', 'askedNew', 'state']) delete cloudConf[k];
+    saveCloud();
+    showCloudMode();
+    showCloudDialog();
+  });
+  function showCloudMode() {
+    $('cloudBtn').hidden = !cloudAllowed();
+    $('cloudState').hidden = !cloudOn();
+    if (cloudOn()) {
+      $('cloudState').textContent = cloudConf.state || 'Dropbox';
+      $('storeBanner').hidden = false;
+      $('storeBanner').innerHTML = `Your songs are in Dropbox, in <strong>${esc(cloudConf.root)}</strong> (the desktop app’s songs folder), and kept on this device too, so they work without a connection. Changes go both ways when it syncs.`;
+      setSync('');
+    }
+  }
+  // back from Dropbox's sign-in page (?code=…&state=…)
+  async function cloudReturn() {
+    const q = new URLSearchParams(location.search);
+    if (!q.get('code') && !q.get('error')) return;
+    const pending = local.get('cloudPending', null);
+    history.replaceState(null, '', location.pathname);
+    if (q.get('error')) { toast('Dropbox: not connected.'); return; }
+    if (!pending || pending.state !== q.get('state')) { toast('Dropbox: that sign-in had expired. Try again.'); return; }
+    try { await cloudFinishSignIn(q.get('code'), { redirected: true }); showCloudDialog(); }
+    catch (error) { toast(`Dropbox: ${error.message}`); }
+  }
+  window.ukemusicCloudSync = (o) => cloudSync(o);   // for the tests
+  window.addEventListener('online', () => cloudSoon(1000));
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') cloudSoon(1500); });
+
   // ── Song view ──
   const view = { song: null, panel: 'songPanel' };
   const look = local.get('look', { layout: 'lines', diagrams: 'song_start', size: 16 });
@@ -1135,6 +1495,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   $('fTitle').addEventListener('input', () => {
     const t = $('fTitle').value.trim().replace(/\s+/g, ' ');
     if (!t) return;
+    if (/[\\/:*?"<>|]/.test(t)) { $('editSaved').textContent = 'A title can’t have \\ / : * ? " < > |'; $('editSaved').classList.add('warn'); return; }
     if (titleTaken(t, view.song.id)) { $('editSaved').textContent = 'Another song has that title'; $('editSaved').classList.add('warn'); return; }
     view.song.title = t;
     $('editTitleShown').textContent = t;
@@ -2160,6 +2521,10 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       showStarterMode(false);
     }
     renderLibrary();
+    // 4.47: Dropbox: back from signing in, and a sync to start
+    showCloudMode();
+    await cloudReturn();
+    if (cloudOn()) { showCloudMode(); cloudSync({ quiet: true }); }
   }
 })();
 </script>

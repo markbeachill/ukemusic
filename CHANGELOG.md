@@ -1,5 +1,26 @@
 # Changelog
 
+## v4.47.0
+
+### Your songs in Dropbox, from the web player
+The web player can keep its songs in the desktop app's own songs folder, in Dropbox: one set of songs, changed anywhere. Change a song on the iPad and it's in the folder on your computer a moment later (Dropbox syncs it); change it on the computer and the iPad has it the next time it syncs.
+- **Dropbox…** (in the web player's song list, on the website): sign in to Dropbox, then choose the songs folder (the one the desktop app uses, with a folder for each song). The songs there replace the public-domain ones; songs you already had on the device can go into the folder too (it asks once).
+- It reads and writes the song folders exactly as the desktop keeps them: `Title/Title-song.txt`, `song.ini` (key, tempo, artist…) and `notes.txt`. Exports, history, learn sheets, setlists and Archived songs are left alone. A new song becomes a new folder; renaming a song renames its folder and file; deleting one moves it to **Archived songs** in the folder (so the desktop can bring it back).
+- It syncs when it opens, a few seconds after you change a song, when the connection comes back, and with **Sync now**. Only the files that changed are sent.
+- **Changed in both places** between syncs: nothing is lost. The computer's version stays as the song, and this device's is kept beside it as "… (changed on this device)", in both places.
+- The songs are still kept on the device, so it all works without a connection; changes wait and go when it's back.
+- Signing in uses Dropbox's own page (PKCE: no password or secret is kept, only the sign-in on that device). On a Home Screen app on iPhone or iPad, Dropbox shows a code to copy back. **Disconnect** stops syncing and keeps the songs on the device.
+- It needs a free Dropbox app key, made once at dropbox.com/developers: the steps are on the website's Phone and tablet page.
+
+## v4.46.0
+
+### Playing beside the editor
+- **The words being sung colour in word by word**, in the desktop preview and now in the web player too. Before, a coloured band swept across the line's whole box, so a line that wraps onto two rows (a long line, or Chords in the words) filled both rows at once. Now each word is coloured as it's begun, along the first row and on into the second, as you read it.
+
+### Practice
+- **Chord shapes drill: Order.** **In turn, as typed** (now the usual) goes through the chords as you typed them, round and round, so a song's changes (`Dm Dm F G`) can be drilled in its order; **Mixed up** is the old way (any order, never the same chord twice running). Learn's "practise the shapes" still mixes them up.
+
+
 ## v4.45.0
 
 ### The web player: write and keep your songs on a phone or tablet
@@ -11,12 +32,6 @@ The web player (ukemusic in the browser: iPad, iPhone, Android, or any computer)
 - The public-domain songs shown at the start become yours as soon as you write or change a song.
 - **A proper web app.** It has a web app manifest and icons, so **Add to Home Screen** (iPhone, iPad) and **Install app** (Android, Chrome and Edge on a computer) give it its own icon and window. And it **works offline**: once opened with a connection, the page, the songs, the sounds and the fonts are kept on the device, so it opens and plays with no signal; a new version arrives the next time it opens online.
 - **Website: Phone and tablet**, a new page: putting it on your Home Screen (iPad and iPhone, Android, a computer), bringing songs in, writing and changing them, keeping them safe, and taking them back to the computer, with a warning that on iPad and iPhone the Home Screen app keeps its own songs, separate from Safari's. Linked from the home page, Bring your songs, the footer and the web player. The Teach page uses the new names (Add songs from files…, Phone and tablet…).
-
-### Playing beside the editor
-- **The words being sung colour in word by word**, in the desktop preview and now in the web player too. Before, a coloured band swept across the line's whole box, so a line that wraps onto two rows (a long line, or Chords in the words) filled both rows at once. Now each word is coloured as it's begun, along the first row and on into the second, as you read it.
-
-### Practice
-- **Chord shapes drill: Order.** **In turn, as typed** (now the usual) goes through the chords as you typed them, round and round, so a song's changes (`Dm Dm F G`) can be drilled in its order; **Mixed up** is the old way (any order, never the same chord twice running). Learn's "practise the shapes" still mixes them up.
 
 ### Desktop: Phone and tablet…
 - **Phone and tablet…** in the library (beside Export every song…): **Save songs for the web player…** (every song in one file, as before, when the button had gone missing) and **Bring in songs from the web player…**: choose the web player's backup and see the songs written or changed there, each with a tick box. New songs are added; changed songs are updated, keeping the earlier version in the song's history and a line in its notes. A song that's only different because it changed on the computer since is left alone.

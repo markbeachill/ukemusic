@@ -13,6 +13,8 @@ Rebuild after changing the desktop app (from the app's folder):
 
 `web/make.js` bundles the code, puts the page together (`out/index.html` for any web server, `out/ukemusic-web.html` for a claude.ai artifact), converts the samples to WAV in `out/sounds` (needs ffmpeg) and writes the public-domain library as `out/public-domain-songs.json`. On GitHub, `.github/workflows/web.yml` does the same on every push to `main` and publishes `web/out` with GitHub Pages. Library packs (.ukelib) aren't available on the web (`stubs/zlib.js`).
 
+On the website it can also keep its songs in Dropbox, in the desktop app's own songs folder (the Dropbox… button; planning in src/cloud-sync.js, the Dropbox calls in app.html; set `DROPBOX_APP_KEY` in app.html to your Dropbox app's key).
+
 It's an installable web app on the website: `out/index.html` links `manifest.webmanifest` and the icons in `icons/` (made from build/icon.png), and registers `sw.js`, the offline copy, written by make.js from `sw-template.js` with every file the player needs and a version that changes when any of them does. The claude.ai copy (`ukemusic-web.html`) has none of this.
 
 (Re-extract `pr_*` from index.html if the practice window changes.)
