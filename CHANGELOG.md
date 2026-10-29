@@ -1,6 +1,12 @@
 # Changelog
 
-## v4.47.0
+## v4.48.0
+
+### Learn: more of the chord patterns players know
+- **Eight standard progressions added**, so Learn, the learn sheet and Chord patterns name them: **Eight Days a Week** (I – II7 – IV – I), the **garage-rock riff** (I – IV – V – IV: "Wild Thing", "Twist and Shout"), **Pachelbel's Canon** (I – V – vi – iii – IV – I – IV – V: "Streets of London"), **Salty Dog** (VI7 – II7 – V7 – I: "Sweet Georgia Brown"), the **minor four** (I – IV – iv – I), **Creep** (I – III – IV – iv), **minor rock** (i – VI – VII – i) and **Watchtower** (i – VII – VI – VII).
+- **A part that's one loop says so.** When a pattern is the whole part, its note adds "Here it's the whole part, round 8 times". When the loop has no famous name, it's still marked as **One loop**: these four chords, round and round, learn them and you have the part.
+- **Round the circle** anywhere: four or more chords each a fourth up from the last (Em → Am → Dm → G) are marked even when they don't end at home (the named Circle only counted vi – ii – V – I).
+
 
 ### Your songs in Dropbox, from the web player
 The web player can keep its songs in the desktop app's own songs folder, in Dropbox: one set of songs, changed anywhere. Change a song on the iPad and it's in the folder on your computer a moment later (Dropbox syncs it); change it on the computer and the iPad has it the next time it syncs.

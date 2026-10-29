@@ -152,8 +152,8 @@ const normCue = (t) => plainWords(t).toLowerCase().replace(/[^a-z0-9' ]+/g, ' ')
  * [{ n, name, hint, steps, chords, start: { row, bar }, end: { row, bar }, words, round }]
  * round: it finishes on the part's first chord (the next time round, or the next part).
  */
-function partPatterns(rows) {
-  const { PATTERNS } = require('./progressions');
+function partPatterns(rows, key = null) {
+  const { PATTERNS, morePatterns } = require('./progressions');
   const core = (n) => String(n).replace(/(maj7|7|9|11|13|6|sus2|sus4|sus|add9)$/, '');
   const seq = [];
   rows.forEach((row, r) => row.forEach((bar, b) => bar.numerals.forEach((num, k) => {
@@ -179,6 +179,13 @@ function partPatterns(rows) {
   }
   // a short one inside a longer one found here says less: drop it
   const kept = found.filter((f) => !found.some((g) => g !== f && g.steps.length > f.steps.length && g.steps.join(' ').includes(f.steps.join(' '))));
+  // 4.48: a circle-of-fifths run anywhere, and the part as one loop
+  for (const x of morePatterns(seq.map((s) => s.core), kept, { minor: Boolean(key && key.mode === 'minor') })) {
+    const span = seq.slice(x.start, x.start + x.length);
+    if (!span.length) continue;
+    const last = span[span.length - 1];
+    kept.push({ name: x.name, hint: x.hint, steps: x.steps, chords: span.map((s) => s.chord).concat(x.steps.length > span.length ? [seq[0].chord] : []), start: { row: span[0].row, bar: span[0].bar }, end: { row: last.row, bar: last.bar }, words: span[0].words, round: false });
+  }
   // numbered in the order they come in the song
   kept.sort((a, b) => a.start.row - b.start.row || a.start.bar - b.start.bar);
   return kept.map((f, i) => ({ ...f, n: i + 1 }));
@@ -242,7 +249,7 @@ function chordMap(ir, schedule, analysis) {
       else if (pairs.some((x) => x >= 0.8)) wordsEach = 'some';
       else wordsEach = 'new';
     }
-    const marks = key ? partPatterns(rows) : [];
+    const marks = key ? partPatterns(rows, key) : [];
     // 4.41: named as the song names it: "Verse 5" for a part heard once, "Chorus and Verse"
     // when the verse and chorus share the chords, so the map and the route agree
     const steps = ((analysis && analysis.route) || []).filter((r) => r.letter === p.letter);

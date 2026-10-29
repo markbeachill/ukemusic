@@ -58,7 +58,16 @@ const PATTERNS = [
   { name: 'Mixolydian', steps: ['I', 'bVII', 'I'], hint: 'home and the flat seven.' },
   { name: 'Andalusian (minor)', steps: ['i', 'VII', 'VI', 'V'], hint: 'stepping down from home to five: flamenco, "Hit the Road Jack".' },
   { name: 'Minor one-four-five', steps: ['i', 'iv', 'V', 'i'], hint: 'the minor three-chord trick.' },
-  { name: 'Minor folk', steps: ['i', 'III', 'IV', 'VI'], hint: '"House of the Rising Sun"-style minor ballad.' }
+  { name: 'Minor folk', steps: ['i', 'III', 'IV', 'VI'], hint: '"House of the Rising Sun"-style minor ballad.' },
+  // 4.48: more of the standard ones
+  { name: 'Eight Days a Week', steps: ['I', 'II', 'IV', 'I'], hint: 'home, a bright major two that sounds as if it\'s heading for five, but drops to four instead, then home ("Eight Days a Week").' },
+  { name: 'Garage-rock riff', steps: ['I', 'IV', 'V', 'IV'], hint: 'one, four, five, back to four, round and round ("Wild Thing", "Twist and Shout", "La Bamba").' },
+  { name: 'Pachelbel\'s Canon', steps: ['I', 'V', 'vi', 'iii', 'IV', 'I', 'IV', 'V'], hint: 'stepping down in pairs, then back up to five: the "Canon in D" chords ("Streets of London", "Go West").' },
+  { name: 'Salty Dog', steps: ['VI', 'II', 'V', 'I'], hint: 'three major sevenths round the circle of fifths, each pulling to the next, then home ("Salty Dog", "Sweet Georgia Brown").' },
+  { name: 'Minor four', steps: ['I', 'IV', 'iv', 'I'], hint: 'four, then four turned minor just before home: a bittersweet sigh, loved in ballads and Beatles songs.' },
+  { name: 'Creep', steps: ['I', 'III', 'IV', 'iv'], hint: 'home, a major three, four, then four turned minor: big and sad at once ("Creep").' },
+  { name: 'Minor rock (i–VI–VII)', steps: ['i', 'VI', 'VII', 'i'], hint: 'minor home, down to six, up through seven and home: the rise of a hundred rock songs and sea songs.' },
+  { name: 'Watchtower', steps: ['i', 'VII', 'VI', 'VII'], hint: 'minor home, stepping down two and back: a driving minor riff ("All Along the Watchtower").' }
 ];
 
 const ROLES = {
@@ -127,8 +136,61 @@ function lineSummary(lines) {
   return out.map((l) => (l.times > 1 ? `${l.text} ×${l.times}` : l.text));
 }
 
+// 4.48: a numeral's note, to tell a move up a fourth (round the circle of fifths) from any other
+const ROMAN = { I: 0, II: 1, III: 2, IV: 3, V: 4, VI: 5, VII: 6 };
+function corePc(c, minor = false) {
+  const m = String(c).match(/^([b#]?)(VII|VI|IV|V|III|II|I)/i);
+  if (!m) return null;
+  const scale = minor ? [0, 2, 3, 5, 7, 8, 10] : [0, 2, 4, 5, 7, 9, 11];
+  return (scale[ROMAN[m[2].toUpperCase()]] + (m[1] === 'b' ? -1 : m[1] === '#' ? 1 : 0) + 12) % 12;
+}
+
+/**
+ * More to say about a part's chords than the familiar patterns (4.48):
+ *   * a run of four or more chords, each a fourth up from the last (round the circle of fifths),
+ *     wherever it starts (the named Circle only counts one that ends at home)
+ *   * the whole part as one loop: a named pattern that is the whole part says so ("round 8
+ *     times"); a loop with no name is still a loop to learn ("One loop")
+ * cores: the part's numerals (no repeats in a row); found: the named patterns found (their hints
+ * get "the whole part" added); -> extra patterns [{ name, steps, hint, start, length }]
+ */
+function morePatterns(cores, found, { minor = false } = {}) {
+  const out = [];
+  const pcs = cores.map((c) => corePc(c, minor));
+  let best = null;
+  for (let i = 0; i < cores.length;) {
+    let j = i;
+    while (j + 1 < cores.length && pcs[j] !== null && pcs[j + 1] !== null && (pcs[j + 1] - pcs[j] + 12) % 12 === 5) j += 1;
+    if (j - i + 1 >= 4 && (!best || j - i + 1 > best.length)) best = { start: i, length: j - i + 1 };
+    i = j > i ? j : i + 1;
+  }
+  if (best) {
+    const steps = cores.slice(best.start, best.start + best.length);
+    // not when a named pattern already tells (most of) it: three steps of it in a row
+    const threes = steps.slice(0, -2).map((_, i) => steps.slice(i, i + 3).join(' '));
+    if (!found.some((f) => threes.some((t) => f.steps.join(' ').includes(t)))) {
+      out.push({ name: 'Round the circle', steps, hint: `each chord a fourth up from the last, ${steps.length} in a row: round the circle of fifths, each one pulling to the next${steps[steps.length - 1] === 'I' || steps[steps.length - 1] === 'i' ? ', and home' : ''}.`, start: best.start, length: best.length });
+    }
+  }
+  const c = cycle(cores);
+  if (c.times >= 2 && c.unit.length >= 2 && c.unit.length <= 8) {
+    const unit = c.unit.join(' ');
+    const isUnit = (steps) => {
+      const s = steps.length > 2 && steps[steps.length - 1] === steps[0] ? steps.slice(0, -1) : steps;
+      return s.length === c.unit.length && [...s, ...s].join(' ').includes(unit);
+    };
+    const named = found.find((f) => isUnit(f.steps));
+    if (named) named.hint = `${named.hint.replace(/\.$/, '')}. Here it's the whole part, round ${c.times} times.`;
+    else {
+      const steps = c.end === c.unit[0] ? [...c.unit, c.end] : c.unit;
+      out.push({ name: 'One loop', steps, hint: `the whole part is these ${c.unit.length} chords, round and round (${c.times} times): learn this loop and you have the part.`, start: 0, length: Math.min(steps.length, cores.length) });
+    }
+  }
+  return out;
+}
+
 /** Where a pattern appears in a list of numerals (as a loop too: vi IV I V inside I V vi IV I…) */
-function findPatterns(cores) {
+function findPatterns(cores, { minor = false } = {}) {
   const found = [];
   if (!cores.length) return found;
   const loop = [...cores, ...cores.slice(0, 3)];
@@ -142,7 +204,9 @@ function findPatterns(cores) {
     }
   }
   // Prefer the longer, more telling ones: drop a short pattern inside one already found
-  return found.filter((f) => !found.some((g) => g !== f && g.steps.length > f.steps.length && g.steps.join(' ').includes(f.steps.join(' '))));
+  const kept = found.filter((f) => !found.some((g) => g !== f && g.steps.length > f.steps.length && g.steps.join(' ').includes(f.steps.join(' '))));
+  for (const x of morePatterns(cores, kept, { minor })) kept.push({ name: x.name, steps: x.steps, hint: x.hint });
+  return kept;
 }
 
 /** 12-bar blues: I I I I IV IV I I V IV I V (or V7s), from chords bar by bar */
@@ -405,7 +469,7 @@ function analyse(irNodes, { key = null } = {}) {
     part.occurrences = part.blocks.map((b) => ({ index: blocks.indexOf(b) + 1, line: b.first, words: openingWords(b) }));
     part.patterns = isTwelveBar(part.blocks[0].cores)
       ? [{ name: '12-bar blues', steps: part.blocks[0].cores, hint: 'four bars of one, two of four, two of one, then five, four, one (five).' }]
-      : findPatterns(part.blocks[0].cores);
+      : findPatterns(part.blocks[0].cores, { minor: k.mode === 'minor' });
   }
   const hasChorus = parts.some((p) => /^(chorus|refrain)/i.test(p.name));
   for (const part of parts) {
@@ -487,4 +551,4 @@ function addLabels(text, result) {
   return { text: lines.join('\n'), added: todo.length };
 }
 
-module.exports = { roleOf, songKeyGuess, partStarts, numeral, addLabels, openingWords, analyse, analysisText, sectionChords, songBlocks, findPatterns, lineSummary, repeatUnit, PATTERNS };
+module.exports = { roleOf, songKeyGuess, partStarts, numeral, addLabels, openingWords, analyse, analysisText, sectionChords, songBlocks, findPatterns, morePatterns, corePc, lineSummary, repeatUnit, PATTERNS };

@@ -96,7 +96,8 @@ test('#20 a part made of two others', () => {
 
 test('#5 #8 #11 #15 patterns: in song order, five of five found, no wrap-round noise, a loop once', () => {
   const danny = mapOf(pd('Danny Boy'), 'C').map.parts[0].marks;
-  assert.deepStrictEqual(danny.map((m) => m.name), ['Five of five (II7–V7–I)', 'Amen (plagal)', 'Three-chord trick', '50s / doo-wop']);
+  // 4.48: and the minor four (F Fm C, "from glen to glen")
+  assert.deepStrictEqual(danny.map((m) => m.name), ['Minor four', 'Five of five (II7–V7–I)', 'Amen (plagal)', 'Three-chord trick', '50s / doo-wop']);
   for (let i = 1; i < danny.length; i += 1) assert.ok(danny[i].start.row >= danny[i - 1].start.row, 'numbered as they come');
   assert.ok(!danny.some((m) => m.name === 'Home and away'), 'C G7 | C round the end isn\'t a pattern');
   const pop = mapOf(parse('--START MUSIC--\n[[Verse]]\n[C]a [G]b [Am]c [F]d\n[C]a [G]b [Am]c [F]d\n\n[[Verse]]\n[C]a [G]b [Am]c [F]d\n[C]a [G]b [Am]c [F]d\n--END MUSIC--\n'), 'C').map.parts[0].marks;
