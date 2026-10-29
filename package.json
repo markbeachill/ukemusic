@@ -1,6 +1,6 @@
 {
   "name": "ukemusic",
-  "version": "4.49.0",
+  "version": "4.49.1",
   "repository": "https://github.com/markbeachill/ukemusic",
   "description": "Ukulele chord sheet editor with live preview, fingering diagrams, and tablature support",
   "main": "main.js",
@@ -18,9 +18,9 @@
     "package:linux": "electron-builder --linux --publish never"
   },
   "devDependencies": {
-    "electron": "^41.0.2",
-    "electron-builder": "^26.0.12",
-    "@tombatossals/chords-db": "^0.5.1"
+    "@tombatossals/chords-db": "^0.5.1",
+    "electron": "^45.1.0",
+    "electron-builder": "^26.0.12"
   },
   "build": {
     "appId": "com.ukemusic.app",
@@ -111,10 +111,10 @@
     }
   },
   "dependencies": {
-    "ini": "^6.0.0",
     "@codemirror/commands": "^6.8.1",
+    "@codemirror/language": "^6.11.3",
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.38.6",
-    "@codemirror/language": "^6.11.3"
+    "ini": "^6.0.0"
   }
 }

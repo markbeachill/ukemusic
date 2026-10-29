@@ -1,5 +1,14 @@
 # Changelog
 
+## v4.49.1
+
+### Learn sheets for songs that change key
+- A `{key: G}` above the song's first chord is the key the song is in, not a key change (a song with `{key: G}` before verse 1 and `{key: A}` before verse 3 was said to be in D).
+- The chords are listed in each key: "The chords in G", then "After the key change: the chords in A". A chord that comes in both (E7) is listed in both, with what it does in each: in G it leads into A, the new key.
+- Chord map: a part that comes again in the new key says so under it: "Verse 3 and Verse 4: the same in A, the same numbers. Play A for G, A7 for G7, D for C, E7 for D7."
+- The chord map leaves out the tab's bars (the Picking section has them).
+- The circle of fifths is drawn for the key the song starts in, with a note on where the key change moves home.
+
 ## v4.49.0
 
 ### Key changes

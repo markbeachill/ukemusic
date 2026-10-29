@@ -409,12 +409,27 @@ function partStarts(irNodes) {
 
 /** 4.41: the app's guess at a song's key, from its chords and how its parts start */
 /** 4.49: the song up to its first written key change ({key: A}): the song's own key is the first */
+/** 4.49.1: a {key: G} before the song's first chord says the key it starts in: not a change */
+function openingKey(irNodes) {
+  const nodes = irNodes || [];
+  const kc = nodes.find((n) => n.type === 'keychange' && typeof n.line === 'number');
+  if (!kc) return null;
+  const firstChord = nodes.find((n) => n.type === 'chord' && !n.noChord && n.content && typeof n.line === 'number');
+  if (firstChord && firstChord.line < kc.line) return null;
+  const key = require('./keys').parseKey(kc.content);
+  return key ? { line: kc.line, key } : null;
+}
+const isChange = (n, opening) => n.type === 'keychange' && typeof n.line === 'number' && !(opening && n.line === opening.line);
+
 function beforeKeyChange(irNodes) {
-  const first = (irNodes || []).find((n) => n.type === 'keychange' && typeof n.line === 'number');
+  const opening = openingKey(irNodes);
+  const first = (irNodes || []).find((n) => isChange(n, opening));
   return first ? irNodes.filter((n) => typeof n.line !== 'number' || n.line < first.line) : (irNodes || []);
 }
 
 function songKeyGuess(irNodes) {
+  const opening = openingKey(irNodes);
+  if (opening) return opening.key;
   irNodes = beforeKeyChange(irNodes);
   // a key change that isn't written: the key it starts in
   try { const moved = !irNodes.some((n) => n.type === 'keychange') && guessKeyChange(songBlocks(irNodes)); if (moved) return moved.from; } catch (_e) { /* the usual guess */ }
@@ -426,7 +441,9 @@ function songKeyGuess(irNodes) {
 
 function analyse(irNodes, { key = null } = {}) {
   const all = (irNodes || []).filter((n) => n.type === 'chord' && !n.noChord).map((n) => n.content);
-  let k = key && !key.guessed ? key : null;
+  // (4.49.1: a {key} written above the first chord is the song's key, whatever else was chosen)
+  const opening = openingKey(irNodes);
+  let k = opening ? opening.key : (key && !key.guessed ? key : null);
   if (!k && all.length) {
     // (4.49: from the song's own key, before any written key change)
     const opening = beforeKeyChange(irNodes);
@@ -441,11 +458,11 @@ function analyse(irNodes, { key = null } = {}) {
   if (!k || !all.length) return { key: k, chords: [], parts: [], route: [], sections: [], letters: [], shape: '', summary: [], keyChanges: [] };
   // 4.49: key changes written in the song ({key: A}): the chords after one are numbered in it
   const { parseKey } = require('./keys');
-  const written = (irNodes || []).filter((n) => n.type === 'keychange' && typeof n.line === 'number')
+  const written = (irNodes || []).filter((n) => isChange(n, opening))
     .map((n) => ({ line: n.line, key: parseKey(n.content) })).filter((c) => c.key).sort((a, b) => a.line - b.line);
   // none written: one that seems to happen and stay (and then the song's key, if it was only
   // guessed, is the key it starts in: a song half in G and half in A isn't in D)
-  const chosenKey = Boolean(key && !key.guessed);
+  const chosenKey = Boolean(opening || (key && !key.guessed));
   let movedTo = null;
   if (!written.length) {
     movedTo = guessKeyChange(songBlocks(irNodes));
@@ -453,17 +470,18 @@ function analyse(irNodes, { key = null } = {}) {
     if (movedTo && !chosenKey) k = movedTo.from;
   }
   const keyAt = (line) => { let at = k; for (const c of written) if (c.line <= line) at = c.key; return at; };
+  // the chords, in each key the song is in (4.49.1: E7 before a change to A is VI7 in G, and V7 after it)
   const counts = new Map();
-  const firstLine = new Map();
   for (const n of irNodes || []) {
     if (n.type !== 'chord' || n.noChord) continue;
-    counts.set(n.content, (counts.get(n.content) || 0) + 1);
-    if (!firstLine.has(n.content)) firstLine.set(n.content, n.line);
+    const ck = keyAt(n.line);
+    const id = `${ck.name}|${n.content}`;
+    if (!counts.has(id)) counts.set(id, { chord: n.content, ck, count: 0 });
+    counts.get(id).count += 1;
   }
-  const chords = [...counts.keys()].map((chord) => {
-    const ck = keyAt(firstLine.get(chord));
+  const chords = [...counts.values()].map(({ chord, ck, count }) => {
     const n = numeral(chord, ck);
-    return { chord, numeral: n, role: roleOf(n, ck), count: counts.get(chord), ...(ck !== k ? { inKey: ck.name } : {}) };
+    return { chord, numeral: n, role: roleOf(n, ck), count, ...(ck !== k ? { inKey: ck.name } : {}) };
   });
 
   const blocks = songBlocks(irNodes).map((b) => {
@@ -582,7 +600,11 @@ function analyse(irNodes, { key = null } = {}) {
 
   const uniqueCores = [...new Set(chords.map((c) => core(c.numeral)))];
   const summary = [];
-  summary.push(`${chords.length} chord${chords.length === 1 ? '' : 's'}: ${chords.map((c) => `${c.chord} (${c.numeral})`).join(', ')}`);
+  const listChords = (list) => list.map((c) => `${c.chord} (${c.numeral})`).join(', ');
+  if (written.length) {
+    const keysIn = [...new Set(chords.map((c) => c.inKey || k.name))];
+    summary.push(keysIn.map((name) => `In ${name}: ${listChords(chords.filter((c) => (c.inKey || k.name) === name))}`).join('. '));
+  } else summary.push(`${chords.length} chord${chords.length === 1 ? '' : 's'}: ${listChords(chords)}`);
   if (uniqueCores.length <= 3 && ['I', 'IV', 'V'].every((n) => uniqueCores.includes(n))) summary.push('The three-chord trick: just one, four and five.');
   const big = parts.filter((p) => p.blocks[0].numLines.length > 1 || p.times > 1);
   summary.push(`${blocks.length} part${blocks.length === 1 ? '' : 's'} in the song, but only ${parts.length} different chord pattern${parts.length === 1 ? '' : 's'} to learn${big.length < parts.length ? ` (${big.length} of them more than a chord or two)` : ''}.`);
@@ -619,7 +641,12 @@ function analyse(irNodes, { key = null } = {}) {
       const same = after && blocks.find((b) => b.first < c.line && b.letter === after.letter);
       summary.push(`It changes key: ${move} to ${c.key.name} at ${c.name}.${same ? ` ${sectionName(after)} is ${sectionName(same)}'s chords, ${move}: the same to learn, counted in the new key.` : ''}`);
     }
-    if (lead) summary.push(`${before}, just before it, ${lead}`);
+    if (lead) {
+      summary.push(`${before}, just before it, ${lead}`);
+      // and that's what it does there (not "leads to two")
+      const was = chords.find((x) => x.chord === before && (x.inKey || k.name) === c.from.name);
+      if (was && !c.detected) was.role = `leads into ${c.key.name}, the new key`;
+    }
   }
 
   const sections = blocks.map((b) => ({ line: b.first, labelled: Boolean(plainLabel(b.label)), name: b.label ? String(b.label).replace(/[:：]\s*$/, '').trim() : b.shownName, letter: b.letter, chords: b.chordLines, numerals: b.numLines, lines: compactLines(b.numLines).lines, chordLines: compactLines(b.chordLines).lines, patterns: parts.find((p) => p.letter === b.letter).patterns, sameAs: '' }));
@@ -664,4 +691,4 @@ function addLabels(text, result) {
   return { text: lines.join('\n'), added: todo.length };
 }
 
-module.exports = { roleOf, songKeyGuess, partStarts, numeral, addLabels, openingWords, analyse, analysisText, sectionChords, songBlocks, findPatterns, morePatterns, corePc, lineSummary, repeatUnit, PATTERNS };
+module.exports = { openingKey, roleOf, songKeyGuess, partStarts, numeral, addLabels, openingWords, analyse, analysisText, sectionChords, songBlocks, findPatterns, morePatterns, corePc, lineSummary, repeatUnit, PATTERNS };

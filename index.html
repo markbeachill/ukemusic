@@ -10057,7 +10057,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             sub: creditText(cfg),
             facts,
             map: learn.chordMap(L.ir, schedule, L.analysis),
-            shapes: L.analysis.chords.map((c) => ({ name: c.chord, numeral: c.numeral, role: c.role, svg: learnDiagram(L.library, c.chord) })),
+            shapes: L.analysis.chords.map((c) => ({ name: c.chord, numeral: c.numeral, role: c.role, inKey: c.inKey, svg: learnDiagram(L.library, c.chord) })),
             summary: (L.analysis.summary || []).slice(1),
             changes: learn.songChanges(L.ir, L.library, { tuningName: L.instrument.tuningName }),
             patterns,

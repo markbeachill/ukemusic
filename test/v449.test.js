@@ -95,3 +95,33 @@ test('lines that take no room ({melody}) don\'t split a part', () => {
   const a = p.analyse(parse('--START MUSIC--\n[[Verse]]\n{melody: E E F G}\n[C]a [G]b\n{melody: G F E D}\n[C]c [G]d\n--END MUSIC--\n'), {});
   assert.strictEqual(a.sections.length, 1);
 });
+
+// 4.49.1: Mark's Folsom sheet: {key: G} above the first verse and {key: A} above the third
+test('a {key} above the first chord is the song\'s key, not a change', () => {
+  const text = `--START MUSIC--\n[[Intro]]\n\`\`\`tab\nA|--3--|\n\`\`\`\n{key: G}\n${VERSES(true).replace(/^--START MUSIC--\n/, '')}`;
+  const ir = parse(text);
+  assert.strictEqual(p.songKeyGuess(ir).name, 'G');
+  const a = p.analyse(ir, { key: { ...p.songKeyGuess(ir), guessed: false } });
+  assert.strictEqual(a.key.name, 'G');
+  assert.deepStrictEqual(a.keyChanges.map((c) => c.key.name), ['A']);
+  // even when the song's key was set to something else, the written one counts
+  assert.strictEqual(p.analyse(ir, { key: { tonic: 2, mode: 'major', name: 'D' } }).key.name, 'G');
+  // the chords listed in each key: E7 leads into A before the change, and is V7 after it
+  const e7 = a.chords.filter((c) => c.chord === 'E7');
+  assert.deepStrictEqual(e7.map((c) => [c.numeral, c.inKey || 'G']), [['VI7', 'G'], ['V7', 'A']]);
+  assert.match(e7[0].role, /leads into A/);
+  // the sheet: a group of chords for A; the verses in A as shapes to swap; no tab bars in the map
+  const map = learn.chordMap(ir, buildSchedule(ir, { countIn: false }), a);
+  const verse = map.parts.find((x) => (x.moved || []).length);
+  assert.deepStrictEqual(verse.moved[0].names, ['Verse 3', 'Verse 4']);
+  assert.deepStrictEqual(verse.moved[0].swaps.find(([x]) => x === 'C'), ['C', 'D']);
+  assert.ok(map.parts.every((x) => x.rows.flat().every((b) => !b.chords.includes('tab'))));
+  const html = learn.learnSheetHtml({ map, shapes: a.chords.map((c) => ({ name: c.chord, numeral: c.numeral, role: c.role, inKey: c.inKey })) });
+  assert.ok(html.includes('The chords in G') && html.includes('After the key change: the chords in A'));
+  assert.ok(html.includes('class="moved">Verse 3 and Verse 4: the same in <b>A</b>'));
+  // the circle: drawn in G, with the change as a note
+  const notes = learn.circleNotes(ir, a.key);
+  assert.ok(notes.some((n) => /^E7: the five of A: it leads into the key change/.test(n)), notes.join(' / '));
+  assert.ok(notes.some((n) => /changes key to A: home moves 2 steps clockwise/.test(n)));
+  assert.ok(!notes.some((n) => /^A /.test(n)));
+});

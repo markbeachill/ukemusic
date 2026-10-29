@@ -212,7 +212,7 @@ function chordMap(ir, schedule, analysis) {
     return 0;
   };
   const perBlock = blocks.map(() => []);
-  for (const bar of bars) if (blocks.length) perBlock[blockOf(bar.line)].push(bar);
+  for (const bar of bars) if (blocks.length && !bar.chords.every((c) => c === 'tab')) perBlock[blockOf(bar.line)].push(bar);
   const sections = (analysis && analysis.sections) || [];
   const parts = [];
   for (const p of (analysis && analysis.parts) || []) {
@@ -261,8 +261,28 @@ function chordMap(ir, schedule, analysis) {
     const listed = names.slice(0, 3);
     const name = p.times === 1 && steps[0] && steps[0].name ? steps[0].name : (listed.length > 1 ? `${listed.slice(0, -1).join(', ')} and ${listed[listed.length - 1]}` : (listed[0] || p.name));
     const seq = shown.flatMap((b) => b.chords).filter((c, i, a) => i === 0 || c !== a[i - 1]);
+    // 4.49.1: the times it comes in another key (after {key: A}): the same numbers, other shapes
+    const moved = [];
+    const shownKey = shown.length ? keyAt(shown[0].line) : key;
+    const bestIndex = perBlock.indexOf(best);
+    const split = (lines) => (lines || []).flatMap((l) => String(l).split(' – ')).filter((c, i, a) => i === 0 || c !== a[i - 1]);
+    sections.forEach((sec, i) => {
+      if (sec.letter !== p.letter || i === bestIndex || !shownKey) return;
+      const at = keyAt(sec.line);
+      if (!at || at.name === shownKey.name) return;
+      let m = moved.find((x) => x.key === at.name);
+      if (!m) {
+        const a = split(sections[bestIndex] && sections[bestIndex].chords);
+        const b = split(sec.chords);
+        const swaps = [];
+        if (a.length === b.length) a.forEach((c, j) => { if (!swaps.some(([x]) => x === c)) swaps.push([c, b[j]]); });
+        m = { key: at.name, names: [], swaps };
+        moved.push(m);
+      }
+      m.names.push(sec.name);
+    });
     // the words in a list of their own: a property on an array is lost crossing to the page
-    parts.push({ letter: p.letter, name, times: p.times, rows, words: rows.map((r) => r.words || ''), bars: shown.length, patterns: (p.patterns || []).map((x) => x.name), marks, wordsEach, seq });
+    parts.push({ letter: p.letter, name, times: p.times, rows, words: rows.map((r) => r.words || ''), bars: shown.length, patterns: (p.patterns || []).map((x) => x.name), marks, wordsEach, seq, moved });
   }
   // A part that is just the start of another, another with more on the end, or two others one
   // after the other (4.40.2; 4.41: by the chords in order, however the bars are written)
@@ -451,8 +471,24 @@ function outsideWhy(chord, key, seq = []) {
   return `a passing colour (${n})`;
 }
 
+/**
+ * 4.49.1: the circle is drawn for the key the song starts in: the song up to its first key change
+ * ({key: A} after the first chord), and the change and the chord that leads into it, if any
+ */
+function openingIr(ir) {
+  const nodes = ir || [];
+  const firstChord = nodes.find((n) => n.type === 'chord' && !n.noChord && n.content && typeof n.line === 'number');
+  const change = firstChord && nodes.find((n) => n.type === 'keychange' && typeof n.line === 'number' && n.line > firstChord.line);
+  if (!change) return { ir: nodes, change: null };
+  const before = nodes.filter((n) => typeof n.line !== 'number' || n.line < change.line);
+  const last = chordSequence(before).pop() || '';
+  return { ir: before, change: require('./keys').parseKey(change.content), lead: last };
+}
+
 /** A few sentences about how the song sits on the circle */
 function circleNotes(ir, key) {
+  const opened = openingIr(ir);
+  ir = opened.ir;
   const chords = [...new Set(chordSequence(ir))];
   const fam = keyFamily(key);
   const notes = [];
@@ -469,8 +505,15 @@ function circleNotes(ir, key) {
     else {
       notes.push(`${inside.length ? `${inside.join(', ')} ${inside.length === 1 ? 'is' : 'are'} in the key's family. ` : ''}From outside it:`);
       const seq = chordSequence(ir);
-      for (const c of outside) notes.push(`${c}: ${outsideWhy(c, key, seq)}.`);
+      for (const c of outside) {
+        const leads = opened.change && c === opened.lead && /^V/.test(numeral(c, opened.change));
+        notes.push(`${c}: ${leads ? `the five of ${opened.change.name}: it leads into the key change` : outsideWhy(c, key, seq)}.`);
+      }
     }
+  }
+  if (opened.change && key) {
+    const d = stepsAround(circlePlace(key.name).pos, circlePlace(opened.change.name).pos);
+    notes.push(`Then the song changes key to ${opened.change.name}: home moves ${Math.abs(d) === 1 ? 'one step' : `${Math.abs(d)} steps`} ${d < 0 ? 'anticlockwise' : 'clockwise'} round the circle, and the chords go with it, the same numbers. (The circle here is the key it starts in, ${key.name}.)`);
   }
   const homePos = fam ? fam[1] : null;
   const homeRing = key && key.mode === 'minor' ? 'inner' : 'outer';
@@ -502,6 +545,7 @@ function circleNotes(ir, key) {
  * and arrows for its main moves.
  */
 function circleSvg(ir, key, { size = 440 } = {}) {
+  ir = openingIr(ir).ir;
   const c = size / 2;
   const rOut = size * 0.36;
   const rIn = size * 0.245;
@@ -761,6 +805,7 @@ table.map .n{color:#5b6662;font-size:12px;white-space:nowrap}
 .steps{margin:0;padding-left:18px}
 .notes{border:1px dashed #b9c6c2;border-radius:8px;height:90px;margin-top:4px}
 .foot{margin-top:16px;color:#8a9592;font-size:11px}
+.moved{margin:4px 0 0;font-size:13px}
 .circle{display:flex;gap:16px;align-items:flex-start;break-inside:avoid}
 .circle svg{width:220px;height:auto;flex:none}
 .circle ul{margin:0;padding-left:18px;font-size:13px}
@@ -946,14 +991,20 @@ function learnSheetHtml(info) {
       const story = first ? `. ${esc(m.hint.charAt(0).toUpperCase() + m.hint.slice(1))}` : ' (as before).';
       return `<li><span class="tag">${CIRCLED[m.n - 1] || m.n}</span> <b>${esc(m.name)}</b>: ${esc(m.chords.join(' '))}${m.round ? ' (back to the start)' : ''}, ${esc(m.steps.join(' '))}${m.words && first ? `, in the line “${esc(m.words)}”` : ''}${story}</li>`;
     }).join('');
-    return `<div class="part"><h3><span class="letter">${esc(p.letter)}</span>${esc(p.name)}${times}${likeHtml}</h3><table class="map">${rows}</table>${notes ? `<ul class="marks">${notes}</ul>` : ''}</div>`;
+    const movedHtml = (p.moved || []).map((m) => `<p class="moved">${esc(m.names.join(' and '))}: the same in <b>${esc(m.key)}</b>, the same numbers${m.swaps.length ? `. Play ${m.swaps.map(([a, b]) => `<b>${esc(b)}</b> for ${esc(a)}`).join(', ')}` : ''}.</p>`).join('');
+    return `<div class="part"><h3><span class="letter">${esc(p.letter)}</span>${esc(p.name)}${times}${likeHtml}</h3><table class="map">${rows}</table>${movedHtml}${notes ? `<ul class="marks">${notes}</ul>` : ''}</div>`;
   }).join('');
   const most = [...map.parts].filter((p) => !p.like || p.like.how === 'more' || p.like.how === 'again').sort((a, b) => b.times - a.times)[0];
   // home first, then its closest chords, then the rest (4.40.3)
   // (4.41: by the kind of key: VI is family in a minor key, an outsider in a major one)
   const RANK = map.key && map.key.mode === 'minor' ? ['i', 'iv', 'V', 'v', 'III', 'VI', 'VII', 'ii°', 'ii'] : ['I', 'IV', 'V', 'vi', 'ii', 'iii', 'vii°'];
   const rank = (n) => { const c = String(n || '').replace(/(maj7|7|9|11|13|6|sus2|sus4|sus|add9)$/, ''); const i = RANK.indexOf(c); return i < 0 ? RANK.length : i; };
-  const shapesHtml = shapes.map((x, i) => ({ x, i })).sort((a, b) => rank(a.x.numeral) - rank(b.x.numeral) || a.i - b.i).map(({ x }) => x).map((s) => `<div class="shape"><div class="dg">${String(s.svg || '').replace(/viewBox="0 0 100 (\d+)"/, (m, h) => `viewBox="0 4 100 ${Number(h) - 37}"`)}</div><div class="nm">${esc(s.name)}</div><div class="nu">${esc(s.numeral || '')}</div>${s.role ? `<div class="ro">${esc(s.role)}</div>` : ''}</div>`).join('');
+  const shapeHtml = (list) => list.map((x, i) => ({ x, i })).sort((a, b) => rank(a.x.numeral) - rank(b.x.numeral) || a.i - b.i).map(({ x }) => x).map((s) => `<div class="shape"><div class="dg">${String(s.svg || '').replace(/viewBox="0 0 100 (\d+)"/, (m, h) => `viewBox="0 4 100 ${Number(h) - 37}"`)}</div><div class="nm">${esc(s.name)}</div><div class="nu">${esc(s.numeral || '')}</div>${s.role ? `<div class="ro">${esc(s.role)}</div>` : ''}</div>`).join('');
+  // 4.49.1: after a key change, the chords in the new key in a group of their own
+  const homeShapes = shapes.filter((s) => !s.inKey);
+  const shapesHtml = shapeHtml(homeShapes);
+  const laterKeys = [...new Set(shapes.filter((s) => s.inKey).map((s) => s.inKey))];
+  const laterHtml = laterKeys.map((k) => `<h2>After the key change: the chords in ${esc(k)}</h2><div class="shapes">${shapeHtml(shapes.filter((s) => s.inKey === k))}</div>`).join('');
   // how much there is to learn: Chord patterns' summary, and the parts that are only bits of others
   const bits = map.parts.filter((p) => p.like && p.like.letter && p.like.how !== 'one');
   const bitsLine = bits.length ? `Not as much to learn as it looks: ${bits.map((p) => `${p.letter} is ${p.like.text}`).join('; ')}.` : '';
@@ -979,7 +1030,7 @@ function learnSheetHtml(info) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}: learn sheet</title><style>${SHEET_CSS}</style></head><body>
 <h1>${esc(title)}</h1>${sub ? `<p class="sub">${esc(sub)}</p>` : ''}
 <div class="facts">${factsHtml}</div>
-${shapesHtml ? `<h2>The chords${map.key && map.key.name ? ` in ${esc(map.key.name)}` : ''}, and how they feel</h2><div class="shapes">${shapesHtml}</div>` : ''}
+${shapesHtml ? `<h2>The chords${map.key && map.key.name ? ` in ${esc(map.key.name)}` : ''}, and how they feel</h2><div class="shapes">${shapesHtml}</div>` : ''}${laterHtml}
 <h2>The song</h2><div class="route">${route}</div>
 ${shortHtml ? `<ul class="short">${shortHtml}</ul>` : (most && most.times > 1 ? `<p>Learn <b>${esc(most.letter)} ${esc(most.name.toLowerCase())}</b> first: it comes ${most.times} times.</p>` : '')}
 ${parts ? `<h2>Chord map</h2>${parts}` : ''}

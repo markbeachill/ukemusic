@@ -2362,7 +2362,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       sub: [view.song.settings?.song?.artist, view.song.settings?.song?.year].filter(Boolean).join(', '),
       facts,
       map: U.learn.chordMap(L.ir, schedule, L.analysis),
-      shapes: L.analysis.chords.map((c) => ({ name: c.chord, numeral: c.numeral, role: c.role, svg: diagram(c.chord, L.lib) })),
+      shapes: L.analysis.chords.map((c) => ({ name: c.chord, numeral: c.numeral, role: c.role, inKey: c.inKey, svg: diagram(c.chord, L.lib) })),
       summary: (L.analysis.summary || []).slice(1),
       changes: U.learn.songChanges(L.ir, L.lib, { tuningName: L.inst.tuningName }),
       patterns,
