@@ -251,6 +251,11 @@ function chordProToUkemusic(input) {
     }
 
     const { name, value } = d;
+    // 4.49: a {key} once the song has started is a key change: kept where it is
+    if (name === 'key' && value && meta.key && out.some((l) => /\S/.test(l))) {
+      out.push(`{key: ${value}}`);
+      continue;
+    }
     if (META.includes(name)) {
       if (value && !meta[name]) meta[name] = value;
       if (value) keptFields.push({ name, value });
@@ -562,10 +567,11 @@ function ukemusicToChordPro(irNodes, info = {}) {
     groupIndex += 1;
     // 4.44: {pick} and {melody} lines are ukemusic's own: ChordPro's custom directives (x_), which
     // other ChordPro apps ignore and ukemusic reads back
-    const own = group.filter((n) => n.type === 'pick' || n.type === 'melody');
+    const own = group.filter((n) => n.type === 'pick' || n.type === 'melody' || n.type === 'keychange');
     if (own.length) {
       for (const n of own) {
-        if (n.type === 'pick') out.push(`{x_ukemusic_pick: ${n.pickName ? `${n.pickName}: ` : ''}${n.content}}`.replace(/: \}$/, ':}'));
+        if (n.type === 'keychange') out.push(`{key: ${n.content}}`);   // 4.49: ChordPro's own, mid-song
+        else if (n.type === 'pick') out.push(`{x_ukemusic_pick: ${n.pickName ? `${n.pickName}: ` : ''}${n.content}}`.replace(/: \}$/, ':}'));
         else {
           // in the key the chords are written in for this export
           const shift = Number(info.tuneShift) || 0;
@@ -574,7 +580,7 @@ function ukemusicToChordPro(irNodes, info = {}) {
           out.push(`{x_ukemusic_melody${n.format === 'abc' ? '_abc' : ''}: ${moved.slice(moved.indexOf(':') + 1).replace(/\}\s*$/, '').trim()}}`);
         }
       }
-      group = group.filter((n) => n.type !== 'pick' && n.type !== 'melody');
+      group = group.filter((n) => n.type !== 'pick' && n.type !== 'melody' && n.type !== 'keychange');
       if (!group.length) continue;
     }
     const lyrics = group.filter((n) => n.type === 'lyric' && n.content.trim());

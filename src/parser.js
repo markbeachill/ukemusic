@@ -7,6 +7,7 @@ const STRUCTURE_RE = /^\s*\[\[(.*?)\]\]\s*$/; // 4.26: spaces around a heading l
 const RHYTHM_RE = /^\{([^}]*)\}$/;
 const VOICE_RE = /^\s*\{\s*(harmony|lead)\s*\}\s*$/i; // 4.34: harmony lines (in italics) until {lead}
 const PICK_RE = /^\s*\{\s*pick(?:\s+([A-Za-z][\w-]*))?\s*(?::\s*(.*?))?\s*\}\s*$/i; // 4.44: {pick: …}
+const KEY_RE = /^\s*\{\s*key\s*:\s*([A-Ga-g][#b♯♭]?\s*(?:m|min|minor|maj|major)?)\s*\}\s*$/i; // 4.49: {key: A}, a key change
 const TAB_START_RE = /^```tab(?:\s+(\d+)\s*\/\s*(\d+))?\s*$/; // 4.44: ```tab 4/4: timed by its bars
 const TAB_END_RE = /^```\s*$/;
 
@@ -102,6 +103,14 @@ function parseLineContent(lineText, lineNumber, nodes, options) {
   const pick = lineText.match(PICK_RE);
   if (pick) {
     nodes.push({ ...createNode('pick', (pick[2] || '').trim(), lineNumber, null, []), pickName: pick[1] || '' });
+    return;
+  }
+
+  // 4.49: {key: A} on its own line: the key changes here (the song moves up to A). Learn numbers
+  // the chords after it in the new key; the sheet shows a small "Key change" mark.
+  const keyChange = lineText.match(KEY_RE);
+  if (keyChange) {
+    nodes.push(createNode('keychange', keyChange[1].replace(/\s+/g, '').replace(/^([a-g])/, (c) => c.toUpperCase()).replace(/(major|maj)$/i, '').replace(/(minor|min)$/i, 'm'), lineNumber, null, []));
     return;
   }
 

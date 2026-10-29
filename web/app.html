@@ -2246,7 +2246,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       const html = U.pickSheet.pickSheetHtml({
         title: view.song.title,
         sub: [view.song.settings?.song?.artist, view.song.settings?.song?.year].filter(Boolean).join(', '),
-        facts: [['Key', key ? U.keys.describe(key) : ''], ['Capo', p.capo ? String(p.capo) : ''], ['Time', p.beats === 6 ? '6/8' : `${p.beats}/4`], ['Tempo', `${p.tempo} bpm`], ['First note', U.picking.noteName(view.song.settings?.song?.first_note, p.transpose)], ['Plays', p.instrument !== 'soprano' ? L.inst.name : '']],
+        facts: [['Key', key ? [U.keys.describe(key), ...(L.analysis.keyChanges || []).filter((c) => !c.detected).map((c) => `then ${U.keys.describe(c.key)} (${c.name})`)].join(', ') : ''], ['Capo', p.capo ? String(p.capo) : ''], ['Time', p.beats === 6 ? '6/8' : `${p.beats}/4`], ['Tempo', `${p.tempo} bpm`], ['First note', U.picking.noteName(view.song.settings?.song?.first_note, p.transpose)], ['Plays', p.instrument !== 'soprano' ? L.inst.name : '']],
         patternId, instrument: p.instrument, beats: p.beats, ir: L.ir, schedule,
         chordDef: (name) => U.chordDefinition(L.lib, name),
         made: new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
@@ -2348,7 +2348,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     const patterns = [];
     for (const part of L.analysis.parts) for (const pat of part.patterns || []) if (!patterns.some((x) => x.name === pat.name)) patterns.push({ name: pat.name, hint: pat.hint });
     const facts = [
-      ['Key', key ? U.keys.describe(key) : ''],
+      ['Key', key ? [U.keys.describe(key), ...(L.analysis.keyChanges || []).filter((c) => !c.detected).map((c) => `then ${U.keys.describe(c.key)} (${c.name})`)].join(', ') : ''],   // 4.49
       ['Capo', p.capo ? String(p.capo) : ''],
       ['Time', p.beats === 6 ? '6/8' : `${p.beats}/4`],
       ['Tempo', `${p.tempo} bpm`],

@@ -10043,7 +10043,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const patterns = [];
           for (const part of L.analysis.parts) for (const pat of part.patterns || []) if (!patterns.some((x) => x.name === pat.name)) patterns.push({ name: pat.name, hint: pat.hint });
           const facts = [
-            ['Key', key ? window.ukemusic.keys.describe(key) : ''],
+            ['Key', key ? [window.ukemusic.keys.describe(key), ...(L.analysis.keyChanges || []).filter((c) => !c.detected).map((c) => `then ${window.ukemusic.keys.describe(c.key)} (${c.name})`)].join(', ') : ''],   // 4.49: and the key it changes to
             ['Capo', L.capo ? String(L.capo) : ''],
             ['Time', beats === 6 ? '6/8' : `${beats}/4`],
             ['Tempo', `${tempo} bpm`],
@@ -10090,7 +10090,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             title: state.song.title,
             sub: creditText(cfg),
             facts: [
-              ['Key', key ? window.ukemusic.keys.describe(key) : ''],
+              ['Key', key ? [window.ukemusic.keys.describe(key), ...(L.analysis.keyChanges || []).filter((c) => !c.detected).map((c) => `then ${window.ukemusic.keys.describe(c.key)} (${c.name})`)].join(', ') : ''],   // 4.49: and the key it changes to
               ['Capo', L.capo ? String(L.capo) : ''],
               ['Time', beats === 6 ? '6/8' : `${beats}/4`],
               ['Tempo', `${tempo} bpm`],

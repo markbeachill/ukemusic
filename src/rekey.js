@@ -38,6 +38,14 @@ function rewriteText(text, semitones, { key = null, instrument = 'soprano' } = {
       tab = [];
       continue;
     }
+    // 4.49: a key change moves too
+    const kc = line.match(/^(\s*\{\s*key\s*:\s*)([^}]+?)(\s*\}\s*)$/i);
+    if (kc) {
+      const keys = require('./keys');
+      const k = keys.parseKey(kc[2]);
+      out.push(k ? `${kc[1]}${keys.transposeKey(k, semitones).name}${kc[3]}` : line);
+      continue;
+    }
     // 4.44: the tune moves too
     if (melodyLine(line)) {
       out.push(transposeMelodyLine(line, semitones, (n) => transposeName(n, semitones, key)));

@@ -669,6 +669,8 @@ function sheetCss() {
   .inline-line .ichord .ib { font-weight: 400; opacity: 0.7; }
   .inline-line .bar { margin: 0 0.3em; }
   .chords-only { white-space: pre-wrap; }
+  .key-change { display: inline-block; margin: 0.6em 0 0.2em; padding: 0.1em 0.6em; border: 1px solid var(--chord-color, #b22222); border-radius: 999px; color: var(--chord-color, #b22222); font-family: var(--font-family, system-ui, sans-serif); font-size: 0.85em; }
+  @media print { .key-change { color: #000; border-color: #000; } }
   @media print { .inline-line .ichord { color: #000; } }`
     + require('./notation-svg').tuneCss();
 }
@@ -724,7 +726,17 @@ function renderHtml(irNodes, options = {}) {
     if (!sectionHasLines || sectionRepeats) output[sectionAt] = '<section class="song-section section-cue">';
     output.push('</section>');
   };
-  for (const group of groups) {
+  for (let group of groups) {
+    // 4.49: a key change ({key: A}): a small mark where it happens (it takes no line of its own)
+    const keyChanges = group.filter((n) => n.type === 'keychange');
+    if (keyChanges.length) {
+      group = group.filter((n) => n.type !== 'keychange');
+      const mark = keyChanges.map((n) => `<div class="key-change">Key change: <b>${escapeHtml(n.content)}</b></div>`).join('');
+      const nextIsHeading = group.length === 1 && group[0].type === 'structure';
+      if (!group.length || !nextIsHeading) output.push(mark);
+      else { closeSection(); sectionOpen = false; output.push(mark); }
+      if (!group.length) continue;
+    }
     // [[Label]] followed by anything on the same line: bold label at the start of that line
     const { label, body } = splitInlineLabel(group);
     let html = renderGroup(body, normalizedOptions, state);

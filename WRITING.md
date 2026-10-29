@@ -381,6 +381,24 @@ When some lines are a harmony part sung with (or over) the main line, put `{harm
 
 ---
 
+## Key changes
+
+Some songs move up partway through ("Folsom Prison Blues" goes from G up to A for its last verses). Write the new key on a line of its own where it changes:
+
+```
+[D7x2]…and I hang my head and [G]cry
+[E7]
+{key: A}
+[[Verse 3]]
+[Ax3]…
+```
+
+- The sheet shows a small **Key change: A** mark there, and karaoke says it as it comes.
+- **Learn** counts the chords after it in the new key, so verse 3 in A is still verse 1, up a tone: one pattern to learn, not two. The learn sheet's key reads "G major, then A major (Verse 3)".
+- Changing the key you play in, or rewriting the song in another key, moves it too.
+- The song's own key (on the Info tab) is the key it starts in.
+- If you haven't written one, Learn spots a change that comes and stays, and says where to write it (on the learn sheet and in Chord patterns). It also points out the chord that leads into the new key, usually its five (E7 into A).
+
 ## The song's details
 
 Artist, year, written by, album, source, tags and difficulty go on the **Info** tab beside the song, not in the song text, with the song's original key, time and tempo. Notes and history go on the **Notes** tab. How you play it (the key you play in, saved keys, capo, instrument, strum) is on the **This song** tab.

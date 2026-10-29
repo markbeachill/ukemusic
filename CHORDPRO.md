@@ -21,7 +21,7 @@ Nothing in the file is thrown away. Whatever ukemusic doesn't turn into part of 
 | `{title}` / `{t}` | The song's name |
 | `{artist}`, or `{subtitle}` / `{st}` when there's no artist | Artist |
 | `{composer}`, `{lyricist}` | Written by |
-| `{key}` | Key |
+| `{key}` | Key (a second `{key}` later in the song is a key change, kept where it is as `{key: A}`, and saved out the same way) |
 | `{time: 3/4}` | Time (2/4, 3/4, 4/4 or 6/8) |
 | `{tempo}` | Tempo, if it's between 40 and 240 |
 | `{album}`, `{year}` | Album, year |

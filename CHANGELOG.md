@@ -1,5 +1,14 @@
 # Changelog
 
+## v4.49.0
+
+### Key changes
+- **`{key: A}`** on a line of its own: the song changes key there ("Folsom Prison Blues" moves from G up to A). The sheet shows a small **Key change: A** mark; karaoke says it as it comes; changing the key you play in, or rewriting the song in another key, moves it too; ChordPro saves it as `{key: A}` mid-song, and a second `{key}` in a ChordPro file comes in as a key change.
+- **Learn counts the chords after a key change in the new key**, so a verse a tone up is still the same verse (one pattern to learn, and the learn sheet says so: "Verse 3 is Verse 1's chords, up a tone"). The chords on the learn sheet are numbered in the key they come in, and its key reads "G major, then A major (Verse 3)". The song's key is guessed from the part before the change (a song half in G and half in A was being called D).
+- **Learn spots a key change you haven't written**: one that comes and stays to the end. The learn sheet and Chord patterns say "It seems to move up a tone to A at Verse 3: write {key: A} on a line above it".
+- **The chord that leads into it**: when the chord just before is the new key's five (E7 into A), Learn says so: the pivot, or turnaround.
+- Fixed: a `{melody}` or `{pick}` line inside a verse no longer splits it into separate parts in Learn.
+
 ## v4.48.0
 
 ### Learn: more of the chord patterns players know

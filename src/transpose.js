@@ -109,6 +109,15 @@ function transposeTabNodes(irNodes, semitones, options) {
 }
 
 function transposeIR(irNodes, semitones, options = {}) {
+  // 4.49: a key change ({key: A}) moves with the chords
+  if (semitones !== 0 && irNodes.some((n) => n.type === 'keychange')) {
+    const keys = require('./keys');
+    irNodes = irNodes.map((n) => {
+      if (n.type !== 'keychange') return n;
+      const k = keys.parseKey(n.content);
+      return k ? { ...n, content: keys.transposeKey(k, semitones).name } : n;
+    });
+  }
   if (options.tab !== false && irNodes.some((n) => n.type === 'tab') && (semitones !== 0 || options.instrument)) {
     irNodes = transposeTabNodes(irNodes, semitones, options);
   }

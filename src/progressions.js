@@ -189,6 +189,52 @@ function morePatterns(cores, found, { minor = false } = {}) {
   return out;
 }
 
+// ── Key changes (4.49) ──
+const MOVES = { 1: 'up a semitone', 2: 'up a tone', 3: 'up a minor third', 4: 'up a major third', 5: 'up a fourth', 6: 'a tritone away', 7: 'down a fourth', 8: 'down a major third', 9: 'down a minor third', 10: 'down a tone', 11: 'down a semitone' };
+function keyMove(from, to) {
+  if (!from || !to) return 'to a new key';
+  const d = (to.tonic - from.tonic + 12) % 12;
+  if (d === 0) return to.mode !== from.mode ? (to.mode === 'minor' ? 'to the minor' : 'to the major') : 'to the same key';
+  return MOVES[d];
+}
+/** Does this chord lead into a key? "is the five of A: it leads into the new key" */
+function leadsInto(chordName, key) {
+  const parsed = parseChordName(chordName);
+  if (!parsed || !key || parsed.rootIndex === undefined) return '';
+  const rel = (parsed.rootIndex - key.tonic + 12) % 12;
+  const q = chordQuality(parsed.suffix);
+  if (rel === 7 && q === 'maj') return `is the five of ${key.name}: it leads into the new key (a "pivot" or turnaround).`;
+  if (rel === 2 && q === 'maj') return `is the five of five in ${key.name}: it leads on to five, then home in the new key.`;
+  return '';
+}
+/** Chords in a key's family: how many fit (I ii iii IV V vi vii°, and the minor key's) */
+const FAMILY = { major: new Set(['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°']), minor: new Set(['i', 'ii°', 'III', 'iv', 'v', 'V', 'VI', 'VII']) };
+function fitIn(chordNames, key) {
+  if (!chordNames.length) return 0;
+  const fam = FAMILY[key.mode === 'minor' ? 'minor' : 'major'];
+  return chordNames.filter((c) => fam.has(core(numeral(c, key)))).length / chordNames.length;
+}
+/**
+ * A key change that happens and stays, when none is written: the first part from which the rest
+ * of the song fits another key well and the song's key badly (and what came before fits the
+ * song's key). -> { line, key, block } or null
+ */
+function guessKeyChange(blocks) {
+  const chordsOf = (list) => list.flatMap((b) => b.lines.flatMap((l) => l.chords)).filter((c) => c !== 'N.C.');
+  const starts = (list) => list.map((b) => (b.lines.find((l) => l.chords.length) || { chords: [] }).chords[0]).filter(Boolean);
+  for (let i = 1; i < blocks.length; i += 1) {
+    const before = chordsOf(blocks.slice(0, i));
+    const after = chordsOf(blocks.slice(i));
+    if (after.length < 4 || before.length < 4) continue;
+    const k1 = (rankKeys(before, { starts: starts(blocks.slice(0, i)) })[0] || {}).key;
+    const k2 = (rankKeys(after, { starts: starts(blocks.slice(i)) })[0] || {}).key;
+    if (!k1 || !k2 || (k2.tonic === k1.tonic && k2.mode === k1.mode)) continue;
+    const there = fitIn(after, k2);
+    if (there >= 0.9 && fitIn(after, k1) <= there - 0.3 && fitIn(before, k1) >= 0.75) return { line: blocks[i].first, key: k2, from: k1, block: blocks[i] };
+  }
+  return null;
+}
+
 /** Where a pattern appears in a list of numerals (as a loop too: vi IV I V inside I V vi IV I…) */
 function findPatterns(cores, { minor = false } = {}) {
   const found = [];
@@ -246,10 +292,13 @@ const plainLabel = (label) => String(label || '').replace(/[:：]\s*$/, '').repl
 /** The song as blocks: [{ label, lines: [{ chords, words }], first }] */
 function songBlocks(irNodes) {
   const byLine = new Map();
+  const silent = new Set();   // lines that take no room: not a blank line between two others
   let lastChord = null;
   const order = [];
   for (const node of irNodes || []) {
     if (typeof node.line !== 'number') continue;
+    // lines that take no room ({melody}, {pick}, {key}) don't end a part (4.49)
+    if (node.type === 'melody' || node.type === 'pick' || node.type === 'keychange') { silent.add(node.line); continue; }
     if (!byLine.has(node.line)) { byLine.set(node.line, { chords: [], words: '', heading: null, held: null, startsWithWords: null, segments: [] }); order.push(node.line); }
     const l = byLine.get(node.line);
     if (node.type === 'structure') { l.heading = String(node.content || ''); continue; }
@@ -295,7 +344,8 @@ function songBlocks(irNodes) {
   let previous = null;
   for (const n of lines) {
     const l = byLine.get(n);
-    const blankBefore = previous !== null && n > previous + 1;
+    let blankBefore = false;
+    if (previous !== null) for (let g = previous + 1; g < n && !blankBefore; g += 1) if (!silent.has(g)) blankBefore = true;
     const empty = !l.chords.length && !l.words.trim() && !l.heading;
     if (l.heading !== null || blankBefore || empty) close();
     if (empty) { previous = n; continue; }
@@ -358,7 +408,16 @@ function partStarts(irNodes) {
 }
 
 /** 4.41: the app's guess at a song's key, from its chords and how its parts start */
+/** 4.49: the song up to its first written key change ({key: A}): the song's own key is the first */
+function beforeKeyChange(irNodes) {
+  const first = (irNodes || []).find((n) => n.type === 'keychange' && typeof n.line === 'number');
+  return first ? irNodes.filter((n) => typeof n.line !== 'number' || n.line < first.line) : (irNodes || []);
+}
+
 function songKeyGuess(irNodes) {
+  irNodes = beforeKeyChange(irNodes);
+  // a key change that isn't written: the key it starts in
+  try { const moved = !irNodes.some((n) => n.type === 'keychange') && guessKeyChange(songBlocks(irNodes)); if (moved) return moved.from; } catch (_e) { /* the usual guess */ }
   const all = (irNodes || []).filter((n) => n.type === 'chord' && !n.noChord && n.content).map((n) => n.content);
   if (!all.length) return null;
   const ranked = rankKeys(all, { starts: partStarts(irNodes) });
@@ -369,25 +428,48 @@ function analyse(irNodes, { key = null } = {}) {
   const all = (irNodes || []).filter((n) => n.type === 'chord' && !n.noChord).map((n) => n.content);
   let k = key && !key.guessed ? key : null;
   if (!k && all.length) {
+    // (4.49: from the song's own key, before any written key change)
+    const opening = beforeKeyChange(irNodes);
+    const guessFrom = opening.filter((n) => n.type === 'chord' && !n.noChord).map((n) => n.content);
     // Guessing: the likeliest key, unless its home chord neither starts nor ends the song and a
     // close runner-up's does (a song in D with C and F chords can look like G)
-    const ranked = rankKeys(all, { starts: partStarts(irNodes) });
+    const ranked = rankKeys(guessFrom.length ? guessFrom : all, { starts: partStarts(opening) });
     const top = ranked[0];
     const close = ranked.filter((r) => top && r.score >= Math.min(top.score - 2.5, top.score * 0.9));
     k = top && (top.starts || top.ends) ? top.key : ((close.find((r) => r.ends) || close.find((r) => r.starts) || top || {}).key || null);
   }
-  if (!k || !all.length) return { key: k, chords: [], parts: [], route: [], sections: [], letters: [], shape: '', summary: [] };
+  if (!k || !all.length) return { key: k, chords: [], parts: [], route: [], sections: [], letters: [], shape: '', summary: [], keyChanges: [] };
+  // 4.49: key changes written in the song ({key: A}): the chords after one are numbered in it
+  const { parseKey } = require('./keys');
+  const written = (irNodes || []).filter((n) => n.type === 'keychange' && typeof n.line === 'number')
+    .map((n) => ({ line: n.line, key: parseKey(n.content) })).filter((c) => c.key).sort((a, b) => a.line - b.line);
+  // none written: one that seems to happen and stay (and then the song's key, if it was only
+  // guessed, is the key it starts in: a song half in G and half in A isn't in D)
+  const chosenKey = Boolean(key && !key.guessed);
+  let movedTo = null;
+  if (!written.length) {
+    movedTo = guessKeyChange(songBlocks(irNodes));
+    if (movedTo && chosenKey && !(movedTo.from.tonic === k.tonic && movedTo.from.mode === k.mode)) movedTo = null;
+    if (movedTo && !chosenKey) k = movedTo.from;
+  }
+  const keyAt = (line) => { let at = k; for (const c of written) if (c.line <= line) at = c.key; return at; };
   const counts = new Map();
-  for (const c of all) counts.set(c, (counts.get(c) || 0) + 1);
+  const firstLine = new Map();
+  for (const n of irNodes || []) {
+    if (n.type !== 'chord' || n.noChord) continue;
+    counts.set(n.content, (counts.get(n.content) || 0) + 1);
+    if (!firstLine.has(n.content)) firstLine.set(n.content, n.line);
+  }
   const chords = [...counts.keys()].map((chord) => {
-    const n = numeral(chord, k);
-    return { chord, numeral: n, role: roleOf(n, k), count: counts.get(chord) };
+    const ck = keyAt(firstLine.get(chord));
+    const n = numeral(chord, ck);
+    return { chord, numeral: n, role: roleOf(n, ck), count: counts.get(chord), ...(ck !== k ? { inKey: ck.name } : {}) };
   });
 
   const blocks = songBlocks(irNodes).map((b) => {
-    const numLines = b.lines.filter((l) => l.chords.length).map((l) => l.chords.map((c) => numeral(c, k)).join(' – '));
+    const numLines = b.lines.filter((l) => l.chords.length).map((l) => l.chords.map((c) => numeral(c, keyAt(l.line))).join(' – '));
     const chordLines = b.lines.filter((l) => l.chords.length).map((l) => l.chords.join(' – '));
-    const cores = squash(b.lines.flatMap((l) => l.chords).map((c) => core(numeral(c, k))));
+    const cores = squash(b.lines.flatMap((l) => l.chords.map((c) => core(numeral(c, keyAt(l.line))))));
     return { ...b, numLines, chordLines, cores, sig: cycleKey(cores), words: normWords(b.lines.map((l) => l.words).join(' ')) };
   });
 
@@ -510,6 +592,36 @@ function analyse(irNodes, { key = null } = {}) {
   else if (most && most.times >= 2) summary.push(`The ${most.name.toLowerCase()} (${most.letter}) comes ${most.times} times: learn that first.`);
   if (parts.some((p) => p.firstAgain)) summary.push('The first verse comes back at the end.');
 
+  // 4.49: key changes: the ones written in the song, or (when there are none) one that seems to
+  // happen and stay (the last verses a tone higher); and the chord that leads into the new key
+  const keyChanges = [];
+  const sectionName = (b) => (b.label ? String(b.label).replace(/[:：]\s*$/, '').trim() : (b.shownName || `line ${b.first}`));
+  const blockAtLine = (line) => blocks.find((b) => b.first >= line) || null;
+  for (const c of written) {
+    const from = keyAt(c.line - 1);
+    const b = blockAtLine(c.line);
+    keyChanges.push({ line: c.line, key: c.key, from, name: b ? sectionName(b) : `line ${c.line}` });
+  }
+  if (movedTo) {
+    const b = blocks.find((x) => x.first >= movedTo.line) || movedTo.block;
+    keyChanges.push({ line: movedTo.line, key: movedTo.key, from: k, name: sectionName(b), detected: true });
+  }
+  for (const c of keyChanges) {
+    const move = keyMove(c.from, c.key);
+    // the chord just before: the five of the new key leads into it
+    const before = blocks.filter((b) => b.first < c.line).flatMap((b) => b.lines.flatMap((l) => l.chords)).pop();
+    const lead = before ? leadsInto(before, c.key) : '';
+    c.move = move;
+    if (c.detected) summary.push(`It seems to move ${move} to ${c.key.name} at ${c.name}. Write {key: ${c.key.name}} on a line above it, and Learn numbers the chords from there in ${c.key.name} (now it's all counted in ${k.name}).`);
+    else {
+      // a part after the change with the chords of one before it: the same part, moved
+      const after = blocks.find((b) => b.first >= c.line);
+      const same = after && blocks.find((b) => b.first < c.line && b.letter === after.letter);
+      summary.push(`It changes key: ${move} to ${c.key.name} at ${c.name}.${same ? ` ${sectionName(after)} is ${sectionName(same)}'s chords, ${move}: the same to learn, counted in the new key.` : ''}`);
+    }
+    if (lead) summary.push(`${before}, just before it, ${lead}`);
+  }
+
   const sections = blocks.map((b) => ({ line: b.first, labelled: Boolean(plainLabel(b.label)), name: b.label ? String(b.label).replace(/[:：]\s*$/, '').trim() : b.shownName, letter: b.letter, chords: b.chordLines, numerals: b.numLines, lines: compactLines(b.numLines).lines, chordLines: compactLines(b.chordLines).lines, patterns: parts.find((p) => p.letter === b.letter).patterns, sameAs: '' }));
   return {
     key: k,
@@ -519,7 +631,8 @@ function analyse(irNodes, { key = null } = {}) {
     sections,
     letters: parts.map((p) => ({ letter: p.letter, first: p.name, numerals: p.sig })),
     shape: route.map((r) => `${r.name}${r.times > 1 ? ` ×${r.times}` : ''}`).join(' → '),
-    summary
+    summary,
+    keyChanges: keyChanges.map(({ line, key: to, from, name, detected, move }) => ({ line, key: to, from, name, move, ...(detected ? { detected: true } : {}) }))
   };
 }
 

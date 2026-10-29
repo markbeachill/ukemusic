@@ -100,6 +100,11 @@ function buildKaraoke(irNodes, schedule, options = {}) {
       piece = null;
       continue;
     }
+    // 4.49: a key change: said as it comes, like a heading
+    if (node.type === 'keychange') {
+      lines.push({ kind: 'heading', line: node.line, label: `Key change: ${node.content}` });
+      continue;
+    }
     if (node.type === 'structure') {
       const next = nodes[i + 1];
       const alone = !next || next.type === 'linebreak';

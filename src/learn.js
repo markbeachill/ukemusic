@@ -200,6 +200,9 @@ function chordMap(ir, schedule, analysis) {
   const bars = barsOf(schedule);
   const blocks = blockLines(ir);
   const key = analysis && analysis.key;
+  // 4.49: after a key change written in the song ({key: A}), the numbers are in the new key
+  const changes = ((analysis && analysis.keyChanges) || []).filter((c) => !c.detected).sort((a, b) => a.line - b.line);
+  const keyAt = (line) => { let at = key; for (const c of changes) if (c.line <= line) at = c.key; return at; };
   const blockOf = (line) => {
     let found = -1;
     blocks.forEach((b, i) => { if (b.lines.includes(line) || (b.first <= line && found === -1 && i === blocks.length - 1)) found = i; });
@@ -221,7 +224,7 @@ function chordMap(ir, schedule, analysis) {
     });
     const shown = (best || []).map((b) => ({
       chords: b.chords,
-      numerals: b.chords.map((c) => (key && c !== 'N.C.' && c !== 'tab' ? numeral(c, key) : c)),
+      numerals: b.chords.map((c) => (key && c !== 'N.C.' && c !== 'tab' ? numeral(c, keyAt(b.line)) : c)),
       line: b.line
     }));
     // a row per line of the song (its phrases), a long line wrapping at six bars
