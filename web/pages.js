@@ -33,7 +33,7 @@ function siteFooter() {
   return `<footer>
   <div class="wrap">
     <span>ukemusic by Mark Beachill · MIT licence · <a class="repo-link" href="https://github.com/markbeachill/ukemusic">ukemusic on GitHub</a></span>
-    <span class="ref">Reference: <a href="phone.html">Phone and tablet</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a></span>
+    <span class="ref">Reference: <a href="dropbox.html">Shared Dropbox folder</a> · <a href="phone.html">Phone and tablet</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a></span>
     <button class="theme" id="theme" type="button">Light / dark</button>
   </div>
 </footer>`;
@@ -209,6 +209,7 @@ const SONGS_PAGE = {
 </div></div>
 <section><div class="wrap">
   <h2>Four ways in</h2>
+  <p class="intro">Sharing songs with a club or band? <a href="dropbox.html">Use a shared Dropbox folder</a> to keep one collection of song files.</p>
   <div class="grid two">
     <div class="card"><h3>Paste from a website</h3><p>Copy a chord sheet from a website and use <b>File → Paste from website</b>. Chords on their own line above the words are moved into the words for you.</p></div>
     <div class="card"><h3>Your club's songbook</h3><p>A whole folder of ChordPro songs comes in at once, one song each, with tags and links; each subfolder becomes a setlist. Strum marks clubs write in the brackets come in as written.</p></div>
@@ -315,6 +316,7 @@ const PHONE_PAGE = {
 </div></section>
 <section id="dropbox"><div class="wrap">
   <h2>6. One set of songs, everywhere: Dropbox</h2>
+  <p>For a club or band, start with the <a href="dropbox.html">guide to sharing a Dropbox songs folder</a>, including permissions and working together.</p>
   <p class="intro">Put the desktop app's songs folder in Dropbox, and the web player reads and writes the same songs. Change a song on the iPad and it's on your computer a moment later; change it on the computer and the iPad has it the next time it syncs. No files to move about.</p>
   <div class="grid two">
     <div class="card"><h3>Once, on your computer</h3><ol class="steps">
@@ -355,6 +357,82 @@ const PHONE_PAGE = {
     <li>For big jobs (a whole club songbook, printing, PDFs, setlist songbooks) the <a href="./#get">desktop app</a> does more</li>
   </ul></div></div>
   <div class="next-pages" style="margin-top:20px"><a class="btn primary" href="app/">Open the web player</a><a class="btn" href="songs.html">Bring your songs</a><a class="btn" href="guide.html">The song guide</a></div>
+</div></section>`
+};
+
+const DROPBOX_PAGE = {
+  file: 'dropbox.html', title: 'Share song files with Dropbox',
+  blurb: 'Set up a shared Dropbox songs folder for your ukulele club or band, open it in ukemusic, sync phones and tablets, and avoid conflicting edits.',
+  body: () => `
+<div class="page-hero"><div class="wrap">
+  <p class="eyebrow">Songs for your group</p>
+  <h1>One shared folder for your song files</h1>
+  <p class="lede">Keep your club or band's ukemusic songs in Dropbox. Each member opens the same collection through their own Dropbox account, so a saved change can reach everyone when their devices sync.</p>
+  <div class="cta"><a class="btn primary" href="#setup">Set up the folder</a><a class="btn" href="#devices">Open it in ukemusic</a></div>
+</div></div>
+<section><div class="wrap">
+  <h2>Choose who looks after the songs</h2>
+  <p class="intro">A simple arrangement is one song librarian who makes changes, with everyone else taking copies to play. If several people edit, agree who is working on each song before starting.</p>
+  <div class="grid two">
+    <div class="card"><h3>Can edit</h3><p>For the librarian and trusted contributors. Editors can add, change and delete files in the shared folder. Use this permission for ukemusic's two-way Dropbox sync.</p></div>
+    <div class="card"><h3>Can view</h3><p>For members who only need to read or download songs. Download a copy to use locally, or import it into the web player. Local edits do not update the group's folder. The web player's Dropbox sync can write changes, so use downloaded copies for this arrangement.</p></div>
+  </div>
+  <p>Dropbox explains <a href="https://help.dropbox.com/share/set-file-folder-permissions">sharing permissions</a> and <a href="https://help.dropbox.com/share/share-file-or-folder">view-only download links</a>. A link for downloading copies is different from joining a shared folder that stays in sync.</p>
+</div></section>
+<section id="setup"><div class="wrap">
+  <h2>1. Set up and share the folder</h2>
+  <ol class="steps">
+    <li><span><strong>Keep a backup.</strong> Copy your existing ukemusic songs folder somewhere outside Dropbox before changing your setup.</span></li>
+    <li><span><strong>Create a folder in Dropbox</strong> called, for example, <strong>Club songs</strong>. Copy the contents of your ukemusic songs folder into it, keeping each song's whole folder together.</span></li>
+    <li><span><strong>Share the folder on dropbox.com.</strong> Select <strong>Share</strong>, enter each member's email address, choose <strong>Can edit</strong> or <strong>Can view</strong>, and send the invitation. Give people the access agreed above.</span></li>
+    <li><span><strong>Each member accepts the invitation</strong> using their own Dropbox account and adds the shared folder to their Dropbox. For desktop use, install the Dropbox app and wait for the folder to finish syncing.</span></li>
+    <li><span><strong>Make the songs available offline</strong> on each computer: right-click the shared songs folder in File Explorer or Finder and choose Dropbox's <strong>Make available offline</strong>. Wait for the download to finish before opening it in ukemusic.</span></li>
+  </ol>
+  <p>Keep personal songs outside the group's folder. Share the songs folder itself, rather than your whole Dropbox. See Dropbox's <a href="https://help.dropbox.com/sync/access-files-offline">offline file instructions</a> if the menu differs on your device.</p>
+  <div class="note-box"><p><strong>Keep the folder structure.</strong> ukemusic expects one folder per song, with a file ending in <code>-song.txt</code> inside. Keep <code>song.ini</code> and <code>notes.txt</code> alongside it if present; they hold the song's settings and notes. PDFs and exported sheets are useful copies, but do not replace the editable song files.</p></div>
+  <pre class="cmd" aria-label="Example shared songs folder">Dropbox/
+  Club songs/
+    Amazing Grace/
+      Amazing Grace-song.txt
+      song.ini
+      notes.txt
+    Danny Boy/
+      Danny Boy-song.txt</pre>
+</div></section>
+<section id="devices"><div class="wrap">
+  <h2>2. Open the songs in ukemusic</h2>
+  <div class="grid two">
+    <div class="card"><h3>On a computer</h3><ol class="steps">
+      <li><span>In the desktop app, open <strong>Settings → Songs folder</strong>.</span></li>
+      <li><span>Choose your local Dropbox <strong>Club songs</strong> folder: the folder containing all the individual song folders.</span></li>
+      <li><span>Open a song from the library. Editors save normally; Dropbox sends the changed files to the other members.</span></li>
+    </ol><p>Each computer selects its own local copy of the shared folder. The path can be different on every computer. View-only members should work in a downloaded copy outside the shared folder.</p></div>
+    <div class="card"><h3>On a phone, tablet or in a browser</h3><ol class="steps">
+      <li><span>Open the <a href="app/">web player</a> and press <strong>Dropbox…</strong>. If it asks for an app key, follow the <a href="phone.html#dropbox">Dropbox connection and app-key instructions</a>.</span></li>
+      <li><span>Press <strong>Connect to Dropbox</strong> and sign in with your own account. In an iPhone or iPad Home Screen app, use <strong>Connect with a code</strong>.</span></li>
+      <li><span>Choose the shared <strong>Club songs</strong> folder in your Dropbox, then <strong>Use this folder</strong>. Choose the collection, not one song or all of Dropbox.</span></li>
+      <li><span>Press <strong>Sync now</strong> and check it finishes. If asked to upload songs already on your device, only agree if they belong in the group's collection.</span></li>
+    </ol><p>This connection syncs both ways and needs edit access. For view-only use, download song files or a ZIP of the songs folder from Dropbox, then import them into the web player instead.</p></div>
+  </div>
+  <p>The web player keeps songs on the device for offline use and syncs when it opens, shortly after a change, or with <strong>Sync now</strong>. Its Dropbox sync handles song text, song settings and notes; it leaves exports, history and setlists alone. Practice progress stays on each device.</p>
+</div></section>
+<section><div class="wrap">
+  <h2>3. A routine for rehearsals and edits</h2>
+  <ol class="steps">
+    <li><span><strong>Before rehearsal:</strong> connect to the internet and let Dropbox finish. In the web player, press <strong>Sync now</strong>. Open the songs you need and check they work before leaving your connection.</span></li>
+    <li><span><strong>Before editing:</strong> agree who is changing the song, sync first, then open it. If it was already open on a computer while someone changed it elsewhere, open it again to load the new version.</span></li>
+    <li><span><strong>After editing:</strong> save, wait for Dropbox or the web player to report that syncing has finished, then tell the next editor the song is ready.</span></li>
+    <li><span><strong>For your own arrangement:</strong> work on a separate copy outside the shared collection, or agree a clearly named group variant such as <strong>Amazing Grace - easy key</strong>.</span></li>
+  </ol>
+  <div class="note-box" style="margin-top:24px"><p><strong>Changes affect the group.</strong> Renaming, deleting or archiving a shared song can affect everyone when they sync. The web player moves deleted songs to <strong>Archived songs</strong>. Keep a separate backup of the collection and agree who manages removals.</p></div>
+</div></section>
+<section><div class="wrap">
+  <h2>If something goes wrong</h2>
+  <details><summary>I cannot see the shared songs</summary><p>Check that you accepted the invitation with the account you are using, that the folder is visible on dropbox.com, and that syncing has finished. In ukemusic, select the folder containing the individual song folders. A folder of PDFs alone will not become an editable ukemusic library.</p></details>
+  <details><summary>A change has not arrived</summary><p>Save on the device where you made the change, check its connection and sync status, then sync the receiving device. Reopen a song already open in the desktop app. Check that both devices chose the same shared collection.</p></details>
+  <details><summary>I cannot save or sync changes</summary><p>Check your permission with the folder owner: <strong>Can view</strong> does not allow uploads or edits. Check Dropbox for storage or sync errors too. Keep a local backup of unsynced work before disconnecting or changing folders.</p></details>
+  <details><summary>There are two versions of a song</summary><p>If the web player finds changes on both sides since the last sync, it keeps the Dropbox version and a copy labelled <strong>… (changed on this device)</strong>. Dropbox's desktop app can separately create a <strong>conflicted copy</strong> when people edit the same file. Keep both, compare the changes, and ask the librarian to combine them before removing either. See <a href="https://help.dropbox.com/organize/conflicted-copy">Dropbox's conflicted-copy guidance</a>.</p></details>
+  <div class="next-pages" style="margin-top:28px"><a class="btn" href="songs.html">Bring your songs</a><a class="btn" href="phone.html#dropbox">Connect a phone or tablet</a><a class="btn" href="./#get">Get ukemusic</a></div>
 </div></section>`
 };
 
@@ -421,8 +499,9 @@ function build() {
   for (const p of PAGES) fs.writeFileSync(path.join(SITE, p.file), wrapPage(p, pageBody(p), siteCss));
   fs.writeFileSync(path.join(SITE, SONGS_PAGE.file), wrapPage(SONGS_PAGE, SONGS_PAGE.body(), siteCss));
   fs.writeFileSync(path.join(SITE, PHONE_PAGE.file), wrapPage(PHONE_PAGE, PHONE_PAGE.body(), siteCss));
-  return [...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file];
+  fs.writeFileSync(path.join(SITE, DROPBOX_PAGE.file), wrapPage(DROPBOX_PAGE, DROPBOX_PAGE.body(), siteCss));
+  return [...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, DROPBOX_PAGE.file];
 }
 
-module.exports = { build, PAGES, SONGS_PAGE, PHONE_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
+module.exports = { build, PAGES, SONGS_PAGE, PHONE_PAGE, DROPBOX_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
 if (require.main === module) console.log('pages:', build().join(', '));

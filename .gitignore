@@ -15,6 +15,7 @@ site/teach.html
 site/chord-sheets.html
 site/songs.html
 site/phone.html
+site/dropbox.html
 *.AppImage
 *.dmg
 *.exe
