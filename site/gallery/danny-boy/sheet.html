@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Danny Boy</title>
+    <style>
+      html, body { margin: 0; padding: 0; background: var(--bg-color); color: var(--text-color); }
+      body { padding: 16px; }
+      
+  .strum-box { --sb-size: var(--strum-size, max(14px, calc(var(--monospace-size, 14px) * 1.15))); font-size: var(--sb-size); font-family: "Segoe UI", system-ui, -apple-system, sans-serif; color: var(--text-color, #111); margin: 0.35em 0 0.6em; break-inside: avoid; page-break-inside: avoid; }
+  .strum-box .sb-grid { display: grid; grid-template-columns: repeat(var(--steps), 2em); justify-items: center; align-items: end; row-gap: 0.1em; }
+  .strum-box .sb-a { font-size: 1.5em; line-height: 1.05; font-weight: 600; }
+  .strum-box .sb-a.acc { font-weight: 900; text-decoration: underline; text-decoration-thickness: 0.12em; text-underline-offset: 0.15em; color: var(--chord-color, #b22222); }
+  .strum-box .sb-a.rest { opacity: 0.45; }
+  .strum-box .sb-l { font: 700 1.05em/1.2 var(--monospace-font, "Courier New", monospace); }
+  .strum-box .sb-l.acc { font-weight: 900; }
+  .strum-box .sb-n { font-size: 1em; line-height: 1.2; opacity: 0.85; }
+  .strum-box .sb-n.beat { font-weight: 800; opacity: 1; }
+  .strum-box .sb-name { font-weight: 800; font-size: 1em; line-height: 1.3; }
+  .strum-box .sb-sub { font-size: 0.9em; font-weight: 700; line-height: 1.2; }
+  .strum-box .sb-time { font-weight: 900; line-height: 1; }
+
+  /* comic: the info box */
+  .strum-box.style-comic { display: inline-grid; grid-template-columns: auto auto; border: 2px solid #000; box-shadow: 0.2em 0.2em 0 #000; background: #fff; color: #000; }
+  .strum-box.style-comic .sb-tag { background: #000; color: #fff; padding: 0.35em 0.7em; display: grid; align-content: center; gap: 0.15em; min-width: 4.4em; }
+  .strum-box.style-comic .sb-time { font-size: 1.9em; font-family: "Arial Black", "Segoe UI", sans-serif; }
+  .strum-box.style-comic .sb-body { padding: 0.3em 0.7em 0.35em; display: grid; gap: 0.15em; }
+  .strum-box.style-comic .sb-name { text-transform: uppercase; letter-spacing: 0.04em; }
+  .strum-box.style-comic.time-change .sb-tag { background: #fff; color: #000; border-right: 2px solid #000; background-image: repeating-linear-gradient(-45deg, transparent 0 0.35em, rgba(0,0,0,0.12) 0.35em 0.5em); }
+  .strum-box.style-comic.time-change .sb-sub { text-transform: uppercase; }
+
+  /* clean: light and rounded */
+  .strum-box.style-clean { display: inline-grid; grid-template-columns: auto auto; border: 1.5px solid var(--rhythm-color, #666); border-radius: 0.6em; overflow: hidden; }
+  .strum-box.style-clean .sb-tag { padding: 0.35em 0.7em; display: grid; align-content: center; gap: 0.15em; border-right: 1.5px solid var(--rhythm-color, #666); min-width: 4em; }
+  .strum-box.style-clean .sb-time { font-size: 1.7em; }
+  .strum-box.style-clean .sb-body { padding: 0.3em 0.7em 0.35em; display: grid; gap: 0.15em; }
+  .strum-box.style-clean.time-change { border-width: 3px; }
+  .strum-box.style-clean.time-change .sb-tag { border-right-width: 3px; }
+
+  /* compact: one line */
+  .strum-box.style-compact { display: inline-flex; align-items: baseline; gap: 0.7em; border: 1.5px solid var(--text-color, #111); border-radius: 0.3em; padding: 0.1em 0.7em 0.1em 0; }
+  .strum-box.style-compact .sb-time { background: var(--text-color, #111); color: var(--bg-color, #fff); padding: 0.15em 0.5em; font-size: 1.05em; }
+  .strum-box.style-compact .sb-time em { font-style: normal; font-size: 0.8em; text-transform: uppercase; margin-left: 0.3em; }
+  .strum-box.style-compact .sb-arrows { display: inline-flex; gap: 0.25em; }
+  .strum-box.style-compact .sb-a { font-size: 1.3em; }
+  .strum-box.style-compact .sb-letters { font: 700 1em var(--monospace-font, "Courier New", monospace); }
+  .strum-box.style-compact .sb-name { font-weight: 700; }
+
+  /* several bars taking turns: {D-DU-UDU | D-DUDU} */
+  .strum-box .sb-parts { display: flex; gap: 0.9em; align-items: end; }
+  .strum-box .sb-part + .sb-part { border-left: 2px solid currentColor; padding-left: 0.9em; }
+  .strum-box .sb-bar { display: block; font-size: 0.85em; font-weight: 700; line-height: 1.3; }
+  .strum-box .sb-sep { font-weight: 400; margin: 0 0.4em; }
+
+  /* a strum named earlier ({A}) and {stop}: one small line */
+  .strum-box.strum-recall, .strum-box.strum-stop { display: inline-flex; align-items: center; gap: 0.6em; padding: 0.1em 0.7em 0.1em 0; border: 1.5px solid var(--text-color, #111); border-radius: 0.3em; box-shadow: none; background: transparent; color: inherit; }
+  .strum-box .sb-ref { background: var(--text-color, #111); color: var(--bg-color, #fff); font-weight: 900; padding: 0.1em 0.55em; line-height: 1.3; letter-spacing: 0.03em; }
+  .strum-box.style-compact .sb-ref { padding: 0.15em 0.5em; }
+  .strum-box .sb-arrows { display: inline-flex; gap: 0.25em; align-items: center; }
+  .strum-box.strum-recall .sb-a, .strum-box.strum-stop .sb-a { font-size: 1.3em; }
+  .strum-box .sb-note { font-weight: 700; }
+  .strum-box.strum-stop { border-width: 2.5px; }
+
+  /* the key to the named strums, at the top of the sheet */
+  .strum-legend { --sb-size: var(--strum-size, max(14px, calc(var(--monospace-size, 14px) * 1.15))); font-size: var(--sb-size); font-family: "Segoe UI", system-ui, -apple-system, sans-serif; display: inline-grid; grid-template-columns: auto auto auto; gap: 0.25em 0.8em; align-items: center; border: 1.5px solid var(--text-color, #111); border-radius: 0.3em; padding: 0.4em 0.8em 0.5em; margin: 0.2em 0 0.8em; break-inside: avoid; }
+  .strum-legend .sl-title { grid-column: 1 / -1; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.9em; }
+  .strum-legend .sl-row { display: contents; }
+  .strum-legend .sb-ref { background: var(--text-color, #111); color: var(--bg-color, #fff); font-weight: 900; padding: 0.1em 0.55em; text-align: center; }
+  .strum-legend .sb-arrows { display: inline-flex; gap: 0.25em; }
+  .strum-legend .sb-a { font-size: 1.3em; font-weight: 600; }
+  .strum-legend .sb-a.acc { font-weight: 900; text-decoration: underline; }
+  .strum-legend .sb-a.rest { opacity: 0.45; }
+  .strum-legend .sb-sep { margin: 0 0.4em; }
+  .strum-legend .sb-letters { font: 700 1em var(--monospace-font, "Courier New", monospace); }
+
+  @media print {
+    .strum-box .sb-a.acc { color: #000; }
+  }
+  .chord-grid .bar { color: var(--text-color, #333); font-weight: 400; }
+  .chord-grid .bar-repeat { color: var(--text-color, #333); font-weight: 700; }
+  .repeat-mark { font-family: var(--font-family, system-ui, sans-serif); font-weight: 800; color: var(--text-color, #333); border: 1.5px solid currentColor; border-radius: 0.3em; padding: 0 0.35em; margin-left: 0.4em; white-space: nowrap; }
+  td.repeat-mark { border: none; vertical-align: bottom; }
+  .inline-line { font-family: var(--font-family, system-ui, sans-serif); font-size: calc(var(--monospace-size, 14px) * 1.1); line-height: 1.6; color: var(--text-color, #333); white-space: pre-wrap; overflow-wrap: anywhere; min-height: 1em; }
+  .inline-line .ichord { color: var(--chord-color, #b22222); font-weight: 800; white-space: nowrap; }
+  .inline-line .ichord .ib { font-weight: 400; opacity: 0.7; }
+  .inline-line .bar { margin: 0 0.3em; }
+  .chords-only { white-space: pre-wrap; }
+  .key-change { display: inline-block; margin: 0.6em 0 0.2em; padding: 0.1em 0.6em; border: 1px solid var(--chord-color, #b22222); border-radius: 999px; color: var(--chord-color, #b22222); font-family: var(--font-family, system-ui, sans-serif); font-size: 0.85em; }
+  @media print { .key-change { color: #000; border-color: #000; } }
+  @media print { .inline-line .ichord { color: #000; } }
+  .tune-strip { margin: 0.4em 0 1.2em; padding: 0.5em 0.8em 0.6em; border: 1px solid color-mix(in srgb, var(--text-color, #333) 18%, transparent); border-radius: 8px; break-inside: avoid; page-break-inside: avoid; }
+  .tune-title { font-family: var(--font-family, system-ui, sans-serif); font-weight: 700; font-size: 0.95em; color: var(--text-color, #333); margin-bottom: 0.2em; }
+  .tune-row { margin: 0.15em 0 0.35em; break-inside: avoid; page-break-inside: avoid; }
+  .tune-caption { font-family: var(--font-family, system-ui, sans-serif); font-size: 0.82em; color: color-mix(in srgb, var(--text-color, #333) 70%, transparent); }
+  .tune-section { font-weight: 700; color: var(--text-color, #333); margin-right: 0.3em; }
+  .tune-words { font-style: italic; }
+  .tune-staff { margin: 0.3em 0 0.1em; break-inside: avoid; page-break-inside: avoid; }
+  .tune-staff-svg { display: block; max-width: 100%; height: auto; overflow: visible; color: var(--text-color, #333); fill: currentColor; }
+  .tune-staff-svg .tune-line, .tune-staff-svg .tune-bar, .tune-staff-svg .tune-ledger { stroke: currentColor; stroke-width: 0.91; }
+  .tune-staff-svg .tune-line { opacity: 0.7; }
+  .tune-staff-svg .tune-bar { stroke-width: 1.12; }
+  .tune-staff-svg .tune-stem { stroke: currentColor; stroke-width: 1.05; }
+  .tune-staff-svg .tune-chord { fill: var(--chord-color, #b22222); font-family: var(--font-family, system-ui, sans-serif); font-weight: 700; font-size: 12.25px; }
+  .tune-staff-svg .tune-tuplet { font-family: var(--font-family, system-ui, sans-serif); font-style: italic; font-size: 9.8px; }
+  .tune-staff-svg .tune-note.now { fill: var(--chord-color, #b22222); }
+  .tune-staff-svg .tune-note.now .tune-stem, .tune-staff-svg .tune-note.now .tune-ledger { stroke: var(--chord-color, #b22222); }
+  @media print { .tune-staff-svg .tune-chord { fill: #000; } .tune-strip { border-color: #bbb; } }
+      /* ukemusic style set: Classic — the usual look: red chords, blue headings, grey strums */
+
+/* Light theme (default) */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --chord-color: #b22222;
+  --rhythm-color: #666666;
+  --section-color: #1a5276;
+  --monospace-font: "Courier New", monospace;
+  --monospace-size: 14px;
+  --font-family: system-ui, -apple-system, sans-serif;
+  --rhythm-size: 14px;
+  --line-spacing: 1.4;
+  --section-spacing: 1.5em;
+  --verse-spacing: 1em;
+  /* Plain strum patterns: how much bigger than the words (View → Plain strums) */
+  --plain-strum-scale: 1.2;
+  /* Stage: the "(stage)" exports, and the preview when View → Look is Stage */
+  --stage-font: "Consolas", "Lucida Console", "DejaVu Sans Mono", monospace;
+  --stage-size: 18px;
+  --stage-color: #000000;
+}
+
+[data-theme="dark"] {
+  --bg-color: #1e1e1e;
+  --text-color: #d4d4d4;
+  --chord-color: #f08080;
+  --rhythm-color: #aaaaaa;
+  --section-color: #5dade2;
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="auto"] {
+    --bg-color: #1e1e1e;
+    --text-color: #d4d4d4;
+    --chord-color: #f08080;
+    --rhythm-color: #aaaaaa;
+    --section-color: #5dade2;
+  }
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--monospace-size);
+  line-height: var(--line-spacing);
+}
+
+.line-group { margin-bottom: 0; }
+
+/* Monospace layout: chords + lyrics + tab share --monospace-font and --monospace-size */
+.lyrics {
+  font-family: var(--monospace-font);
+  font-size: var(--monospace-size);
+  color: var(--text-color);
+  line-height: var(--line-spacing);
+  white-space: nowrap;
+  min-height: 1em;
+}
+
+.lyrics:empty { min-height: var(--verse-spacing); }
+
+.chords {
+  font-family: var(--monospace-font);
+  font-size: var(--monospace-size);
+  color: var(--chord-color);
+  line-height: var(--line-spacing);
+  white-space: nowrap;
+}
+
+.rhythm {
+  font-family: var(--monospace-font);
+  font-size: var(--rhythm-size);
+  color: var(--rhythm-color);
+  line-height: var(--line-spacing);
+  white-space: nowrap;
+}
+
+.section {
+  font-family: var(--font-family);
+  color: var(--section-color);
+  margin: var(--section-spacing) 0 0.5em;
+}
+
+.bar { color: var(--chord-color); }
+
+.tab {
+  font-family: var(--monospace-font);
+  font-size: var(--monospace-size);
+  color: var(--text-color);
+  line-height: var(--line-spacing);
+  background: transparent;
+  white-space: pre-wrap;
+}
+
+/* Diagrams */
+.chord-diagram {
+  --diagram-size: 80px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+.chord-diagram svg { width: var(--diagram-size); }
+.chord-diagram .dot { fill: var(--text-color); }
+.chord-diagram .line { stroke: var(--rhythm-color); }
+.chord-diagram .name { fill: var(--chord-color); }
+
+.chord-diagrams {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+
+.chord-diagram-text {
+  min-width: calc(var(--diagram-size) * 0.75);
+  min-height: calc(var(--diagram-size) * 0.75);
+  border: 1px solid var(--rhythm-color);
+  justify-content: center;
+  padding: 0.5rem;
+}
+.chord-diagram-text .name {
+  color: var(--chord-color);
+  fill: var(--chord-color);
+}
+
+/* Table layout: uses --font-family (proportional), not monospace */
+.chord-table {
+  border-collapse: collapse;
+  font-family: var(--font-family);
+  font-size: var(--monospace-size);
+  margin-bottom: 0.25em;
+}
+.chord-table td {
+  padding: 0 0.3em 0 0;
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+.chord-table .chord-row td {
+  color: var(--chord-color);
+  font-weight: bold;
+  padding-bottom: 0;
+}
+.chord-table .lyric-row td {
+  color: var(--text-color);
+  padding-top: 0;
+}
+.chord-table .rhythm-row td {
+  color: var(--rhythm-color);
+  font-size: var(--rhythm-size);
+}
+.chord-table .bar { padding: 0 0.1em; }
+
+/* ── Tab ─────────────────────────────────────────────────
+   View → Tab picks between these (data-tab-… on the page). */
+.tab .tab-fret { font-weight: 700; color: var(--chord-color); }
+.tab .tab-string { opacity: 0.7; }
+[data-tab-frets="bold"] .tab .tab-fret { font-weight: 700; color: var(--text-color); }
+[data-tab-frets="plain"] .tab .tab-fret { font-weight: inherit; color: inherit; }
+[data-tab-size="smaller"] .tab { font-size: calc(var(--monospace-size) * 0.85); }
+[data-tab-size="larger"] .tab { font-size: calc(var(--monospace-size) * 1.2); }
+[data-tab-box] .tab {
+  background: rgba(127, 127, 127, 0.08);
+  border: 1px solid rgba(127, 127, 127, 0.3);
+  border-radius: 6px;
+  padding: 8px 12px;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+[data-tab-faint] .tab .tab-dash, [data-tab-faint] .tab .tab-string { opacity: 0.4; }
+
+/* ── Exports: the title at the top ─────────────────────── */
+.song-title { font-family: var(--font-family); font-size: 1.6em; margin: 0 0 0.15em; color: var(--text-color); }
+.song-subtitle { font-family: var(--font-family); font-size: 0.9em; margin: 0 0 1.2em; color: var(--rhythm-color); }
+.song-artist { font-family: var(--font-family); font-size: 1.05em; margin: 0 0 0.2em; color: var(--text-color); }
+
+/* ── Stage ───────────────────────────────────────────────
+   Bold and black, easy to read at a gig: the "(stage)" PDFs and web pages,
+   stage songbooks, and the preview when View → Look is Stage.
+   Its font, size and colour are --stage-font, --stage-size and --stage-color
+   at the top of this file (Settings → Export changes them too). */
+[data-style="stage"] {
+  --bg-color: #ffffff;
+  --text-color: var(--stage-color);
+  --chord-color: var(--stage-color);
+  --rhythm-color: var(--stage-color);
+  --section-color: var(--stage-color);
+  --monospace-font: var(--stage-font);
+  --monospace-size: var(--stage-size);
+  --rhythm-size: calc(var(--stage-size) - 2px);
+  --line-spacing: 1.3;
+}
+[data-style="stage"] .chords, [data-style="stage"] .lyrics, [data-style="stage"] .rhythm,
+[data-style="stage"] .tab, [data-style="stage"] .chord-table td { font-weight: 700; color: var(--stage-color); }
+[data-style="stage"] .tab .tab-fret, [data-style="stage"] .tab .tab-string { color: var(--stage-color); opacity: 1; }
+[data-style="stage"] .tab .tab-fret { font-weight: 900; }
+[data-style="stage"] .section, [data-style="stage"] .song-title, [data-style="stage"] .lyrics-title { font-weight: 700; color: var(--stage-color); }
+[data-style="stage"] .song-subtitle { color: var(--stage-color); }
+[data-style="stage"] .chord-diagram svg line { stroke: var(--stage-color) !important; }
+[data-style="stage"] .chord-diagram svg text.name { font-weight: 700; fill: var(--stage-color) !important; }
+[data-style="stage"] .lyrics-page, [data-style="stage"] .lyric-line { color: var(--stage-color); font-weight: 700; }
+[data-style="stage"] .lyric-line { font-size: calc(var(--stage-size) * 1.1); }
+
+/* ── Strum boxes and chord diagrams ─────────────────────
+   --plain-strum-scale (at the top) sets the size of plain strum patterns (View → Plain strums).
+   The --diagram-… colours reach every part of the chord diagrams. */
+.strum-box, .strum-legend { --strum-size: calc(var(--monospace-size) * 1.15); }
+/* Plain strum patterns */
+.rhythm, .chord-table .rhythm-row td { font-size: calc(var(--monospace-size) * var(--plain-strum-scale, 1.2)); font-weight: 700; color: var(--text-color); }
+.chord-diagram {
+  --diagram-line: var(--rhythm-color);
+  --diagram-dot: var(--text-color);
+  --diagram-finger: var(--bg-color);
+  --diagram-name: var(--chord-color);
+}
+.chord-diagram svg .line { stroke: var(--diagram-line); }
+.chord-diagram svg .dot, .chord-diagram svg .barre { fill: var(--diagram-dot); }
+.chord-diagram svg .open { stroke: var(--diagram-dot); }
+.chord-diagram svg .muted, .chord-diagram svg .fret-label { fill: var(--diagram-dot); }
+.chord-diagram svg .finger { fill: var(--diagram-finger); }
+.chord-diagram svg .name { fill: var(--diagram-name); }
+[data-style="stage"] .chord-diagram { --diagram-line: var(--stage-color); --diagram-dot: var(--stage-color); --diagram-name: var(--stage-color); }
+/* For a box round each diagram, take away the comment marks around the next line
+.chord-diagram { border: 1px solid var(--diagram-line); border-radius: 8px; padding: 4px 6px; }
+*/
+
+/* ── Section names ───────────────────────────────────────
+   Export → Section names puts data-sections on the page: Small, or Hidden to save paper
+   for gigs and practice. A heading with nothing under it ("Chorus" as a cue, or
+   "Chorus x2") always stays, smaller, so you still know what to play. */
+[data-sections="small"] .song-section .section,
+[data-sections="hide"] .song-section.section-cue .section { font-size: 0.85em; margin: 0.6em 0 0.1em; }
+[data-sections="hide"] .song-section:not(.section-cue) > .section { display: none; }
+[data-sections="hide"] .song-section:not(.section-cue) { margin-top: 0.25em; }
+
+
+  .shorthand-key { margin: 1.6em 0 0; padding-top: 0.4em; border-top: 1px solid #bbb; font-family: Arial, "Segoe UI", sans-serif; font-size: 11px; color: #444; }
+  .shorthand-key strong { color: #000; }
+  @media print {
+    html, body { background: #fff !important; }
+    body { padding: 0 !important; }
+    .song-section.keep-together, .line-group, .chord-diagram, .chord-diagrams, pre.tab, .chord-table, .lyric-line { break-inside: avoid; page-break-inside: avoid; }
+    .section { break-after: avoid; page-break-after: avoid; }
+  }
+    </style>
+  </head>
+  <body><h1 class="song-title">Danny Boy</h1><p class="song-artist">Frederic Weatherly, 1913</p>
+<p class="song-subtitle">Original key · C major · Ukulele</p><div class="chord-diagrams"><div class="chord-diagram" data-chord="G7"><svg viewBox="0 0 100 145" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="G7 chord diagram" style="width: var(--diagram-size); height: auto;"><line class="line" x1="24" y1="34" x2="24" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="44" y1="34" x2="44" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="64" y1="34" x2="64" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="84" y1="34" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="34" x2="84" y2="34" stroke="var(--rhythm-color)" stroke-width="4" /><line class="line" x1="24" y1="58" x2="84" y2="58" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="82" x2="84" y2="82" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="106" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><circle class="open" cx="24" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="dot" cx="44" cy="70" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="44" y="74" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">2</text><circle class="dot" cx="64" cy="46" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="64" y="50" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">1</text><circle class="dot" cx="84" cy="70" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="84" y="74" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">3</text><text class="name" x="54" y="138" text-anchor="middle" font-size="18" font-weight="600" fill="var(--chord-color)">G7</text></svg></div><div class="chord-diagram" data-chord="C"><svg viewBox="0 0 100 145" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="C chord diagram" style="width: var(--diagram-size); height: auto;"><line class="line" x1="24" y1="34" x2="24" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="44" y1="34" x2="44" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="64" y1="34" x2="64" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="84" y1="34" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="34" x2="84" y2="34" stroke="var(--rhythm-color)" stroke-width="4" /><line class="line" x1="24" y1="58" x2="84" y2="58" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="82" x2="84" y2="82" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="106" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><circle class="open" cx="24" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="open" cx="44" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="open" cx="64" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="dot" cx="84" cy="94" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="84" y="98" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">3</text><text class="name" x="54" y="138" text-anchor="middle" font-size="18" font-weight="600" fill="var(--chord-color)">C</text></svg></div><div class="chord-diagram" data-chord="C7"><svg viewBox="0 0 100 145" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="C7 chord diagram" style="width: var(--diagram-size); height: auto;"><line class="line" x1="24" y1="34" x2="24" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="44" y1="34" x2="44" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="64" y1="34" x2="64" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="84" y1="34" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="34" x2="84" y2="34" stroke="var(--rhythm-color)" stroke-width="4" /><line class="line" x1="24" y1="58" x2="84" y2="58" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="82" x2="84" y2="82" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="106" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><circle class="open" cx="24" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="open" cx="44" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="open" cx="64" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="dot" cx="84" cy="46" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="84" y="50" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">1</text><text class="name" x="54" y="138" text-anchor="middle" font-size="18" font-weight="600" fill="var(--chord-color)">C7</text></svg></div><div class="chord-diagram" data-chord="F"><svg viewBox="0 0 100 145" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="F chord diagram" style="width: var(--diagram-size); height: auto;"><line class="line" x1="24" y1="34" x2="24" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="44" y1="34" x2="44" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="64" y1="34" x2="64" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="84" y1="34" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="34" x2="84" y2="34" stroke="var(--rhythm-color)" stroke-width="4" /><line class="line" x1="24" y1="58" x2="84" y2="58" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="82" x2="84" y2="82" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="106" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><circle class="dot" cx="24" cy="70" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="24" y="74" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">2</text><circle class="open" cx="44" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="dot" cx="64" cy="46" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="64" y="50" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">1</text><circle class="open" cx="84" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><text class="name" x="54" y="138" text-anchor="middle" font-size="18" font-weight="600" fill="var(--chord-color)">F</text></svg></div><div class="chord-diagram" data-chord="Fm"><svg viewBox="0 0 100 145" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fm chord diagram" style="width: var(--diagram-size); height: auto;"><line class="line" x1="24" y1="34" x2="24" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="44" y1="34" x2="44" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="64" y1="34" x2="64" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="84" y1="34" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="34" x2="84" y2="34" stroke="var(--rhythm-color)" stroke-width="4" /><line class="line" x1="24" y1="58" x2="84" y2="58" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="82" x2="84" y2="82" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="106" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><circle class="dot" cx="24" cy="46" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="24" y="50" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">1</text><circle class="open" cx="44" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="dot" cx="64" cy="46" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="64" y="50" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">2</text><circle class="dot" cx="84" cy="94" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="84" y="98" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">4</text><text class="name" x="54" y="138" text-anchor="middle" font-size="18" font-weight="600" fill="var(--chord-color)">Fm</text></svg></div><div class="chord-diagram" data-chord="Am"><svg viewBox="0 0 100 145" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Am chord diagram" style="width: var(--diagram-size); height: auto;"><line class="line" x1="24" y1="34" x2="24" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="44" y1="34" x2="44" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="64" y1="34" x2="64" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="84" y1="34" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="34" x2="84" y2="34" stroke="var(--rhythm-color)" stroke-width="4" /><line class="line" x1="24" y1="58" x2="84" y2="58" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="82" x2="84" y2="82" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="106" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><circle class="dot" cx="24" cy="70" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="24" y="74" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">1</text><circle class="open" cx="44" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="open" cx="64" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="open" cx="84" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><text class="name" x="54" y="138" text-anchor="middle" font-size="18" font-weight="600" fill="var(--chord-color)">Am</text></svg></div><div class="chord-diagram" data-chord="D7"><svg viewBox="0 0 100 145" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="D7 chord diagram" style="width: var(--diagram-size); height: auto;"><line class="line" x1="24" y1="34" x2="24" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="44" y1="34" x2="44" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="64" y1="34" x2="64" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="84" y1="34" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="34" x2="84" y2="34" stroke="var(--rhythm-color)" stroke-width="4" /><line class="line" x1="24" y1="58" x2="84" y2="58" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="82" x2="84" y2="82" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="106" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><circle class="dot" cx="24" cy="70" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="24" y="74" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">1</text><circle class="dot" cx="44" cy="70" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="44" y="74" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">1</text><circle class="dot" cx="64" cy="70" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="64" y="74" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">1</text><circle class="dot" cx="84" cy="94" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="84" y="98" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">3</text><rect class="barre" x="17" y="65" width="54" height="10" rx="5" fill="var(--text-color)" data-barre="true" /><text class="name" x="54" y="138" text-anchor="middle" font-size="18" font-weight="600" fill="var(--chord-color)">D7</text></svg></div><div class="chord-diagram" data-chord="G"><svg viewBox="0 0 100 145" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="G chord diagram" style="width: var(--diagram-size); height: auto;"><line class="line" x1="24" y1="34" x2="24" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="44" y1="34" x2="44" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="64" y1="34" x2="64" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="84" y1="34" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="34" x2="84" y2="34" stroke="var(--rhythm-color)" stroke-width="4" /><line class="line" x1="24" y1="58" x2="84" y2="58" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="82" x2="84" y2="82" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="106" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><circle class="open" cx="24" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="dot" cx="44" cy="70" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="44" y="74" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">1</text><circle class="dot" cx="64" cy="94" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="64" y="98" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">3</text><circle class="dot" cx="84" cy="70" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="84" y="74" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">2</text><text class="name" x="54" y="138" text-anchor="middle" font-size="18" font-weight="600" fill="var(--chord-color)">G</text></svg></div></div>
+<div class="line-group" data-line="2"><div class="strum-box style-comic"><div class="sb-tag"><span class="sb-time">4/4</span><span class="sb-sub">66 bpm</span></div><div class="sb-body"><div class="sb-parts"><div class="sb-part"><div class="sb-grid" style="--steps:8"><span class="sb-a">↓</span><span class="sb-a rest">·</span><span class="sb-a">↓</span><span class="sb-a rest">·</span><span class="sb-a">↓</span><span class="sb-a rest">·</span><span class="sb-a">↓</span><span class="sb-a">↑</span><span class="sb-l">D</span><span class="sb-l">-</span><span class="sb-l">D</span><span class="sb-l">-</span><span class="sb-l">D</span><span class="sb-l">-</span><span class="sb-l">D</span><span class="sb-l">U</span><span class="sb-n beat">1</span><span class="sb-n">&amp;</span><span class="sb-n beat">2</span><span class="sb-n">&amp;</span><span class="sb-n beat">3</span><span class="sb-n">&amp;</span><span class="sb-n beat">4</span><span class="sb-n">&amp;</span></div></div></div></div></div></div>
+<section class="song-section">
+<h2 class="section">Verse 1</h2>
+<div class="line-group" data-line="4"><div class="chords">&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span></div><div class="lyrics">Oh&nbsp;Danny&nbsp;boy,&nbsp;the&nbsp;pipes,&nbsp;the&nbsp;pipes&nbsp;are&nbsp;calling</div></div>
+<div class="line-group" data-line="5"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">Fm</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">Am</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">D7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span></div><div class="lyrics">From&nbsp;glen&nbsp;to&nbsp;glen,&nbsp;and&nbsp;down&nbsp;the&nbsp;mountain&nbsp;side.</div></div>
+<div class="line-group" data-line="6"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span></div><div class="lyrics">The&nbsp;summer&#39;s&nbsp;gone,&nbsp;and&nbsp;all&nbsp;the&nbsp;roses&nbsp;falling,</div></div>
+<div class="line-group" data-line="7"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">Am</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">It&#39;s&nbsp;you,&nbsp;it&#39;s&nbsp;you&nbsp;must&nbsp;go&nbsp;and&nbsp;I&nbsp;must&nbsp;bide.</div></div>
+<div class="line-group" data-line="8"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span></div><div class="lyrics">But&nbsp;come&nbsp;ye&nbsp;back&nbsp;when&nbsp;summer&#39;s&nbsp;in&nbsp;the&nbsp;meadow,</div></div>
+<div class="line-group" data-line="9"><div class="chords">&nbsp;&nbsp;&nbsp;<span class="chord">G</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">Am</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">D7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G</span></div><div class="lyrics">Or&nbsp;when&nbsp;the&nbsp;valley&#39;s&nbsp;hushed&nbsp;and&nbsp;white&nbsp;with&nbsp;snow,</div></div>
+<div class="line-group" data-line="10"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">Fm</span></div><div class="lyrics">It&#39;s&nbsp;I&#39;ll&nbsp;be&nbsp;here&nbsp;in&nbsp;sunshine&nbsp;or&nbsp;in&nbsp;shadow,</div></div>
+<div class="line-group" data-line="11"><div class="chords">&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">Am</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">Oh&nbsp;Danny&nbsp;boy,&nbsp;oh&nbsp;Danny&nbsp;boy,&nbsp;I&nbsp;love&nbsp;you&nbsp;so!</div></div>
+<div class="line-group"><div class="lyrics"></div></div>
+</section>
+<section class="song-section">
+<h2 class="section">Verse 2</h2>
+<div class="line-group" data-line="14"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span></div><div class="lyrics">But&nbsp;when&nbsp;ye&nbsp;come,&nbsp;and&nbsp;all&nbsp;the&nbsp;flowers&nbsp;are&nbsp;dying,</div></div>
+<div class="line-group" data-line="15"><div class="chords">&nbsp;&nbsp;&nbsp;<span class="chord">Fm</span>&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">Am</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">D7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span></div><div class="lyrics">If&nbsp;I&nbsp;am&nbsp;dead,&nbsp;as&nbsp;dead&nbsp;I&nbsp;well&nbsp;may&nbsp;be,</div></div>
+<div class="line-group" data-line="16"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span></div><div class="lyrics">Ye&#39;ll&nbsp;come&nbsp;and&nbsp;find&nbsp;the&nbsp;place&nbsp;where&nbsp;I&nbsp;am&nbsp;lying,</div></div>
+<div class="line-group" data-line="17"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">Am</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;<span class="chord">F</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">And&nbsp;kneel&nbsp;and&nbsp;say&nbsp;an&nbsp;Ave&nbsp;there&nbsp;for&nbsp;me.</div></div>
+<div class="line-group" data-line="18"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span></div><div class="lyrics">And&nbsp;I&nbsp;shall&nbsp;hear,&nbsp;though&nbsp;soft&nbsp;you&nbsp;tread&nbsp;above&nbsp;me,</div></div>
+<div class="line-group" data-line="19"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">Am</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">D7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G</span></div><div class="lyrics">And&nbsp;all&nbsp;my&nbsp;grave&nbsp;will&nbsp;warmer,&nbsp;sweeter&nbsp;be,</div></div>
+<div class="line-group" data-line="20"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">Fm</span></div><div class="lyrics">For&nbsp;you&nbsp;will&nbsp;bend&nbsp;and&nbsp;tell&nbsp;me&nbsp;that&nbsp;you&nbsp;love&nbsp;me,</div></div>
+<div class="line-group" data-line="21"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">Am</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">And&nbsp;I&nbsp;shall&nbsp;sleep&nbsp;in&nbsp;peace&nbsp;until&nbsp;you&nbsp;come&nbsp;to&nbsp;me!</div></div>
+</section></body>
+</html>

@@ -59,7 +59,7 @@ test('the front page: the doors, browser or computer, and every link goes somewh
   const site = fs.readFileSync(path.join(ROOT, 'site', 'index.html'), 'utf8');
   assert.ok(site.includes('id="doors"') && site.includes('id="choose"') && site.includes('<section id="get">') && site.includes('id="download"'));
   const local = [...site.matchAll(/href="([a-z-]+\.html)(#[^"]*)?"/g)].map((m) => m[1]);
-  const made = [...require('../web/pages').PAGES.map((p) => p.file), 'songs.html', require('../web/pages').PHONE_PAGE.file, require('../web/pages').DROPBOX_PAGE.file, ...require('../web/docs').PAGES.map((p) => p.html)];
+  const made = [...require('../web/pages').PAGES.map((p) => p.file), 'songs.html', require('../web/pages').PHONE_PAGE.file, require('../web/pages').DROPBOX_PAGE.file, require('../web/pages').GALLERY_PAGE.file, ...require('../web/docs').PAGES.map((p) => p.html)];
   for (const f of new Set(local)) assert.ok(made.includes(f), `${f} is linked but not made`);
   for (const img of [...site.matchAll(/src="img\/([^"]+)"/g)].map((m) => m[1])) assert.ok(fs.existsSync(path.join(ROOT, 'site', 'img', img)), img);
 });

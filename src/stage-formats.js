@@ -12,10 +12,10 @@ const WORDS_FONT = 'var(--stage-words-font, "Segoe UI", Arial, "Liberation Sans"
 const FORMATS = [
   { id: 'clear', name: 'Clear: chords above the words', layout: 'table', description: 'Words in plain type, chords in bold above them, a clear gap between parts. The easiest to scan.' },
   { id: 'brackets', name: 'Brackets: chords above, in [ ]', layout: 'table', description: 'As Clear, with each chord in light brackets: [C].' },
-  { id: 'compact', name: 'Compact: chords in the words', layout: 'inline', description: 'Chords in bold brackets inside the words: [C]Oh, Susanna. Shortest; harder to scan.' },
+  { id: 'compact', name: 'Compact: chords in the words', layout: 'inline', description: 'Chords in bold brackets inside the words: [C]Oh, Susanna. The default: the fewest pages.' },
   { id: 'heavy', name: 'Heavy: everything bold, white-on-black chords', layout: null, description: 'The Stage look from 4.19: all bold, chords as black blocks. Uses the song\'s own layout.' }
 ];
-const DEFAULT_FORMAT = 'clear';
+const DEFAULT_FORMAT = 'compact';   // 4.52 (was Clear)
 
 const formatOf = (id) => FORMATS.find((f) => f.id === id) || FORMATS.find((f) => f.id === DEFAULT_FORMAT);
 

@@ -424,7 +424,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div class="tool"><button id="commonBtn" type="button" aria-pressed="false" title="No diagrams for the chords everyone knows: C, G, Am, F…">Common: shown</button></div>
         <div class="tool"><label for="tuneSel">Tune</label><select id="tuneSel" title="Songs with their tune written in: the tune as notes on a staff"><option value="strip">At the top</option><option value="lines">Over every line</option><option value="off">Hidden</option></select></div>
         <div class="tool"><label for="lookSel">Look</label><select id="lookSel"><option value="standard">Song sheet</option><option value="stage">Stage copy</option></select></div>
-        <div class="tool" id="stageFormatTool" hidden><label for="stageFormat">Stage</label><select id="stageFormat"><option value="clear">Clear</option><option value="brackets">Brackets [C]</option><option value="compact">Compact</option><option value="heavy">Heavy</option></select></div>
+        <div class="tool" id="stageFormatTool" hidden><label for="stageFormat">Stage</label><select id="stageFormat"><option value="compact">Compact</option><option value="clear">Clear</option><option value="brackets">Brackets [C]</option><option value="heavy">Heavy</option></select></div>
         <div class="tool" id="stageChorusTool" hidden><label for="stageChorus">Chorus</label><select id="stageChorus"><option value="full">Every time</option><option value="once">Once, then “as before”</option></select></div>
       </details></div>
     </header>
@@ -1390,7 +1390,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
       tune: S().tune !== undefined ? S().tune === true : (view.song.settings?.playback?.tune === true || view.song.settings?.playback?.tune === 'true'),
       pick: S().pick !== undefined ? S().pick : (U.picking.pattern(view.song.settings?.playback?.pick || '') ? view.song.settings.playback.pick : ''),
       feel: S().feel || view.song.settings?.playback?.swing || 'auto',
-      stageFormat: U.stageFormats.formatOf(look.stageFormat || S().stageFormat || view.song.settings?.export?.stage_format || 'clear').id,
+      stageFormat: U.stageFormats.formatOf(look.stageFormat || S().stageFormat || view.song.settings?.export?.stage_format || 'compact').id,
       stageChorus: (look.stageChorus || S().stageChorus || view.song.settings?.export?.stage_chorus) === 'once' ? 'once' : 'full'
     };
   };

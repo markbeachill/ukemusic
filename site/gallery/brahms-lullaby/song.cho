@@ -1,0 +1,25 @@
+{title: Brahms' Lullaby}
+{artist: Johannes Brahms}
+{composer: Johannes Brahms (tune, "Wiegenlied", Op. 49 No. 4, 1868), traditional English words}
+{year: 1868}
+{key: C}
+{tempo: 80}
+{time: 3/4}
+# ukemusic: this song uses ukemusic's own directives (ChordPro custom directives, x_…).
+# ukemusic: Other ChordPro apps ignore them; ukemusic reads them back. What they mean:
+# ukemusic:   {x_ukemusic_melody: E E F G | …}   the tune of the next line, by note name in the
+# ukemusic:       written key: a note is a beat, E2 two, E/2 half, E. one and a half, r a rest;
+# ukemusic:       each note is the nearest to the one before (' an octave up, , down)
+# ukemusic: More: WRITING.md in ukemusic, or https://github.com/markbeachill/ukemusic
+
+{comment: Strum D>DD}
+{start_of_verse: Verse}
+{x_ukemusic_melody: E/2 E/2 | G. E/2 E | G2 E/2 G/2 | C B. A/2 | A G D/2 E/2}
+Lulla[C][*×3]by, and good night, with roses be[G7]dight, with
+{x_ukemusic_melody: F D D/2 E/2 | F2 D/2 F/2 | B'/2 A/2 G B | C2}
+[G7][*×3]lilies o'erspread is baby's wee [C]bed.
+{x_ukemusic_melody: C,/2 C/2 | C'2 A/2 F/2 | G2 E/2 C/2 | F G A | G2}
+Lay thee [F]down now and [C]rest, may thy [G7]slumber be [C]blessed.
+{x_ukemusic_melody: C,/2 C/2 | C'2 A/2 F/2 | G2 E/2 C/2 | F E D | C3}
+Lay thee [F]down now and [C]rest, may thy [G7]slumber be [C]blessed.
+{end_of_verse}

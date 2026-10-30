@@ -53,7 +53,8 @@ const DEFAULT_CONFIG = {
     stage_font: 'Consolas',
     stage_size: 18,
     stage_fit: true,
-    stage_format: 'clear',
+    stage_format: 'compact',   // 4.52: Compact (chords in the words) is the default
+    stage_compact: true,       // 4.52: settings from before then have been moved to Compact once
     stage_chorus: 'full',
     stage_diagrams: 'song'
   },
@@ -160,6 +161,12 @@ function normalizeParsedConfig(value) {
 async function readConfigObject() {
   const raw = await fsp.readFile(configPath, 'utf8');
   const parsed = normalizeParsedConfig(ini.parse(raw));
+  // 4.52: Compact became the Stage format's default: settings from before then move to it once
+  // (a format chosen after this is kept)
+  if (parsed.export && parsed.export.stage_compact !== true) {
+    if (!parsed.export.stage_format || parsed.export.stage_format === 'clear') parsed.export.stage_format = 'compact';
+    parsed.export.stage_compact = true;
+  }
   return { raw, config: mergeConfig(cloneDefaultConfig(), parsed) };
 }
 

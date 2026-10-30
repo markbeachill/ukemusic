@@ -1,0 +1,45 @@
+[
+ {
+  "title": "The Wild Rover",
+  "slug": "wild-rover",
+  "pages": {
+   "sheet.pdf": 3,
+   "stage.pdf": 2,
+   "lyrics.pdf": 2,
+   "lyrics-stage.pdf": 2,
+   "learn.pdf": 3,
+   "pick.pdf": 5
+  }
+ },
+ {
+  "title": "Brahms' Lullaby",
+  "slug": "brahms-lullaby",
+  "pages": {
+   "sheet.pdf": 2,
+   "stage.pdf": 1,
+   "lyrics.pdf": 1,
+   "lyrics-stage.pdf": 1,
+   "learn.pdf": 2,
+   "pick.pdf": 2
+  }
+ },
+ {
+  "title": "Danny Boy",
+  "slug": "danny-boy",
+  "pages": {
+   "sheet.pdf": 2,
+   "stage.pdf": 1,
+   "lyrics.pdf": 1,
+   "lyrics-stage.pdf": 1,
+   "learn.pdf": 3,
+   "pick.pdf": 3
+  }
+ },
+ {
+  "title": "Club night",
+  "slug": "songbook",
+  "pages": {
+   "club-night.pdf": 13
+  }
+ }
+]

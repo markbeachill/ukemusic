@@ -1,5 +1,19 @@
 # Changelog
 
+## v4.52.0
+
+### Compact Stage copies by default
+- **Compact** (the chords in the words, the fewest pages) is now the Stage format for every song, unless you choose another. Settings from before this version move to Compact once; choose Clear, Brackets or Heavy again in Settings → Export, or for one song in Export → Stage, and it's kept. Compact is first in the lists.
+
+### Fixed
+- The **Changes**, **Next chord?**, **Circle**, **Picking**, **Trouble spots** and **About** windows in the desktop app had lost their look in 4.50 (a huge chord shape filled the Changes window). Their styles are back.
+- The pick pattern "Up, twice a bar" no longer says "a bar of 4/4" on a song in 3/4.
+
+### The website and README
+- A **Gallery**: real files made by the app from three public-domain songs (chord sheets, Stage copies, learn sheets, pick sheets, words only, a songbook, and the song as a web page, ChordPro and Markdown), to open and look through.
+- New pictures throughout, showing this version. The README has them too, with a quick tour.
+- The home page heading has no stray "C" over "songs".
+
 ## v4.51.0
 
 ### A clearer song workspace

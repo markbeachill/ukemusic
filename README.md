@@ -1,13 +1,93 @@
-# ukemusic
+<p align="center">
+  <img src="site/img/icon-192.png" width="96" height="96" alt="">
+</p>
 
-Ukulele chord sheet editor (also baritone ukulele and guitar) with live preview, fingering diagrams, and tablature.
+<h1 align="center">ukemusic</h1>
 
-Ukulele first, with baritone ukulele and guitar too: see [INSTRUMENTS.md](INSTRUMENTS.md) (instruments, file names, capo, left-handed, sounds, strum library).
-How tab works (writing, pasting, key changes, other instruments, playback, and the code behind it): see [TABLATURE.md](TABLATURE.md).
-How to write songs (everything you can type, with examples): see [WRITING.md](WRITING.md), also in the app under Write → How to write.
-ChordPro (what ukemusic reads and writes, and its additions): see [CHORDPRO.md](CHORDPRO.md). What's changed in each version: [CHANGELOG.md](CHANGELOG.md). All three are also pages of the website, made from these files.
+<p align="center">
+  <b>Bring your songs. Learn them, practise them, play them together.</b><br>
+  Type the words with the chords in square brackets: ukemusic draws the chord sheet, the shapes and the strum,<br>
+  plays it with you, helps you learn it by heart, and prints it for the gig.
+</p>
 
-## Getting around (v4)
+<p align="center">
+  <a href="https://markbeachill.github.io/ukemusic/"><b>Website</b></a> ·
+  <a href="https://markbeachill.github.io/ukemusic/app/"><b>Try it in your browser</b></a> ·
+  <a href="https://github.com/markbeachill/ukemusic/releases/latest"><b>Download</b></a> ·
+  <a href="https://markbeachill.github.io/ukemusic/gallery.html"><b>Gallery</b></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/markbeachill/ukemusic/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/markbeachill/ukemusic?color=0e6b64&label=release"></a>
+  <a href="https://github.com/markbeachill/ukemusic/actions/workflows/test.yml"><img alt="Tests" src="https://img.shields.io/github/actions/workflow/status/markbeachill/ukemusic/test.yml?label=tests"></a>
+  <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-0e6b64"></a>
+  <img alt="Windows, Mac, Linux, phones and tablets" src="https://img.shields.io/badge/runs%20on-Windows%20·%20Mac%20·%20Linux%20·%20web-555">
+</p>
+
+<p align="center">
+  <img src="site/img/editor.webp" width="900" alt="ukemusic: the song typed on the left, the finished chord sheet with chord shapes and the strum pattern on the right">
+</p>
+
+Free and open source, for ukulele first, with baritone ukulele and guitar too. A desktop app for Windows, Mac and Linux, and a web player for phones, tablets and any browser.
+
+## Write it like this
+
+```text
+--START MUSIC--
+[[Verse 1]]
+{3/4 D-DUDU}
+I've [C]been a wild rover for [F]many's the [C]year,
+And I've [C]spent all me [G7]money on whiskey and [C]beer
+--END MUSIC--
+```
+
+The chords go in square brackets where they're played; `{D-DU-UDU}` is the strum. Or paste a chord sheet from a website, import ChordPro, a songbook or a PDF, and ukemusic writes it this way for you. Everything you can type: [WRITING.md](WRITING.md).
+
+## A quick tour
+
+<table>
+<tr>
+<td width="50%"><img src="site/img/playing.webp" alt="The Wild Rover playing: the line lit, the chord and its strum, the next shapes"><br><b>Play along.</b> It strums the song with real ukulele sounds; the line, the chord and the strum light up as they come, with the next shapes ready.</td>
+<td width="50%"><img src="site/img/karaoke.webp" alt="Karaoke: big words, the line being sung lit, chord shapes for now, next and then"><br><b>Karaoke.</b> Full screen, big words lit as they're sung, and the chord shapes for now, next and then.</td>
+</tr>
+<tr>
+<td><img src="site/img/learn-memory.webp" alt="Playing from memory: the chords hidden after the first time"><br><b>Learn it by heart.</b> The chords fade after the first time each part comes, then show as numbers, then go.</td>
+<td><img src="site/img/changes.webp" alt="The changes in a song, hardest first, with what each finger does"><br><b>The hard changes, first.</b> Every chord change in the song, with what each finger does, and practice for each.</td>
+</tr>
+<tr>
+<td><img src="site/img/learn.webp" alt="A learn sheet: the chords and how they feel, the song's parts, the chord map"><br><b>Learn sheets.</b> The chords and what each one does, the song's parts, the chord map with its patterns, and the circle of fifths.</td>
+<td><img src="site/img/tune.webp" alt="Brahms' Lullaby with its tune drawn as notes"><br><b>Fingerpick it, with the tune.</b> Picking patterns, tab, and the tune drawn as notes on a staff.</td>
+</tr>
+<tr>
+<td><img src="site/img/practice.webp" alt="Free Practice: exercises by category"><br><b>Free Practice.</b> 39 exercises: warm-ups, chord changes, strumming, picking, scales and noodling, with routines and your progress.</td>
+<td><img src="site/img/session-setlist.webp" alt="The Session screen: a song on one screen for a group"><br><b>Play together.</b> Setlists, songbook PDFs, and the Session screen: the whole song on the TV for a club night.</td>
+</tr>
+<tr>
+<td><img src="site/img/stage.webp" alt="A Stage copy on two pages"><br><b>Print it for the gig.</b> A chord sheet in your own style and a Stage copy: big plain words, the chords in them, the fewest pages. <a href="https://markbeachill.github.io/ukemusic/gallery.html">See the gallery</a>.</td>
+<td><img src="site/img/phone-song.webp" width="200" alt="The web player on a phone"> <img src="site/img/phone-library.webp" width="200" alt="The web player's song list on a phone"><br><b>On a phone or tablet.</b> The web player plays, edits and keeps songs, and can share a Dropbox songs folder with the desktop app.</td>
+</tr>
+</table>
+
+## Get it
+
+- **In your browser:** [the web player](https://markbeachill.github.io/ukemusic/app/), nothing to install. Add it to your Home Screen to use it offline.
+- **On your computer:** [the latest release](https://github.com/markbeachill/ukemusic/releases/latest): a Windows installer, Mac disk images (Apple silicon and Intel) and a Linux AppImage. They aren't code-signed, so Windows and macOS ask once before opening them; [the website](https://markbeachill.github.io/ukemusic/#get) says how.
+- **From the source:** `npm install`, then `npm start` (see [Development](#development)).
+
+## The guides
+
+| | |
+|---|---|
+| [WRITING.md](WRITING.md) | How to write songs: everything you can type, with examples (also in the app: Write → How to write) |
+| [INSTRUMENTS.md](INSTRUMENTS.md) | Ukulele, baritone and guitar: file names, capo, left-handed, sounds, the strum library |
+| [TABLATURE.md](TABLATURE.md) | Tab: writing, pasting, key changes, other instruments, playback |
+| [CHORDPRO.md](CHORDPRO.md) | What ukemusic reads and writes in ChordPro, and what it adds |
+| [How ukemusic helps you learn a song](docs/explanation/learning-a-song.md) | How Learn works out a song, and how far to trust it |
+| [CHANGELOG.md](CHANGELOG.md) | What's changed in each version |
+
+The guides and the changelog are pages of [the website](https://markbeachill.github.io/ukemusic/) too, made from these files.
+
+## Getting around the desktop app
 
 - ukemusic opens on **Your songs** (the library): open a song, start a new one, paste one from a website or import a file. Three old, copyright-free starter songs show how songs are written.
 - In a song, the tabs hold everything (File → Close goes back to your songs). **View** has the look (diagrams, text size, strum style, layout) and **Export** makes PDFs and other files in one click:
@@ -28,7 +108,7 @@ ChordPro (what ukemusic reads and writes, and its additions): see [CHORDPRO.md](
 - Strum patterns show as **info boxes** (time signature, name, arrows, letters, count), in a choice of styles including plain; `{3/4 D-DUDU}` changes the time from there on.
 - The song is on the left and its preview on the right, kept in step: scroll the song and the preview follows; click a preview line to jump to it in the song.
 
-## Website, downloads and web player
+## The website and releases
 
 - **Website:** https://markbeachill.github.io/ukemusic/ (what ukemusic does, with downloads). Its page is `site/index.html`; it finds the repository and the latest release by itself.
 - **Web player:** https://markbeachill.github.io/ukemusic/app/ (for phones, tablets and any browser: play, write and edit songs, and use Free Practice; see [web/README.md](web/README.md)). It opens with public-domain songs; add your own from files, a desktop export or a shared Dropbox songs folder. Practice history stays on each device and has its own backup.
@@ -74,7 +154,7 @@ npm run package
 
 Output goes to `dist/`.
 
-## Project Structure
+## Project structure
 
 ```
 main.js              Electron main process
@@ -112,7 +192,3 @@ On first launch, creates config files at:
 | Windows | `%APPDATA%\ukemusic\` |
 
 Files: `config.ini` (behaviour), `style.css` (appearance), optionally `chords.json` (chord library overrides).
-
-## Spec Version
-
-Built to ukemusic specification v2.5.

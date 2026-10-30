@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Brahms' Lullaby</title>
+    <style>
+      html, body { margin: 0; padding: 0; background: var(--bg-color); color: var(--text-color); }
+      body { padding: 16px; }
+      
+  .strum-box { --sb-size: var(--strum-size, max(14px, calc(var(--monospace-size, 14px) * 1.15))); font-size: var(--sb-size); font-family: "Segoe UI", system-ui, -apple-system, sans-serif; color: var(--text-color, #111); margin: 0.35em 0 0.6em; break-inside: avoid; page-break-inside: avoid; }
+  .strum-box .sb-grid { display: grid; grid-template-columns: repeat(var(--steps), 2em); justify-items: center; align-items: end; row-gap: 0.1em; }
+  .strum-box .sb-a { font-size: 1.5em; line-height: 1.05; font-weight: 600; }
+  .strum-box .sb-a.acc { font-weight: 900; text-decoration: underline; text-decoration-thickness: 0.12em; text-underline-offset: 0.15em; color: var(--chord-color, #b22222); }
+  .strum-box .sb-a.rest { opacity: 0.45; }
+  .strum-box .sb-l { font: 700 1.05em/1.2 var(--monospace-font, "Courier New", monospace); }
+  .strum-box .sb-l.acc { font-weight: 900; }
+  .strum-box .sb-n { font-size: 1em; line-height: 1.2; opacity: 0.85; }
+  .strum-box .sb-n.beat { font-weight: 800; opacity: 1; }
+  .strum-box .sb-name { font-weight: 800; font-size: 1em; line-height: 1.3; }
+  .strum-box .sb-sub { font-size: 0.9em; font-weight: 700; line-height: 1.2; }
+  .strum-box .sb-time { font-weight: 900; line-height: 1; }
+
+  /* comic: the info box */
+  .strum-box.style-comic { display: inline-grid; grid-template-columns: auto auto; border: 2px solid #000; box-shadow: 0.2em 0.2em 0 #000; background: #fff; color: #000; }
+  .strum-box.style-comic .sb-tag { background: #000; color: #fff; padding: 0.35em 0.7em; display: grid; align-content: center; gap: 0.15em; min-width: 4.4em; }
+  .strum-box.style-comic .sb-time { font-size: 1.9em; font-family: "Arial Black", "Segoe UI", sans-serif; }
+  .strum-box.style-comic .sb-body { padding: 0.3em 0.7em 0.35em; display: grid; gap: 0.15em; }
+  .strum-box.style-comic .sb-name { text-transform: uppercase; letter-spacing: 0.04em; }
+  .strum-box.style-comic.time-change .sb-tag { background: #fff; color: #000; border-right: 2px solid #000; background-image: repeating-linear-gradient(-45deg, transparent 0 0.35em, rgba(0,0,0,0.12) 0.35em 0.5em); }
+  .strum-box.style-comic.time-change .sb-sub { text-transform: uppercase; }
+
+  /* clean: light and rounded */
+  .strum-box.style-clean { display: inline-grid; grid-template-columns: auto auto; border: 1.5px solid var(--rhythm-color, #666); border-radius: 0.6em; overflow: hidden; }
+  .strum-box.style-clean .sb-tag { padding: 0.35em 0.7em; display: grid; align-content: center; gap: 0.15em; border-right: 1.5px solid var(--rhythm-color, #666); min-width: 4em; }
+  .strum-box.style-clean .sb-time { font-size: 1.7em; }
+  .strum-box.style-clean .sb-body { padding: 0.3em 0.7em 0.35em; display: grid; gap: 0.15em; }
+  .strum-box.style-clean.time-change { border-width: 3px; }
+  .strum-box.style-clean.time-change .sb-tag { border-right-width: 3px; }
+
+  /* compact: one line */
+  .strum-box.style-compact { display: inline-flex; align-items: baseline; gap: 0.7em; border: 1.5px solid var(--text-color, #111); border-radius: 0.3em; padding: 0.1em 0.7em 0.1em 0; }
+  .strum-box.style-compact .sb-time { background: var(--text-color, #111); color: var(--bg-color, #fff); padding: 0.15em 0.5em; font-size: 1.05em; }
+  .strum-box.style-compact .sb-time em { font-style: normal; font-size: 0.8em; text-transform: uppercase; margin-left: 0.3em; }
+  .strum-box.style-compact .sb-arrows { display: inline-flex; gap: 0.25em; }
+  .strum-box.style-compact .sb-a { font-size: 1.3em; }
+  .strum-box.style-compact .sb-letters { font: 700 1em var(--monospace-font, "Courier New", monospace); }
+  .strum-box.style-compact .sb-name { font-weight: 700; }
+
+  /* several bars taking turns: {D-DU-UDU | D-DUDU} */
+  .strum-box .sb-parts { display: flex; gap: 0.9em; align-items: end; }
+  .strum-box .sb-part + .sb-part { border-left: 2px solid currentColor; padding-left: 0.9em; }
+  .strum-box .sb-bar { display: block; font-size: 0.85em; font-weight: 700; line-height: 1.3; }
+  .strum-box .sb-sep { font-weight: 400; margin: 0 0.4em; }
+
+  /* a strum named earlier ({A}) and {stop}: one small line */
+  .strum-box.strum-recall, .strum-box.strum-stop { display: inline-flex; align-items: center; gap: 0.6em; padding: 0.1em 0.7em 0.1em 0; border: 1.5px solid var(--text-color, #111); border-radius: 0.3em; box-shadow: none; background: transparent; color: inherit; }
+  .strum-box .sb-ref { background: var(--text-color, #111); color: var(--bg-color, #fff); font-weight: 900; padding: 0.1em 0.55em; line-height: 1.3; letter-spacing: 0.03em; }
+  .strum-box.style-compact .sb-ref { padding: 0.15em 0.5em; }
+  .strum-box .sb-arrows { display: inline-flex; gap: 0.25em; align-items: center; }
+  .strum-box.strum-recall .sb-a, .strum-box.strum-stop .sb-a { font-size: 1.3em; }
+  .strum-box .sb-note { font-weight: 700; }
+  .strum-box.strum-stop { border-width: 2.5px; }
+
+  /* the key to the named strums, at the top of the sheet */
+  .strum-legend { --sb-size: var(--strum-size, max(14px, calc(var(--monospace-size, 14px) * 1.15))); font-size: var(--sb-size); font-family: "Segoe UI", system-ui, -apple-system, sans-serif; display: inline-grid; grid-template-columns: auto auto auto; gap: 0.25em 0.8em; align-items: center; border: 1.5px solid var(--text-color, #111); border-radius: 0.3em; padding: 0.4em 0.8em 0.5em; margin: 0.2em 0 0.8em; break-inside: avoid; }
+  .strum-legend .sl-title { grid-column: 1 / -1; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.9em; }
+  .strum-legend .sl-row { display: contents; }
+  .strum-legend .sb-ref { background: var(--text-color, #111); color: var(--bg-color, #fff); font-weight: 900; padding: 0.1em 0.55em; text-align: center; }
+  .strum-legend .sb-arrows { display: inline-flex; gap: 0.25em; }
+  .strum-legend .sb-a { font-size: 1.3em; font-weight: 600; }
+  .strum-legend .sb-a.acc { font-weight: 900; text-decoration: underline; }
+  .strum-legend .sb-a.rest { opacity: 0.45; }
+  .strum-legend .sb-sep { margin: 0 0.4em; }
+  .strum-legend .sb-letters { font: 700 1em var(--monospace-font, "Courier New", monospace); }
+
+  @media print {
+    .strum-box .sb-a.acc { color: #000; }
+  }
+  .chord-grid .bar { color: var(--text-color, #333); font-weight: 400; }
+  .chord-grid .bar-repeat { color: var(--text-color, #333); font-weight: 700; }
+  .repeat-mark { font-family: var(--font-family, system-ui, sans-serif); font-weight: 800; color: var(--text-color, #333); border: 1.5px solid currentColor; border-radius: 0.3em; padding: 0 0.35em; margin-left: 0.4em; white-space: nowrap; }
+  td.repeat-mark { border: none; vertical-align: bottom; }
+  .inline-line { font-family: var(--font-family, system-ui, sans-serif); font-size: calc(var(--monospace-size, 14px) * 1.1); line-height: 1.6; color: var(--text-color, #333); white-space: pre-wrap; overflow-wrap: anywhere; min-height: 1em; }
+  .inline-line .ichord { color: var(--chord-color, #b22222); font-weight: 800; white-space: nowrap; }
+  .inline-line .ichord .ib { font-weight: 400; opacity: 0.7; }
+  .inline-line .bar { margin: 0 0.3em; }
+  .chords-only { white-space: pre-wrap; }
+  .key-change { display: inline-block; margin: 0.6em 0 0.2em; padding: 0.1em 0.6em; border: 1px solid var(--chord-color, #b22222); border-radius: 999px; color: var(--chord-color, #b22222); font-family: var(--font-family, system-ui, sans-serif); font-size: 0.85em; }
+  @media print { .key-change { color: #000; border-color: #000; } }
+  @media print { .inline-line .ichord { color: #000; } }
+  .tune-strip { margin: 0.4em 0 1.2em; padding: 0.5em 0.8em 0.6em; border: 1px solid color-mix(in srgb, var(--text-color, #333) 18%, transparent); border-radius: 8px; break-inside: avoid; page-break-inside: avoid; }
+  .tune-title { font-family: var(--font-family, system-ui, sans-serif); font-weight: 700; font-size: 0.95em; color: var(--text-color, #333); margin-bottom: 0.2em; }
+  .tune-row { margin: 0.15em 0 0.35em; break-inside: avoid; page-break-inside: avoid; }
+  .tune-caption { font-family: var(--font-family, system-ui, sans-serif); font-size: 0.82em; color: color-mix(in srgb, var(--text-color, #333) 70%, transparent); }
+  .tune-section { font-weight: 700; color: var(--text-color, #333); margin-right: 0.3em; }
+  .tune-words { font-style: italic; }
+  .tune-staff { margin: 0.3em 0 0.1em; break-inside: avoid; page-break-inside: avoid; }
+  .tune-staff-svg { display: block; max-width: 100%; height: auto; overflow: visible; color: var(--text-color, #333); fill: currentColor; }
+  .tune-staff-svg .tune-line, .tune-staff-svg .tune-bar, .tune-staff-svg .tune-ledger { stroke: currentColor; stroke-width: 0.91; }
+  .tune-staff-svg .tune-line { opacity: 0.7; }
+  .tune-staff-svg .tune-bar { stroke-width: 1.12; }
+  .tune-staff-svg .tune-stem { stroke: currentColor; stroke-width: 1.05; }
+  .tune-staff-svg .tune-chord { fill: var(--chord-color, #b22222); font-family: var(--font-family, system-ui, sans-serif); font-weight: 700; font-size: 12.25px; }
+  .tune-staff-svg .tune-tuplet { font-family: var(--font-family, system-ui, sans-serif); font-style: italic; font-size: 9.8px; }
+  .tune-staff-svg .tune-note.now { fill: var(--chord-color, #b22222); }
+  .tune-staff-svg .tune-note.now .tune-stem, .tune-staff-svg .tune-note.now .tune-ledger { stroke: var(--chord-color, #b22222); }
+  @media print { .tune-staff-svg .tune-chord { fill: #000; } .tune-strip { border-color: #bbb; } }
+      /* ukemusic style set: Classic — the usual look: red chords, blue headings, grey strums */
+
+/* Light theme (default) */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --chord-color: #b22222;
+  --rhythm-color: #666666;
+  --section-color: #1a5276;
+  --monospace-font: "Courier New", monospace;
+  --monospace-size: 14px;
+  --font-family: system-ui, -apple-system, sans-serif;
+  --rhythm-size: 14px;
+  --line-spacing: 1.4;
+  --section-spacing: 1.5em;
+  --verse-spacing: 1em;
+  /* Plain strum patterns: how much bigger than the words (View → Plain strums) */
+  --plain-strum-scale: 1.2;
+  /* Stage: the "(stage)" exports, and the preview when View → Look is Stage */
+  --stage-font: "Consolas", "Lucida Console", "DejaVu Sans Mono", monospace;
+  --stage-size: 18px;
+  --stage-color: #000000;
+}
+
+[data-theme="dark"] {
+  --bg-color: #1e1e1e;
+  --text-color: #d4d4d4;
+  --chord-color: #f08080;
+  --rhythm-color: #aaaaaa;
+  --section-color: #5dade2;
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="auto"] {
+    --bg-color: #1e1e1e;
+    --text-color: #d4d4d4;
+    --chord-color: #f08080;
+    --rhythm-color: #aaaaaa;
+    --section-color: #5dade2;
+  }
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--monospace-size);
+  line-height: var(--line-spacing);
+}
+
+.line-group { margin-bottom: 0; }
+
+/* Monospace layout: chords + lyrics + tab share --monospace-font and --monospace-size */
+.lyrics {
+  font-family: var(--monospace-font);
+  font-size: var(--monospace-size);
+  color: var(--text-color);
+  line-height: var(--line-spacing);
+  white-space: nowrap;
+  min-height: 1em;
+}
+
+.lyrics:empty { min-height: var(--verse-spacing); }
+
+.chords {
+  font-family: var(--monospace-font);
+  font-size: var(--monospace-size);
+  color: var(--chord-color);
+  line-height: var(--line-spacing);
+  white-space: nowrap;
+}
+
+.rhythm {
+  font-family: var(--monospace-font);
+  font-size: var(--rhythm-size);
+  color: var(--rhythm-color);
+  line-height: var(--line-spacing);
+  white-space: nowrap;
+}
+
+.section {
+  font-family: var(--font-family);
+  color: var(--section-color);
+  margin: var(--section-spacing) 0 0.5em;
+}
+
+.bar { color: var(--chord-color); }
+
+.tab {
+  font-family: var(--monospace-font);
+  font-size: var(--monospace-size);
+  color: var(--text-color);
+  line-height: var(--line-spacing);
+  background: transparent;
+  white-space: pre-wrap;
+}
+
+/* Diagrams */
+.chord-diagram {
+  --diagram-size: 80px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+.chord-diagram svg { width: var(--diagram-size); }
+.chord-diagram .dot { fill: var(--text-color); }
+.chord-diagram .line { stroke: var(--rhythm-color); }
+.chord-diagram .name { fill: var(--chord-color); }
+
+.chord-diagrams {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+
+.chord-diagram-text {
+  min-width: calc(var(--diagram-size) * 0.75);
+  min-height: calc(var(--diagram-size) * 0.75);
+  border: 1px solid var(--rhythm-color);
+  justify-content: center;
+  padding: 0.5rem;
+}
+.chord-diagram-text .name {
+  color: var(--chord-color);
+  fill: var(--chord-color);
+}
+
+/* Table layout: uses --font-family (proportional), not monospace */
+.chord-table {
+  border-collapse: collapse;
+  font-family: var(--font-family);
+  font-size: var(--monospace-size);
+  margin-bottom: 0.25em;
+}
+.chord-table td {
+  padding: 0 0.3em 0 0;
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+.chord-table .chord-row td {
+  color: var(--chord-color);
+  font-weight: bold;
+  padding-bottom: 0;
+}
+.chord-table .lyric-row td {
+  color: var(--text-color);
+  padding-top: 0;
+}
+.chord-table .rhythm-row td {
+  color: var(--rhythm-color);
+  font-size: var(--rhythm-size);
+}
+.chord-table .bar { padding: 0 0.1em; }
+
+/* ── Tab ─────────────────────────────────────────────────
+   View → Tab picks between these (data-tab-… on the page). */
+.tab .tab-fret { font-weight: 700; color: var(--chord-color); }
+.tab .tab-string { opacity: 0.7; }
+[data-tab-frets="bold"] .tab .tab-fret { font-weight: 700; color: var(--text-color); }
+[data-tab-frets="plain"] .tab .tab-fret { font-weight: inherit; color: inherit; }
+[data-tab-size="smaller"] .tab { font-size: calc(var(--monospace-size) * 0.85); }
+[data-tab-size="larger"] .tab { font-size: calc(var(--monospace-size) * 1.2); }
+[data-tab-box] .tab {
+  background: rgba(127, 127, 127, 0.08);
+  border: 1px solid rgba(127, 127, 127, 0.3);
+  border-radius: 6px;
+  padding: 8px 12px;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+[data-tab-faint] .tab .tab-dash, [data-tab-faint] .tab .tab-string { opacity: 0.4; }
+
+/* ── Exports: the title at the top ─────────────────────── */
+.song-title { font-family: var(--font-family); font-size: 1.6em; margin: 0 0 0.15em; color: var(--text-color); }
+.song-subtitle { font-family: var(--font-family); font-size: 0.9em; margin: 0 0 1.2em; color: var(--rhythm-color); }
+.song-artist { font-family: var(--font-family); font-size: 1.05em; margin: 0 0 0.2em; color: var(--text-color); }
+
+/* ── Stage ───────────────────────────────────────────────
+   Bold and black, easy to read at a gig: the "(stage)" PDFs and web pages,
+   stage songbooks, and the preview when View → Look is Stage.
+   Its font, size and colour are --stage-font, --stage-size and --stage-color
+   at the top of this file (Settings → Export changes them too). */
+[data-style="stage"] {
+  --bg-color: #ffffff;
+  --text-color: var(--stage-color);
+  --chord-color: var(--stage-color);
+  --rhythm-color: var(--stage-color);
+  --section-color: var(--stage-color);
+  --monospace-font: var(--stage-font);
+  --monospace-size: var(--stage-size);
+  --rhythm-size: calc(var(--stage-size) - 2px);
+  --line-spacing: 1.3;
+}
+[data-style="stage"] .chords, [data-style="stage"] .lyrics, [data-style="stage"] .rhythm,
+[data-style="stage"] .tab, [data-style="stage"] .chord-table td { font-weight: 700; color: var(--stage-color); }
+[data-style="stage"] .tab .tab-fret, [data-style="stage"] .tab .tab-string { color: var(--stage-color); opacity: 1; }
+[data-style="stage"] .tab .tab-fret { font-weight: 900; }
+[data-style="stage"] .section, [data-style="stage"] .song-title, [data-style="stage"] .lyrics-title { font-weight: 700; color: var(--stage-color); }
+[data-style="stage"] .song-subtitle { color: var(--stage-color); }
+[data-style="stage"] .chord-diagram svg line { stroke: var(--stage-color) !important; }
+[data-style="stage"] .chord-diagram svg text.name { font-weight: 700; fill: var(--stage-color) !important; }
+[data-style="stage"] .lyrics-page, [data-style="stage"] .lyric-line { color: var(--stage-color); font-weight: 700; }
+[data-style="stage"] .lyric-line { font-size: calc(var(--stage-size) * 1.1); }
+
+/* ── Strum boxes and chord diagrams ─────────────────────
+   --plain-strum-scale (at the top) sets the size of plain strum patterns (View → Plain strums).
+   The --diagram-… colours reach every part of the chord diagrams. */
+.strum-box, .strum-legend { --strum-size: calc(var(--monospace-size) * 1.15); }
+/* Plain strum patterns */
+.rhythm, .chord-table .rhythm-row td { font-size: calc(var(--monospace-size) * var(--plain-strum-scale, 1.2)); font-weight: 700; color: var(--text-color); }
+.chord-diagram {
+  --diagram-line: var(--rhythm-color);
+  --diagram-dot: var(--text-color);
+  --diagram-finger: var(--bg-color);
+  --diagram-name: var(--chord-color);
+}
+.chord-diagram svg .line { stroke: var(--diagram-line); }
+.chord-diagram svg .dot, .chord-diagram svg .barre { fill: var(--diagram-dot); }
+.chord-diagram svg .open { stroke: var(--diagram-dot); }
+.chord-diagram svg .muted, .chord-diagram svg .fret-label { fill: var(--diagram-dot); }
+.chord-diagram svg .finger { fill: var(--diagram-finger); }
+.chord-diagram svg .name { fill: var(--diagram-name); }
+[data-style="stage"] .chord-diagram { --diagram-line: var(--stage-color); --diagram-dot: var(--stage-color); --diagram-name: var(--stage-color); }
+/* For a box round each diagram, take away the comment marks around the next line
+.chord-diagram { border: 1px solid var(--diagram-line); border-radius: 8px; padding: 4px 6px; }
+*/
+
+/* ── Section names ───────────────────────────────────────
+   Export → Section names puts data-sections on the page: Small, or Hidden to save paper
+   for gigs and practice. A heading with nothing under it ("Chorus" as a cue, or
+   "Chorus x2") always stays, smaller, so you still know what to play. */
+[data-sections="small"] .song-section .section,
+[data-sections="hide"] .song-section.section-cue .section { font-size: 0.85em; margin: 0.6em 0 0.1em; }
+[data-sections="hide"] .song-section:not(.section-cue) > .section { display: none; }
+[data-sections="hide"] .song-section:not(.section-cue) { margin-top: 0.25em; }
+
+
+  .shorthand-key { margin: 1.6em 0 0; padding-top: 0.4em; border-top: 1px solid #bbb; font-family: Arial, "Segoe UI", sans-serif; font-size: 11px; color: #444; }
+  .shorthand-key strong { color: #000; }
+  @media print {
+    html, body { background: #fff !important; }
+    body { padding: 0 !important; }
+    .song-section.keep-together, .line-group, .chord-diagram, .chord-diagrams, pre.tab, .chord-table, .lyric-line { break-inside: avoid; page-break-inside: avoid; }
+    .section { break-after: avoid; page-break-after: avoid; }
+  }
+    </style>
+  </head>
+  <body><h1 class="song-title">Brahms' Lullaby</h1><p class="song-artist">Johannes Brahms, 1868</p>
+<p class="song-subtitle">Original key · C major · Ukulele</p><div class="chord-diagrams"><div class="chord-diagram" data-chord="C"><svg viewBox="0 0 100 145" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="C chord diagram" style="width: var(--diagram-size); height: auto;"><line class="line" x1="24" y1="34" x2="24" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="44" y1="34" x2="44" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="64" y1="34" x2="64" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="84" y1="34" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="34" x2="84" y2="34" stroke="var(--rhythm-color)" stroke-width="4" /><line class="line" x1="24" y1="58" x2="84" y2="58" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="82" x2="84" y2="82" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="106" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><circle class="open" cx="24" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="open" cx="44" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="open" cx="64" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="dot" cx="84" cy="94" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="84" y="98" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">3</text><text class="name" x="54" y="138" text-anchor="middle" font-size="18" font-weight="600" fill="var(--chord-color)">C</text></svg></div><div class="chord-diagram" data-chord="G7"><svg viewBox="0 0 100 145" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="G7 chord diagram" style="width: var(--diagram-size); height: auto;"><line class="line" x1="24" y1="34" x2="24" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="44" y1="34" x2="44" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="64" y1="34" x2="64" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="84" y1="34" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="34" x2="84" y2="34" stroke="var(--rhythm-color)" stroke-width="4" /><line class="line" x1="24" y1="58" x2="84" y2="58" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="82" x2="84" y2="82" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="106" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><circle class="open" cx="24" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="dot" cx="44" cy="70" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="44" y="74" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">2</text><circle class="dot" cx="64" cy="46" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="64" y="50" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">1</text><circle class="dot" cx="84" cy="70" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="84" y="74" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">3</text><text class="name" x="54" y="138" text-anchor="middle" font-size="18" font-weight="600" fill="var(--chord-color)">G7</text></svg></div><div class="chord-diagram" data-chord="F"><svg viewBox="0 0 100 145" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="F chord diagram" style="width: var(--diagram-size); height: auto;"><line class="line" x1="24" y1="34" x2="24" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="44" y1="34" x2="44" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="64" y1="34" x2="64" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="84" y1="34" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="34" x2="84" y2="34" stroke="var(--rhythm-color)" stroke-width="4" /><line class="line" x1="24" y1="58" x2="84" y2="58" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="82" x2="84" y2="82" stroke="var(--rhythm-color)" stroke-width="1.5" /><line class="line" x1="24" y1="106" x2="84" y2="106" stroke="var(--rhythm-color)" stroke-width="1.5" /><circle class="dot" cx="24" cy="70" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="24" y="74" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">2</text><circle class="open" cx="44" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><circle class="dot" cx="64" cy="46" r="7" fill="var(--text-color)" data-dot="true" /><text class="finger" x="64" y="50" text-anchor="middle" font-size="9" fill="var(--bg-color)" data-finger="true">1</text><circle class="open" cx="84" cy="16" r="5" fill="none" stroke="var(--text-color)" stroke-width="1.5" data-open="true" /><text class="name" x="54" y="138" text-anchor="middle" font-size="18" font-weight="600" fill="var(--chord-color)">F</text></svg></div></div>
+<div class="tune-strip"><div class="tune-title">The tune</div><div class="tune-row" data-line="5"><div class="tune-caption"><span class="tune-section">Verse</span> <span class="tune-words">Lullaby, and good night, with roses…</span></div><svg class="tune-staff-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -28.7 593.57 71.4" width="593.57" height="71.4" role="img" aria-label="The tune, as music"><line x1="0" x2="592.57" y1="0" y2="0" class="tune-line"/><line x1="0" x2="592.57" y1="7" y2="7" class="tune-line"/><line x1="0" x2="592.57" y1="14" y2="14" class="tune-line"/><line x1="0" x2="592.57" y1="21" y2="21" class="tune-line"/><line x1="0" x2="592.57" y1="28" y2="28" class="tune-line"/><path d="M1.504-1.66C1.496-1.708 1.504-1.712 1.528-1.736C1.96-2.14 2.288-2.648 2.288-3.26C2.288-3.608 2.192-3.952 2.028-4.192C1.968-4.28 1.864-4.392 1.82-4.392C1.764-4.392 1.64-4.288 1.56-4.2C1.264-3.872 1.168-3.372 1.168-2.956C1.168-2.724 1.196-2.464 1.224-2.3C1.232-2.252 1.236-2.244 1.188-2.204C0.612-1.728 0-1.156 0-0.348C0 0.348 0.476 1.008 1.456 1.008C1.548 1.008 1.652 1 1.732 0.984C1.776 0.976 1.784 0.972 1.792 1.02C1.84 1.288 1.9 1.636 1.9 1.824C1.9 2.416 1.5 2.488 1.264 2.488C1.048 2.488 0.944 2.424 0.944 2.372C0.944 2.344 0.98 2.332 1.072 2.304C1.196 2.268 1.34 2.16 1.34 1.928C1.34 1.708 1.2 1.52 0.956 1.52C0.688 1.52 0.528 1.732 0.528 1.98C0.528 2.24 0.684 2.632 1.288 2.632C1.556 2.632 2.076 2.512 2.076 1.832C2.076 1.604 2.004 1.224 1.96 0.976C1.952 0.928 1.956 0.932 2.012 0.908C2.416 0.748 2.684 0.408 2.684-0.044C2.684-0.556 2.308-1.008 1.72-1.008C1.616-1.008 1.616-1.008 1.604-1.08M1.88-3.772C2.012-3.772 2.12-3.664 2.12-3.444C2.12-3 1.74-2.64 1.424-2.364C1.396-2.34 1.38-2.344 1.372-2.396C1.356-2.5 1.348-2.636 1.348-2.764C1.348-3.388 1.636-3.772 1.88-3.772M1.444-1.048C1.456-0.972 1.456-0.976 1.384-0.952C1.032-0.832 0.804-0.516 0.804-0.176C0.804 0.184 0.992 0.44 1.264 0.532C1.296 0.544 1.344 0.556 1.372 0.556C1.404 0.556 1.42 0.536 1.42 0.512C1.42 0.484 1.388 0.472 1.36 0.46C1.192 0.388 1.072 0.216 1.072 0.032C1.072-0.196 1.228-0.368 1.472-0.436C1.536-0.452 1.544-0.448 1.552-0.404L1.752 0.788C1.76 0.832 1.756 0.832 1.696 0.844C1.632 0.856 1.552 0.864 1.472 0.864C0.772 0.864 0.32 0.476 0.32-0.08C0.32-0.316 0.36-0.632 0.692-1.008C0.932-1.276 1.116-1.424 1.304-1.576C1.344-1.608 1.352-1.604 1.36-1.56M1.72-0.412C1.712-0.46 1.716-0.472 1.764-0.468C2.088-0.44 2.356-0.168 2.356 0.184C2.356 0.436 2.204 0.64 1.98 0.752C1.932 0.776 1.924 0.776 1.916 0.728" transform="translate(2.8 21) scale(7)"/><path d="M0.852-0.992C0.848-0.992 0.844-0.992 0.836-0.992L0.808-0.996C0.804-0.996 0.796-0.996 0.792-0.996C0.448-0.996 0.104-0.768 0.104-0.556C0.104-0.424 0.18-0.248 0.428-0.232L0.448-0.232C0.624-0.232 0.712-0.36 0.712-0.492L0.712-0.524C0.7-0.672 0.6-0.68 0.58-0.688C0.56-0.696 0.5-0.688 0.5-0.744L0.5-0.76C0.508-0.828 0.632-0.86 0.668-0.86C1.008-0.86 1.04-0.648 1.04-0.552L1.04-0.524C1.04-0.228 0.804-0.112 0.552-0.1C0.512-0.096 0.456-0.076 0.456-0.032C0.456 0.016 0.524 0.016 0.556 0.016C1.016 0.016 1.052 0.328 1.052 0.38C1.052 0.804 0.836 0.852 0.748 0.852C0.732 0.852 0.716 0.848 0.712 0.848C0.68 0.844 0.604 0.844 0.6 0.784L0.6 0.764C0.6 0.676 0.688 0.616 0.692 0.5C0.692 0.332 0.576 0.212 0.404 0.212C0.388 0.212 0.376 0.212 0.36 0.216C0.292 0.228 0.216 0.268 0.168 0.32C0.1 0.38 0.08 0.476 0.08 0.564C0.088 0.876 0.372 0.996 0.764 1.004L0.8 1.004C1.196 1.004 1.604 0.8 1.604 0.448L1.604 0.42C1.596 0.304 1.568 0.228 1.492 0.14C1.468 0.108 1.436 0.08 1.396 0.056L1.312 0.008L1.18-0.028C1.16-0.032 1.148-0.032 1.14-0.048C1.136-0.056 1.136-0.06 1.136-0.068C1.136-0.084 1.14-0.1 1.152-0.104C1.196-0.116 1.24-0.12 1.276-0.14C1.436-0.216 1.52-0.32 1.52-0.504C1.52-0.872 1.02-0.98 0.852-0.992" transform="translate(25.9 7) scale(7)"/><path d="M1.448 0.296L1.448-0.56C1.448-0.592 1.444-0.628 1.4-0.628C1.364-0.628 1.344-0.62 1.32-0.592L0.94-0.132C0.924-0.112 0.904-0.088 0.904-0.04L0.904 0.296L0.364 0.296C0.684 0.024 1.324-0.884 1.336-0.932L1.34-0.944C1.34-0.98 1.312-1.004 1.28-1.004C1.244-1.004 1.08-0.996 1.008-0.996C0.936-0.996 0.756-1.004 0.724-1.004C0.688-1.004 0.632-0.992 0.632-0.928C0.632-0.432 0.24 0.124 0.12 0.292L0.096 0.324C0.096 0.324 0.096 0.328 0.096 0.328L0.092 0.332C0.084 0.352 0.08 0.368 0.08 0.38C0.08 0.42 0.112 0.448 0.16 0.448L0.904 0.448L0.904 0.7C0.904 0.808 0.816 0.84 0.744 0.84C0.68 0.84 0.652 0.876 0.652 0.916C0.652 0.956 0.668 1 0.728 1L1.58 1C1.62 1 1.66 0.972 1.66 0.916C1.66 0.86 1.612 0.836 1.572 0.836C1.532 0.836 1.448 0.812 1.448 0.684L1.448 0.448L1.74 0.448C1.78 0.448 1.8 0.42 1.8 0.372C1.8 0.324 1.784 0.296 1.74 0.296" transform="translate(25.9 21) scale(7)"/><g class="tune-note" data-line="5" data-at="-1"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(49 28) scale(7)"/><line x1="56.84" x2="56.84" y1="26.81" y2="3.5" class="tune-stem"/></g><g class="tune-note" data-line="5" data-at="-0.5"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(78.67 28) scale(7)"/><line x1="86.51" x2="86.51" y1="26.81" y2="3.5" class="tune-stem"/></g><line x1="110.44" x2="110.44" y1="0" y2="28" class="tune-bar"/><g class="tune-note" data-line="5" data-at="0"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(118.84 21) scale(7)"/><circle cx="130.74" cy="17.5" r="1.4"/><line x1="126.68" x2="126.68" y1="19.81" y2="-3.5" class="tune-stem"/></g><g class="tune-note" data-line="5" data-at="1.5"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(157.93 28) scale(7)"/><line x1="165.77" x2="165.77" y1="26.81" y2="3.5" class="tune-stem"/><path d="M0.952 3.16C0.952 3.16 1.056 2.78 1.056 2.468C1.056 1.968 0.848 1.496 0.596 1.096C0.392 0.78 0.224 0.436 0.16 0.052C0.148-0.012 0.116-0.036 0.076-0.036C0.032-0.036 0-0.024 0 0.024L0 0.98C0.264 1.028 0.644 1.572 0.788 1.912C0.848 2.048 0.884 2.276 0.884 2.512C0.884 2.692 0.856 2.88 0.788 3.06C0.78 3.084 0.776 3.104 0.776 3.12C0.776 3.184 0.816 3.22 0.84 3.236C0.864 3.252 0.932 3.228 0.952 3.16" transform="translate(165.35 3.5) scale(7)"/></g><g class="tune-note" data-line="5" data-at="2"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(187.6 28) scale(7)"/><line x1="195.44" x2="195.44" y1="26.81" y2="3.5" class="tune-stem"/></g><line x1="224.7" x2="224.7" y1="0" y2="28" class="tune-bar"/><g class="tune-note" data-line="5" data-at="3"><path d="M0.388 0.5C1.048 0.5 1.18-0.036 1.18-0.168C1.18-0.372 1.016-0.5 0.784-0.5C0.188-0.5 0-0.04 0 0.168C0 0.38 0.168 0.5 0.388 0.5M0.3 0.348C0.216 0.348 0.168 0.304 0.14 0.256C0.128 0.232 0.116 0.204 0.116 0.176C0.116-0.02 0.696-0.336 0.884-0.336C0.96-0.336 1.004-0.3 1.032-0.252C1.044-0.228 1.056-0.204 1.056-0.176C1.056-0.004 0.492 0.348 0.3 0.348" transform="translate(233.1 21) scale(7)"/><line x1="240.94" x2="240.94" y1="19.81" y2="-3.5" class="tune-stem"/></g><g class="tune-note" data-line="5" data-at="5"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(275.64 28) scale(7)"/><line x1="283.48" x2="283.48" y1="26.81" y2="3.5" class="tune-stem"/></g><g class="tune-note" data-line="5" data-at="5.5"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(305.31 21) scale(7)"/><line x1="313.15" x2="313.15" y1="19.81" y2="-0.06" class="tune-stem"/></g><line x1="337.08" x2="337.08" y1="0" y2="28" class="tune-bar"/><g class="tune-note" data-line="5" data-at="6"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(345.48 10.5) scale(7)"/><line x1="345.9" x2="345.9" y1="11.69" y2="35" class="tune-stem"/></g><g class="tune-note" data-line="5" data-at="7"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(380.48 14) scale(7)"/><circle cx="392.38" cy="10.5" r="1.4"/><line x1="380.9" x2="380.9" y1="15.19" y2="38.5" class="tune-stem"/></g><g class="tune-note" data-line="5" data-at="8.5"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(419.57 17.5) scale(7)"/><line x1="427.41" x2="427.41" y1="16.31" y2="-7" class="tune-stem"/><path d="M0.952 3.16C0.952 3.16 1.056 2.78 1.056 2.468C1.056 1.968 0.848 1.496 0.596 1.096C0.392 0.78 0.224 0.436 0.16 0.052C0.148-0.012 0.116-0.036 0.076-0.036C0.032-0.036 0-0.024 0 0.024L0 0.98C0.264 1.028 0.644 1.572 0.788 1.912C0.848 2.048 0.884 2.276 0.884 2.512C0.884 2.692 0.856 2.88 0.788 3.06C0.78 3.084 0.776 3.104 0.776 3.12C0.776 3.184 0.816 3.22 0.84 3.236C0.864 3.252 0.932 3.228 0.952 3.16" transform="translate(426.99 -7) scale(7)"/></g><line x1="451.34" x2="451.34" y1="0" y2="28" class="tune-bar"/><g class="tune-note" data-line="5" data-at="9"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(459.74 17.5) scale(7)"/><line x1="467.58" x2="467.58" y1="16.31" y2="-7" class="tune-stem"/></g><g class="tune-note" data-line="5" data-at="10"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(494.74 21) scale(7)"/><line x1="502.58" x2="502.58" y1="19.81" y2="-3.5" class="tune-stem"/></g><g class="tune-note" data-line="5" data-at="11"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(529.74 31.5) scale(7)"/><line x1="537.58" x2="537.58" y1="30.31" y2="7" class="tune-stem"/></g><g class="tune-note" data-line="5" data-at="11.5"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(559.4 28) scale(7)"/><line x1="567.24" x2="567.24" y1="26.81" y2="3.5" class="tune-stem"/></g><line x1="591.17" x2="591.17" y1="0" y2="28" class="tune-bar"/><path d="M56.42 3.5L86.93 3.5L86.93 7L56.42 7Z" class="tune-beam"/><path d="M283.06 3.5L313.57 -0.06L313.57 3.44L283.06 7Z" class="tune-beam"/><path d="M537.16 7L567.66 3.5L567.66 7L537.16 10.5Z" class="tune-beam"/><text x="118.84" y="-14.7" class="tune-chord">C</text><text x="459.74" y="-14.7" class="tune-chord">G7</text></svg></div><div class="tune-row" data-line="7"><div class="tune-caption"><span class="tune-words">lilies o'erspread is baby's wee bed.</span></div><svg class="tune-staff-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -29.4 470.59 72.1" width="470.59" height="72.1" role="img" aria-label="The tune, as music"><line x1="0" x2="469.59" y1="0" y2="0" class="tune-line"/><line x1="0" x2="469.59" y1="7" y2="7" class="tune-line"/><line x1="0" x2="469.59" y1="14" y2="14" class="tune-line"/><line x1="0" x2="469.59" y1="21" y2="21" class="tune-line"/><line x1="0" x2="469.59" y1="28" y2="28" class="tune-line"/><path d="M1.504-1.66C1.496-1.708 1.504-1.712 1.528-1.736C1.96-2.14 2.288-2.648 2.288-3.26C2.288-3.608 2.192-3.952 2.028-4.192C1.968-4.28 1.864-4.392 1.82-4.392C1.764-4.392 1.64-4.288 1.56-4.2C1.264-3.872 1.168-3.372 1.168-2.956C1.168-2.724 1.196-2.464 1.224-2.3C1.232-2.252 1.236-2.244 1.188-2.204C0.612-1.728 0-1.156 0-0.348C0 0.348 0.476 1.008 1.456 1.008C1.548 1.008 1.652 1 1.732 0.984C1.776 0.976 1.784 0.972 1.792 1.02C1.84 1.288 1.9 1.636 1.9 1.824C1.9 2.416 1.5 2.488 1.264 2.488C1.048 2.488 0.944 2.424 0.944 2.372C0.944 2.344 0.98 2.332 1.072 2.304C1.196 2.268 1.34 2.16 1.34 1.928C1.34 1.708 1.2 1.52 0.956 1.52C0.688 1.52 0.528 1.732 0.528 1.98C0.528 2.24 0.684 2.632 1.288 2.632C1.556 2.632 2.076 2.512 2.076 1.832C2.076 1.604 2.004 1.224 1.96 0.976C1.952 0.928 1.956 0.932 2.012 0.908C2.416 0.748 2.684 0.408 2.684-0.044C2.684-0.556 2.308-1.008 1.72-1.008C1.616-1.008 1.616-1.008 1.604-1.08M1.88-3.772C2.012-3.772 2.12-3.664 2.12-3.444C2.12-3 1.74-2.64 1.424-2.364C1.396-2.34 1.38-2.344 1.372-2.396C1.356-2.5 1.348-2.636 1.348-2.764C1.348-3.388 1.636-3.772 1.88-3.772M1.444-1.048C1.456-0.972 1.456-0.976 1.384-0.952C1.032-0.832 0.804-0.516 0.804-0.176C0.804 0.184 0.992 0.44 1.264 0.532C1.296 0.544 1.344 0.556 1.372 0.556C1.404 0.556 1.42 0.536 1.42 0.512C1.42 0.484 1.388 0.472 1.36 0.46C1.192 0.388 1.072 0.216 1.072 0.032C1.072-0.196 1.228-0.368 1.472-0.436C1.536-0.452 1.544-0.448 1.552-0.404L1.752 0.788C1.76 0.832 1.756 0.832 1.696 0.844C1.632 0.856 1.552 0.864 1.472 0.864C0.772 0.864 0.32 0.476 0.32-0.08C0.32-0.316 0.36-0.632 0.692-1.008C0.932-1.276 1.116-1.424 1.304-1.576C1.344-1.608 1.352-1.604 1.36-1.56M1.72-0.412C1.712-0.46 1.716-0.472 1.764-0.468C2.088-0.44 2.356-0.168 2.356 0.184C2.356 0.436 2.204 0.64 1.98 0.752C1.932 0.776 1.924 0.776 1.916 0.728" transform="translate(2.8 21) scale(7)"/><g class="tune-note" data-line="7" data-at="0"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(31.5 24.5) scale(7)"/><line x1="39.34" x2="39.34" y1="23.31" y2="0" class="tune-stem"/></g><g class="tune-note" data-line="7" data-at="1"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(66.5 31.5) scale(7)"/><line x1="74.34" x2="74.34" y1="30.31" y2="7" class="tune-stem"/></g><g class="tune-note" data-line="7" data-at="2"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(101.5 31.5) scale(7)"/><line x1="109.34" x2="109.34" y1="30.31" y2="7" class="tune-stem"/></g><g class="tune-note" data-line="7" data-at="2.5"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(131.17 28) scale(7)"/><line x1="139.01" x2="139.01" y1="26.81" y2="3.5" class="tune-stem"/></g><line x1="162.94" x2="162.94" y1="0" y2="28" class="tune-bar"/><g class="tune-note" data-line="7" data-at="3"><path d="M0.388 0.5C1.048 0.5 1.18-0.036 1.18-0.168C1.18-0.372 1.016-0.5 0.784-0.5C0.188-0.5 0-0.04 0 0.168C0 0.38 0.168 0.5 0.388 0.5M0.3 0.348C0.216 0.348 0.168 0.304 0.14 0.256C0.128 0.232 0.116 0.204 0.116 0.176C0.116-0.02 0.696-0.336 0.884-0.336C0.96-0.336 1.004-0.3 1.032-0.252C1.044-0.228 1.056-0.204 1.056-0.176C1.056-0.004 0.492 0.348 0.3 0.348" transform="translate(171.34 24.5) scale(7)"/><line x1="179.18" x2="179.18" y1="23.31" y2="0" class="tune-stem"/></g><g class="tune-note" data-line="7" data-at="5"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(213.88 31.5) scale(7)"/><line x1="221.72" x2="221.72" y1="30.31" y2="7" class="tune-stem"/></g><g class="tune-note" data-line="7" data-at="5.5"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(243.55 24.5) scale(7)"/><line x1="251.39" x2="251.39" y1="23.31" y2="3.44" class="tune-stem"/></g><line x1="275.32" x2="275.32" y1="0" y2="28" class="tune-bar"/><g class="tune-note" data-line="7" data-at="6"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(283.72 14) scale(7)"/><line x1="291.56" x2="291.56" y1="12.81" y2="-10.5" class="tune-stem"/></g><g class="tune-note" data-line="7" data-at="6.5"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(313.39 17.5) scale(7)"/><line x1="321.23" x2="321.23" y1="16.31" y2="-7" class="tune-stem"/></g><g class="tune-note" data-line="7" data-at="7"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(343.05 21) scale(7)"/><line x1="350.89" x2="350.89" y1="19.81" y2="-3.5" class="tune-stem"/></g><g class="tune-note" data-line="7" data-at="8"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(378.05 14) scale(7)"/><line x1="378.47" x2="378.47" y1="15.19" y2="38.5" class="tune-stem"/></g><line x1="415.15" x2="415.15" y1="0" y2="28" class="tune-bar"/><g class="tune-note" data-line="7" data-at="9"><path d="M0.388 0.5C1.048 0.5 1.18-0.036 1.18-0.168C1.18-0.372 1.016-0.5 0.784-0.5C0.188-0.5 0-0.04 0 0.168C0 0.38 0.168 0.5 0.388 0.5M0.3 0.348C0.216 0.348 0.168 0.304 0.14 0.256C0.128 0.232 0.116 0.204 0.116 0.176C0.116-0.02 0.696-0.336 0.884-0.336C0.96-0.336 1.004-0.3 1.032-0.252C1.044-0.228 1.056-0.204 1.056-0.176C1.056-0.004 0.492 0.348 0.3 0.348" transform="translate(423.55 10.5) scale(7)"/><line x1="423.97" x2="423.97" y1="11.69" y2="35" class="tune-stem"/></g><line x1="468.19" x2="468.19" y1="0" y2="28" class="tune-bar"/><path d="M108.92 7L139.43 3.5L139.43 7L108.92 10.5Z" class="tune-beam"/><path d="M221.3 7L251.81 3.44L251.81 6.94L221.3 10.5Z" class="tune-beam"/><path d="M291.14 -10.5L321.65 -7L321.65 -3.5L291.14 -7Z" class="tune-beam"/><text x="31.5" y="-15.4" class="tune-chord">G7</text><text x="423.55" y="-15.4" class="tune-chord">C</text></svg></div><div class="tune-row" data-line="9"><div class="tune-caption"><span class="tune-words">Lay thee down now and rest,…</span></div><svg class="tune-staff-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -28.7 488.63 71.4" width="488.63" height="71.4" role="img" aria-label="The tune, as music"><line x1="0" x2="487.63" y1="0" y2="0" class="tune-line"/><line x1="0" x2="487.63" y1="7" y2="7" class="tune-line"/><line x1="0" x2="487.63" y1="14" y2="14" class="tune-line"/><line x1="0" x2="487.63" y1="21" y2="21" class="tune-line"/><line x1="0" x2="487.63" y1="28" y2="28" class="tune-line"/><path d="M1.504-1.66C1.496-1.708 1.504-1.712 1.528-1.736C1.96-2.14 2.288-2.648 2.288-3.26C2.288-3.608 2.192-3.952 2.028-4.192C1.968-4.28 1.864-4.392 1.82-4.392C1.764-4.392 1.64-4.288 1.56-4.2C1.264-3.872 1.168-3.372 1.168-2.956C1.168-2.724 1.196-2.464 1.224-2.3C1.232-2.252 1.236-2.244 1.188-2.204C0.612-1.728 0-1.156 0-0.348C0 0.348 0.476 1.008 1.456 1.008C1.548 1.008 1.652 1 1.732 0.984C1.776 0.976 1.784 0.972 1.792 1.02C1.84 1.288 1.9 1.636 1.9 1.824C1.9 2.416 1.5 2.488 1.264 2.488C1.048 2.488 0.944 2.424 0.944 2.372C0.944 2.344 0.98 2.332 1.072 2.304C1.196 2.268 1.34 2.16 1.34 1.928C1.34 1.708 1.2 1.52 0.956 1.52C0.688 1.52 0.528 1.732 0.528 1.98C0.528 2.24 0.684 2.632 1.288 2.632C1.556 2.632 2.076 2.512 2.076 1.832C2.076 1.604 2.004 1.224 1.96 0.976C1.952 0.928 1.956 0.932 2.012 0.908C2.416 0.748 2.684 0.408 2.684-0.044C2.684-0.556 2.308-1.008 1.72-1.008C1.616-1.008 1.616-1.008 1.604-1.08M1.88-3.772C2.012-3.772 2.12-3.664 2.12-3.444C2.12-3 1.74-2.64 1.424-2.364C1.396-2.34 1.38-2.344 1.372-2.396C1.356-2.5 1.348-2.636 1.348-2.764C1.348-3.388 1.636-3.772 1.88-3.772M1.444-1.048C1.456-0.972 1.456-0.976 1.384-0.952C1.032-0.832 0.804-0.516 0.804-0.176C0.804 0.184 0.992 0.44 1.264 0.532C1.296 0.544 1.344 0.556 1.372 0.556C1.404 0.556 1.42 0.536 1.42 0.512C1.42 0.484 1.388 0.472 1.36 0.46C1.192 0.388 1.072 0.216 1.072 0.032C1.072-0.196 1.228-0.368 1.472-0.436C1.536-0.452 1.544-0.448 1.552-0.404L1.752 0.788C1.76 0.832 1.756 0.832 1.696 0.844C1.632 0.856 1.552 0.864 1.472 0.864C0.772 0.864 0.32 0.476 0.32-0.08C0.32-0.316 0.36-0.632 0.692-1.008C0.932-1.276 1.116-1.424 1.304-1.576C1.344-1.608 1.352-1.604 1.36-1.56M1.72-0.412C1.712-0.46 1.716-0.472 1.764-0.468C2.088-0.44 2.356-0.168 2.356 0.184C2.356 0.436 2.204 0.64 1.98 0.752C1.932 0.776 1.924 0.776 1.916 0.728" transform="translate(2.8 21) scale(7)"/><g class="tune-note" data-line="9" data-at="-1"><line x1="28.7" x2="42.7" y1="35" y2="35" class="tune-ledger"/><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(31.5 35) scale(7)"/><line x1="39.34" x2="39.34" y1="33.81" y2="10.5" class="tune-stem"/></g><g class="tune-note" data-line="9" data-at="-0.5"><line x1="58.37" x2="72.37" y1="35" y2="35" class="tune-ledger"/><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(61.17 35) scale(7)"/><line x1="69.01" x2="69.01" y1="33.81" y2="10.5" class="tune-stem"/></g><line x1="92.94" x2="92.94" y1="0" y2="28" class="tune-bar"/><g class="tune-note" data-line="9" data-at="0"><path d="M0.388 0.5C1.048 0.5 1.18-0.036 1.18-0.168C1.18-0.372 1.016-0.5 0.784-0.5C0.188-0.5 0-0.04 0 0.168C0 0.38 0.168 0.5 0.388 0.5M0.3 0.348C0.216 0.348 0.168 0.304 0.14 0.256C0.128 0.232 0.116 0.204 0.116 0.176C0.116-0.02 0.696-0.336 0.884-0.336C0.96-0.336 1.004-0.3 1.032-0.252C1.044-0.228 1.056-0.204 1.056-0.176C1.056-0.004 0.492 0.348 0.3 0.348" transform="translate(101.34 10.5) scale(7)"/><line x1="101.76" x2="101.76" y1="11.69" y2="35" class="tune-stem"/></g><g class="tune-note" data-line="9" data-at="2"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(143.88 17.5) scale(7)"/><line x1="151.72" x2="151.72" y1="16.31" y2="-7" class="tune-stem"/></g><g class="tune-note" data-line="9" data-at="2.5"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(173.55 24.5) scale(7)"/><line x1="181.39" x2="181.39" y1="23.31" y2="-3.44" class="tune-stem"/></g><line x1="205.32" x2="205.32" y1="0" y2="28" class="tune-bar"/><g class="tune-note" data-line="9" data-at="3"><path d="M0.388 0.5C1.048 0.5 1.18-0.036 1.18-0.168C1.18-0.372 1.016-0.5 0.784-0.5C0.188-0.5 0-0.04 0 0.168C0 0.38 0.168 0.5 0.388 0.5M0.3 0.348C0.216 0.348 0.168 0.304 0.14 0.256C0.128 0.232 0.116 0.204 0.116 0.176C0.116-0.02 0.696-0.336 0.884-0.336C0.96-0.336 1.004-0.3 1.032-0.252C1.044-0.228 1.056-0.204 1.056-0.176C1.056-0.004 0.492 0.348 0.3 0.348" transform="translate(213.72 21) scale(7)"/><line x1="221.56" x2="221.56" y1="19.81" y2="-3.5" class="tune-stem"/></g><g class="tune-note" data-line="9" data-at="5"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(256.25 28) scale(7)"/><line x1="264.09" x2="264.09" y1="26.81" y2="3.5" class="tune-stem"/></g><g class="tune-note" data-line="9" data-at="5.5"><line x1="283.12" x2="297.12" y1="35" y2="35" class="tune-ledger"/><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(285.92 35) scale(7)"/><line x1="293.76" x2="293.76" y1="33.81" y2="7.06" class="tune-stem"/></g><line x1="317.69" x2="317.69" y1="0" y2="28" class="tune-bar"/><g class="tune-note" data-line="9" data-at="6"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(326.09 24.5) scale(7)"/><line x1="333.93" x2="333.93" y1="23.31" y2="0" class="tune-stem"/></g><g class="tune-note" data-line="9" data-at="7"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(361.09 21) scale(7)"/><line x1="368.93" x2="368.93" y1="19.81" y2="-3.5" class="tune-stem"/></g><g class="tune-note" data-line="9" data-at="8"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(396.09 17.5) scale(7)"/><line x1="403.93" x2="403.93" y1="16.31" y2="-7" class="tune-stem"/></g><line x1="433.19" x2="433.19" y1="0" y2="28" class="tune-bar"/><g class="tune-note" data-line="9" data-at="9"><path d="M0.388 0.5C1.048 0.5 1.18-0.036 1.18-0.168C1.18-0.372 1.016-0.5 0.784-0.5C0.188-0.5 0-0.04 0 0.168C0 0.38 0.168 0.5 0.388 0.5M0.3 0.348C0.216 0.348 0.168 0.304 0.14 0.256C0.128 0.232 0.116 0.204 0.116 0.176C0.116-0.02 0.696-0.336 0.884-0.336C0.96-0.336 1.004-0.3 1.032-0.252C1.044-0.228 1.056-0.204 1.056-0.176C1.056-0.004 0.492 0.348 0.3 0.348" transform="translate(441.59 21) scale(7)"/><line x1="449.43" x2="449.43" y1="19.81" y2="-3.5" class="tune-stem"/></g><line x1="486.23" x2="486.23" y1="0" y2="28" class="tune-bar"/><path d="M38.92 10.5L69.43 10.5L69.43 14L38.92 14Z" class="tune-beam"/><path d="M151.3 -7L181.81 -3.44L181.81 0.06L151.3 -3.5Z" class="tune-beam"/><path d="M263.67 3.5L294.18 7.06L294.18 10.56L263.67 7Z" class="tune-beam"/><text x="101.34" y="-14.7" class="tune-chord">F</text><text x="213.72" y="-14.7" class="tune-chord">C</text><text x="326.09" y="-14.7" class="tune-chord">G7</text><text x="441.59" y="-14.7" class="tune-chord">C</text></svg></div><div class="tune-row" data-line="11"><div class="tune-caption"><span class="tune-words">Lay thee down now and rest,…</span></div><svg class="tune-staff-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -28.7 494.42 71.4" width="494.42" height="71.4" role="img" aria-label="The tune, as music"><line x1="0" x2="493.42" y1="0" y2="0" class="tune-line"/><line x1="0" x2="493.42" y1="7" y2="7" class="tune-line"/><line x1="0" x2="493.42" y1="14" y2="14" class="tune-line"/><line x1="0" x2="493.42" y1="21" y2="21" class="tune-line"/><line x1="0" x2="493.42" y1="28" y2="28" class="tune-line"/><path d="M1.504-1.66C1.496-1.708 1.504-1.712 1.528-1.736C1.96-2.14 2.288-2.648 2.288-3.26C2.288-3.608 2.192-3.952 2.028-4.192C1.968-4.28 1.864-4.392 1.82-4.392C1.764-4.392 1.64-4.288 1.56-4.2C1.264-3.872 1.168-3.372 1.168-2.956C1.168-2.724 1.196-2.464 1.224-2.3C1.232-2.252 1.236-2.244 1.188-2.204C0.612-1.728 0-1.156 0-0.348C0 0.348 0.476 1.008 1.456 1.008C1.548 1.008 1.652 1 1.732 0.984C1.776 0.976 1.784 0.972 1.792 1.02C1.84 1.288 1.9 1.636 1.9 1.824C1.9 2.416 1.5 2.488 1.264 2.488C1.048 2.488 0.944 2.424 0.944 2.372C0.944 2.344 0.98 2.332 1.072 2.304C1.196 2.268 1.34 2.16 1.34 1.928C1.34 1.708 1.2 1.52 0.956 1.52C0.688 1.52 0.528 1.732 0.528 1.98C0.528 2.24 0.684 2.632 1.288 2.632C1.556 2.632 2.076 2.512 2.076 1.832C2.076 1.604 2.004 1.224 1.96 0.976C1.952 0.928 1.956 0.932 2.012 0.908C2.416 0.748 2.684 0.408 2.684-0.044C2.684-0.556 2.308-1.008 1.72-1.008C1.616-1.008 1.616-1.008 1.604-1.08M1.88-3.772C2.012-3.772 2.12-3.664 2.12-3.444C2.12-3 1.74-2.64 1.424-2.364C1.396-2.34 1.38-2.344 1.372-2.396C1.356-2.5 1.348-2.636 1.348-2.764C1.348-3.388 1.636-3.772 1.88-3.772M1.444-1.048C1.456-0.972 1.456-0.976 1.384-0.952C1.032-0.832 0.804-0.516 0.804-0.176C0.804 0.184 0.992 0.44 1.264 0.532C1.296 0.544 1.344 0.556 1.372 0.556C1.404 0.556 1.42 0.536 1.42 0.512C1.42 0.484 1.388 0.472 1.36 0.46C1.192 0.388 1.072 0.216 1.072 0.032C1.072-0.196 1.228-0.368 1.472-0.436C1.536-0.452 1.544-0.448 1.552-0.404L1.752 0.788C1.76 0.832 1.756 0.832 1.696 0.844C1.632 0.856 1.552 0.864 1.472 0.864C0.772 0.864 0.32 0.476 0.32-0.08C0.32-0.316 0.36-0.632 0.692-1.008C0.932-1.276 1.116-1.424 1.304-1.576C1.344-1.608 1.352-1.604 1.36-1.56M1.72-0.412C1.712-0.46 1.716-0.472 1.764-0.468C2.088-0.44 2.356-0.168 2.356 0.184C2.356 0.436 2.204 0.64 1.98 0.752C1.932 0.776 1.924 0.776 1.916 0.728" transform="translate(2.8 21) scale(7)"/><g class="tune-note" data-line="11" data-at="-1"><line x1="28.7" x2="42.7" y1="35" y2="35" class="tune-ledger"/><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(31.5 35) scale(7)"/><line x1="39.34" x2="39.34" y1="33.81" y2="10.5" class="tune-stem"/></g><g class="tune-note" data-line="11" data-at="-0.5"><line x1="58.37" x2="72.37" y1="35" y2="35" class="tune-ledger"/><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(61.17 35) scale(7)"/><line x1="69.01" x2="69.01" y1="33.81" y2="10.5" class="tune-stem"/></g><line x1="92.94" x2="92.94" y1="0" y2="28" class="tune-bar"/><g class="tune-note" data-line="11" data-at="0"><path d="M0.388 0.5C1.048 0.5 1.18-0.036 1.18-0.168C1.18-0.372 1.016-0.5 0.784-0.5C0.188-0.5 0-0.04 0 0.168C0 0.38 0.168 0.5 0.388 0.5M0.3 0.348C0.216 0.348 0.168 0.304 0.14 0.256C0.128 0.232 0.116 0.204 0.116 0.176C0.116-0.02 0.696-0.336 0.884-0.336C0.96-0.336 1.004-0.3 1.032-0.252C1.044-0.228 1.056-0.204 1.056-0.176C1.056-0.004 0.492 0.348 0.3 0.348" transform="translate(101.34 10.5) scale(7)"/><line x1="101.76" x2="101.76" y1="11.69" y2="35" class="tune-stem"/></g><g class="tune-note" data-line="11" data-at="2"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(143.88 17.5) scale(7)"/><line x1="151.72" x2="151.72" y1="16.31" y2="-7" class="tune-stem"/></g><g class="tune-note" data-line="11" data-at="2.5"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(173.55 24.5) scale(7)"/><line x1="181.39" x2="181.39" y1="23.31" y2="-3.44" class="tune-stem"/></g><line x1="205.32" x2="205.32" y1="0" y2="28" class="tune-bar"/><g class="tune-note" data-line="11" data-at="3"><path d="M0.388 0.5C1.048 0.5 1.18-0.036 1.18-0.168C1.18-0.372 1.016-0.5 0.784-0.5C0.188-0.5 0-0.04 0 0.168C0 0.38 0.168 0.5 0.388 0.5M0.3 0.348C0.216 0.348 0.168 0.304 0.14 0.256C0.128 0.232 0.116 0.204 0.116 0.176C0.116-0.02 0.696-0.336 0.884-0.336C0.96-0.336 1.004-0.3 1.032-0.252C1.044-0.228 1.056-0.204 1.056-0.176C1.056-0.004 0.492 0.348 0.3 0.348" transform="translate(213.72 21) scale(7)"/><line x1="221.56" x2="221.56" y1="19.81" y2="-3.5" class="tune-stem"/></g><g class="tune-note" data-line="11" data-at="5"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(256.25 28) scale(7)"/><line x1="264.09" x2="264.09" y1="26.81" y2="3.5" class="tune-stem"/></g><g class="tune-note" data-line="11" data-at="5.5"><line x1="283.12" x2="297.12" y1="35" y2="35" class="tune-ledger"/><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(285.92 35) scale(7)"/><line x1="293.76" x2="293.76" y1="33.81" y2="7.06" class="tune-stem"/></g><line x1="317.69" x2="317.69" y1="0" y2="28" class="tune-bar"/><g class="tune-note" data-line="11" data-at="6"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(326.09 24.5) scale(7)"/><line x1="333.93" x2="333.93" y1="23.31" y2="0" class="tune-stem"/></g><g class="tune-note" data-line="11" data-at="7"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(361.09 28) scale(7)"/><line x1="368.93" x2="368.93" y1="26.81" y2="3.5" class="tune-stem"/></g><g class="tune-note" data-line="11" data-at="8"><path d="M0.388 0.5C0.744 0.5 1.18 0.172 1.18-0.168C1.18-0.372 1.02-0.5 0.792-0.5C0.352-0.5 0-0.176 0 0.168C0 0.376 0.172 0.5 0.388 0.5" transform="translate(396.09 31.5) scale(7)"/><line x1="403.93" x2="403.93" y1="30.31" y2="7" class="tune-stem"/></g><line x1="433.19" x2="433.19" y1="0" y2="28" class="tune-bar"/><g class="tune-note" data-line="11" data-at="9"><line x1="438.79" x2="452.79" y1="35" y2="35" class="tune-ledger"/><path d="M0.388 0.5C1.048 0.5 1.18-0.036 1.18-0.168C1.18-0.372 1.016-0.5 0.784-0.5C0.188-0.5 0-0.04 0 0.168C0 0.38 0.168 0.5 0.388 0.5M0.3 0.348C0.216 0.348 0.168 0.304 0.14 0.256C0.128 0.232 0.116 0.204 0.116 0.176C0.116-0.02 0.696-0.336 0.884-0.336C0.96-0.336 1.004-0.3 1.032-0.252C1.044-0.228 1.056-0.204 1.056-0.176C1.056-0.004 0.492 0.348 0.3 0.348" transform="translate(441.59 35) scale(7)"/><circle cx="453.49" cy="31.5" r="1.4"/><line x1="449.43" x2="449.43" y1="33.81" y2="10.5" class="tune-stem"/></g><line x1="492.02" x2="492.02" y1="0" y2="28" class="tune-bar"/><path d="M38.92 10.5L69.43 10.5L69.43 14L38.92 14Z" class="tune-beam"/><path d="M151.3 -7L181.81 -3.44L181.81 0.06L151.3 -3.5Z" class="tune-beam"/><path d="M263.67 3.5L294.18 7.06L294.18 10.56L263.67 7Z" class="tune-beam"/><text x="101.34" y="-14.7" class="tune-chord">F</text><text x="213.72" y="-14.7" class="tune-chord">C</text><text x="326.09" y="-14.7" class="tune-chord">G7</text><text x="441.59" y="-14.7" class="tune-chord">C</text></svg></div></div>
+<div class="line-group" data-line="2"><div class="strum-box style-comic"><div class="sb-tag"><span class="sb-time">3/4</span><span class="sb-sub">80 bpm</span></div><div class="sb-body"><div class="sb-name">Waltz (simple)</div><div class="sb-parts"><div class="sb-part"><div class="sb-grid" style="--steps:3"><span class="sb-a acc">↓</span><span class="sb-a">↓</span><span class="sb-a">↓</span><span class="sb-l acc">D</span><span class="sb-l">D</span><span class="sb-l">D</span><span class="sb-n beat">1</span><span class="sb-n beat">2</span><span class="sb-n beat">3</span></div></div></div></div></div></div>
+<section class="song-section">
+<h2 class="section">Verse</h2>
+<div class="line-group" data-line="5"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C×3</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span></div><div class="lyrics">Lullaby,&nbsp;and&nbsp;good&nbsp;night,&nbsp;with&nbsp;roses&nbsp;bedight,&nbsp;with</div></div>
+<div class="line-group" data-line="7"><div class="chords"><span class="chord">G7×3</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">lilies&nbsp;o&#39;erspread&nbsp;is&nbsp;baby&#39;s&nbsp;wee&nbsp;bed.</div></div>
+<div class="line-group" data-line="9"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">Lay&nbsp;thee&nbsp;down&nbsp;now&nbsp;and&nbsp;rest,&nbsp;may&nbsp;thy&nbsp;slumber&nbsp;be&nbsp;blessed.</div></div>
+<div class="line-group" data-line="11"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">Lay&nbsp;thee&nbsp;down&nbsp;now&nbsp;and&nbsp;rest,&nbsp;may&nbsp;thy&nbsp;slumber&nbsp;be&nbsp;blessed.</div></div>
+</section><p class="shorthand-key"><strong>C×3</strong> = 3 bars of C</p></body>
+</html>

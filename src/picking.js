@@ -22,7 +22,7 @@ const PATTERNS = [
   },
   {
     id: 'up8', level: 2, name: 'Up, twice a bar', strings: 'g C E A g C E A',
-    tip: 'The same four strings in eighths: twice through in a bar of 4/4.',
+    tip: 'The same four strings in eighths: twice through in a bar of 4/4; in 3/4 and 6/8, up across them and back.',
     four: ['p', 'i', 'm', 'a', 'p', 'i', 'm', 'a'], three: ['p', 'i', 'm', 'a', 'm', 'i'], six: ['p', 'i', 'm', 'a', 'm', 'i']
   },
   {

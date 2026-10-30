@@ -33,7 +33,7 @@ function siteFooter() {
   return `<footer>
   <div class="wrap">
     <span>ukemusic by Mark Beachill · MIT licence · <a class="repo-link" href="https://github.com/markbeachill/ukemusic">ukemusic on GitHub</a></span>
-    <span class="ref">Reference: <a href="dropbox.html">Shared Dropbox folder</a> · <a href="phone.html">Phone and tablet</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a></span>
+    <span class="ref">Reference: <a href="gallery.html">Gallery</a> · <a href="dropbox.html">Shared Dropbox folder</a> · <a href="phone.html">Phone and tablet</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a></span>
     <button class="theme" id="theme" type="button">Light / dark</button>
   </div>
 </footer>`;
@@ -90,6 +90,16 @@ const PAGE_CSS = `
 .note-box { background: var(--teal-soft); border-radius: var(--radius); padding: 18px 22px; }
 .note-box p { margin: 0; }
 footer .ref a { color: var(--muted); }
+.g-song { padding-bottom: 8px; }
+.g-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 18px; margin-top: 18px; }
+.g-card { display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: var(--ink); }
+.g-thumb { display: block; background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); overflow: hidden; aspect-ratio: 210 / 297; transition: transform 120ms; }
+.g-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.g-card:hover .g-thumb { transform: translateY(-3px); border-color: var(--teal); }
+.g-name { font-weight: 800; font-size: 16px; }
+.g-name small { font-weight: 500; color: var(--muted); font-size: 13px; }
+.g-what { color: var(--muted); font-size: 14px; line-height: 1.45; }
+.g-more { margin-top: 16px; color: var(--muted); font-size: 15px; }
 nav.links a[aria-current] { color: var(--ink); }
 @media (min-width: 861px) and (max-width: 980px) { nav.links { gap: 14px; } }
 `;
@@ -119,10 +129,10 @@ const PAGES = [
       { h3: 'Play from memory', p: ['Karaoke with the chords fading out. Each part shows its chords the first time it comes, then a <b>?</b>; next time try the numbers only, then nothing at all. Tap a <b>?</b> if you need it: the ones you looked at become your trouble spots.', 'Remembering beats re-reading: that\'s one of the best-tested findings about memory.'], img: 'learn-memory.webp', alt: 'The Wild Rover playing from memory: the first verse with its chords, the rest to come as question marks' },
       { h3: 'Next chord?', p: ['The song\'s changes one at a time, with the words either side: you\'re playing C, what comes next? Hear each answer before you choose, and hear the real change after. The ones you miss go on your list.'], img: 'learn-quiz.webp', alt: 'The Next chord? quiz: four chords to choose from, each with a button to hear it' },
       { h3: 'The learn sheet', p: ['One page to keep on your music stand: the chords and how each one feels ("home", "tension", "the sad home"), the song\'s parts with their first words, a chord map with the familiar patterns marked, the five hardest changes with finger tips, and the song on the circle of fifths.'], img: 'learn.webp', alt: 'A learn sheet for Danny Boy' },
-      { h3: 'The hardest changes first', p: ['Every chord change in the song, hardest first, with both shapes and what each finger does: which one stays put, which slides, which moves to another string. Practise any of them on its own, or see how many clean changes you can make in a minute.'], img: 'changes.webp', h: 765, alt: 'The changes in It\'s a Long Way to Tipperary, hardest first, with the two shapes and finger tips for each' },
+      { h3: 'The hardest changes first', p: ['Every chord change in the song, hardest first, with both shapes and what each finger does: which one stays put, which slides, which moves to another string. Practise any of them on its own, or see how many clean changes you can make in a minute.'], img: 'changes.webp', h: 860, alt: 'The changes in It\'s a Long Way to Tipperary, hardest first, with the two shapes and finger tips for each' },
       { h3: 'Pick it instead of strumming', p: ['Any song can be fingerpicked to sing along to: the chords stay, your right hand picks a pattern. Five standard ukulele patterns, easiest first: one string a beat, up twice a bar, up and back, pinch and roll, and the alternating thumb. Play along in karaoke with each string shown as it comes, and your first note sounded in the count-in.', 'Write the tune in ({melody: E E F G …}) and ukemusic plays it quietly while you learn, or makes a picked solo from it: the tune on top of the chords, a chord melody.', 'The pick sheet lays the song out like a fingerstyle songbook: the pattern counted out, the chord boxes, then each line as tab with the chord over the bar where it starts and the words underneath.'], img: 'pick-sheet.webp', h: 1416, alt: 'A pick sheet: the Alternating thumb pattern counted out, the chord boxes, and the song as tab with the chords over it and the words under it' },
-      { h3: 'Fingerpicking, in layers', p: ['A song with tab? When it sits on chord shapes, ukemusic says which, bar by bar ("Hold C, pick g-C-E-A"). Learn it in four steps, each played along: the chords strummed, the picking on open strings, both slowly, then both in time. From memory fades the tab like the chords.'], img: 'picking.webp', h: 821, alt: 'Picking in steps: four steps to play, and the intro read as hold C, then G7, with the picking pattern' },
-      { h3: 'Think in numbers', p: ['Turn on Numbers and the sheet shows the chords as numbers in the key: I is home, IV and V are away. Then play it in another key from memory, with the numbers to guide you.'], img: 'learn-numbers.webp', h: 765, alt: 'The Learn tab with the song\'s chords shown as numbers: I, V7, IV, II7' },
+      { h3: 'Fingerpicking, in layers', p: ['A song with tab? When it sits on chord shapes, ukemusic says which, bar by bar ("Hold C, pick g-C-E-A"). Learn it in four steps, each played along: the chords strummed, the picking on open strings, both slowly, then both in time. From memory fades the tab like the chords.'], img: 'picking.webp', h: 860, alt: 'Picking in steps: four steps to play, and the intro read as hold C, then G7, with the picking pattern' },
+      { h3: 'Think in numbers', p: ['Turn on Numbers and the sheet shows the chords as numbers in the key: I is home, IV and V are away. Then play it in another key from memory, with the numbers to guide you.'], img: 'learn-numbers.webp', h: 860, alt: 'The Learn tab with the song\'s chords shown as numbers: I, V7, IV, II7' },
       { h3: 'Understand it, and it sticks', list: ['<b>Numbers:</b> a song in numbers (I, IV, V…) is the same in every key. Learn it once, play it anywhere', '<b>Patterns:</b> four-chord pop, the 50s progression, the three-chord trick, named where they happen, so you spot them in the next song', '<b>The circle of fifths:</b> turned so the song\'s home is at the top, with how it moves', '<b>Another key:</b> play it from memory in a different key: if you can, you know the song'] }
     ],
     best: 'web',
@@ -139,7 +149,7 @@ const PAGES = [
     features: [
       { h3: 'Free Practice', p: ['39 exercises, marked beginner, improver or intermediate: warm-ups, chord switching, strumming patterns, fingerpicking, scales and noodling. Open an exercise and start; Help gives instructions for that exercise only.', 'Your last three started exercises are at the top, and each exercise remembers your settings. On a phone, Edit settings opens the controls while the playing view keeps the exercise and Start/Stop together.', 'Progress, scores and personal routines stay on this device between visits. Keep your practice safe has a separate practice backup; Dropbox song sync and song backups do not include practice history.'], img: 'practice.webp', alt: 'Free Practice: exercise cards by category and level' },
       { h3: 'Practise your songs', p: ['Press Play and hear the song on a real ukulele, the way it\'s written. Slow it down, loop the part you\'re learning, or have it speed up a little each time round.'], list: ['Waltzes, swing and shuffle feel, picked out from the strum', 'Tap the tempo, or count yourself in', 'The strum lit up as it plays, with the next chord shapes'], img: 'playing.webp', alt: 'A song playing, the current line and its strum lit' },
-      { h3: 'Practise the hard changes', p: ['Learn → The changes lists every change in the song, hardest first, with what each finger does. One click turns any of them into a drill, or a one-minute challenge with your best score kept.'], img: 'changes.webp', h: 765, alt: 'The changes in a song, hardest first, each with Practise and One minute buttons' }
+      { h3: 'Practise the hard changes', p: ['Learn → The changes lists every change in the song, hardest first, with what each finger does. One click turns any of them into a drill, or a one-minute challenge with your best score kept.'], img: 'changes.webp', h: 860, alt: 'The changes in a song, hardest first, each with Practise and One minute buttons' }
     ],
     best: 'web',
     web: ['All of Free Practice, routines and progress', 'Play along with your songs: slower, looped, faster'],
@@ -154,8 +164,8 @@ const PAGES = [
     group: ['The Session screen: the whole song on one TV or projector, laid out so nobody scrolls', 'Arrow keys, a presentation clicker or a tap for the next song', 'Karaoke for the room: big words that light up as you sing', 'Check the whole library fits one screen before the night'],
     features: [
       { h3: 'The Session screen', p: ['For a club night or a jam: the whole song on one screen, as big as it will go. Verses and choruses in columns, never split, with the chord shapes down the side. With a TV plugged in, the song fills it while the laptop shows what\'s next.'], img: 'session-setlist.webp', h: 765, alt: 'The Session screen: It\'s a Long Way to Tipperary in two columns, song 2 of 5 in the setlist' },
-      { h3: 'Setlists and songbooks', p: ['Put the night\'s songs in order, in the keys you play them. Run the setlist on the Session screen, make one songbook PDF of the whole set, or a folder with a PDF per song for a tablet.'], img: 'setlist.webp', h: 765, alt: 'A setlist called Club night with five songs, and buttons for the Session screen and a songbook PDF' },
-      { h3: 'Stage copies', p: ['Print the song sheet for practice and a Stage copy for the gig, in the format that suits your eyes: Clear, Brackets, Compact or Heavy. Choruses printed every time, or once and then "as before".'], img: 'stage.webp', h: 765, alt: 'A Stage copy: bold chords above plain words' },
+      { h3: 'Setlists and songbooks', p: ['Put the night\'s songs in order, in the keys you play them. Run the setlist on the Session screen, make one songbook PDF of the whole set, or a folder with a PDF per song for a tablet.'], img: 'setlist.webp', h: 860, alt: 'A setlist called Club night with five songs, and buttons for the Session screen and a songbook PDF' },
+      { h3: 'Stage copies', p: ['Print the song sheet for practice and a Stage copy for the gig, in the format that suits your eyes: Compact (chords in the words, the fewest pages, and the default), Clear, Brackets or Heavy. Choruses printed every time, or once and then "as before".'], img: 'stage.webp', h: 765, alt: 'A Stage copy: plain words with the chords in them' },
       { h3: 'Karaoke for the whole room', p: ['Full screen, big words that light up as you sing, with the chord above each word and the shapes down the side. Tap any line to start from there.'], img: 'karaoke.webp', alt: 'The karaoke view' }
     ],
     best: 'desktop',
@@ -171,7 +181,7 @@ const PAGES = [
     group: ['The song on the screen at the front, chords and shapes for all to see', 'Next chord? as a quiz for the room', 'Everyone loops the tricky bit together, slowly', 'Players take the songs home in the web player and practise'],
     features: [
       { h3: 'The screen at the front', p: ['The Session screen puts the song on the TV or projector, big enough for the back row, and goes through a setlist with a clicker. Karaoke lights up the words as the group sings.'], img: 'session-setlist.webp', h: 765, alt: 'The Session screen, song 2 of 5 in a club night setlist' },
-      { h3: 'Teach the tricky changes', p: ['For each song, the changes that will trip the group up, hardest first, with what each finger does. Drill one together before you play the song.'], img: 'changes.webp', h: 765, alt: 'The changes in a song, hardest first, with finger tips' },
+      { h3: 'Teach the tricky changes', p: ['For each song, the changes that will trip the group up, hardest first, with what each finger does. Drill one together before you play the song.'], img: 'changes.webp', h: 860, alt: 'The changes in a song, hardest first, with finger tips' },
       { h3: 'Handouts that teach', p: ['A learn sheet for each song: the chords and how they feel, the parts with their first words, the patterns marked, the hardest changes with finger tips. Players learn the song, not just the shapes.'], img: 'learn.webp', alt: 'A learn sheet for Danny Boy' },
       { h3: 'Suit the room', list: ['Any key for the group\'s voices, with the chords spelled right', 'A capo, and the shapes to finger', 'Ukulele (high or low G), baritone and guitar, each with its own shapes', 'Choose the shape you teach for a chord, kept with the song'] }
     ],
@@ -436,6 +446,65 @@ const DROPBOX_PAGE = {
 </div></section>`
 };
 
+
+// 4.52: the gallery: what the app makes, as real files (site/gallery/, made from three public-domain
+// songs by the desktop app; gallery.json lists them with their page counts)
+const GALLERY_KINDS = [
+  { file: 'sheet.pdf', name: 'Chord sheet', what: 'The song to print: the chord shapes and the strum at the top, the chords over the words.' },
+  { file: 'stage.pdf', name: 'Stage copy', what: 'For a gig or a club night: big plain words with the chords in them (Compact), the fewest pages.' },
+  { file: 'learn.pdf', name: 'Learn sheet', what: 'The chords and what each one does, the parts of the song, the chord map with its patterns, the changes to practise and the circle of fifths.' },
+  { file: 'pick.pdf', name: 'Pick sheet', what: 'The song set out for fingerpicking: the pattern counted out, then the song as tab with the chords over it and the words under it.' },
+  { file: 'lyrics.pdf', name: 'Words only', what: 'The words, for singers, with the section names.' }
+];
+const GALLERY_SONGS = {
+  'wild-rover': 'A waltz with a written strum: the strum box, three chords, and a chorus that comes back.',
+  'brahms-lullaby': 'With its tune written in: the tune is drawn as music over the chord sheet and set out as tab on the pick sheet.',
+  'danny-boy': 'More chords (Fm, D7): the learn sheet says what each does, and where the song borrows from the minor key.'
+};
+const GALLERY_PAGE = {
+  file: 'gallery.html', title: 'Gallery: what ukemusic makes',
+  blurb: 'Real files made by ukemusic from public-domain songs: chord sheets, Stage copies, learn sheets, pick sheets, a songbook, and the song as ChordPro, Markdown and a web page.',
+  body: () => {
+    let list = [];
+    try { list = JSON.parse(fs.readFileSync(path.join(SITE, 'gallery', 'gallery.json'), 'utf8')); } catch (_e) { /* no gallery yet */ }
+    const pagesText = (n) => `${n} page${n === 1 ? '' : 's'}`;
+    const songs = list.filter((g) => g.slug !== 'songbook').map((g) => {
+      const cards = GALLERY_KINDS.filter((k) => g.pages[k.file]).map((k) => {
+        const base = `gallery/${g.slug}/${k.file}`;
+        return `<a class="g-card" href="${base}"><span class="g-thumb"><img src="${base.replace(/\.pdf$/, '.webp')}" loading="lazy" alt="${esc(`${k.name} for ${g.title}, page 1`)}"></span><span class="g-name">${esc(k.name)} <small>PDF · ${pagesText(g.pages[k.file])}</small></span><span class="g-what">${esc(k.what)}</span></a>`;
+      }).join('');
+      const more = [['sheet.html', 'Web page'], ['lyrics-stage.pdf', 'Words, Stage copy (PDF)'], ['song.cho', 'ChordPro (.cho)'], ['song.md', 'Markdown'], ['lyrics.txt', 'Words as text']]
+        .map(([f, n]) => `<a href="gallery/${g.slug}/${f}">${esc(n)}</a>`).join(' · ');
+      return `<section class="g-song"><div class="wrap">
+  <h2>${esc(g.title)}</h2>
+  <p class="intro">${esc(GALLERY_SONGS[g.slug] || '')}</p>
+  <div class="g-grid">${cards}</div>
+  <p class="g-more">Also: ${more}</p>
+</div></section>`;
+    }).join('\n');
+    const book = list.find((g) => g.slug === 'songbook');
+    const bookHtml = book ? `<section><div class="wrap">
+  <h2>A songbook</h2>
+  <p class="intro">A setlist of five songs as one PDF, in order, with a contents page: made from the library's Setlists tab (Songbook PDF…).</p>
+  <div class="g-grid"><a class="g-card" href="gallery/songbook/club-night.pdf"><span class="g-thumb"><img src="gallery/songbook/club-night.webp" loading="lazy" alt="The Club night songbook, the first song's page"></span><span class="g-name">Club night <small>PDF · ${pagesText(book.pages['club-night.pdf'])}</small></span><span class="g-what">The Wild Rover, It's a Long Way to Tipperary, Danny Boy, Amazing Grace and Scarborough Fair.</span></a></div>
+</div></section>` : '';
+    return `
+<div class="page-hero"><div class="wrap">
+  <p class="eyebrow">Gallery</p>
+  <h1>What ukemusic makes</h1>
+  <p class="lede">Real files, made by the app from three public-domain songs: open any of them. Your songs come out the same way, on A4 or Letter, in the style you choose.</p>
+  <div class="cta"><a class="btn primary" href="app/">Try it in your browser</a><a class="btn" href="./#get">Download the app</a></div>
+</div></div>
+${songs}
+${bookHtml}
+<section><div class="wrap">
+  <h2>Making them</h2>
+  <p class="intro">In the desktop app: <strong>Export → Export now</strong> for a song (tick the kinds you want), <strong>Learn → Learn sheet</strong>, <strong>Accompaniment → Pick sheet</strong>, and <strong>Songbook PDF…</strong> on a setlist. The Stage copy comes with each chord sheet; its look (Compact, Clear, Brackets or Heavy) is in <strong>Export → Stage</strong>. The web player prints and saves PDFs from <strong>Download</strong>.</p>
+  <div class="next-pages" style="margin-top:20px"><a class="btn" href="chord-sheets.html">Chord sheets</a><a class="btn" href="learn.html">Learn a song</a><a class="btn" href="perform.html">Perform</a></div>
+</div></section>`;
+  }
+};
+
 function pageBody(p) {
   const rows = p.features.map((f, i) => featureRow(f, i % 2 === 1)).join('\n');
   return `
@@ -500,8 +569,9 @@ function build() {
   fs.writeFileSync(path.join(SITE, SONGS_PAGE.file), wrapPage(SONGS_PAGE, SONGS_PAGE.body(), siteCss));
   fs.writeFileSync(path.join(SITE, PHONE_PAGE.file), wrapPage(PHONE_PAGE, PHONE_PAGE.body(), siteCss));
   fs.writeFileSync(path.join(SITE, DROPBOX_PAGE.file), wrapPage(DROPBOX_PAGE, DROPBOX_PAGE.body(), siteCss));
-  return [...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, DROPBOX_PAGE.file];
+  fs.writeFileSync(path.join(SITE, GALLERY_PAGE.file), wrapPage(GALLERY_PAGE, GALLERY_PAGE.body(), siteCss));
+  return [...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file];
 }
 
-module.exports = { build, PAGES, SONGS_PAGE, PHONE_PAGE, DROPBOX_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
+module.exports = { build, PAGES, SONGS_PAGE, PHONE_PAGE, DROPBOX_PAGE, GALLERY_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
 if (require.main === module) console.log('pages:', build().join(', '));

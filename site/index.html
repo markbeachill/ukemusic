@@ -78,8 +78,6 @@ nav.links a:hover { color: var(--ink); }
 /* Hero */
 .hero { padding: 64px 0 24px; }
 .hero h1 { font-size: clamp(34px, 5.4vw, 58px); line-height: 1.18; letter-spacing: -0.03em; margin: 0 0 18px; max-width: 19ch; }
-.hero h1 .chorded { position: relative; display: inline-block; }
-.hero h1 .chorded::before { content: attr(data-c); position: absolute; left: 0.04em; top: -0.5em; color: var(--chord); font: 700 0.5em/1 var(--mono); letter-spacing: 0; }
 .hero p.lede { font-size: clamp(18px, 2.2vw, 21px); color: var(--muted); max-width: 46ch; margin: 0 0 28px; }
 .cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 .cta .note { font-size: 14px; color: var(--muted); }
@@ -204,7 +202,7 @@ footer a { color: var(--muted); }
 <main>
   <div class="hero">
     <div class="wrap">
-      <h1>Bring your <span class="chorded" data-c="C">songs</span>. Learn them, practise them, play them together.</h1>
+      <h1>Bring your songs. Learn them, practise them, play them together.</h1>
       <p class="lede">Paste a chord sheet from a website, import your club's songbook, or type the words with the chords in square brackets. ukemusic turns it into everything else: the chord sheet and shapes, playback and karaoke, a way to learn it by heart, and a clear copy for the gig.</p>
       <div class="cta">
         <a class="btn primary" href="app/">Try it in your browser</a>
@@ -224,7 +222,7 @@ footer a { color: var(--muted); }
         <a class="door" href="learn.html"><img src="img/learn-memory.webp" loading="lazy" width="1360" height="860" alt=""><span><strong>Learn</strong>Get a song by heart: the chords fade as you play, a quiz on what comes next, and a learn sheet.</span></a>
         <a class="door" href="practise.html"><img src="img/practice.webp" loading="lazy" width="1360" height="860" alt=""><span><strong>Practise</strong>Warm-ups, chord changes, strumming and picking, and your songs slowed down and looped.</span></a>
         <a class="door" href="perform.html"><img src="img/session-setlist.webp" loading="lazy" width="1360" height="765" alt=""><span><strong>Perform</strong>Stage copies, setlists, and the Session screen on the TV for a club night.</span></a>
-        <a class="door" href="teach.html"><img src="img/changes.webp" loading="lazy" width="1360" height="765" alt=""><span><strong>Teach</strong>Run a club or a class: the screen at the front, handouts and learn sheets from one song file.</span></a>
+        <a class="door" href="teach.html"><img src="img/changes.webp" loading="lazy" width="1360" height="860" alt=""><span><strong>Teach</strong>Run a club or a class: the screen at the front, handouts and learn sheets from one song file.</span></a>
         <a class="door" href="chord-sheets.html"><img src="img/editor.webp" loading="lazy" width="1360" height="860" alt=""><span><strong>Chord sheets</strong>Clear sheets with shapes and the strum, in any key, capo or instrument.</span></a>
         <a class="door door-songs" href="songs.html"><span><strong>Bring your songs</strong>From websites, songbooks, ChordPro files and PDFs, with an AI prompt for the difficult ones.</span><span class="go">How to get them in →</span></a>
       </div>
@@ -331,12 +329,12 @@ oh don't you cry for me</pre>
           <h3>Stage copies you can read at a glance</h3>
           <p>Print the song sheet for practice and a Stage copy for the gig: big, bold and easy to scan, in the format that suits you.</p>
           <ul>
-            <li>Clear, Brackets, Compact or Heavy</li>
+            <li>Compact (the default), Clear, Brackets or Heavy</li>
             <li>Choruses printed every time, or once and then "as before"</li>
             <li>PDF, web page, words only, Markdown or ChordPro; a songbook from a setlist</li>
           </ul>
         </div>
-        <div class="shot"><img src="img/stage.webp" loading="lazy" width="1360" height="765" alt="A Stage copy of The Wild Rover on two pages: bold chords above plain words, with clear section names"></div>
+        <div class="shot"><img src="img/stage.webp" loading="lazy" width="1360" height="765" alt="A Stage copy of The Wild Rover on two pages: plain words with the chords in them, and clear section names"></div>
       </div>
 
       <div class="feature">
@@ -462,6 +460,7 @@ npm run package      # make an installer for this computer, in dist/</pre>
       <p class="intro">ukemusic is open source under the MIT licence. The code, the guide to writing songs and the public-domain song library are all on GitHub; suggestions and fixes are welcome there.</p>
       <div class="grid">
         <div class="card"><h3>The code</h3><p><a class="repo-link" href="#">ukemusic on GitHub</a>: issues, changes and every release.</p></div>
+        <div class="card"><h3>Gallery</h3><p><a href="gallery.html">What ukemusic makes</a>: chord sheets, Stage copies, learn and pick sheets and a songbook, as real files to open.</p></div>
         <div class="card"><h3>How to write songs</h3><p><a href="guide.html">The guide</a> to everything you can type, with examples. It's in the app too.</p></div>
         <div class="card"><h3>What's new</h3><p><a href="changes.html">The changes in each version</a>, newest first.</p></div>
         <div class="card"><h3>ChordPro</h3><p><a href="chordpro.html">What ukemusic reads and writes</a>, and what it adds to the format.</p></div>
@@ -475,7 +474,7 @@ npm run package      # make an installer for this computer, in dist/</pre>
 <footer>
   <div class="wrap">
     <span>ukemusic by Mark Beachill · MIT licence · <a class="repo-file" data-path="THIRD_PARTY_NOTICES.md" href="#">Thanks and third-party notices</a></span>
-    <span class="ref">Reference: <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a> · <a class="repo-link" href="#">GitHub</a></span>
+    <span class="ref">Reference: <a href="gallery.html">Gallery</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a> · <a class="repo-link" href="#">GitHub</a></span>
     <button class="theme" id="theme" type="button">Light / dark</button>
   </div>
 </footer>

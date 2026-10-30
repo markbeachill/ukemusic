@@ -1373,6 +1373,91 @@
         max-width: 55vw;
       }
 
+      /* 4.52: the Learn, Pick, quiz, About and style-set dialogs (back from 4.49: they sat inside the
+         practice CSS that tools/sync-practice.js replaces with the web copy, so they were lost in 4.50) */
+      .css-sets { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin: 4px 0 10px; font-size: 13px; }
+      .css-sets input { width: 200px; }
+      .rib-fields .rib-button-inline { min-height: 52px; align-self: flex-end; }
+      #viewStyleSet { width: auto; min-width: 0; max-width: 140px; }
+      #viewStrumSize { max-width: 110px; }
+      #viewLayout, #viewTune { max-width: 130px; }
+      [data-ribbon-panel="play"] select { max-width: 125px; }
+      .rib-stack { display: grid; gap: 4px; align-self: center; }
+      .rib-stack .rib-field { display: grid; grid-template-columns: 44px auto; align-items: center; gap: 6px; }
+      .rib-stack .rib-field[hidden] { display: none; }
+      .rib-stack label { margin: 0; }
+      [data-ribbon-panel="play"] .rib-fields { gap: 8px; }
+      [data-ribbon-panel="play"] .rib-group { padding: 0 8px; }
+      #playTempoInput { width: 56px; }
+      [data-ribbon-panel="view"] select { max-width: 150px; }
+      [data-ribbon-panel="view"] .rib-fields { gap: 8px; }
+      [data-ribbon-panel="view"] .rib-group { padding: 0 8px; }
+      .rib-fields .rib-button-inline { min-width: 60px; padding: 4px 6px; }
+      .about-dialog { width: min(640px, 94vw); max-height: 86vh; }
+      /* 4.39: Learn */
+      .learn-changes-dialog { width: min(760px, 94vw); max-height: 88vh; }
+      .learn-changes { display: grid; gap: 10px; max-height: 62vh; overflow-y: auto; margin: 10px 0; }
+      .learn-change { display: grid; grid-template-columns: auto 1fr auto; gap: 6px 14px; align-items: center; border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; }
+      .learn-change .lc-shapes { display: flex; align-items: center; gap: 4px; --diagram-size: 58px; --rhythm-color: #555; --chord-color: #b22222; --text-color: #111; }
+      .learn-change .lc-shapes .chord-diagram svg { width: 58px; height: auto; }
+      .learn-change .lc-arrow { font-size: 20px; color: var(--muted); }
+      .learn-change .lc-title { font-weight: 800; }
+      .learn-change .lc-title .lc-count { font-weight: 400; color: var(--muted); }
+      .learn-change .lc-tip { font-size: 13px; line-height: 1.4; }
+      .learn-change .lc-actions { display: grid; gap: 4px; }
+      .learn-change.trouble-row { grid-template-columns: minmax(0, 1fr) auto; }
+      .learn-change.trouble-row .lc-actions { grid-auto-flow: column; }
+      .k-chord.k-hidden { color: var(--muted, #888); cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+      .k-chord.k-revealed { color: #c2410c; }
+      .k-chord.k-number { font-style: normal; }
+      .export-sub { margin-left: 22px; font-size: 13px; }
+      .pick-h { font-size: 14px; margin: 14px 0 2px; }
+      .rib-button.dim { opacity: 0.5; }
+      .pick-pattern-text { display: block; font: 600 11.5px system-ui, sans-serif; color: var(--muted, #5b6662); max-width: 230px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      [data-ribbon-panel="pick"] select { max-width: 230px; }
+      #pickWritePatternNote { display: block; margin-top: 4px; }
+      .pick-help-dialog { width: min(680px, 94vw); max-height: calc(100vh - 32px); }
+      .pick-write-dialog { width: min(620px, 94vw); }
+      .pick-write-grid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px 14px; align-items: start; margin: 10px 0; }
+      .pick-write-grid > label:first-child, .pick-write-grid > label[for] { padding-top: 4px; font-weight: 600; }
+      .pick-write-grid .details-label { font-weight: 600; padding-top: 2px; }
+      .pick-write-grid div > label { display: block; margin-bottom: 4px; }
+      #pickWriteTitle { width: 100%; }
+      .pick-help { max-height: calc(100vh - 190px); overflow: auto; font-size: 14px; line-height: 1.5; }
+      .pick-help p, .pick-help ol { margin: 0 0 10px; }
+      .pick-help-code { font: 12.5px/1.4 Consolas, "Courier New", monospace; background: var(--panel, #f4f6f5); padding: 8px 10px; border-radius: 6px; white-space: pre-wrap; margin: 0 0 10px; }
+      .k-pick { font: 600 0.75em var(--font-family, system-ui); color: var(--muted, #667); padding: 4px 0; }
+      .k-pick.k-hidden { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+      .k-pick.k-revealed { color: #c2410c; }
+      .k-line.k-trouble::before { content: '⚑'; position: absolute; margin-left: -1.4em; color: #c2410c; font-size: 0.8em; }
+      .learn-circle-dialog { width: min(860px, 96vw); }
+      .learn-circle { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: start; }
+      .learn-circle svg { width: min(440px, 80vw); height: auto; }
+      .learn-circle ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; font-size: 14px; line-height: 1.45; }
+      @media (max-width: 760px) { .learn-circle { grid-template-columns: 1fr; } }
+      .learn-quiz-dialog { width: min(640px, 94vw); }
+      .lq-words { font-size: 22px; line-height: 1.5; margin: 6px 0 4px; }
+      .lq-words .lq-gap { display: inline-block; min-width: 2.4em; margin: 0 4px; padding: 0 6px; text-align: center; font-weight: 800; color: #b22222; border-bottom: 3px solid #b22222; }
+      .lq-now { color: var(--muted); margin: 6px 0 10px; }
+      .lq-now b { color: #b22222; }
+      .lq-options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+      .lq-options .lq-opt { display: grid; gap: 4px; }
+      .lq-options .lq-pick { font-size: 22px; font-weight: 800; padding: 10px 4px; }
+      .lq-options .lq-pick.right { background: #d9f2e3; border-color: #2e8b57; }
+      .lq-options .lq-pick.wrong { background: #fde2e2; border-color: #b22222; }
+      .lq-options .lq-hear { font-size: 12px; padding: 2px 4px; }
+      .lq-result { min-height: 1.4em; font-weight: 600; }
+      .about-body { font-size: 14px; line-height: 1.5; }
+      .about-name { font-size: 24px; }
+      .about-version { color: var(--muted); font-size: 14px; }
+      .about-tagline { margin: 6px 0 4px; }
+      .about-author { margin: 0 0 8px; color: var(--muted); }
+      .about-body h3 { margin: 14px 0 4px; font-size: 16px; }
+      .about-body h4 { margin: 12px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+      .about-list { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+      .about-licence { display: inline-block; font-size: 12px; color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 0 7px; }
+      .about-foot { font-size: 12.5px; color: var(--muted); margin-top: 14px; }
+      .about-body a { color: var(--accent); }
       /* ── Practice window ───────────────────────────────── */
       .practice { position: fixed; inset: 0; z-index: 55; display: grid; grid-template-rows: auto 1fr; background: var(--panel-bg); color: var(--text); }
       .practice[hidden] { display: none; }
@@ -2120,9 +2205,9 @@
                   <label for="exportStageFormat">Stage</label>
                   <select id="exportStageFormat">
                     <option value="default">Default</option>
+                    <option value="compact">Compact</option>
                     <option value="clear">Clear</option>
                     <option value="brackets">Brackets</option>
-                    <option value="compact">Compact</option>
                     <option value="heavy">Heavy</option>
                   </select>
                 </div>
@@ -2715,12 +2800,12 @@
                       <div class="field">
                         <label for="export-stage_format">Format</label>
                         <select id="export-stage_format" data-config-path="export.stage_format">
+                          <option value="compact">Compact: chords in the words (the default)</option>
                           <option value="clear">Clear: chords above the words</option>
                           <option value="brackets">Brackets: chords above, in [ ]</option>
-                          <option value="compact">Compact: chords in the words</option>
                           <option value="heavy">Heavy: all bold, white-on-black chords</option>
                         </select>
-                        <p class="help">How Stage copies (for a gig, or practising at home) look. Clear is the easiest to scan: plain words, bold chords above them, a gap between parts. Compact is shortest. A song can have its own: Export → Stage.</p>
+                        <p class="help">How Stage copies (for a gig, or practising at home) look. Compact, the default, puts the chords in the words: the fewest pages. Clear has plain words with bold chords above them: easier to scan for a song you don't know yet. A song can have its own: Export → Stage.</p>
                       </div>
                       <div class="field">
                         <label for="export-stage_diagrams">Chord diagrams</label>
@@ -3947,7 +4032,7 @@
             stage_font: 'Consolas',
             stage_size: 18,
             stage_fit: true,
-            stage_format: 'clear',
+            stage_format: 'compact',
             stage_chorus: 'full',
             stage_diagrams: 'song'
           },
