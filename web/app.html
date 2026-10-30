@@ -327,6 +327,28 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
   .fields .pair { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+
+#displaySettings {flex-basis:100%;padding:8px 0} #displaySettings > summary {cursor:pointer;font-weight:650} #displaySettings[open] {display:block} #displaySettings .tool {display:inline-flex;margin:6px}
+.settings-scope {flex-basis:100%;margin:8px 0 0;font-weight:650;font-size:13px}
+.song-overview {border:1px solid var(--border);border-radius:8px;padding:8px;margin-bottom:16px}
+.song-overview summary {cursor:pointer;font:14px system-ui;white-space:normal}
+.section-jump {display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;font-size:13px}
+.selected-line {outline:2px solid var(--accent);outline-offset:3px}
+.player:not(.active) .now,.player:not(.active) #strip {display:none}
+.player:not(.active) .status {font-size:11px;margin-top:2px}
+#saveRecovery {padding:12px;border:2px solid #b44;border-radius:8px;margin-bottom:12px}
+#editSaved {white-space:nowrap}
+@media(max-width:720px){
+ #songView .song-head {min-width:0;flex:1}
+ #songView .bar-row {flex-wrap:wrap;gap:6px}
+ #songView .bar-row .song-head {flex-basis:calc(100% - 50px)}
+ #songView .bar-row .spacer,#saveState:empty {display:none}
+ #moreTools {position:fixed;top:90px;left:8px;right:8px;max-height:65dvh;overflow:auto;background:var(--surface);border:1px solid var(--border);box-shadow:0 6px 30px #0004;border-radius:10px;z-index:90;padding:14px}
+ .player-row {gap:5px}.player-row .btn {padding:6px 8px;font-size:12px}
+ .panel {padding-bottom:160px}
+ .player:not(.active) #status {display:none}
+ #songMeta {font-size:11px;margin:7px 0}
+}
 </style>
 
 <div id="app">
@@ -383,32 +405,32 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <button id="editBtn" class="btn" type="button" title="Change the words and chords, the details and the notes">Edit</button>
         <button id="downloadBtn" class="btn ghost icon" type="button" title="Download" aria-label="Download this song">⤓</button>
       </div>
-      <div id="tools" class="tools gutter" role="toolbar" aria-label="How the song is shown">
+      <div id="tools" class="tools gutter" role="toolbar" aria-label="Playing choices for this song on this device">
         <div class="tool"><span class="lab">Key</span><button id="keyDown" type="button" aria-label="Key down">−</button><span id="keyVal" class="val"></span><button id="keyUp" type="button" aria-label="Key up">+</button></div>
         <div class="tool"><span class="lab">Capo</span><button id="capoDown" type="button" aria-label="Capo down">−</button><span id="capoVal" class="val"></span><button id="capoUp" type="button" aria-label="Capo up">+</button></div>
-        <div class="tool" data-wide><label for="instrument">Plays</label><select id="instrument"></select></div>
-        <div class="tool" data-wide><label for="strumSel">Strum</label><select id="strumSel" title="The strum it plays: the song's own, or one from the strum library (strong strokes marked &gt;)"></select></div>
-        <div class="tool" data-wide><span class="lab">Text</span><button id="textDown" type="button" aria-label="Smaller text">A−</button><button id="textUp" type="button" aria-label="Bigger text">A+</button></div>
-        <div class="tool more"><button id="moreBtn" type="button" aria-expanded="false" aria-controls="moreTools">More <span aria-hidden="true">▾</span></button></div>
+        <div class="tool" data-wide><label for="instrument">Instrument</label><select id="instrument"></select></div>
+        <div class="tool" data-wide><label for="strumSel">Accompaniment</label><select id="strumSel" title="The strum it plays: the song's own, or one from the strum library (strong strokes marked &gt;)"></select></div>
+        <div class="tool" data-display><span class="lab">Text</span><button id="textDown" type="button" aria-label="Smaller text">A−</button><button id="textUp" type="button" aria-label="Bigger text">A+</button></div>
+        <div class="tool more"><button id="moreBtn" type="button" aria-expanded="false" aria-controls="moreTools">Settings <span aria-hidden="true">▾</span></button></div>
       </div>
       <div id="moreTools" class="more-tools gutter" role="group" aria-label="More settings" hidden>
-        <div id="moreFirst"></div>
-        <div class="tool"><label for="timeSel">Time</label><select id="timeSel"><option value="2">2/4</option><option value="3">3/4</option><option value="4">4/4</option><option value="6">6/8</option></select></div>
+        <p class="settings-scope">Playing choices · this song on this device</p><button id="resetPlaying" class="btn" type="button">Reset playing choices</button><div id="moreFirst"></div>
+        <div class="tool"><label for="timeSel">Time signature</label><select id="timeSel"><option value="2">2/4</option><option value="3">3/4</option><option value="4">4/4</option><option value="6">6/8</option></select></div>
         <div class="tool"><label for="feelSel">Feel</label><select id="feelSel" title="Swing: the second of each pair of strokes comes late, long-short"><option value="auto">Auto</option><option value="straight">Straight</option><option value="light">Light swing</option><option value="swing">Swing</option><option value="shuffle">Shuffle</option></select></div>
-        <div class="tool"><label for="layout">Sheet</label><select id="layout">
+        <details id="displaySettings"><summary>Display · all songs on this device</summary><div id="displayText"></div><div class="tool"><label for="layout">Sheet</label><select id="layout">
           <option value="lines">Chords above</option><option value="inline">Chords in the words</option><option value="table">Columns</option><option value="chords">Chords only</option></select></div>
         <div class="tool"><label for="diagrams">Shapes</label><select id="diagrams">
           <option value="song_start">At the top</option><option value="first_use">Where used</option><option value="none">None</option></select></div>
         <div class="tool"><button id="commonBtn" type="button" aria-pressed="false" title="No diagrams for the chords everyone knows: C, G, Am, F…">Common: shown</button></div>
         <div class="tool"><label for="tuneSel">Tune</label><select id="tuneSel" title="Songs with their tune written in: the tune as notes on a staff"><option value="strip">At the top</option><option value="lines">Over every line</option><option value="off">Hidden</option></select></div>
-        <div class="tool"><label for="lookSel">Look</label><select id="lookSel"><option value="standard">Standard</option><option value="stage">Stage</option></select></div>
+        <div class="tool"><label for="lookSel">Look</label><select id="lookSel"><option value="standard">Song sheet</option><option value="stage">Stage copy</option></select></div>
         <div class="tool" id="stageFormatTool" hidden><label for="stageFormat">Stage</label><select id="stageFormat"><option value="clear">Clear</option><option value="brackets">Brackets [C]</option><option value="compact">Compact</option><option value="heavy">Heavy</option></select></div>
         <div class="tool" id="stageChorusTool" hidden><label for="stageChorus">Chorus</label><select id="stageChorus"><option value="full">Every time</option><option value="once">Once, then “as before”</option></select></div>
-      </div>
+      </details></div>
     </header>
 
     <main id="songPanel" class="panel gutter">
-      <p id="songMeta" class="song-meta"></p>
+      <p id="songMeta" class="song-meta"></p><label class="section-jump">Jump to section <select id="sectionJump"><option value="">Choose a section</option></select></label><button id="playHere" class="btn" type="button" hidden>Play from here</button>
       <div id="sheet" class="sheet"></div>
     </main>
 
@@ -416,9 +438,9 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
       <div class="gutter">
         <div class="player-row">
           <button id="playBtn" class="btn primary" type="button">▶ Play</button>
-          <button id="karaokeButton" class="btn" type="button" title="Full screen, big words that light up as you sing, with the chord shapes">Karaoke</button>
+          <button id="restartBtn" class="btn" type="button">Restart</button><button id="stopBtn" class="btn" type="button" hidden>Stop</button><button id="accompanimentBtn" class="btn" type="button">Accompaniment</button><button id="karaokeButton" class="btn" type="button" title="Full screen, big words that light up as you sing, with the chord shapes">Karaoke</button>
           <button id="learnBtn" class="btn" type="button" title="Learn the song by heart: play from memory, a quiz on the changes, the learn sheet, its chord patterns and the circle of fifths">Learn</button>
-          <button id="sessionBtn" class="btn" type="button" title="Session screen: the whole song on one screen for a group to play from (a TV or projector). Arrow keys, a clicker or a tap go to the next song in the list">Session</button>
+          <button id="sessionBtn" class="btn" type="button" title="Session screen: the whole song on one screen for a group to play from (a TV or projector). Arrow keys, a clicker or a tap go to the next song in the list">Group screen</button>
           <div class="now"><div id="nowChord" class="now-chord"></div><div id="nowShapes" class="now-shapes"></div></div>
           <div class="tempo"><button id="slower" type="button" aria-label="Slower">−</button><span id="tempoVal" class="val"></span><button id="faster" type="button" aria-label="Faster">+</button></div>
         </div>
@@ -446,31 +468,31 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <button id="editTabNotes" type="button" role="tab" aria-selected="false">Notes</button>
       </div>
     </header>
-    <main class="panel gutter edit-main">
+    <main class="panel gutter edit-main"><p id="autosaveNote" class="note">Changes save automatically on this device. Dropbox-linked songs also sync to the shared folder.</p><div id="saveRecovery" role="alert" hidden><p>Your changes have not been saved. Keep this editor open, retry, or save a local copy.</p><button id="retrySave" class="btn" type="button">Retry save</button> <button id="saveLocalCopy" class="btn" type="button">Save a local copy</button></div>
       <div id="editWordsPanel">
         <div class="edit-tools" role="toolbar" aria-label="Type">
           <button class="btn" type="button" data-ins="[]" data-back="1" title="A chord: [C] just before the word it changes on">[ ] Chord</button>
           <button class="btn" type="button" data-ins="[[]]" data-back="2" title="A heading on its own line: [[Verse 1]], [[Chorus]]">[[ ]] Heading</button>
           <button class="btn" type="button" data-ins="{}" data-back="1" title="A strum on its own line: {D-DU-UDU}">{ } Strum</button>
-          <button class="btn" type="button" data-ins="|" data-back="0" title="A bar line">|</button>
+          <button class="btn" type="button" data-ins="|" data-back="0" aria-label="Insert a bar line" title="A bar line">|</button>
           <button class="btn" type="button" data-ins="{melody: }" data-back="1" title="The tune of the next line, by note name: {melody: E E F G | G F E D}">♪ Tune</button>
           <button id="editPreviewBtn" class="btn" type="button" aria-pressed="false" title="See the chord sheet">Preview</button>
         </div>
-        <div id="editWrap" class="edit-wrap">
+<details class="note"><summary>Help with insertion buttons</summary><p>Chord inserts [ ] before a word, for example [C]Hello. Heading inserts [[Verse 1]] on its own line. Strum inserts a pattern such as {D-DU-UDU}. The bar line | separates bars. Tune inserts note names for the next line, for example {melody: E E F G}.</p></details><div id="editWrap" class="edit-wrap">
           <div class="editor-box"><div id="editorHost"></div><textarea id="editorFallback" spellcheck="false" autocapitalize="off" autocomplete="off" hidden aria-label="The song: words with the chords in square brackets"></textarea></div>
           <div id="editSheet" class="sheet edit-preview"></div>
         </div>
       </div>
-      <div id="editInfoPanel" class="fields" hidden>
+      <div id="editInfoPanel" class="fields" hidden><p class="note">Song details · saved with the song and shared through Dropbox when linked. Playing choices are separate.</p>
         <div class="row"><label for="fTitle">Title</label><input id="fTitle" autocomplete="off"></div>
         <div class="pair"><div class="row"><label for="fArtist">Artist</label><input id="fArtist" autocomplete="off"></div><div class="row"><label for="fYear">Year</label><input id="fYear" inputmode="numeric" autocomplete="off"></div></div>
         <div class="row"><label for="fWriter">Written by</label><input id="fWriter" autocomplete="off"></div>
         <div class="pair"><div class="row"><label for="fKey">Key</label><select id="fKey"></select></div><div class="row"><label for="fCapo">Capo</label><select id="fCapo"></select></div></div>
-        <div class="pair"><div class="row"><label for="fTempo">Tempo (beats a minute)</label><input id="fTempo" type="number" min="40" max="240" inputmode="numeric"></div><div class="row"><label for="fTime">Time</label><select id="fTime"><option value="2">2/4</option><option value="3">3/4</option><option value="4">4/4</option><option value="6">6/8</option></select></div></div>
+        <div class="pair"><div class="row"><label for="fTempo">Tempo (beats a minute)</label><input id="fTempo" type="number" min="40" max="240" inputmode="numeric"></div><div class="row"><label for="fTime">Time signature</label><select id="fTime"><option value="2">2/4</option><option value="3">3/4</option><option value="4">4/4</option><option value="6">6/8</option></select></div></div>
         <div class="row"><label for="fTags">Tags (commas between them)</label><input id="fTags" autocomplete="off"></div>
         <h2>This song</h2>
         <div class="add-row"><button id="editDuplicate" class="btn" type="button">Make a copy</button><button id="editDelete" class="btn danger" type="button">Delete this song</button></div>
-        <p class="note">Deleting can't be undone here. If the song came from the desktop app, it's still there.</p>
+        <p id="deleteNote" class="note"></p>
       </div>
       <div id="editNotesPanel" hidden>
         <textarea id="fNotes" class="notes-box" aria-label="Notes" placeholder="Anything about the song: where it's from, how you play it…"></textarea>
@@ -511,7 +533,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
   </form>
 </dialog>
 
-<dialog id="downloadDialog">
+<dialog id="downloadDialog"><button id="printSheet" class="btn" type="button">Print / Save PDF</button>
   <h2>Download</h2>
   <p class="note">Files are saved to your device (on iPhone and iPad: Files or the share sheet).</p>
   <div class="choice-list">
@@ -554,7 +576,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
     <div id="pickSteps" class="choice-list"></div>
     <p id="pickBars" class="note"></p>
   </div>
-  <div class="dialog-actions"><button id="pickClose" class="btn" type="button">Close</button></div>
+  <label for="pickStrumming">Strumming</label><select id="pickStrumming"></select><p class="note">Choose a strum or a picking pattern. Selection changes this song on this device. Hear example stays here; Play in Karaoke opens the follow-along screen.</p><div class="dialog-actions"><button id="pickPlay" class="btn primary" type="button">Play in Karaoke</button><button id="pickHear" class="btn" type="button">Hear example</button><button id="pickClose" class="btn" type="button">Close</button></div>
 </dialog>
 
 <dialog id="pickHelpDialog" class="guide-dialog">
@@ -620,6 +642,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 <script type="text/plain" id="sheetCssText">/*SHEET_CSS_RAW*/</script>
 <script>
 // ── The desktop helpers the practice window uses, for the web ─────────────────
+/*SONG_UI_JS*/
 const state = { config: { playback: { sound: 'sampled' }, song: {}, library: { songs_folder: '/songs' } }, userStopped: false };
 const player = window.UkePlayer ? new window.UkePlayer() : null;
 const songsFolder = () => '/songs';
@@ -742,11 +765,12 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   let askedToKeep = false;
   const store = {
     mode: 'local',
-    async save(song, { edited, cloud: syncIt = true } = {}) {
+    async save(song, { edited, cloud: syncIt = true, preserveLive = false } = {}) {
       song.updated = new Date().toISOString();
       if (edited !== undefined) { if (edited) song.edited = true; else delete song.edited; }
       if (syncIt && edited && typeof cloudSoon === 'function') cloudSoon();   // 4.47: to Dropbox, soon
-      songs.set(song.id, song);
+      if (!preserveLive) songs.set(song.id, song);
+      else { const live = songs.get(song.id); if (live) { live.edited = true; live.updated = song.updated; } }
       if (db) {
         try { await db.doc('songs/' + song.id).set(clean(song)); setSync(''); return true; }
         catch (error) { setSync(error.code === 'quota_exceeded' ? 'Storage is full' : 'Not saved: offline?', true); return false; }
@@ -757,8 +781,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
         try { await idb.put({ id: song.id, ...clean(song) }); return true; }
         catch (error) { setSync(/quota/i.test(String(error && error.name)) ? 'This device is out of space' : 'Not saved', true); return false; }
       }
-      local.set('songs', [...songs.values()]);
-      return true;
+      try { localStorage.setItem('ukeweb.' + 'songs', JSON.stringify([...songs.values()].map(x => x.id === song.id ? song : x))); return true; } catch (_error) { return false; }
     },
     async remove(id, { cloud: syncIt = true } = {}) {
       // 4.47: a song in Dropbox, deleted here: moved to Archived songs there at the next sync
@@ -1367,8 +1390,8 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
       tune: S().tune !== undefined ? S().tune === true : (view.song.settings?.playback?.tune === true || view.song.settings?.playback?.tune === 'true'),
       pick: S().pick !== undefined ? S().pick : (U.picking.pattern(view.song.settings?.playback?.pick || '') ? view.song.settings.playback.pick : ''),
       feel: S().feel || view.song.settings?.playback?.swing || 'auto',
-      stageFormat: U.stageFormats.formatOf(S().stageFormat || view.song.settings?.export?.stage_format || 'clear').id,
-      stageChorus: (S().stageChorus || view.song.settings?.export?.stage_chorus) === 'once' ? 'once' : 'full'
+      stageFormat: U.stageFormats.formatOf(look.stageFormat || S().stageFormat || view.song.settings?.export?.stage_format || 'clear').id,
+      stageChorus: (look.stageChorus || S().stageChorus || view.song.settings?.export?.stage_chorus) === 'once' ? 'once' : 'full'
     };
   };
   // ── Stage formats (desktop 4.29–4.32): Clear, Brackets, Compact or Heavy; repeated choruses in full or once ──
@@ -1399,6 +1422,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     const song = songs.get(id);
     if (!song) return;
     stop();
+    play.selectedLine = 0;
     view.song = song;
     $('songTitle').textContent = song.title;
     $('songArtist').textContent = [song.settings?.song?.artist, song.settings?.song?.year].filter(Boolean).join(', ');
@@ -1421,25 +1445,31 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   });
   // ── Edit (4.45): the words and chords, the details and the notes; saved as you type ──
   const edit = { open: false, usingCM: false, last: '', saveTimer: null, previewTimer: null, dirty: false };
+  let editQueue;
+  function newEditQueue() {
+    editQueue = UkeSongUI.createSaveQueue({ read: () => view.song, write: song => store.save(song, { edited: true, preserveLive: true }), status: value => {
+      edit.dirty = value !== 'saved';
+      $('editSaved').textContent = {saving:'Saving…', saved:'Saved', failed:'Not saved'}[value];
+      $('editSaved').classList.toggle('warn', value === 'failed');
+      $('saveRecovery').hidden = value !== 'failed';
+    }});
+  }
   function editorText() {
     if (edit.usingCM) { const v = U.editorGetValue(); if (v !== null && v !== undefined) return v; }
     return $('editorFallback').value;
   }
   async function flushEdit() {
     clearTimeout(edit.saveTimer);
-    if (!edit.dirty || !view.song) return;
-    edit.dirty = false;
-    const ok = await store.save(view.song, { edited: true });
-    $('editSaved').textContent = ok ? 'Saved' : 'Not saved';
-    $('editSaved').classList.toggle('warn', !ok);
+    return editQueue ? editQueue.flush() : true;
   }
   function editChanged() {
-    edit.dirty = true;
-    $('editSaved').textContent = 'Saving…';
-    $('editSaved').classList.remove('warn');
+    if (!editQueue) newEditQueue();
+    editQueue.changed();
     clearTimeout(edit.saveTimer);
     edit.saveTimer = setTimeout(flushEdit, 700);
   }
+  $('retrySave').addEventListener('click', flushEdit);
+  $('saveLocalCopy').addEventListener('click', () => saveFile({ filename: view.song.title + ' (recovery).json', data: JSON.stringify(U.webSongs.build([view.song], { appVersion: U.appVersion })), type: 'application/json' }));
   function renderEditPreview() {
     clearTimeout(edit.previewTimer);
     edit.previewTimer = setTimeout(() => { if (edit.open && view.song) renderSheet($('editSheet')); }, 250);
@@ -1461,8 +1491,18 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
       const on = tab === name;
       $(tab).setAttribute('aria-selected', String(on));
       $(panel).hidden = !on;
+      $(tab).tabIndex = on ? 0 : -1;
+      $(tab).setAttribute('aria-controls', panel);
+      $(panel).setAttribute('role', 'tabpanel');
+      $(panel).setAttribute('aria-labelledby', tab);
     }
   }
+  document.querySelector('#editView [role="tablist"]').addEventListener('keydown', event => {
+    const tabs = ['editTabWords','editTabInfo','editTabNotes']; const i = tabs.indexOf(document.activeElement.id);
+    if (i < 0 || !['ArrowRight','ArrowLeft','Home','End'].includes(event.key)) return;
+    event.preventDefault(); const n = event.key === 'Home' ? 0 : event.key === 'End' ? 2 : (i + (event.key === 'ArrowRight' ? 1 : 2)) % 3;
+    showEditTab(tabs[n]); $(tabs[n]).focus();
+  });
   $('editTabWords').addEventListener('click', () => showEditTab('editTabWords'));
   $('editTabInfo').addEventListener('click', () => showEditTab('editTabInfo'));
   $('editTabNotes').addEventListener('click', () => showEditTab('editTabNotes'));
@@ -1530,6 +1570,11 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     try { r = U.editorInit('#editorHost', { value: view.song.text, theme: isDark() ? 'dark' : 'light', fallbackSelector: '#editorFallback' }); } catch (_e) { r = null; }
     edit.usingCM = Boolean(r && r.usingCodeMirror);
     if (!edit.usingCM) { $('editorFallback').hidden = false; $('editorFallback').style.display = ''; $('editorFallback').value = view.song.text; }
+    newEditQueue();
+    const deletion = UkeSongUI.deletionInfo(view.song, cloudOn());
+    $('editDelete').textContent = deletion.label;
+    $('deleteNote').textContent = deletion.note;
+    $('saveRecovery').hidden = true;
     fillInfo();
     $('fNotes').value = view.song.notes || '';
     showEditTab('editTabWords');
@@ -1539,7 +1584,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     window.scrollTo(0, 0);
   }
   async function closeEditor() {
-    await flushEdit();
+    if (!await flushEdit()) return;
     edit.open = false;
     $('editView').hidden = true;
     if (!view.song) return;
@@ -1556,10 +1601,12 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   $('editHelp').addEventListener('click', () => openGuide());
   $('editPreviewBtn').addEventListener('click', () => {
     const on = !$('editWrap').classList.contains('previewing');
+    if (on) edit.scrollY = window.scrollY;
     $('editWrap').classList.toggle('previewing', on);
     $('editPreviewBtn').setAttribute('aria-pressed', String(on));
     $('editPreviewBtn').textContent = on ? 'Back to editing' : 'Preview';
     if (on) renderSheet($('editSheet'));
+    else { window.scrollTo(0, edit.scrollY || 0); (edit.usingCM ? $('editorHost').querySelector('.cm-content') : $('editorFallback'))?.focus({preventScroll:true}); }
   });
   // [ ] { } [[ ]] | and {melody: }: hard to find on a phone or tablet keyboard
   for (const b of document.querySelectorAll('[data-ins]')) {
@@ -1577,10 +1624,10 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     });
   }
   $('editDuplicate').addEventListener('click', async () => {
-    await flushEdit();
+    if (!await flushEdit()) return;
     const title = freeTitle(`${view.song.title} (copy)`);
     const copy = { ...JSON.parse(JSON.stringify(view.song)), id: uniqueId(title), title };
-    await store.save(copy, { edited: true });
+    if (!await store.save(copy, { edited: true })) { toast('The copy could not be saved. Your original is still open.'); return; }
     edit.open = false;
     openSong(copy.id);
     await openEditor();
@@ -1588,7 +1635,8 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   });
   $('editDelete').addEventListener('click', async () => {
     if (!view.song) return;
-    if (!confirm(`Delete “${view.song.title}” from this device?`)) return;
+    if (!confirm(UkeSongUI.deletionInfo(view.song, cloudOn()).confirm)) return;
+    if (!await flushEdit()) return;
     clearTimeout(edit.saveTimer);
     edit.dirty = false;
     const id = view.song.id;
@@ -1669,6 +1717,28 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     try { sheet.innerHTML = U.renderHTML(currentIr(stage ? stageText(played(view.song.text)) : played(view.song.text)), options); }
     catch (error) { sheet.innerHTML = `<p>This song couldn’t be shown: ${esc(error.message)}</p>`; }
   }
+  function prepareSongSheet() {
+    const sheet = $('sheet');
+    // Keep the opening words visible; introductory diagrams, notation and rhythm stay available.
+    const intro = [];
+    for (const child of [...sheet.children]) {
+      if (child.matches('.song-section') || child.querySelector('.lyrics, .chords, .chord-table, .tab')) break;
+      intro.push(child);
+    }
+    if (intro.length) {
+      const details = document.createElement('details'); details.className = 'song-overview';
+      const summary = document.createElement('summary'); summary.textContent = 'Song overview · chord shapes, tune and rhythm';
+      details.append(summary, ...intro); sheet.prepend(details);
+    }
+    const groups = [...sheet.querySelectorAll('.line-group[data-line]')];
+    for (const group of groups) { group.tabIndex = 0; group.setAttribute('aria-label', 'Select this line to play from here'); }
+    const sections = [...sheet.querySelectorAll('.song-section')];
+    $('sectionJump').replaceChildren(new Option('Choose a section', ''), ...sections.map(section => {
+      const line = section.querySelector('.line-group[data-line]');
+      return new Option(section.querySelector('.section')?.textContent || 'Section', line?.dataset.line || '');
+    }));
+    if (!sections.length && groups.length) $('sectionJump').append(new Option('Beginning', groups[0].dataset.line));
+  }
   // 4.44: the tune as notes: where (the Tune menu), in the key it's played in
   function tuneOptions() {
     const key = songKey(view.song);
@@ -1716,8 +1786,14 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     const bits = [`${p.beats === 6 ? '6/8' : `${p.beats}/4`}`, `${p.tempo} bpm`];
     if (k.shift) bits.push(`${k.shift > 0 ? '+' : ''}${k.shift} from the original`);
     if (p.capo) bits.push(`capo ${p.capo}: the chords are the shapes to play`);
+    const original = songKey(view.song);
+    if (original) {
+      const shapes = U.keys.transpose(original, p.transpose - p.capo);
+      bits.push(`Original ${original.name} · Sounds in ${k.name} · ${p.capo ? `Capo ${p.capo} · ` : ''}Play ${shapes.name} shapes`);
+    }
+    bits.push('Playing choices stay on this device');
     $('songMeta').textContent = bits.join(' · ');
-    if (view.panel === 'songPanel') renderSheet($('sheet'));
+    if (view.panel === 'songPanel') { renderSheet($('sheet')); prepareSongSheet(); }
     if (!(player && player.playing)) showFirstChords();
   }
   const change = (fn, { song = true } = {}) => () => {
@@ -1727,6 +1803,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     state.config.song.instrument = prefs().instrument;
     if (player && player.playing) restart(); else renderSong();
   };
+  $('resetPlaying').addEventListener('click', change(() => { delete devicePrefs[view.song.id]; }));
   $('keyDown').addEventListener('click', change(() => { S().transpose = Math.max(-11, prefs().transpose - 1); }));
   $('keyUp').addEventListener('click', change(() => { S().transpose = Math.min(11, prefs().transpose + 1); }));
   $('capoDown').addEventListener('click', change(() => { S().capo = Math.max(0, prefs().capo - 1); }));
@@ -1737,8 +1814,8 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   $('tuneSel').addEventListener('change', change(() => { look.tune = $('tuneSel').value; }, { song: false }));
   $('lookSel').addEventListener('change', change(() => { look.style = $('lookSel').value; }, { song: false }));
   $('commonBtn').addEventListener('click', change(() => { look.hideCommon = !look.hideCommon; }, { song: false }));
-  $('stageFormat').addEventListener('change', change(() => { S().stageFormat = $('stageFormat').value; }));
-  $('stageChorus').addEventListener('change', change(() => { S().stageChorus = $('stageChorus').value; }));
+  $('stageFormat').addEventListener('change', change(() => { look.stageFormat = $('stageFormat').value; }, { song: false }));
+  $('stageChorus').addEventListener('change', change(() => { look.stageChorus = $('stageChorus').value; }, { song: false }));
   $('textDown').addEventListener('click', change(() => { look.size = Math.max(11, look.size - 1); }, { song: false }));
   $('textUp').addEventListener('click', change(() => { look.size = Math.min(30, look.size + 1); }, { song: false }));
   // More: the settings that aren't in the row. On a narrow screen Plays, Strum and Text go in here too.
@@ -1756,13 +1833,15 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   }
   WIDE.addEventListener('change', placeTools);
   placeTools();
+  $('displayText').append(document.querySelector('[data-display]'));
   function showMore(open) {
     $('moreTools').hidden = !open;
     $('moreBtn').setAttribute('aria-expanded', String(open));
-    $('moreBtn').innerHTML = open ? 'Less <span aria-hidden="true">▴</span>' : 'More <span aria-hidden="true">▾</span>';
+    $('moreBtn').innerHTML = open ? 'Close settings' : 'Settings';
   }
   $('moreBtn').addEventListener('click', () => { look.more = $('moreTools').hidden; local.set('look', look); showMore(look.more); });
-  showMore(look.more === true);
+  showMore(false);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') showMore(false); });
   $('timeSel').addEventListener('change', change(() => {
     const beats = Number($('timeSel').value);
     S().beats_per_bar = beats;
@@ -1784,6 +1863,11 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
 
   // ── Downloads ──
   $('downloadBtn').addEventListener('click', () => $('downloadDialog').showModal());
+  $('printSheet').addEventListener('click', () => {
+    const frame = document.createElement('iframe'); frame.title = 'Print song sheet'; frame.style.cssText = 'position:fixed;width:1px;height:1px;left:-10000px';
+    frame.onload = () => { frame.contentWindow.addEventListener('afterprint', () => frame.remove(), {once:true}); frame.contentWindow.focus(); frame.contentWindow.print(); };
+    frame.srcdoc = sheetDocument(false); document.body.append(frame);
+  });
   $('dlClose').addEventListener('click', () => $('downloadDialog').close());
   function sheetDocument(stage) {
     const p = prefs();
@@ -1855,11 +1939,13 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     if (!session) return;
     if (e.key === 'Escape' || session.key(e.key)) { e.preventDefault(); e.stopPropagation(); if (e.key === 'Escape') closeSession(); }
   }
+  let releaseSessionFocus;
   function closeSession() {
     if (!session) return;
     session.destroy();
     session = null;
     $('sessionView').hidden = true;
+    releaseSessionFocus?.(); releaseSessionFocus = null;
     document.removeEventListener('keydown', sessionKeys, true);
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
   }
@@ -1880,9 +1966,20 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       return { title: song.title, get sub() { return get().sub; }, get diagrams() { return get().diagrams; }, get html() { return get().html; } };
     });
     session.show({ songs: lazy, start: Math.max(0, ids.indexOf(view.song.id)), hideCommon: look.hideCommon === true, dark: isDark(), minPx: Math.round(Math.max(13, Math.min(18, Math.min(innerWidth, innerHeight) / 45))) });
+    box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', 'Group screen');
+    releaseSessionFocus = UkeSongUI.enterOverlay(box);
     document.addEventListener('keydown', sessionKeys, true);
   }
-  $('sessionBtn').addEventListener('click', openSession);
+  const queueDialog = document.createElement('dialog');
+  queueDialog.innerHTML = '<h2>Group screen</h2><p>The current library search and order provide this queue. Use arrow keys or tap to move between songs.</p><ol></ol><div class="dialog-actions"><button class="btn" data-cancel>Cancel</button><button class="btn primary" data-open>Open group screen</button></div>';
+  document.body.append(queueDialog);
+  queueDialog.querySelector('[data-cancel]').onclick = () => queueDialog.close();
+  queueDialog.querySelector('[data-open]').onclick = () => { queueDialog.close(); openSession(); };
+  $('sessionBtn').addEventListener('click', () => {
+    const ids = listedIds(); if (!ids.includes(view.song.id)) ids.unshift(view.song.id);
+    queueDialog.querySelector('ol').replaceChildren(...ids.map(id => Object.assign(document.createElement('li'), {textContent:songs.get(id)?.title || id})));
+    queueDialog.showModal();
+  });
 
   // ── Play along ──
   const play = { schedule: null, raf: null, line: null, barKey: null, wake: null, userStopped: false };
@@ -1932,7 +2029,8 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     play.line = null;
     play.barKey = null;
     player.setSound(prefs().instrument === 'guitar' ? 'steel' : 'sampled');
-    $('playBtn').textContent = '■ Stop';
+    $('playBtn').textContent = 'Pause';
+    $('player').classList.add('active'); $('stopBtn').hidden = false;
     $('status').textContent = schedule.countInDuration ? 'Count-in…' : '';
     play.wake = null;
     try { navigator.wakeLock?.request('screen').then((w) => { play.wake = w; }, () => {}); } catch (_e) { /* the screen may sleep */ }
@@ -1999,6 +2097,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     cancelAnimationFrame(play.raf);
     clearSung($('sheet'));
     $('playBtn').textContent = '▶ Play';
+    $('player').classList.remove('active'); $('stopBtn').hidden = true;
     document.querySelectorAll('.line-group.playing').forEach((el) => el.classList.remove('playing'));
     [...$('strip').children].forEach((c) => c.classList.remove('on'));
     play.tuneNow?.classList.remove('now');
@@ -2020,22 +2119,37 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     renderSong();
     setTimeout(() => start(line), 80);
   }
-  $('playBtn').addEventListener('click', () => {
-    if (player && player.playing && play.schedule) { stop(); $('status').textContent = 'Stopped.'; showFirstChords(); }
-    else start(0);
+  $('playBtn').addEventListener('click', async () => {
+    try {
+      if (player?.playing && play.schedule) {
+        if (player.paused) { await player.resume(); $('playBtn').textContent = 'Pause'; }
+        else { await player.pause(); $('playBtn').textContent = 'Resume'; $('status').textContent = 'Paused — Resume continues from here.'; }
+      } else start(play.selectedLine || 0);
+    } catch (error) { toast(error.message); }
   });
-  for (const id of ['sheet']) {
-    $(id).addEventListener('click', (event) => {
-      const group = event.target.closest('.line-group[data-line]');
-      if (!group || !(player && player.playing && play.schedule)) return;
-      play.line = Number(group.dataset.line);
-      restart();
-    });
+  $('stopBtn').addEventListener('click', () => { stop(); showFirstChords(); });
+  $('restartBtn').addEventListener('click', () => { stop(); start(0); });
+  $('playHere').addEventListener('click', () => { stop(); start(play.selectedLine || 0); });
+  function selectLine(group) {
+    if (!group) return;
+    play.selectedLine = Number(group.dataset.line);
+    $('sheet').querySelectorAll('.selected-line').forEach(el => el.classList.remove('selected-line'));
+    group.classList.add('selected-line');
+    $('playHere').hidden = false;
+    $('playHere').textContent = 'Play from selected line';
   }
+  $('sheet').addEventListener('click', event => selectLine(event.target.closest('.line-group[data-line]')));
+  $('sheet').addEventListener('keydown', event => {
+    if ((event.key === 'Enter' || event.key === ' ') && event.target.matches('.line-group[data-line]')) { event.preventDefault(); selectLine(event.target); }
+  });
+  $('sectionJump').addEventListener('change', () => {
+    const group = $('sheet').querySelector('[data-line="' + $('sectionJump').value + '"]');
+    if (group) { selectLine(group); group.scrollIntoView({block:'center'}); group.focus({preventScroll:true}); }
+  });
   function tick() {
     const schedule = play.schedule;
     if (!schedule) return;
-    if (!player.playing) { play.raf = requestAnimationFrame(tick); return; }
+    if (!player.playing || player.paused) { play.raf = requestAnimationFrame(tick); return; }
     const t = player.position();
     const beat = 60 / schedule.tempo;
     if (t < schedule.countInDuration) {
@@ -2175,6 +2289,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
 
   // Picking in steps (4.43): the tab's chords strummed, the picking on open strings, then both
   function openPick() {
+    clearTimeout(exampleTimer); if (play.schedule) stop(); $('pickHear').textContent = 'Hear example';
     const text = played(view.song.text);
     const hasTab = /^\s*```\s*tab(?:\s+\d+\s*\/\s*\d+)?\s*$/im.test(text);
     const L = learnSong();
@@ -2190,16 +2305,18 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       const on = p.pick === pat.id ? '  ✓ this song' : '';
       const tuned = U.melody.hasMelody(L.ir);
       const shown = pat.id === 'melody' ? (tuned ? '' : ' This song has no tune written in yet.') : (firstFrets ? ` On ${firstChord.content}: ${pk.pickText(pat.id, { frets: firstFrets, chord: firstChord.content, instrument: p.instrument, beats: p.beats, compound: p.beats === 6 })}.` : '');
-      b.append(Object.assign(document.createElement('strong'), { textContent: `▶ ${pat.level}  ${pat.name}${on}` }), Object.assign(document.createElement('span'), { textContent: pat.tip + shown }));
+      b.setAttribute('aria-pressed', String(p.pick === pat.id));
+      b.append(Object.assign(document.createElement('strong'), { textContent: `${pat.level}  ${pat.name}${on}` }), Object.assign(document.createElement('span'), { textContent: pat.tip + shown }));
       b.addEventListener('click', () => {
         S().pick = pat.id;
         saveSoon();
         renderTools();
-        $('pickDialog').close();
-        window.__playSong({ karaoke: true, learn: null, step: null });
+        openPick();
       });
       return b;
     }));
+    $('pickStrumming').replaceChildren(new Option('As written', ''), ...U.strums.filter(x => x.beats === p.beats).map(x => new Option(x.name, x.id)));
+    $('pickStrumming').value = p.strum || '';
     $('pickStrumBtn').hidden = !p.pick;
     $('pickTuneRow').hidden = !U.melody.hasMelody(L.ir);
     $('pickTune').checked = p.tune;
@@ -2230,7 +2347,17 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     if (!$('pickDialog').open) $('pickDialog').showModal();
   }
   $('learnPickBtn').addEventListener('click', openPick);
+  $('accompanimentBtn').addEventListener('click', openPick);
+  $('pickPlay').addEventListener('click', () => { stop(); $('pickDialog').close(); window.__playSong({karaoke:true,learn:null,step:null}); });
+  let exampleTimer;
+  $('pickHear').addEventListener('click', async () => {
+    clearTimeout(exampleTimer); stop(); await start(0);
+    $('pickHear').textContent = 'Playing example…';
+    exampleTimer = setTimeout(() => { stop(); $('pickHear').textContent = 'Hear example'; }, 6000);
+  });
+  $('pickDialog').addEventListener('close', () => { clearTimeout(exampleTimer); if (play.schedule) stop(); $('pickHear').textContent = 'Hear example'; });
   $('pickClose').addEventListener('click', () => $('pickDialog').close());
+  $('pickStrumming').addEventListener('change', () => { S().pick = ''; S().strum = $('pickStrumming').value; saveSoon(); renderTools(); openPick(); });
   $('pickTune').addEventListener('change', () => { S().tune = $('pickTune').checked; saveSoon(); });
   $('pickStrumBtn').addEventListener('click', () => { S().pick = ''; saveSoon(); renderTools(); openPick(); });
   $('pickHelpBtn').addEventListener('click', () => $('pickHelpDialog').showModal());

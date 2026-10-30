@@ -25,6 +25,7 @@ put('/*PRACTICE_JS*/', safe(fs.readFileSync('pr_js.js', 'utf8')));
 put('/*SESSION_JS*/', safe(fs.readFileSync(APP + 'src/session-fit.js', 'utf8') + '\n' + fs.readFileSync(APP + 'src/session-screen.js', 'utf8')));
 put('/*UMW_BUNDLE*/', safe(bundle));
 put('/*PLAYER*/', safe(player));
+put('/*SONG_UI_JS*/', safe(fs.readFileSync(APP + 'src/song-ui.js', 'utf8')));
 fs.mkdirSync('out', { recursive: true });
 fs.writeFileSync('out/ukemusic-web.html', html);
 // A standalone page for any web server (GitHub Pages): the same app with a doctype, charset and viewport

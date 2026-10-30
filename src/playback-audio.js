@@ -374,9 +374,11 @@
       this.currentBar = -2;
       this.voices = [];
       this.playing = true;
+      this.paused = false;
+      window.UkeSongUI?.updateTransport(this);
 
       const pump = () => {
-        if (!this.playing) return;
+        if (!this.playing || this.paused) return;
         const horizon = ctx.currentTime + LOOKAHEAD;
         const events = this.schedule.events;
         while (this.nextEvent < events.length && this.startTime + events[this.nextEvent].time < horizon) {
@@ -413,9 +415,25 @@
       this.raf = window.requestAnimationFrame(follow);
     }
 
+    async pause() {
+      if (!this.playing || this.paused) return;
+      this.paused = true;
+      try { await this.ctx.suspend(); window.UkeSongUI?.updateTransport(this); }
+      catch (error) { this.paused = false; throw error; }
+    }
+
+    async resume() {
+      if (!this.playing || !this.paused) return;
+      await this.ctx.resume();
+      this.paused = false;
+      window.UkeSongUI?.updateTransport(this);
+    }
+
     stop() {
       const wasPlaying = this.playing;
       this.playing = false;
+      const wasPaused = this.paused;
+      this.paused = false;
       if (this.timer) window.clearInterval(this.timer);
       if (this.raf) window.cancelAnimationFrame(this.raf);
       this.timer = null;
@@ -423,8 +441,10 @@
       if (this.ctx) {
         const now = this.ctx.currentTime;
         for (let s = 0; s < this.voices.length; s += 1) this.damp(s, now);
+        if (wasPaused) this.ctx.resume().catch(() => {});
       }
       if (wasPlaying && this.callbacks && this.callbacks.onEnd) this.callbacks.onEnd();
+      window.UkeSongUI?.updateTransport(this);
     }
 
     /** Seconds since the music (after the count-in) started, for tests and display. */

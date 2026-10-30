@@ -78,6 +78,14 @@
       .appbar-button.play:hover:not(:disabled) { background: var(--accent-dark); }
       .appbar-button svg, .rib-button svg { flex: none; }
 
+      #quickPlay, #quickStop, #songSections {
+        font: inherit; font-size: 13px; padding: 7px 10px;
+        border: 1px solid #c8d5d3; border-radius: 7px;
+        background: var(--panel-bg, #fff); color: var(--text-color, #222);
+      }
+      #quickPlay { min-width: 76px; }
+      #songSections { max-width: 190px; }
+      #writtenAccompaniment { display:block; max-width:230px; font-size:12px; }
       .appbar-title {
         display: flex;
         align-items: baseline;
@@ -1793,18 +1801,21 @@
             <span id="savedBadge" class="saved-badge">Saved</span>
           </div>
           <span class="appbar-spacer"></span>
+          <button id="quickPlay" type="button" title="Play, pause or resume">Play / Pause</button>
+          <button id="quickStop" type="button">Stop</button>
+          <select id="songSections" aria-label="Jump to section"><option value="">Jump to section</option></select>
           <span id="nowPlaying" class="now-playing" aria-live="polite"></span>
         </div>
         <nav class="ribbon" aria-label="Tools">
           <div class="ribbon-tabs" role="tablist">
             <button id="ribbonTabSong" class="ribbon-tab" type="button" role="tab" data-ribbon="song" title="Close, save, bring in and export songs">File</button>
             <button id="ribbonTabWrite" class="ribbon-tab" type="button" role="tab" data-ribbon="write" title="Help with writing the song: tab, strums, key, tidying">Write</button>
-            <button id="ribbonTabThisSong" class="ribbon-tab" type="button" role="tab" data-ribbon="thissong" title="This song's key, capo, instrument, tempo and strum, saved with the song">This song</button>
-            <button id="ribbonTabView" class="ribbon-tab" type="button" role="tab" data-ribbon="view" title="How the song looks: chord diagrams, text size, strum patterns, layout">View</button>
+            <button id="ribbonTabThisSong" class="ribbon-tab" type="button" role="tab" data-ribbon="thissong" title="Saved song settings; transpose and practice speed are temporary playing choices">This song</button>
+            <button id="ribbonTabView" class="ribbon-tab" type="button" role="tab" data-ribbon="view" title="How the song looks: chord diagrams, text size, strum patterns, layout">Display</button>
             <button id="ribbonTabExport" class="ribbon-tab" type="button" role="tab" data-ribbon="export" title="PDFs, web pages, lyrics and ChordPro files, into the song's exports folder">Export</button>
             <button id="ribbonTabPlay" class="ribbon-tab" type="button" role="tab" data-ribbon="play" title="Play, stop, karaoke, tempo and how playback sounds">Play</button>
             <button id="ribbonTabLearn" class="ribbon-tab" type="button" role="tab" data-ribbon="learn" title="Learn the song: play it from memory, practise its changes, think in numbers, and make a learn sheet">Learn</button>
-            <button id="ribbonTabPick" class="ribbon-tab" type="button" role="tab" data-ribbon="pick" title="Fingerpick the song instead of strumming: choose a pattern, play it, make a pick sheet, and learn any tab in steps">Pick</button>
+            <button id="ribbonTabPick" class="ribbon-tab" type="button" role="tab" data-ribbon="pick" title="Fingerpick the song instead of strumming: choose a pattern, play it, make a pick sheet, and learn any tab in steps">Accompaniment</button>
             <button id="ribbonTabSettings" class="ribbon-tab" type="button" role="tab" data-ribbon="settings" title="Settings for this song and the defaults for all songs">Settings</button>
             <span class="ribbon-end">
               <button id="ribbonHide" class="ribbon-close ribbon-hide" type="button" title="Hide the tools, for more room (click any tab, or this again, to show them)" aria-label="Hide the tools"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -1943,7 +1954,7 @@
                   <input id="tempoInput" type="number" min="40" max="240" step="1" data-config-path="song.tempo" data-scope="song" title="Tempo in beats per minute, for playback and karaoke (in 6/8, beats are dotted quarters: two a bar). Saved with the song." />
                 </div>
                 <div class="rib-field" title="Beats in each bar. Saved with the song.">
-                  <label for="beatsSelect">Time</label>
+                  <label for="beatsSelect">Time signature</label>
                   <select id="beatsSelect" data-config-path="song.beats_per_bar" data-scope="song" title="Beats in each bar. Saved with the song.">
                     <option value="4">4/4</option>
                     <option value="3">3/4</option>
@@ -1952,7 +1963,7 @@
                   </select>
                 </div>
                 <div class="rib-field" title="The strum played where the song has no {pattern} of its own, or a picking pattern instead (Pick: …). Saved with the song; Default follows Settings → All songs.">
-                  <label for="songStrumSelect">Strum</label>
+                  <label for="songStrumSelect">Unmarked passages</label>
                   <select id="songStrumSelect" title="The strum played where the song has no {pattern} of its own, or a picking pattern instead (Pick: …). Saved with the song; Default follows Settings → All songs."></select>
                 </div>
               </div>
@@ -2131,9 +2142,9 @@
               <div class="rib-items">
                 <button id="playButton" class="rib-button" type="button" data-icon="play" title="Play the song here, beside the editor: the preview follows the words, with the chord, the strum and the next shapes above it (F5)">Play</button>
                 <button id="stopButton" class="rib-button" type="button" data-icon="stop" title="Stop playing (Shift+F5)" disabled>Stop</button>
-                <button id="playFromStartButton" class="rib-button" type="button" data-icon="restart" title="Play from the top of the song (also while it's playing). Tip: while it plays, click a line in the preview to jump there">From the start</button>
+                <button id="resetPracticeChoices" class="rib-button" type="button" title="Return to the original key, full practice speed and no section loop">Original key / full speed</button><button id="playFromStartButton" class="rib-button" type="button" data-icon="restart" title="Play from the top of the song (also while it's playing). Tip: while it plays, click a line in the preview to jump there">Restart</button>
                 <button id="karaokeButton" class="rib-button" type="button" data-icon="karaoke" title="Karaoke: full screen, with big words lighting up as they're sung, the strum and the chord shapes">Karaoke</button>
-                <button id="sessionButton" class="rib-button" type="button" data-icon="screen" title="Session screen: the whole song on one screen, as big as it will go, for a group to play from (on the TV or projector, if one is plugged in)">Session</button>
+                <button id="sessionButton" class="rib-button" type="button" data-icon="screen" title="Session screen: the whole song on one screen, as big as it will go, for a group to play from (on the TV or projector, if one is plugged in)">Group screen</button>
               </div>
               <span class="rib-label">Play</span>
             </div>
@@ -2341,7 +2352,7 @@
         <section class="panel editor-panel">
           <div class="editor-tabs" role="tablist">
             <button id="tabSong" type="button" role="tab" class="active">Words &amp; chords</button>
-            <button id="tabDetails" type="button" role="tab" title="About the song: artist, year, written by, album, source, tags, difficulty and its key">Info</button>
+            <button id="tabDetails" type="button" role="tab" title="About the song: artist, year, written by, album, source, tags, difficulty and its key">Details</button>
             <button id="tabLinks" type="button" role="tab" title="Web pages for the song: the original on YouTube, a uke play-along, a lesson, Wikipedia">Links</button>
             <button id="tabExports" type="button" role="tab" title="Everything exported for this song: look at it, see what's out of date, delete it">Exports</button>
             <button id="tabNotes" type="button" role="tab" title="Your notes on the song, and its history">Notes</button>
@@ -2484,7 +2495,7 @@
                   <div id="songSettingsBody" class="settings-groups">
                     <section class="settings-group" id="set-song-about">
                       <h3>About this song</h3>
-                      <p class="help">The key the song is written in, artist, year, written by, album, source, tags and difficulty are on the song's <strong>Info</strong> tab, beside Song and Notes.</p>
+                      <p class="help">The key the song is written in, artist, year, written by, album, source, tags and difficulty are on the song's <strong>Details</strong> tab, beside Song and Notes.</p>
                       <p class="help">Tempo, time, strum, capo and instrument for this song are on the <strong>This song</strong> tab above the editor.</p>
                     </section>
                     <section class="settings-group" id="set-song-custom">
@@ -3727,7 +3738,7 @@
           <span id="karaokeSteps" class="k-steps"></span>
         </div>
         <span class="k-spacer"></span>
-        <span class="k-tempo" title="Tempo: changes carry on straight away, and are saved with the song">
+        <span class="k-tempo" title="Tempo: adjust how fast this song plays">
           <button id="karaokeSlower" type="button" title="5 bpm slower">−</button>
           <span id="karaokeTempo">100 bpm</span>
           <button id="karaokeFaster" type="button" title="5 bpm faster">+</button>
@@ -3735,9 +3746,9 @@
         <button id="karaokeShapesToggle" type="button" title="Show or hide the chord shapes: the chord now and the next two" aria-pressed="true">Shapes</button>
         <button id="karaokeSmaller" type="button" title="Smaller text">A−</button>
         <button id="karaokeBigger" type="button" title="Bigger text">A+</button>
-        <button id="karaokePlay" type="button" title="Play from the start (Space)">▶ Play</button>
+        <button id="karaokePlay" type="button" title="Play, pause or resume (Space)">▶ Play</button>
         <button id="karaokeRestart" type="button" title="Back to the start (also while it's playing). Or click a line to play from there">⏮ From the start</button>
-        <button id="karaokeStop" type="button" title="Stop (Space)">■ Stop</button>
+        <button id="karaokeStop" type="button" title="Stop playback">■ Stop</button>
         <button id="karaokeTrouble" type="button" title="Mark the line playing now as a trouble spot (T)" hidden>⚑ Trouble here</button>
         <button id="karaokeClose" type="button" title="Close (Esc)">Close</button>
       </div>
@@ -3746,6 +3757,7 @@
         <aside id="karaokeShapes" class="k-shapes" aria-label="Chord shapes: now, next and then"></aside>
       </div>
     </div>
+    <script src="src/song-ui.js"></script>
     <script src="src/playback-audio.js"></script>
     <script>
       // Error logging: send uncaught errors (with stack traces) to logs/ukemusic.log
@@ -6737,7 +6749,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         });
 
         function setPlayingUi(playing) {
-          playButton.disabled = playing;
+          playButton.disabled = false;
+          playButton.textContent = playing ? 'Pause' : 'Play';
           stopButton.disabled = !playing;
           document.getElementById('pickStopButton').disabled = !playing;   // 4.44: and on the Pick tab
           if (!playing) {
@@ -7494,6 +7507,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           karaokeView.raf = window.requestAnimationFrame(karaokeTick);
         }
 
+        let releaseKaraokeFocus;
         function karaokeStart(ir, schedule, startLine, endLine = 0, learn = null) {
           karaokeView.schedule = schedule;
           // 4.39: playing from memory: which lines show their chords, as numbers, or hidden
@@ -7518,14 +7532,19 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           document.getElementById('karaokeInfo').textContent =
             `${learn && learn.legend && karaokeView.learn?.key ? `In ${karaokeView.learn.key.name}` : keyLabel(learn && Number.isFinite(learn.transpose) ? learn.transpose : state.transpose)}${songCapo() ? ` · capo ${songCapo()}` : ''}${learnInfo(ir)}`;
           karaokeRender(ir, schedule, startLine, endLine);
+          const opening = karaokeEl.hidden;
           karaokeEl.hidden = false;
+          if (opening) releaseKaraokeFocus = UkeSongUI.enterOverlay(karaokeEl);
+          for (const line of karaokeLines.querySelectorAll('[data-line]')) { line.tabIndex = 0; line.setAttribute('role','button'); line.setAttribute('aria-label','Play from this line'); }
           karaokeLines.scrollTop = 0;
-          document.getElementById('karaokePlay').disabled = true;
+          document.getElementById('karaokePlay').disabled = false;
+          document.getElementById('karaokePlay').textContent = 'Pause';
           document.getElementById('karaokeStop').disabled = false;
           if (!karaokeView.raf) karaokeView.raf = window.requestAnimationFrame(karaokeTick);
         }
 
         function karaokeStopped() {
+          document.getElementById('karaokePlay').textContent = 'Play';
           clearStrip();
           document.getElementById('karaokePlay').disabled = false;
           document.getElementById('karaokeStop').disabled = true;
@@ -7546,7 +7565,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           }
           if (karaokeView.raf) window.cancelAnimationFrame(karaokeView.raf);
           karaokeView.raf = null;
-          focusEditor();
+          if (releaseKaraokeFocus) { releaseKaraokeFocus(); releaseKaraokeFocus = null; } else focusEditor();
         }
 
         async function karaokeResize(step) {
@@ -7562,7 +7581,17 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         }
 
         document.getElementById('karaokeButton').addEventListener('click', () => playSong({ karaoke: true, learn: null }));
-        document.getElementById('karaokePlay').addEventListener('click', () => playSong({ karaoke: true, startLine: 0 }));
+        async function toggleKaraokePlayback() {
+          try {
+            if (!player?.playing) { playSong({karaoke:true,startLine:0}); return; }
+            if (player.paused) { await player.resume(); document.getElementById('karaokePlay').textContent = 'Pause'; }
+            else { await player.pause(); document.getElementById('karaokePlay').textContent = 'Resume'; }
+          } catch (error) { setStatusMessage(error.message); }
+        }
+        document.getElementById('karaokePlay').addEventListener('click', toggleKaraokePlayback);
+        karaokeLines.addEventListener('keydown', event => {
+          if ((event.key === 'Enter' || event.key === ' ') && event.target.matches('[data-line]')) { event.preventDefault(); event.stopPropagation(); event.target.click(); }
+        });
         document.getElementById('karaokeRestart').addEventListener('click', () => playSong({ karaoke: true, startLine: 0, fromStart: true }));
         // Click a line in karaoke to play from there (4.22)
         document.getElementById('karaokeLines').addEventListener('click', (event) => {
@@ -7579,19 +7608,37 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           if (event.key === 'Escape') {
             event.preventDefault();
             karaokeClose();
-          } else if (event.key === ' ' || event.code === 'Space') {
+          } else if ((event.key === ' ' || event.code === 'Space') && !event.target.closest('button, input, select')) {
             event.preventDefault();
-            if (player && player.playing) stopPlayback();
-            else playSong({ karaoke: true });
+            toggleKaraokePlayback();
           } else if ((event.key === 't' || event.key === 'T') && karaokeView.learn && !event.ctrlKey && !event.metaKey && !event.altKey) {
             event.preventDefault();
             karaokeMarkTrouble();
           }
         });
 
-        playButton.addEventListener('click', () => playSong());
+        async function toggleSongPlayback() {
+          try {
+            if (!player?.playing) { playSong(); return; }
+            if (player.paused) { await player.resume(); playButton.textContent = 'Pause'; }
+            else { await player.pause(); playButton.textContent = 'Resume'; }
+          } catch (error) { setStatusMessage(error.message); }
+        }
+        playButton.addEventListener('click', toggleSongPlayback);
+        document.getElementById('quickPlay').addEventListener('click', toggleSongPlayback);
+        document.getElementById('quickStop').addEventListener('click', stopPlayback);
+        document.getElementById('songSections').addEventListener('change', event => {
+          const line = Number(event.target.value); if (line) playSong({startLine:line});
+        });
         // From the start (4.22): from the top, whatever the cursor; while playing it jumps back
         document.getElementById('playFromStartButton').addEventListener('click', () => playSong({ startLine: 0, fromStart: true }));
+        document.getElementById('resetPracticeChoices').addEventListener('click', async () => {
+          stopPlayback();
+          document.getElementById('practiceSpeed').value = '100';
+          document.getElementById('loopSection').checked = false;
+          document.getElementById('speedUp').checked = false;
+          await setTranspose(0);
+        });
         stopButton.addEventListener('click', stopPlayback);
         document.getElementById('pickStopButton').addEventListener('click', stopPlayback);
         window.addEventListener('beforeunload', () => player && player.stop());
@@ -10327,7 +10374,7 @@ function showTab(tab) {
           document.getElementById('pickPattern').focus();
           return true;
         };
-        document.getElementById('pickPlayButton').addEventListener('click', () => { if (!needPattern()) playSong({}); });
+        document.getElementById('pickPlayButton').addEventListener('click', () => { if (!needPattern()) toggleSongPlayback(); });
         document.getElementById('pickKaraokeButton').addEventListener('click', () => { if (!needPattern()) playSong({ karaoke: true, learn: null, textTransform: null }); });
         document.getElementById('pickSheetButton').addEventListener('click', async () => {
           if (!state.song && !(await requireSongForExport())) return;
@@ -10959,6 +11006,12 @@ function showTab(tab) {
           return found ? found.name : id;
         }
         function refreshSongStrum(config) {
+          const sections = document.getElementById('songSections');
+          const selected = sections.value;
+          const headings = window.ukemusic.parseSong(getEditorValue(), getParserOptions()).filter(n => n.type === 'structure');
+          sections.replaceChildren(new Option('Play from section', ''), ...headings.map(n => new Option(n.content, String(n.line))));
+          sections.value = selected;
+          sections.disabled = !state.song;
           const beats = Number(config?.song?.beats_per_bar) || 4;
           const own = state.song ? getAt(state.songSettings || {}, 'playback.default_strum') : undefined;
           const ids = window.ukemusic.strums.filter((s) => s.beats === beats).map((s) => s.id);
@@ -10967,7 +11020,7 @@ function showTab(tab) {
           songStrumSelect.replaceChildren();
           const fallback = document.createElement('option');
           fallback.value = '';
-          fallback.textContent = `Default: ${strumLabel(state.config?.playback?.default_strum || 'simple')}`;
+          fallback.textContent = `Fallback: ${strumLabel(state.config?.playback?.default_strum || 'simple')}`;
           songStrumSelect.appendChild(fallback);
           for (const id of ids) {
             const option = document.createElement('option');
@@ -10978,6 +11031,10 @@ function showTab(tab) {
           }
           songStrumSelect.value = own || '';
           songStrumSelect.disabled = !state.song;
+          let written = document.getElementById('writtenAccompaniment');
+          if (!written) { written = document.createElement('small'); written.id = 'writtenAccompaniment'; songStrumSelect.parentElement.append(written); }
+          const rhythm = window.ukemusic.parseSong(getEditorValue(), getParserOptions()).find(n => n.type === 'rhythm' && !n.stop && !n.feelOnly && n.content);
+          written.textContent = rhythm ? 'As written: ' + (rhythm.strumName || rhythm.content) : 'No explicit pattern; uses fallback';
           document.getElementById('rekeyButton').disabled = !state.song || !state.transpose;
 
         }

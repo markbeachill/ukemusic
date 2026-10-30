@@ -1,5 +1,20 @@
 # Changelog
 
+## v4.51.0
+
+### A clearer song workspace
+- The web song sheet opens with the words visible. Introductory chord shapes, tune notation and rhythm sit in an optional Song overview; the stopped player is compact on a phone.
+- Playing choices are labelled as personal to this song on this device. Reset playing choices returns to the song's saved settings. Original key, sounding key and capo chord shapes are shown together.
+- Settings separates playing controls from Display preferences. Labels now use Instrument, Accompaniment, Time signature, Details, Song sheet, Stage copy and Group screen.
+- Jump to section and a selected line's Play from here make passages easier to reach. Play now pauses and resumes without losing position; Restart and Stop remain explicit. Desktop has a compact transport above the ribbon and an original-key/full-speed reset.
+- Accompaniment is directly accessible. Choosing a picking pattern keeps the chooser open; Hear example and Play in Karaoke are separate actions. The desktop distinguishes written patterns from the fallback for unmarked passages.
+
+### Safer editing and accessible playback
+- Failed web saves keep the editor open and retain unsaved changes. Retry save and Save a local copy provide recovery. Saves are serialized so typing during a write cannot lose the latest changes.
+- Shared Dropbox songs clearly say that archiving affects other devices and folder members, and explain recovery through Archived songs.
+- Karaoke and the web Group screen isolate background controls, move focus into the screen and restore it on close. Karaoke lines can be played from the keyboard; editor tabs support arrow-key navigation.
+- The Group screen previews its song queue. Download includes Print / Save PDF, and editing provides optional insertion-button help while preserving the editing position when returning from Preview.
+
 ## v4.50.0
 
 ### Free Practice: easier to start and return to

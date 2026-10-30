@@ -371,6 +371,7 @@
           karaokeView.raf = window.requestAnimationFrame(karaokeTick);
         }
 
+        let releaseKaraokeFocus;
         function karaokeStart(ir, schedule, startLine, endLine = 0, learn = null) {
           karaokeView.schedule = schedule;
           // from memory: which lines show their chords, as numbers, or hidden (kept on a line tap)
@@ -395,14 +396,19 @@
           document.getElementById('karaokeInfo').textContent =
             `${keyLabel(state.transpose)}${songCapo() ? ` · capo ${songCapo()}` : ''}${karaokeView.learn ? ` · From memory: ${stageText[karaokeView.learn.opts.stage] || ''}` : ''}`;
           karaokeRender(ir, schedule, startLine, endLine);
+          const opening = karaokeEl.hidden;
           karaokeEl.hidden = false;
+          if (opening) releaseKaraokeFocus = UkeSongUI.enterOverlay(karaokeEl);
+          for (const line of karaokeLines.querySelectorAll('[data-line]')) { line.tabIndex = 0; line.setAttribute('role','button'); line.setAttribute('aria-label','Play from this line'); }
           karaokeLines.scrollTop = 0;
-          document.getElementById('karaokePlay').disabled = true;
+          document.getElementById('karaokePlay').disabled = false;
+          document.getElementById('karaokePlay').textContent = 'Pause';
           document.getElementById('karaokeStop').disabled = false;
           if (!karaokeView.raf) karaokeView.raf = window.requestAnimationFrame(karaokeTick);
         }
 
         function karaokeStopped() {
+          document.getElementById('karaokePlay').textContent = 'Play';
           clearStrip();
           document.getElementById('karaokePlay').disabled = false;
           document.getElementById('karaokeStop').disabled = true;
@@ -420,7 +426,7 @@
           }
           if (karaokeView.raf) window.cancelAnimationFrame(karaokeView.raf);
           karaokeView.raf = null;
-          focusEditor();
+          if (releaseKaraokeFocus) { releaseKaraokeFocus(); releaseKaraokeFocus = null; } else focusEditor();
         }
 
         async function karaokeResize(step) {
@@ -436,7 +442,17 @@
         }
 
         document.getElementById('karaokeButton').addEventListener('click', () => playSong({ karaoke: true }));
-        document.getElementById('karaokePlay').addEventListener('click', () => playSong({ karaoke: true, startLine: 0 }));
+        async function toggleKaraokePlayback() {
+          try {
+            if (!player?.playing) { playSong({karaoke:true,startLine:0}); return; }
+            if (player.paused) { await player.resume(); document.getElementById('karaokePlay').textContent = 'Pause'; }
+            else { await player.pause(); document.getElementById('karaokePlay').textContent = 'Resume'; }
+          } catch (error) { setStatusMessage(error.message); }
+        }
+        document.getElementById('karaokePlay').addEventListener('click', toggleKaraokePlayback);
+        karaokeLines.addEventListener('keydown', event => {
+          if ((event.key === 'Enter' || event.key === ' ') && event.target.matches('[data-line]')) { event.preventDefault(); event.stopPropagation(); event.target.click(); }
+        });
         document.getElementById('karaokeRestart').addEventListener('click', () => playSong({ karaoke: true, startLine: 0, fromStart: true }));
         // Click a line in karaoke to play from there (4.22)
         document.getElementById('karaokeLines').addEventListener('click', (event) => {
@@ -453,10 +469,9 @@
           if (event.key === 'Escape') {
             event.preventDefault();
             karaokeClose();
-          } else if (event.key === ' ' || event.code === 'Space') {
+          } else if ((event.key === ' ' || event.code === 'Space') && !event.target.closest('button, input, select')) {
             event.preventDefault();
-            if (player && player.playing) stopPlayback();
-            else playSong({ karaoke: true });
+            toggleKaraokePlayback();
           }
         });
 
