@@ -41,14 +41,14 @@
           }
         }
         const prChordOf = (rootSel, typeSel) => `${rootSel.value}${typeSel.value}`;
-        function prInstrument() { return songInstrument(effectiveConfig()).id; }
+        function prInstrument() { return $p('prInstrument')?.value || songInstrument(effectiveConfig()).id; }
         function prLibrary() { return chordLibraryFor(prInstrument()); }
         function prTuning() { return window.ukemusic.instrument(prInstrument()).strings; }
         function prDiagram(name, frets = null, fingers = null) {
           const library = prLibrary();
           const definition = frets ? T.definitionFromFrets(frets, name, fingers) : window.ukemusic.chordDefinition(library, name);
           if (!definition) return `<div class="pr-note">No diagram for ${escapeHtmlText(name)} on this instrument.</div>`;
-          return window.ukemusic.diagramSvg({ ...definition, name }, { left_handed: effectiveConfig()?.diagrams?.left_handed, show_fingers: true });
+          return window.ukemusic.diagramSvg({ ...definition, name }, { left_handed: $p('prLeftHanded')?.checked, show_fingers: true });
         }
         const chordList = (text) => String(text || '').split(/[\s,|]+/).filter((c) => c && window.ukemusic.parseSong(`[${c}]`, { useDelimiters: false }).some((n) => n.type === 'chord'));
         const strumBeats = (pattern) => (window.ukemusic.strums.find((s) => s.pattern === pattern)?.beats) || 4;
@@ -65,20 +65,24 @@
         function prSaveProgress() {
           try {
             PP.write(songsFolder(), pr.progress);
+            return true;
           } catch (error) {
             window.ukemusicLogError('Could not save practice progress', error);
+            $p('prSaveStatus').textContent = 'Practice could not be saved. Export a backup before closing.';
+            return false;
           }
         }
         function prRefreshToday() {
           if (!pr.progress) return;
           const today = todayKey();
-          const secs = PP.todaySeconds(pr.progress, today) + (pr.session ? pr.session.seconds : 0);
+          const secs = PP.todaySeconds(pr.progress, today) + prSessionSeconds();
           const streak = PP.streak(pr.progress, today);
           $p('prToday').textContent = `Today ${PP.formatMinutes(secs)}${streak > 1 ? ` · ${streak} days in a row` : ''}`;
         }
         // Time on an exercise counts while it plays; it's logged when it stops
         function prSessionStart() {
           if (!pr.exId) return;
+          pr.finishedSeconds = 0;
           pr.session = pr.session && pr.session.exId === pr.exId ? pr.session : { exId: pr.exId, seconds: 0, since: null };
           pr.session.since = performance.now();
           pr.session.tempo = pr.mode === 'oneminute' ? null : prTempo();
@@ -104,16 +108,85 @@
         }
         setInterval(() => {
           if (practiceEl.hidden || pr.view !== 'player') return;
-          const s = prSessionSeconds();
+          const s = pr.session ? prSessionSeconds() : (pr.finishedSeconds || 0);
+          prUpdateMobile();
+          if (!pr.demoPlaying && pr.schedule && player?.playing && player.position() >= pr.cleanAfter) { pr.cleanReady = true; $p('prClean').disabled = false; }
           $p('prTimer').textContent = `⏱ ${fmtClock(s)}`;
           if (pr.session && pr.session.since) prRefreshToday();
           prRoutineTick();
         }, 500);
 
+        function prCaptureSettings() {
+          return Object.fromEntries([...practiceEl.querySelectorAll('.practice-controls select, .practice-controls input')]
+            .filter((el) => el.id && el.id !== 'prVolume')
+            .map((el) => [el.id, el.type === 'checkbox' ? el.checked : el.value]));
+        }
+        function prApplySettings(settings) {
+          for (const [id, value] of Object.entries(settings || {})) {
+            const el = $p(id);
+            if (!el || !el.closest('.practice-controls') || !['INPUT', 'SELECT'].includes(el.tagName)) continue;
+            if (el.type === 'checkbox') el.checked = Boolean(value);
+            else if (el.tagName !== 'SELECT' || [...el.options].some((o) => o.value === String(value))) el.value = String(value);
+          }
+        }
+        function prSaveSettings() {
+          if (!pr.exId || !pr.progress || pr.restoring || pr.routine) return;
+          pr.progress.preferences = pr.progress.preferences || {};
+          pr.progress.preferences[pr.exId] = prCaptureSettings();
+          prSaveProgress();
+        }
+        function prContext() {
+          const settings = prCaptureSettings();
+          for (const id of Object.keys(settings)) {
+            const el = $p(id);
+            let parent = el;
+            let hidden = false;
+            while (parent && parent.id !== 'prControls') { if (parent.hidden) hidden = true; parent = parent.parentElement; }
+            if (hidden || ['prTempo', 'prBars', 'prCountIn', 'prClick', 'prAutoFaster', 'prSound'].includes(id)) delete settings[id];
+          }
+          return JSON.stringify(settings);
+        }
+        function prCancelAttempt() {
+          clearTimeout(pr.tick);
+          pr.tick = null;
+          pr.pendingScore = null;
+          $p('prScoreEntry').hidden = true;
+          if (pr.oneMinute?.running) prOneMinuteStop(false);
+          if (player?.playing) prStop();
+          cancelAnimationFrame(pr.raf);
+          pr.cleanReady = false;
+          $p('prClean').disabled = true;
+        }
+        function prShortcut(id) {
+          const e = PL.EXERCISES.find((x) => x.id === id);
+          if (!e) return null;
+          const b = document.createElement('button');
+          b.type = 'button'; b.textContent = e.title;
+          b.addEventListener('click', () => prOpen(id));
+          return b;
+        }
+        function prQuickLinks() {
+          const buttons = (pr.progress.recent || []).map(prShortcut).filter(Boolean);
+          $p('prRecent').hidden = !buttons.length;
+          $p('prRecentCards').replaceChildren(...buttons);
+          $p('prBeginnerCards').replaceChildren(...['downs', 'chord-change', 'spider-1234'].map(prShortcut));
+        }
+        function prUpdateMobile() {
+          const visible = pr.view === 'player';
+          $p('prSettingsToggle').hidden = !visible;
+          $p('prReset').hidden = !visible;
+          $p('prMobileGo').hidden = !visible;
+          $p('prMobileTempo').textContent = pr.mode === 'oneminute' ? '60 seconds' : prTempo() + ' bpm';
+          $p('prMobileStart').disabled = $p('prStart').disabled;
+          $p('prMobileStop').disabled = $p('prStop').disabled;
+          $p('prMobileSlower').hidden = $p('prMobileFaster').hidden = pr.mode === 'oneminute';
+        }
         // ── The menu ──
         function prRenderHome() {
           prLoadProgress();
           prRefreshToday();
+          prQuickLinks();
+          prUpdateMobile();
           $p('prCats').replaceChildren(...PL.CATEGORIES.map((c) => {
             const b = document.createElement('button');
             b.type = 'button';
@@ -143,10 +216,13 @@
             const meta = [];
             if (p && p.last_date) meta.push(`last ${p.last_date.slice(5).split('-').reverse().join('/')}`);
             if (p && p.last_tempo) meta.push(`${p.last_tempo} bpm`);
-            if (p && p.best_tempo) meta.push(`best ${p.best_tempo} bpm`);
+            const best = p?.contexts?.[p.last_context]?.best_tempo;
+            if (best) meta.push(`best ${best} bpm for last setup`);
+            else if (p?.best_tempo) meta.push(`earlier best ${p.best_tempo} bpm`);
             if (e.mode === 'oneminute') {
-              const best = PP.bestScore(pr.progress, e.id, null);
-              if (best !== null) meta.push(`best ${best} changes`);
+              const pair = p?.scores?.[p.scores.length - 1]?.label;
+              const best = PP.bestScore(pr.progress, e.id, pair || null);
+              if (best !== null) meta.push(`best ${best} changes${pair ? ' (' + pair.replace('>', ' → ') + ')' : ''}`);
             }
             if (p && p.seconds) meta.push(PP.formatMinutes(p.seconds));
             card.innerHTML = `<span class="pr-card-top"><strong>${escapeHtmlText(e.title)}</strong><span class="pr-badge ${e.level.toLowerCase()}">${e.level}</span></span>
@@ -157,7 +233,8 @@
           }));
         }
         function prShowHome() {
-          if (player && player.playing) prStop();
+          prSaveSettings();
+          prCancelAttempt();
           prSessionEnd();
           pr.view = 'home';
           pr.exId = null;
@@ -169,15 +246,19 @@
           $p('prClean').hidden = true;
           $p('prTitle').textContent = 'Free Practice';
           prRenderHome();
+          $p('prHelpButton').focus();
         }
 
         // Open an exercise: its trainer, with its preset (and your last tempo)
-        function prOpen(exId, { keepGoing = false } = {}) {
+        function prOpen(exId, { keepGoing = false, settings = null, reset = false } = {}) {
           const e = PL.EXERCISES.find((x) => x.id === exId);
           if (!e) return;
-          if (player && player.playing) prStop();
+          if (!reset) prSaveSettings();
+          prCancelAttempt();
           prSessionEnd();
           prSetup();
+          pr.restoring = true;
+          prApplySettings(pr.defaults);
           pr.view = 'player';
           pr.exId = e.id;
           pr.exDef = e;
@@ -190,6 +271,7 @@
           $p('prLevel').hidden = false;
           $p('prTimer').hidden = false;
           $p('prTimer').textContent = '⏱ 0:00';
+          pr.finishedSeconds = 0;
           $p('prClean').hidden = ['oneminute', 'metronome', 'noodle'].includes(e.mode);
           prShowMode(e.mode, { quiet: true });
           for (const [id, value] of Object.entries(e.set || {})) {
@@ -207,18 +289,48 @@
             } else el.value = String(value);
           }
           if (e.set && e.set.prProgression !== undefined) prApplyProgression();
-          const last = pr.progress?.exercises?.[e.id]?.last_tempo;
-          if (last && e.mode !== 'oneminute') $p('prTempo').value = String(last);
+          const saved = pr.progress?.preferences?.[e.id];
+          if (!reset) prApplySettings(settings || saved);
+          if (!reset && !saved && !settings) {
+            const last = pr.progress?.exercises?.[e.id]?.last_tempo;
+            if (last && e.mode !== 'oneminute') $p('prTempo').value = String(last);
+          }
+          pr.restoring = false;
           if (keepGoing && $p('prBars').querySelector('option[value="0"]')) $p('prBars').value = '0';
           $p('prNoodleSave').hidden = !e.create;
           pr.shown = {};
           pr.fret = null;
           prKindRows();
           prPreview();
-          prHelpFirstTime(e.mode);
+          pr.earCache = null;
+          pr.earRepeat = false;
+          pr.cleanReady = false;
+          $p('prClean').disabled = true;
+          $p('prGoal').textContent = window.ukemusic.practiceHelp.forExercise(e.id).goal;
+          $p('prSaveStatus').textContent = '';
+          practiceEl.classList.remove('pr-settings-open');
+          $p('prSettingsToggle').textContent = 'Edit settings';
+          $p('prSettingsToggle').setAttribute('aria-expanded', 'false');
+          prUpdateMobile();
+          $p('prSettingsToggle').focus();
         }
 
         // ── Routines ──
+        function prSettingsDescription(id, settings) {
+          const e = PL.EXERCISES.find((item) => item.id === id);
+          if (!e || !settings || !Object.keys(settings).length) return 'Exercise defaults';
+          const values = { ...e.set, ...settings };
+          const parts = [window.ukemusic.instrument(values.prInstrument || 'soprano').label];
+          if (['change','oneminute'].includes(e.mode)) parts.push((values.prFromRoot || 'C') + (values.prFromType || '') + ' → ' + (values.prToRoot || 'F') + (values.prToType || ''));
+          if (e.mode === 'strum') parts.push(values.prChords || 'C', values.prStrum === 'own' ? values.prStrumOwn : values.prStrum);
+          if (e.mode === 'spider') parts.push('start at fret ' + (values.prStartFret || 1));
+          if (e.mode === 'drill') parts.push(values.prDrillSet);
+          if (e.mode === 'blues') parts.push('key ' + values.prBluesKey);
+          if (e.mode === 'noodle') parts.push('key ' + values.prNoodleKey, PL.NOODLE_SETS[values.prNoodleNotes]?.name);
+          if (e.mode === 'notes') parts.push(values.prNotesKind === 'picking' ? values.prPickChords : 'key ' + values.prScaleRoot);
+          if (e.mode !== 'oneminute') parts.push((values.prTempo || 80) + ' bpm');
+          return parts.filter(Boolean).join(' · ');
+        }
         function prRenderRoutines() {
           const holder = $p('prRoutines');
           holder.replaceChildren();
@@ -259,6 +371,7 @@
             form.innerHTML = '';
             const name = Object.assign(document.createElement('input'), { type: 'text', value: routine.name, className: 'pr-routine-name' });
             name.addEventListener('input', () => { routine.name = name.value; });
+            name.setAttribute('aria-label', 'Routine name');
             form.appendChild(name);
             routine.steps.forEach((step, k) => {
               const line = document.createElement('div');
@@ -270,19 +383,31 @@
                 for (const e of PL.EXERCISES.filter((x) => x.cat === c.id)) group.appendChild(new Option(e.title, e.id));
                 sel.appendChild(group);
               }
+              sel.setAttribute('aria-label', 'Exercise for step ' + (k + 1));
               sel.value = step.id;
-              sel.addEventListener('change', () => { step.id = sel.value; });
+              sel.addEventListener('change', () => { step.id = sel.value; delete step.settings; if (step.id === 'one-minute') step.minutes = 1; draw(); });
               const mins = Object.assign(document.createElement('input'), { type: 'number', min: 1, max: 30, value: step.minutes, className: 'pr-step-min' });
+              mins.setAttribute('aria-label', 'Minutes for step ' + (k + 1));
+              mins.disabled = step.id === 'one-minute';
+              if (mins.disabled) mins.value = step.minutes = 1;
               mins.addEventListener('change', () => { step.minutes = Math.max(1, Math.min(30, Number(mins.value) || 1)); });
               const rm = Object.assign(document.createElement('button'), { type: 'button', textContent: '✕', title: 'Remove this step' });
               rm.addEventListener('click', () => { routine.steps.splice(k, 1); draw(); });
-              line.append(sel, mins, Object.assign(document.createElement('span'), { textContent: 'min' }), rm);
+              const personalise = Object.assign(document.createElement('button'), { type: 'button', textContent: 'Use my saved settings' });
+              personalise.addEventListener('click', () => { step.settings = JSON.parse(JSON.stringify(pr.progress.preferences?.[step.id] || {})); draw(); });
+              const up = Object.assign(document.createElement('button'), { type: 'button', textContent: '↑', disabled: k === 0, title: 'Move step up' });
+              const down = Object.assign(document.createElement('button'), { type: 'button', textContent: '↓', disabled: k === routine.steps.length - 1, title: 'Move step down' });
+              up.addEventListener('click', () => { [routine.steps[k - 1], routine.steps[k]] = [routine.steps[k], routine.steps[k - 1]]; draw(); });
+              down.addEventListener('click', () => { [routine.steps[k + 1], routine.steps[k]] = [routine.steps[k], routine.steps[k + 1]]; draw(); });
+              const summary = document.createElement('span'); summary.className = 'pr-settings-summary';
+              summary.textContent = step.settings ? prSettingsDescription(step.id, step.settings) : 'Exercise defaults (configure the exercise first, then use its saved settings).';
+              line.append(sel, mins, Object.assign(document.createElement('span'), { textContent: 'min' }), up, down, rm, personalise, summary);
               form.appendChild(line);
             });
             const actions = document.createElement('div');
             actions.className = 'pr-routine-actions';
             const addStep = Object.assign(document.createElement('button'), { type: 'button', textContent: '+ Add an exercise' });
-            addStep.addEventListener('click', () => { routine.steps.push({ id: 'chord-change', minutes: 2 }); draw(); });
+            addStep.addEventListener('click', () => { routine.steps.push({ id: 'chord-change', minutes: 2, settings: JSON.parse(JSON.stringify(pr.progress.preferences?.['chord-change'] || {})) }); draw(); });
             const save = Object.assign(document.createElement('button'), { type: 'button', className: 'primary', textContent: 'Save routine' });
             save.addEventListener('click', () => {
               if (!routine.steps.length) return;
@@ -315,12 +440,14 @@
             prRoutineEnd(true);
             return;
           }
-          prOpen(step.id, { keepGoing: true });
+          if (!PL.EXERCISES.some((e) => e.id === step.id)) { r.step += 1; prRoutineStep(); return; }
+          prOpen(step.id, { keepGoing: true, settings: step.settings || {} });
           r.started = false;
           $p('prRoutineBar').hidden = false;
           prRoutineTick();
+          const stepIndex = r.step;
           setTimeout(() => {
-            if (pr.routine === r && pr.view === 'player') {
+            if (pr.routine === r && r.step === stepIndex && pr.view === 'player') {
               r.started = true;
               if (pr.mode === 'oneminute') prOneMinuteStart();
               else prStart();
@@ -342,7 +469,7 @@
         function prRoutineNext() {
           const r = pr.routine;
           if (!r) return;
-          if (player && player.playing) prStop();
+          prCancelAttempt();
           prSessionEnd();
           r.step += 1;
           prRoutineStep();
@@ -370,7 +497,7 @@
           $p('prNoodleKey').replaceChildren(...PL.KEYS.map((k) => new Option(k, k)));
           $p('prNoodleNotes').replaceChildren(...Object.entries(PL.NOODLE_SETS).map(([id, s]) => new Option(s.name, id)));
           $p('prSpider').replaceChildren(...F.PATTERNS.map((p) => new Option(p.name, p.id)));
-          $p('prScaleRoot').replaceChildren(...['C', 'D', 'E', 'F', 'G', 'A', 'Bb'].map((k) => new Option(k, k)));
+          $p('prScaleRoot').replaceChildren(...PL.KEYS.map((k) => new Option(k, k)));
           $p('prScale').replaceChildren(...Object.entries(NL.SCALES).map(([id, s]) => new Option(s.name, id)));
           $p('prPickPattern').replaceChildren(...NL.PICK_PATTERNS.map((p) => new Option(p.name, p.id)));
           $p('prMelody').replaceChildren(...NL.MELODIES.map((m) => new Option(m.name, m.id)));
@@ -386,6 +513,42 @@
           }));
           chips($p('prChordSets'), 'prChords', ['C Am F G', 'G C D', 'C F G7', 'A D E7', 'C G Am F', 'Am Dm E7']);
           chips($p('prDrillSets'), 'prDrillSet', ['C Am F G', 'G D Em C', 'C F G7', 'A D E7', 'Dm Bb C F', 'G7 C7 D7 A7']);
+          $p('prInstrument').replaceChildren(...window.ukemusic.instruments.map((i) => new Option(i.label, i.id)));
+          $p('prInstrument').value = songInstrument(effectiveConfig()).id;
+          $p('prLeftHanded').checked = Boolean(effectiveConfig()?.diagrams?.left_handed);
+          $p('prSettingsToggle').addEventListener('click', () => {
+            const open = practiceEl.classList.toggle('pr-settings-open');
+            $p('prSettingsToggle').textContent = open ? 'Back to playing' : 'Edit settings';
+            $p('prSettingsToggle').setAttribute('aria-expanded', String(open));
+          });
+          $p('prReset').addEventListener('click', () => { const id = pr.exId; delete pr.progress.preferences?.[id]; prOpen(id, { reset: true }); prSaveSettings(); });
+          for (const [mobile, original] of [['prMobileStart','prStart'],['prMobileStop','prStop'],['prMobileSlower','prSlower'],['prMobileFaster','prFaster']]) $p(mobile).addEventListener('click', () => { $p(original).click(); prUpdateMobile(); });
+          $p('prHelpDialog').addEventListener('close', () => { $p('prHelpButton').focus(); });
+          $p('prEarRepeat').addEventListener('click', () => { pr.earRepeat = true; prStart(); });
+          $p('prEarNew').addEventListener('click', () => { pr.earRepeat = false; pr.earCache = null; prStart(); });
+          $p('prScoreSave').addEventListener('click', prSaveEnteredScore);
+          $p('prExport').addEventListener('click', () => {
+            const data = JSON.stringify({ format: 'ukemusic-practice', data: pr.progress }, null, 2);
+            const a = document.createElement('a'); const url = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
+            a.href = url; a.download = 'ukemusic-practice.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 30000);
+            $p('prStorageStatus').textContent = 'Practice backup download requested.';
+          });
+          $p('prImport').addEventListener('change', async (event) => {
+            const file = event.target.files[0]; if (!file) return;
+            try {
+              const backup = JSON.parse(await file.text());
+              if (backup.format !== 'ukemusic-practice') throw new Error('Choose a ukemusic practice backup.');
+              const restored = PP.normalise(backup.data);
+              if (!confirm('Replace practice progress, recent exercises and routines on this device with this backup? Songs are kept.')) return;
+              pr.progress = restored;
+              if (!prSaveProgress()) throw new Error('The backup could not be saved on this device.');
+              prRenderHome();
+              $p('prStorageStatus').textContent = 'Practice backup restored.';
+            } catch (error) { $p('prStorageStatus').textContent = 'Could not restore: ' + error.message; }
+            finally { event.target.value = ''; }
+          });
+          $p('prStorageNote').textContent = location.protocol === 'file:' ? 'Progress and routines are saved in practice.json in your songs folder. Export a backup to move your personal practice history.' : 'Progress, recent exercises and routines are saved in this browser on this device. They are separate from songs and Dropbox sync. Export a practice backup before clearing browser data or changing devices.';
+          pr.defaults = prCaptureSettings();
           $p('prShowMe').addEventListener('click', () => prStart({ demo: true }));
           $p('prProgression').addEventListener('change', prApplyProgression);
           $p('prProgKey').addEventListener('change', prApplyProgression);
@@ -433,39 +596,33 @@
         // Rows of the Notes section that belong to one kind (scale, picking…)
         function prKindRows() {
           const kind = $p('prNotesKind').value;
-          for (const row of practiceEl.querySelectorAll('[data-kind]')) row.hidden = !row.dataset.kind.split(' ').includes(kind);
+          for (const row of practiceEl.querySelectorAll('[data-kind]')) row.hidden = pr.mode !== 'notes' || !row.dataset.kind.split(' ').includes(kind);
           for (const row of practiceEl.querySelectorAll('[data-not-kind]')) row.hidden = pr.mode === 'notes' && row.dataset.notKind.split(' ').includes(kind);
         }
 
         // "That was clean": log it, and go 5 bpm faster
         function prMarkClean() {
-          if (!pr.exId || !pr.progress) return;
-          const result = PP.logClean(pr.progress, pr.exId, { date: todayKey(), tempo: prTempo() });
+          if (!pr.exId || !pr.progress || !pr.cleanReady) return;
+          const tempo = pr.playedTempo || prTempo();
+          const context = pr.playedContext || prContext();
+          const result = PP.logClean(pr.progress, pr.exId, { date: todayKey(), tempo, context, settings: prCaptureSettings() });
           pr.progress = result.data;
-          prSaveProgress();
-          $p('prTempo').value = String(result.next);
-          $p('prWhere').textContent = `Logged: clean at ${result.next - 5} bpm. Next: ${result.next} bpm.`;
+          if ($p('prAutoFaster').checked) $p('prTempo').value = String(result.next);
+          pr.cleanReady = false; $p('prClean').disabled = true;
+          prSaveSettings();
+          $p('prSaveStatus').textContent = 'Clean round recorded at ' + tempo + ' bpm for this setup. ' + ($p('prAutoFaster').checked ? 'Next: ' + result.next + ' bpm.' : 'Repeat at this speed, or increase it when several rounds feel easy.');
           prChanged();
         }
 
         // ── Help ──
         function prHelp() {
-          const key = pr.view === 'home' ? (pr.cat === 'routine' ? 'routine' : 'all') : pr.mode;
-          for (const d of document.querySelectorAll('#prHelpDialog details')) d.open = d.dataset.help.split(' ').includes(key);
+          const help = window.ukemusic.practiceHelp.forExercise(pr.view === 'player' ? pr.exId : null);
+          $p('prHelpTitle').textContent = help.title;
+          $p('prHelpContent').innerHTML = (help.aim ? '<p>' + escapeHtmlText(help.aim) + '</p>' : '') + '<ol>' + help.steps.map((x) => '<li>' + escapeHtmlText(x) + '</li>').join('') + '</ol><p><strong>Goal: </strong>' + escapeHtmlText(help.goal) + '</p>';
           const dialog = $p('prHelpDialog');
           if (!dialog.open) dialog.showModal();
         }
-        function prHelpFirstTime(mode) {
-          if (!['spider', 'notes', 'noodle'].includes(mode)) return;
-          let seen = '';
-          try { seen = localStorage.getItem('ukemusic.practiceHelpSeen') || ''; } catch (_err) { seen = 'spider notes noodle'; }
-          const key = mode === 'notes' ? 'spider' : mode;
-          if (seen.split(' ').includes(key) || (key === 'spider' && seen === '1')) return;
-          try { localStorage.setItem('ukemusic.practiceHelpSeen', `${seen === '1' ? 'spider' : seen} ${key}`.trim()); } catch (_err) { /* fine */ }
-          prHelp();
-        }
 
-        // ── Which controls and which parts of the stage each trainer uses ──
         const STAGE = {
           strum: ['shapes', 'steps', 'beats'], blues: ['shapes', 'steps', 'beats', 'grid'], change: ['shapes', 'steps', 'beats'],
           drill: ['shapes', 'steps', 'beats'], spider: ['fret', 'legend', 'finger', 'tab', 'beats'], notes: ['fret', 'legend', 'finger', 'tab', 'beats'],
@@ -499,6 +656,7 @@
           $p('prNowCaption').textContent = mode === 'oneminute' ? 'From' : 'Now';
           $p('prNextCaption').textContent = mode === 'oneminute' ? 'To' : 'Next';
           pr.fret = null;
+          prUpdateMobile();
           if (!quiet) prPreview();
         }
 
@@ -591,7 +749,7 @@
           let tip = '';
           if (kind === 'scale') {
             notes = NL.scaleNotes({ root: $p('prScaleRoot').value, scale: $p('prScale').value, tuning, position: Number($p('prScalePos').value), rounds, upAndBack: $p('prScaleBack').checked, seq: Number($p('prSeq').value) });
-            tip = 'One finger per fret in the box: say the note names as you play them, and you\'ll soon know where they are.';
+            tip = 'One finger per fret in the box: say the note names as you play them. Keep the notes clear and even.';
           } else if (kind === 'picking') {
             const chords = chordList($p('prPickChords').value).map((name) => {
               const def = window.ukemusic.chordDefinition(prLibrary(), name);
@@ -611,7 +769,9 @@
             notes = NL.melodyNotes({ id: $p('prMelody').value, tuning, rounds });
             tip = 'One finger per fret: index on fret 1, middle on 2, ring on 3. Hum along: it helps your ear and your timing.';
           } else if (kind === 'ear') {
-            notes = NL.callResponseNotes({ root: $p('prScaleRoot').value, scale: 'majorPent', tuning, phrases: Math.max(2, rounds * 2) });
+            const earKey = [$p('prScaleRoot').value, $p('prEarLength').value, tuning.join(',')].join('|');
+            if (!pr.earCache || pr.earCache.key !== earKey) pr.earCache = { key: earKey, notes: NL.callResponseNotes({ root: $p('prScaleRoot').value, scale: 'majorPent', tuning, phrases: 1, length: Number($p('prEarLength').value) }) };
+            notes = pr.earCache.notes;
             tip = 'Listen to the phrase (the fretboard hides it), play it back in the gap, then see and hear the answer. It always starts on the key note.';
           }
           const key = [kind, $p('prScaleRoot').value, $p('prScale').value, $p('prScalePos').value, $p('prSeq').value, $p('prPickPattern').value, $p('prPickChords').value, $p('prMelody').value, rounds, tuning.join(',')].join('|');
@@ -800,7 +960,8 @@
           const strings = ex.tuning.length;
           const maxFret = ex.notes && ex.notes.length ? Math.max(...ex.notes.map((n) => n.fret)) : 7;
           const frets = Math.max(8, maxFret + 1);
-          const key = `${strings}:${frets}:${ex.names.join('')}:${ex.noodle ? 'n' : 'x'}`;
+          const left = $p('prLeftHanded').checked;
+          const key = `${strings}:${frets}:${ex.names.join('')}:${ex.noodle ? 'n' : 'x'}:${left}`;
           if (pr.fret && pr.fret.key === key) return pr.fret;
           const W = 70;
           const X0 = 84;
@@ -860,9 +1021,17 @@
           const held = Array.from({ length: Math.max(6, strings) }, () => makeDot('held'));
           const next = makeDot('next');
           const now = makeDot('now');
+          if (left) {
+            const drawing = svgEl('g', { transform: `translate(${width} 0) scale(-1 1)` }, svg);
+            for (const child of [...svg.children]) if (child !== drawing) drawing.appendChild(child);
+            for (const text of drawing.querySelectorAll('text')) {
+              const x = Number(text.getAttribute('x')) || 0;
+              text.setAttribute('transform', `translate(${2 * x} 0) scale(-1 1)`);
+            }
+          }
           $p('prFret').replaceChildren(svg);
           pr.noodleKey = null;
-          pr.fret = { key, xOf, yOf, W, X0, Y0, hand, held, next, now, plucks, fingerEls, knuckleY, picker, pickText, safe };
+          pr.fret = { key, left, xOf, yOf, W, X0, Y0, hand, held, next, now, plucks, fingerEls, knuckleY, picker, pickText, safe };
           return pr.fret;
         }
         function prPlace(dot, note, fb, label = null) {
@@ -1008,6 +1177,7 @@
               const g = svgEl('g', { class: `safe${tone ? ' tone' : ''}${d.root ? ' root' : ''}`, transform: `translate(${fb.xOf(d.fret)} ${fb.yOf(d.string)})` }, fb.safe);
               svgEl('circle', { cx: 0, cy: 0, r: tone ? 13 : 9 }, g);
               const t = svgEl('text', { x: 0, y: 1 }, g);
+              if (fb.left) t.setAttribute('transform', 'scale(-1 1)');
               t.textContent = NOTE_NAMES[d.pc];
             }
           }
@@ -1042,6 +1212,8 @@
         async function prStart({ fromBar = 0, fromNote = 0, demo = false, countIn = $p('prCountIn').checked } = {}) {
           if (!player) return;
           if (pr.mode === 'oneminute') return;
+          if (pr.mode === 'notes' && $p('prNotesKind').value === 'ear' && !pr.earRepeat) pr.earCache = null;
+          prSaveSettings();
           if (player.playing) {
             pr.stopping = true;
             player.stop();
@@ -1092,7 +1264,16 @@
           $p('prStart').disabled = true;
           $p('prStop').disabled = false;
           prTips(ex);
-          if (!demo) prSessionStart();
+          if (!demo) {
+            prSessionPause(); prSessionStart();
+            pr.progress = PP.markStarted(pr.progress, pr.exId); prSaveProgress();
+            pr.playedTempo = prTempo(); pr.playedContext = prContext();
+            pr.cleanReady = false; $p('prClean').disabled = true;
+            const steps = ex.kind === 'notes' ? ex.notes.filter((n) => n.round === ex.notes[0]?.round).length : 16;
+            pr.cleanAfter = schedule.countInDuration + (ex.kind === 'notes' ? steps * schedule.step : 16 * 60 / prTempo());
+          }
+          pr.demoPlaying = demo;
+          prUpdateMobile();
           cancelAnimationFrame(pr.raf);
           pr.raf = requestAnimationFrame(prTick);
           await player.play(schedule, {
@@ -1132,7 +1313,15 @@
           return { ...schedule, events };
         }
         function prEnded() {
+          if (!pr.userStopped && !pr.ex?.demo && pr.schedule && pr.schedule.duration >= pr.cleanAfter) {
+            pr.cleanReady = true;
+            $p('prClean').disabled = false;
+          }
           prSessionPause();
+          if (!pr.routine) {
+            pr.finishedSeconds = prSessionSeconds();
+            prSessionEnd();
+          }
           $p('prStart').disabled = false;
           $p('prStop').disabled = true;
           prDrawBeats(pr.ex && pr.ex.beats ? pr.ex.beats : 4, -1);
@@ -1146,6 +1335,7 @@
           pr.barBase = 0;
           pr.changesBase = 0;
           pr.schedule = null;
+          prUpdateMobile();
           prRefreshToday();
         }
         function prStop() {
@@ -1156,6 +1346,9 @@
         }
         // A setting changed: carry on from where it is if playing, otherwise show it
         function prChanged() {
+          prSaveSettings();
+          pr.cleanReady = false; $p('prClean').disabled = true;
+          prUpdateMobile();
           if (pr.mode === 'oneminute') {
             if (!(pr.oneMinute && pr.oneMinute.running)) prPreview();
             return;
@@ -1295,12 +1488,14 @@
         // ── One-minute changes ──
         function prOneMinuteStart() {
           const ex = prExercise();
+          prCancelAttempt();
           if (!window.ukemusic.chordDefinition(prLibrary(), ex.to)) {
             prTips(ex);
             return;
           }
           pr.ex = ex;
-          pr.oneMinute = { running: true, count: 0, ends: performance.now() + (pr.minuteMs || 60000), label: `${ex.from}>${ex.to}` };
+          prSaveSettings(); pr.progress = PP.markStarted(pr.progress, pr.exId); prSaveProgress();
+          pr.oneMinute = { exId: pr.exId, from: ex.from, to: ex.to, routine: pr.routine, step: pr.routine?.step, running: true, count: 0, ends: performance.now() + (pr.minuteMs || 60000), label: `${ex.from}>${ex.to}` };
           prSessionStart();
           $p('prStart').disabled = true;
           $p('prStop').disabled = false;
@@ -1332,24 +1527,41 @@
         }
         function prOneMinuteStop(finished) {
           const om = pr.oneMinute;
-          if (!om) return;
+          if (!om || !om.running) return;
           om.running = false;
           cancelAnimationFrame(om.raf);
           prSessionPause();
+          if (!pr.routine) {
+            pr.finishedSeconds = prSessionSeconds();
+            prSessionEnd();
+          }
           $p('prStart').disabled = false;
           $p('prStop').disabled = true;
           $p('prCount').disabled = true;
           if (finished) {
-            const best = PP.bestScore(pr.progress, pr.exId, om.label);
-            pr.progress = PP.logScore(pr.progress, pr.exId, { date: todayKey(), count: om.count, label: om.label });
-            prSaveProgress();
-            $p('prBigMain').textContent = String(om.count);
-            $p('prBigSub').textContent = best === null ? 'changes: your first score for this pair' : (om.count > best ? `changes: a new best (was ${best})!` : `changes (best ${best})`);
-            prDrawScores(pr.ex);
-            if (pr.routine) setTimeout(() => prRoutineNext(), 2500);
+            pr.pendingScore = { exId: om.exId, label: om.label, from: om.from, to: om.to, routine: om.routine, step: om.step };
+            $p('prBigMain').textContent = 'Done';
+            $p('prBigSub').textContent = 'Enter your clean changes below, or use the live counter total.';
+            $p('prScoreTotal').value = String(om.count);
+            $p('prScoreEntry').hidden = false;
+            $p('prScoreTotal').focus();
           } else {
             $p('prBigSub').textContent = 'Stopped: not counted. Press Start for a full minute.';
           }
+          prUpdateMobile();
+        }
+        function prSaveEnteredScore() {
+          const attempt = pr.pendingScore;
+          const raw = $p('prScoreTotal').value;
+          const count = Number(raw);
+          if (!attempt || raw === '' || !Number.isInteger(count) || count < 0 || count > 999) { $p('prSaveStatus').textContent = 'Enter a whole number from 0 to 999.'; return; }
+          const best = PP.bestScore(pr.progress, attempt.exId, attempt.label);
+          pr.progress = PP.logScore(pr.progress, attempt.exId, { date: todayKey(), count, label: attempt.label });
+          prSaveProgress(); pr.pendingScore = null; $p('prScoreEntry').hidden = true;
+          $p('prBigMain').textContent = String(count);
+          $p('prBigSub').textContent = best === null ? 'Your first score for this pair' : 'Clean changes (earlier best ' + best + ')';
+          prDrawScores(attempt);
+          if (attempt.routine && pr.routine === attempt.routine && pr.routine.step === attempt.step) prRoutineNext();
         }
         function prDrawScores(ex) {
           const label = `${ex.from}>${ex.to}`;
@@ -1369,17 +1581,24 @@
           const tempo = Number(effectiveConfig()?.song?.tempo);
           if (!pr.opened && tempo) $p('prTempo').value = String(Math.max(50, Math.min(120, tempo)));
           pr.opened = true;
+          pr.returnFocus = document.activeElement;
+          pr.inertElements = [...document.body.children].filter((el) => el !== practiceEl && el !== $p('prHelpDialog') && !['SCRIPT','STYLE'].includes(el.tagName) && !el.contains(practiceEl)).map((el) => ({ el, inert: el.inert }));
+          for (const item of pr.inertElements) item.el.inert = true;
           practiceEl.hidden = false;
+          practiceEl.focus();
           if (typeof exId === 'string' && PL.EXERCISES.some((e) => e.id === exId)) prOpen(exId);
           else prShowHome();
         }
         function closePractice() {
-          if (pr.oneMinute && pr.oneMinute.running) prOneMinuteStop(false);
+          prSaveSettings();
+          prCancelAttempt();
           if (player && player.playing) prStop();
           prSessionEnd();
           pr.routine = null;
           $p('prRoutineBar').hidden = true;
           practiceEl.hidden = true;
+          for (const item of pr.inertElements || []) item.el.inert = item.inert;
+          if (pr.returnFocus?.isConnected) pr.returnFocus.focus();
         }
         window.ukemusicPractice = openPractice;
         window.ukemusicPracticeState = pr;   // for the tests
@@ -1387,7 +1606,12 @@
         document.getElementById('libPractice').addEventListener('click', () => openPractice());
         window.addEventListener('keydown', (event) => {
           if (practiceEl.hidden || document.querySelector('dialog[open]')) return;
-          if (event.key === 'Escape') {
+          if (event.key === 'Tab') {
+            const focusable = [...practiceEl.querySelectorAll('button, input, select, summary, [tabindex]')].filter((el) => !el.disabled && el.getClientRects().length);
+            const first = focusable[0], last = focusable[focusable.length - 1];
+            if (event.shiftKey && (document.activeElement === first || document.activeElement === practiceEl)) { event.preventDefault(); last?.focus(); }
+            else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+          } else if (event.key === 'Escape') {
             event.preventDefault();
             if (pr.view === 'player') {
               if (pr.routine) prRoutineEnd();
@@ -1406,5 +1630,3 @@
             else prStart();
           }
         });
-
-        // ── Song / Notes tabs ───────────────────────────────────

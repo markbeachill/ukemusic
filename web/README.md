@@ -17,4 +17,8 @@ On the website it can also keep its songs in Dropbox, in the desktop app's own s
 
 It's an installable web app on the website: `out/index.html` links `manifest.webmanifest` and the icons in `icons/` (made from build/icon.png), and registers `sw.js`, the offline copy, written by make.js from `sw-template.js` with every file the player needs and a version that changes when any of them does. The claude.ai copy (`ukemusic-web.html`) has none of this.
 
-(Re-extract `pr_*` from index.html if the practice window changes.)
+Practice changes must remain identical in desktop and web. Run `node tools/sync-practice.js` to check. After editing the web practice fragments, run `node tools/sync-practice.js --from-web` to update the desktop copy while retaining its Learn shortcuts. Every web build and the 4.50 regression tests check parity.
+
+Free Practice keeps its own progress, last three started exercises, personal settings and routines. On GitHub Pages these are saved in browser storage (`ukeweb.practice`), separately from the IndexedDB song library and Dropbox sync. Practice home has a separate practice backup/restore; the song backup remains for songs. In a connected artifact the existing private `practice/progress` store is still used, with a local browser copy as well.
+
+Help is optional and specific to the exercise (`src/practice-help.js`). On phones the controls are behind Edit settings, with playback and tempo in a bottom bar. One-minute changes waits for a manually entered score after a full minute; cancellation is shared across all exit paths.

@@ -195,3 +195,59 @@
       .k-step.past { opacity: 0.55; }
       .k-step.on { background: var(--accent); border-color: var(--accent); color: #fff; opacity: 1; }
       .k-step.on .num { color: #fff; }
+
+/* 4.50: optional focused help, recent exercises and a playing view on phones. */
+.pr-home { grid-template-rows: auto minmax(0, 1fr); }
+.pr-tab { max-width: 100%; overflow-x: auto; box-sizing: border-box; }
+.practice button:disabled { opacity: 0.45; cursor: default; }
+.pr-mobile-go[hidden] { display: none !important; }
+.pr-quick { grid-column: 1 / -1; padding: 12px 24px; border-bottom: 1px solid var(--border); display: grid; gap: 12px; }
+.pr-quick h2 { font-size: 17px; margin: 0 0 8px; }
+.pr-shortcuts { display: flex; gap: 8px; flex-wrap: wrap; }
+.pr-shortcuts button, .pr-quick button, .pr-import { padding: 9px 14px; font: inherit; }
+.pr-shortcuts button { min-height: 44px; }
+.pr-import { display: inline-block; cursor: pointer; border: 1px solid var(--border); border-radius: 8px; }
+.pr-import input { display: block; max-width: 240px; font-size: 13px; }
+.pr-help { padding: 0; width: min(620px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); overflow-y: auto; }
+.pr-help-head { position: sticky; top: 0; z-index: 2; background: var(--panel-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; }
+.pr-help-head h2 { margin: 0; font-size: 20px; }
+.pr-help-head button { min-width: 90px; min-height: 44px; font: inherit; }
+#prHelpContent { padding: 8px 20px 20px; line-height: 1.6; }
+.pr-goal { font-size: 15px; margin: 0; max-width: 65ch; text-align: center; }
+.pr-save-status { margin: 0; color: var(--muted); font-size: 14px; }
+.pr-save-status:empty { display: none; }
+.pr-ear-controls { padding: 8px 0; }
+.pr-ear-controls[hidden], #prScoreEntry[hidden] { display: none; }
+#prScoreEntry input { width: 90px; font: inherit; padding: 8px; }
+#prScoreEntry button { padding: 10px; font: inherit; }
+.pr-count-button { min-height: 44px; }
+.pr-routine-edit .pr-step { flex-wrap: wrap; }
+.pr-step label { display: grid; gap: 4px; }
+.pr-step select { min-width: 0; max-width: 100%; }
+.pr-settings-summary { flex-basis: 100%; font-size: 12px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .practice *, .practice *::before { animation: none !important; transition: none !important; } }
+@media (max-width: 760px) {
+  .practice .practice-body { display: block; overflow-y: auto; }
+  .practice:not(.pr-settings-open) #prControls { display: none; }
+  .practice .practice-stage { overflow: visible; padding: 12px; gap: 12px; }
+  .practice .practice-controls { overflow: visible; padding-bottom: 12px; }
+  .practice:not(.pr-settings-open) #prReset { display: none; }
+  .practice.pr-settings-open .practice-stage { display: none; }
+  .practice:not(.pr-settings-open) .pr-mobile-go { display: flex; }
+  .pr-mobile-go { display: none; gap: 8px; flex-wrap: wrap; position: sticky; bottom: 0; padding: 10px; background: var(--panel-bg); border-top: 1px solid var(--border); }
+  .pr-mobile-go button { min-height: 44px; padding: 8px 12px; font: inherit; }
+  .pr-mobile-go .primary { flex: 1; }
+  .pr-mobile-tempo { display: flex; align-items: center; gap: 6px; }
+  .pr-quick { padding: 12px; }
+  .pr-shapes { gap: 18px; }
+  .pr-now .pr-diagram .chord-diagram { --diagram-size: 105px; }
+  .pr-next .pr-diagram .chord-diagram { --diagram-size: 75px; }
+  .pr-chord { font-size: 44px; }
+  .pr-next .pr-chord { font-size: 28px; }
+  .pr-steps { max-width: 100%; overflow-x: auto; gap: 2px; }
+  .pr-steps .k-step { min-width: 24px; width: 32px; height: 48px; }
+  .pr-steps .k-step .sym { font-size: 22px; }
+  .pr-grid { grid-template-columns: repeat(4, minmax(45px, 1fr)); max-width: 100%; width: 100%; }
+  .pr-help-head h2 { font-size: 17px; }
+}
+@media (min-width: 761px) { .pr-mobile-go { display: none; } #prSettingsToggle { display: none; } }

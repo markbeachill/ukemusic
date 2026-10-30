@@ -58,11 +58,11 @@ const EXERCISES = [
   { id: 'ear', cat: 'melody', level: 'Intermediate', title: 'Ear training: call and response', aim: 'Hear a short phrase, play it back, then see the answer.', mode: 'notes', set: { prNotesKind: 'ear', prScaleRoot: 'C', prPerBeat: '1', prTempo: 60 } },
   // Noodling
   { id: 'noodle-free', cat: 'noodle', level: 'Beginner', title: 'Free noodling', aim: 'Play anything over a backing: every note shown sounds good.', mode: 'noodle', set: { prNoodleNotes: 'major', prNoodleQA: false, prNoodleRhythm: false } },
-  { id: 'noodle-three', cat: 'noodle', level: 'Beginner', title: 'Three-note noodling', aim: 'Only a few notes: make the most of them.', mode: 'noodle', set: { prNoodleNotes: 'four', prNoodleQA: false, prNoodleRhythm: false } },
+  { id: 'noodle-three', cat: 'noodle', level: 'Beginner', title: 'Three-note noodling', aim: 'Three notes: make the most of them.', mode: 'noodle', set: { prNoodleNotes: 'three', prNoodleQA: false, prNoodleRhythm: false } },
   { id: 'noodle-pent', cat: 'noodle', level: 'Improver', title: 'Pentatonic noodling', aim: 'Improvise with the pentatonic: no wrong notes.', mode: 'noodle', set: { prNoodleNotes: 'pent', prNoodleQA: false, prNoodleRhythm: false } },
   { id: 'noodle-qa', cat: 'noodle', level: 'Intermediate', title: 'Question and answer', aim: 'The app plays a phrase; you answer it.', mode: 'noodle', set: { prNoodleNotes: 'pent', prNoodleQA: true, prNoodleRhythm: false } },
   { id: 'noodle-rhythm', cat: 'noodle', level: 'Improver', title: 'Rhythmic noodling', aim: 'Simple notes, interesting rhythms: a new rhythm idea every two bars.', mode: 'noodle', set: { prNoodleNotes: 'four', prNoodleQA: false, prNoodleRhythm: true } },
-  { id: 'noodle-create', cat: 'noodle', level: 'Intermediate', title: 'Make a melody', aim: 'Find a tune over the backing, then save it as a new song to write it down.', mode: 'noodle', set: { prNoodleNotes: 'pent', prNoodleQA: false, prNoodleRhythm: false }, create: true }
+  { id: 'noodle-create', cat: 'noodle', level: 'Intermediate', title: 'Make a melody', aim: 'Find a phrase, then create a song template to write it down. Your playing is not recorded.', mode: 'noodle', set: { prNoodleNotes: 'pent', prNoodleQA: false, prNoodleRhythm: false }, create: true }
 ];
 
 const DEFAULT_ROUTINES = [
@@ -86,7 +86,13 @@ const KEY_NOTES = {
   D: ['D', 'E', 'F#', 'G', 'A', 'B', 'C#'],
   A: ['A', 'B', 'C#', 'D', 'E', 'F#', 'G#'],
   F: ['F', 'G', 'A', 'Bb', 'C', 'D', 'E'],
-  Bb: ['Bb', 'C', 'D', 'Eb', 'F', 'G', 'A']
+  Bb: ['Bb', 'C', 'D', 'Eb', 'F', 'G', 'A'],
+  Db: ['Db', 'Eb', 'F', 'Gb', 'Ab', 'Bb', 'C'],
+  Eb: ['Eb', 'F', 'G', 'Ab', 'Bb', 'C', 'D'],
+  E: ['E', 'F#', 'G#', 'A', 'B', 'C#', 'D#'],
+  'F#': ['F#', 'G#', 'A#', 'B', 'C#', 'D#', 'E#'],
+  Ab: ['Ab', 'Bb', 'C', 'Db', 'Eb', 'F', 'G'],
+  B: ['B', 'C#', 'D#', 'E', 'F#', 'G#', 'A#']
 };
 const DEGREE_QUALITY = ['', 'm', 'm', '', '', 'm', 'dim'];
 const PROGRESSIONS = [
@@ -211,6 +217,7 @@ const NOODLE_SETS = {
   pent: { name: 'Pentatonic (five notes, no wrong ones)', scale: 'majorPent' },
   blues: { name: 'Blues scale', scale: 'blues' },
   four: { name: 'Just four notes', steps: [0, 2, 4, 7] },
+  three: { name: 'Just three notes', steps: [0, 2, 4] },
   chord: { name: 'Only the chord\'s notes (they change with the chord)', chordOnly: true }
 };
 

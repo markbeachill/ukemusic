@@ -18,7 +18,7 @@ ChordPro (what ukemusic reads and writes, and its additions): see [CHORDPRO.md](
   - **Learn**: play from memory (the chords fading), a what-comes-next quiz, trouble spots to loop, the circle of fifths, the song's changes with what each finger does (and practice for each), numbers on the sheet, play it in another key, and a learn sheet (PDF and web page in the song's learn folder). How it works out a song, and how far to trust it: [How ukemusic helps you learn a song](docs/explanation/learning-a-song.md);
   - **Settings**: opens Settings.
 - The hint line under the tabs explains whatever the mouse is over.
-- **Practice** (from the library or the Play tab): a menu of 39 exercises in seven categories (warm-ups, chords, strumming, fingerpicking, scales and melody, noodling, routines), with difficulty badges, an animated fretboard, a visual metronome, one-minute-change scores, your progress and streak, and timed routines.
+- **Free Practice**: 39 exercises for warm-ups, chords, rhythm, fingerpicking, scales and improvisation, plus timed routines. Exercises open directly with optional help just for that exercise. The last three started exercises, your settings, scores and routines are kept between visits. Phones have a compact playing view; one-minute changes lets you enter your count afterwards. Practice backups are separate from song backups.
 - The library's **Setlists** tab puts songs in order for a gig or club night and makes a **songbook PDF**. Songs can have an artist and tags to search by.
 - A song can be kept in several keys; each shows in the library as "Song (in F)", and **Make this the song's key** rewrites the song itself in a new key.
 - Each song has an **Info** tab (artist, year, written by, album, source, tags, difficulty, original key, time, tempo) beside Song and Notes. A song always opens on the Song tab.
@@ -31,7 +31,7 @@ ChordPro (what ukemusic reads and writes, and its additions): see [CHORDPRO.md](
 ## Website, downloads and web player
 
 - **Website:** https://markbeachill.github.io/ukemusic/ (what ukemusic does, with downloads). Its page is `site/index.html`; it finds the repository and the latest release by itself.
-- **Web player:** https://markbeachill.github.io/ukemusic/app/ (for phones, tablets and any browser: plays songs and has Practice, but doesn't write or edit them; see [web/README.md](web/README.md)). On the public site it opens with the public-domain songs; your own come from the desktop app's **Songs for the web…** file.
+- **Web player:** https://markbeachill.github.io/ukemusic/app/ (for phones, tablets and any browser: play, write and edit songs, and use Free Practice; see [web/README.md](web/README.md)). It opens with public-domain songs; add your own from files, a desktop export or a shared Dropbox songs folder. Practice history stays on each device and has its own backup.
 - **Installers:** made by GitHub Actions for each release (`.github/workflows/release.yml`): a Windows installer, Mac disk images (Apple silicon and Intel) and a Linux AppImage. They aren't code-signed, so Windows and macOS ask once before opening them; the website says how.
 
 Both the website and the web player are rebuilt on every push to `main` (`.github/workflows/web.yml`).

@@ -1,5 +1,30 @@
 # Changelog
 
+## v4.50.0
+
+### Free Practice: easier to start and return to
+- Exercises open straight away. Optional **Help** contains instructions and a goal for that exercise only, with a **Close help** button that stays visible on a phone.
+- **Recent exercises** shows the last three distinct exercises you started. It survives closing and reopening; browsing or watching a demonstration does not move an exercise into the list.
+- A short **Start here** route offers three beginner exercises. Each exercise shows what a successful round should feel like.
+- The phone playing view keeps the exercise and Start/Stop in view. **Edit settings** opens the controls; **Back to playing** returns to the exercise. Tempo can be changed without opening settings.
+
+### Keep your practice
+- Progress, recent history, personal exercise settings, scores and routines are saved in the public web player between visits. They stay on that browser/device, separately from Dropbox songs. Desktop practice continues to use `practice.json` in the songs folder.
+- **Keep your practice safe** provides a separate practice backup and restore. Song backups continue to hold songs; practice backups include routines, settings and history.
+- Each exercise starts with its own defaults and remembers your changes. **Reset exercise** restores its starting setup. Opening Soft and loud no longer changes the next rhythm exercise.
+- **That was clean** is available after playing a full round. Clean results keep the setup they were played with, so the best tempo for one chord pair is separate from another. Increasing the tempo by 5 bpm is optional.
+
+### Timed changes and routines
+- In **One-minute changes**, play for a full minute, then enter your total and press **Save score**. A partner can still use the live counter. Each transition counts once; a return trip counts twice.
+- Back, Escape, Close and changing exercises stop abandoned attempts, including their separate timers. Scores keep the identity of the exercise that was timed.
+- Routines can capture an exercise's saved personal setup: chord pair, key, pattern, instrument and tempo. Steps can move up or down. One-minute changes always occupies one minute and waits for its score before advancing.
+
+### Other practice improvements
+- Instrument/tuning and handedness are visible in practice. Left-handed diagrams and the animated fretboard follow the selected handedness; background controls cannot receive keyboard focus while practice is open.
+- Progressions, scales and blues offer all twelve keys. Three-note noodling now uses exactly three pitch classes.
+- Ear training offers 2–6-note phrases, **Repeat this phrase** and **New phrase**. **Make a melody** clearly creates a song template with empty tab; it does not record your playing.
+- Shared desktop/web practice checks and regression tests cover storage, old-data migration, recent history, saved settings, contextual results and timer cleanup.
+
 ## v4.49.1
 
 ### Learn sheets for songs that change key

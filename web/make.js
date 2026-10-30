@@ -5,6 +5,7 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 const WEB = __dirname;
 const APP = path.join(WEB, '..');
+require('../tools/sync-practice').sync();
 process.chdir(WEB);
 
 // 1. Bundle the desktop app's own code for the browser

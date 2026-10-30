@@ -1,8 +1,21 @@
 # ukemusic — AI Context Handover Document
 
-**Version:** 4.44.0 (sections 1–15 describe 2.12; the version table in §15 has everything since)  
-**Date:** 2026-10-07  
+**Version:** 4.50.0 (older sections retain historical context; see the current release notes below)
+**Date:** 2026-10-30
 **Purpose:** Complete project context for continuing development in a new AI session
+
+---
+
+## Current release: 4.50.0 — Free Practice
+
+- Desktop `index.html` and web `pr_markup.html`, `pr_css.css`, `pr_js.js` share practice UI. `node tools/sync-practice.js` checks parity; `--from-web` imports edited fragments while preserving the desktop Learn helpers. Web builds and v450 tests check parity. Do not edit one copy and leave the other stale.
+- Optional help comes from `src/practice-help.js` through preload. No automatic help dialogs. Help resolves the exercise ID, with a sticky close control and focus restoration.
+- `src/practice-progress.js` reads old progress into schema 2: existing exercises/days/routines plus `recent` (last three started IDs), `preferences` (control settings by exercise), and contextual clean records. Plain-browser `web/stubs/fs.js` persists practice.json under `ukeweb.practice`; connected database persistence remains supported. Separate practice backup/restore is available in the practice home screen.
+- Exercise defaults are captured once after controls are populated, then each open applies defaults, its preset and its saved preferences. Routine settings override personal preferences, and routine playback does not overwrite personal preferences. Clean rounds retain their played setup and tempo; tempo increase is opt-in.
+- `prCancelAttempt()` is the common cancellation path, including the independent one-minute animation timer. Completed attempts wait for manual score entry; they capture their original exercise ID, pair and routine step. Recent history updates on actual starts, including routine steps, but not demonstrations.
+- Phone layout collapses controls into Edit settings and has separate mobile Start/Stop/tempo controls. Background body siblings are inert while practice is open; Tab stays in the overlay. Left-handed fretboards mirror graphics and counter-mirror text.
+- `test/v450.test.js` exercises persistence, migration, help coverage, twelve keys, three-note practice, settings restoration, cancellation and desktop/web parity. Existing musical regression tests remain in the full npm test suite.
+- The product review and accepted priorities are in `docs/free-practice-review.md`. Melody audio recording and a larger ear-training curriculum remain possible later additions; this release improves the existing template and call/response tools.
 
 ---
 

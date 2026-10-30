@@ -1460,89 +1460,6 @@
       .pr-legend[hidden] { display: none; }
       .pr-help { width: min(720px, 94vw); max-height: 86vh; }
       .css-dialog { width: min(900px, 94vw); }
-      .css-sets { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin: 4px 0 10px; font-size: 13px; }
-      .css-sets input { width: 200px; }
-      .rib-fields .rib-button-inline { min-height: 52px; align-self: flex-end; }
-      #viewStyleSet { width: auto; min-width: 0; max-width: 140px; }
-      #viewStrumSize { max-width: 110px; }
-      #viewLayout, #viewTune { max-width: 130px; }
-      [data-ribbon-panel="play"] select { max-width: 125px; }
-      .rib-stack { display: grid; gap: 4px; align-self: center; }
-      .rib-stack .rib-field { display: grid; grid-template-columns: 44px auto; align-items: center; gap: 6px; }
-      .rib-stack .rib-field[hidden] { display: none; }
-      .rib-stack label { margin: 0; }
-      [data-ribbon-panel="play"] .rib-fields { gap: 8px; }
-      [data-ribbon-panel="play"] .rib-group { padding: 0 8px; }
-      #playTempoInput { width: 56px; }
-      [data-ribbon-panel="view"] select { max-width: 150px; }
-      [data-ribbon-panel="view"] .rib-fields { gap: 8px; }
-      [data-ribbon-panel="view"] .rib-group { padding: 0 8px; }
-      .rib-fields .rib-button-inline { min-width: 60px; padding: 4px 6px; }
-      .about-dialog { width: min(640px, 94vw); max-height: 86vh; }
-      /* 4.39: Learn */
-      .learn-changes-dialog { width: min(760px, 94vw); max-height: 88vh; }
-      .learn-changes { display: grid; gap: 10px; max-height: 62vh; overflow-y: auto; margin: 10px 0; }
-      .learn-change { display: grid; grid-template-columns: auto 1fr auto; gap: 6px 14px; align-items: center; border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; }
-      .learn-change .lc-shapes { display: flex; align-items: center; gap: 4px; --diagram-size: 58px; --rhythm-color: #555; --chord-color: #b22222; --text-color: #111; }
-      .learn-change .lc-shapes .chord-diagram svg { width: 58px; height: auto; }
-      .learn-change .lc-arrow { font-size: 20px; color: var(--muted); }
-      .learn-change .lc-title { font-weight: 800; }
-      .learn-change .lc-title .lc-count { font-weight: 400; color: var(--muted); }
-      .learn-change .lc-tip { font-size: 13px; line-height: 1.4; }
-      .learn-change .lc-actions { display: grid; gap: 4px; }
-      .learn-change.trouble-row { grid-template-columns: minmax(0, 1fr) auto; }
-      .learn-change.trouble-row .lc-actions { grid-auto-flow: column; }
-      .k-chord.k-hidden { color: var(--muted, #888); cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
-      .k-chord.k-revealed { color: #c2410c; }
-      .k-chord.k-number { font-style: normal; }
-      .export-sub { margin-left: 22px; font-size: 13px; }
-      .pick-h { font-size: 14px; margin: 14px 0 2px; }
-      .rib-button.dim { opacity: 0.5; }
-      .pick-pattern-text { display: block; font: 600 11.5px system-ui, sans-serif; color: var(--muted, #5b6662); max-width: 230px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      [data-ribbon-panel="pick"] select { max-width: 230px; }
-      #pickWritePatternNote { display: block; margin-top: 4px; }
-      .pick-help-dialog { width: min(680px, 94vw); max-height: calc(100vh - 32px); }
-      .pick-write-dialog { width: min(620px, 94vw); }
-      .pick-write-grid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px 14px; align-items: start; margin: 10px 0; }
-      .pick-write-grid > label:first-child, .pick-write-grid > label[for] { padding-top: 4px; font-weight: 600; }
-      .pick-write-grid .details-label { font-weight: 600; padding-top: 2px; }
-      .pick-write-grid div > label { display: block; margin-bottom: 4px; }
-      #pickWriteTitle { width: 100%; }
-      .pick-help { max-height: calc(100vh - 190px); overflow: auto; font-size: 14px; line-height: 1.5; }
-      .pick-help p, .pick-help ol { margin: 0 0 10px; }
-      .pick-help-code { font: 12.5px/1.4 Consolas, "Courier New", monospace; background: var(--panel, #f4f6f5); padding: 8px 10px; border-radius: 6px; white-space: pre-wrap; margin: 0 0 10px; }
-      .k-pick { font: 600 0.75em var(--font-family, system-ui); color: var(--muted, #667); padding: 4px 0; }
-      .k-pick.k-hidden { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
-      .k-pick.k-revealed { color: #c2410c; }
-      .k-line.k-trouble::before { content: '⚑'; position: absolute; margin-left: -1.4em; color: #c2410c; font-size: 0.8em; }
-      .learn-circle-dialog { width: min(860px, 96vw); }
-      .learn-circle { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: start; }
-      .learn-circle svg { width: min(440px, 80vw); height: auto; }
-      .learn-circle ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; font-size: 14px; line-height: 1.45; }
-      @media (max-width: 760px) { .learn-circle { grid-template-columns: 1fr; } }
-      .learn-quiz-dialog { width: min(640px, 94vw); }
-      .lq-words { font-size: 22px; line-height: 1.5; margin: 6px 0 4px; }
-      .lq-words .lq-gap { display: inline-block; min-width: 2.4em; margin: 0 4px; padding: 0 6px; text-align: center; font-weight: 800; color: #b22222; border-bottom: 3px solid #b22222; }
-      .lq-now { color: var(--muted); margin: 6px 0 10px; }
-      .lq-now b { color: #b22222; }
-      .lq-options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
-      .lq-options .lq-opt { display: grid; gap: 4px; }
-      .lq-options .lq-pick { font-size: 22px; font-weight: 800; padding: 10px 4px; }
-      .lq-options .lq-pick.right { background: #d9f2e3; border-color: #2e8b57; }
-      .lq-options .lq-pick.wrong { background: #fde2e2; border-color: #b22222; }
-      .lq-options .lq-hear { font-size: 12px; padding: 2px 4px; }
-      .lq-result { min-height: 1.4em; font-weight: 600; }
-      .about-body { font-size: 14px; line-height: 1.5; }
-      .about-name { font-size: 24px; }
-      .about-version { color: var(--muted); font-size: 14px; }
-      .about-tagline { margin: 6px 0 4px; }
-      .about-author { margin: 0 0 8px; color: var(--muted); }
-      .about-body h3 { margin: 14px 0 4px; font-size: 16px; }
-      .about-body h4 { margin: 12px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
-      .about-list { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
-      .about-licence { display: inline-block; font-size: 12px; color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 0 7px; }
-      .about-foot { font-size: 12.5px; color: var(--muted); margin-top: 14px; }
-      .about-body a { color: var(--accent); }
       .css-dialog textarea { width: 100%; box-sizing: border-box; height: min(60vh, 560px); font: 13px/1.45 Consolas, "Courier New", monospace; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--toolbar-bg); color: var(--text); resize: vertical; tab-size: 2; }
       .pr-help details { border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; margin: 8px 0; }
       .pr-help summary { font-weight: 700; font-size: 15px; cursor: pointer; }
@@ -1625,6 +1542,82 @@
       @media (max-width: 760px) { .pr-home { grid-template-columns: 1fr; } .pr-cats { border-right: 0; border-bottom: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; } }
       @media (max-width: 760px) { .practice-body { grid-template-columns: 1fr; } .practice-controls { border-right: 0; border-bottom: 1px solid var(--border); } }
 
+      .k-steps { display: flex; gap: 4px; }
+      .k-step {
+        width: 44px;
+        height: 60px;
+        display: grid;
+        grid-template-rows: 1fr auto;
+        justify-items: center;
+        align-items: center;
+        border-radius: 10px;
+        background: var(--panel-bg);
+        border: 1px solid var(--border);
+        transition: background 60ms, color 60ms;
+      }
+      .k-step .sym { font-size: 26px; line-height: 1; }
+      .k-step .num { font-size: 12px; color: var(--muted); padding-bottom: 4px; min-height: 16px; }
+      .k-step.accent .sym { font-weight: 800; font-size: 30px; }
+      .k-step.rest .sym { color: var(--muted); }
+      .k-step.past { opacity: 0.55; }
+      .k-step.on { background: var(--accent); border-color: var(--accent); color: #fff; opacity: 1; }
+      .k-step.on .num { color: #fff; }
+
+/* 4.50: optional focused help, recent exercises and a playing view on phones. */
+.pr-home { grid-template-rows: auto minmax(0, 1fr); }
+.pr-tab { max-width: 100%; overflow-x: auto; box-sizing: border-box; }
+.practice button:disabled { opacity: 0.45; cursor: default; }
+.pr-mobile-go[hidden] { display: none !important; }
+.pr-quick { grid-column: 1 / -1; padding: 12px 24px; border-bottom: 1px solid var(--border); display: grid; gap: 12px; }
+.pr-quick h2 { font-size: 17px; margin: 0 0 8px; }
+.pr-shortcuts { display: flex; gap: 8px; flex-wrap: wrap; }
+.pr-shortcuts button, .pr-quick button, .pr-import { padding: 9px 14px; font: inherit; }
+.pr-shortcuts button { min-height: 44px; }
+.pr-import { display: inline-block; cursor: pointer; border: 1px solid var(--border); border-radius: 8px; }
+.pr-import input { display: block; max-width: 240px; font-size: 13px; }
+.pr-help { padding: 0; width: min(620px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); overflow-y: auto; }
+.pr-help-head { position: sticky; top: 0; z-index: 2; background: var(--panel-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; }
+.pr-help-head h2 { margin: 0; font-size: 20px; }
+.pr-help-head button { min-width: 90px; min-height: 44px; font: inherit; }
+#prHelpContent { padding: 8px 20px 20px; line-height: 1.6; }
+.pr-goal { font-size: 15px; margin: 0; max-width: 65ch; text-align: center; }
+.pr-save-status { margin: 0; color: var(--muted); font-size: 14px; }
+.pr-save-status:empty { display: none; }
+.pr-ear-controls { padding: 8px 0; }
+.pr-ear-controls[hidden], #prScoreEntry[hidden] { display: none; }
+#prScoreEntry input { width: 90px; font: inherit; padding: 8px; }
+#prScoreEntry button { padding: 10px; font: inherit; }
+.pr-count-button { min-height: 44px; }
+.pr-routine-edit .pr-step { flex-wrap: wrap; }
+.pr-step label { display: grid; gap: 4px; }
+.pr-step select { min-width: 0; max-width: 100%; }
+.pr-settings-summary { flex-basis: 100%; font-size: 12px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .practice *, .practice *::before { animation: none !important; transition: none !important; } }
+@media (max-width: 760px) {
+  .practice .practice-body { display: block; overflow-y: auto; }
+  .practice:not(.pr-settings-open) #prControls { display: none; }
+  .practice .practice-stage { overflow: visible; padding: 12px; gap: 12px; }
+  .practice .practice-controls { overflow: visible; padding-bottom: 12px; }
+  .practice:not(.pr-settings-open) #prReset { display: none; }
+  .practice.pr-settings-open .practice-stage { display: none; }
+  .practice:not(.pr-settings-open) .pr-mobile-go { display: flex; }
+  .pr-mobile-go { display: none; gap: 8px; flex-wrap: wrap; position: sticky; bottom: 0; padding: 10px; background: var(--panel-bg); border-top: 1px solid var(--border); }
+  .pr-mobile-go button { min-height: 44px; padding: 8px 12px; font: inherit; }
+  .pr-mobile-go .primary { flex: 1; }
+  .pr-mobile-tempo { display: flex; align-items: center; gap: 6px; }
+  .pr-quick { padding: 12px; }
+  .pr-shapes { gap: 18px; }
+  .pr-now .pr-diagram .chord-diagram { --diagram-size: 105px; }
+  .pr-next .pr-diagram .chord-diagram { --diagram-size: 75px; }
+  .pr-chord { font-size: 44px; }
+  .pr-next .pr-chord { font-size: 28px; }
+  .pr-steps { max-width: 100%; overflow-x: auto; gap: 2px; }
+  .pr-steps .k-step { min-width: 24px; width: 32px; height: 48px; }
+  .pr-steps .k-step .sym { font-size: 22px; }
+  .pr-grid { grid-template-columns: repeat(4, minmax(45px, 1fr)); max-width: 100%; width: 100%; }
+  .pr-help-head h2 { font-size: 17px; }
+}
+@media (min-width: 761px) { .pr-mobile-go { display: none; } #prSettingsToggle { display: none; } }
       /* ── Karaoke view ─────────────────────────────────── */
       .karaoke {
         position: fixed;
@@ -3446,7 +3439,7 @@
       </div>
     </dialog>
 
-        <div id="practice" class="practice" hidden role="dialog" aria-label="Free Practice">
+        <div id="practice" class="practice" hidden role="dialog" aria-modal="true" tabindex="-1" aria-label="Free Practice">
       <div class="practice-bar">
         <button id="prBack" type="button" title="Back to all the exercises (Esc)" hidden>← All exercises</button>
         <div class="pr-heading">
@@ -3458,16 +3451,22 @@
           <button id="prRoutineSkip" type="button" title="Go on to the next exercise in the routine">Next ▶</button>
           <button id="prRoutineEnd" type="button" title="Stop the routine">End routine</button>
         </div>
+        <button id="prSettingsToggle" type="button" hidden aria-expanded="false">Edit settings</button>
+        <button id="prReset" type="button" hidden>Reset exercise</button>
         <span class="k-spacer"></span>
         <span id="prToday" class="pr-today" title="Practice today, and how many days in a row"></span>
         <span id="prTimer" class="pr-timer" title="Time on this exercise" hidden>⏱ 0:00</span>
-        <button id="prClean" type="button" class="pr-clean" title="That round was clean: log it, and go 5 bpm faster next time" hidden>✓ That was clean</button>
-        <button id="prHelpButton" type="button" title="What everything on this screen means, and how to practise">? How this works</button>
+        <button id="prClean" type="button" class="pr-clean" title="Record a completed clean round for this setup" hidden>✓ That was clean</button>
+        <button id="prHelpButton" type="button" title="Optional instructions for this exercise">? Help</button>
         <button id="practiceClose" type="button" title="Close Practice">Close</button>
       </div>
 
       <!-- The menu: categories on the left, exercises on the right -->
       <div id="prHome" class="pr-home">
+        <div class="pr-quick"><section id="prRecent" hidden><h2>Recent exercises</h2><div id="prRecentCards" class="pr-shortcuts"></div></section>
+          <details class="pr-beginner"><summary>Start here: three short beginner exercises</summary><p>Try steady down-strums on C, then C to F, then a slow finger warm-up. Use Help for the goal of each exercise.</p><div id="prBeginnerCards" class="pr-shortcuts"></div></details>
+          <details><summary>Keep your practice safe</summary><p id="prStorageNote">Progress and routines are saved on this device. Export a practice backup before clearing app data or changing devices.</p><button type="button" id="prExport">Export practice backup</button> <label class="pr-import">Restore practice backup<input id="prImport" type="file" accept="application/json,.json"></label><p id="prStorageStatus" role="status"></p></details>
+        </div>
         <nav id="prCats" class="pr-cats" aria-label="Practice categories"></nav>
         <div class="pr-home-main">
           <div class="pr-home-head">
@@ -3480,7 +3479,10 @@
       </div>
 
       <div class="practice-body" hidden>
-        <aside class="practice-controls">
+        <aside class="practice-controls" id="prControls">
+          <label class="pr-field">Instrument / tuning<select id="prInstrument"></select></label>
+          <label class="pr-check"><input id="prLeftHanded" type="checkbox"> Left-handed diagrams and fretboard</label>
+          <label class="pr-check" data-not="oneminute metronome noodle"><input id="prAutoFaster" type="checkbox"> Add 5 bpm after a clean round</label>
           <section class="pr-section" data-for="strum">
             <h3>Strum</h3>
             <label class="pr-field">Pattern
@@ -3513,11 +3515,11 @@
           </section>
           <section class="pr-section" data-for="change oneminute" hidden>
             <h3>Chords</h3>
-            <div class="pr-field">Chord to learn
-              <span class="pr-pair"><select id="prToRoot"></select><select id="prToType"></select></span>
+            <div class="pr-field"><label for="prToRoot">Chord to learn</label>
+              <span class="pr-pair"><select id="prToRoot"></select><select id="prToType" aria-label="Chord to learn: type"></select></span>
             </div>
-            <div class="pr-field">Coming from
-              <span class="pr-pair"><select id="prFromRoot"></select><select id="prFromType"></select></span>
+            <div class="pr-field"><label for="prFromRoot">Coming from</label>
+              <span class="pr-pair"><select id="prFromRoot"></select><select id="prFromType" aria-label="Coming from: type"></select></span>
             </div>
             <div class="pr-chips" id="prPartners"></div>
             <label class="pr-field" data-not="oneminute">Change
@@ -3558,7 +3560,7 @@
           </section>
           <section class="pr-section" data-for="notes" hidden>
             <h3>Notes</h3>
-            <label class="pr-field">Exercise
+            <label class="pr-field" hidden>Exercise
               <select id="prNotesKind">
                 <option value="scale">Scale</option>
                 <option value="picking">Picking a chord (arpeggio)</option>
@@ -3614,11 +3616,13 @@
             </label>
             <button id="prShowMe" type="button" class="pr-showme" title="Watch and hear one slow round first">▶ Show me</button>
           </section>
+          <div data-kind="ear" class="pr-ear-controls"><label class="pr-field">Phrase length<select id="prEarLength"><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select></label><button type="button" id="prEarRepeat">Repeat this phrase</button> <button type="button" id="prEarNew">New phrase</button><p>Listen, play it back, then compare with the answer.</p></div>
           <section class="pr-section" data-for="noodle" hidden>
             <h3>Noodling</h3>
             <label class="pr-field">Backing
               <span class="pr-pair"><select id="prNoodleBacking"></select><select id="prNoodleKey" title="Key"></select></span>
             </label>
+
             <label class="pr-field">Notes to use
               <select id="prNoodleNotes"></select>
             </label>
@@ -3627,7 +3631,7 @@
             </label>
             <label class="pr-check" title="Two bars: the app plays a short phrase. Two bars: you answer it"><input id="prNoodleQA" type="checkbox" /> Question and answer</label>
             <label class="pr-check" title="A rhythm to use, new every two bars"><input id="prNoodleRhythm" type="checkbox" /> Rhythm ideas</label>
-            <button id="prNoodleSave" type="button" class="pr-showme" title="Make a new song with this backing and an empty tab block, to write your melody down">Save as a new song…</button>
+            <button id="prNoodleSave" type="button" class="pr-showme" title="Make a new song with this backing and an empty tab block, to write your melody down">Create song template…</button>
           </section>
           <section class="pr-section" data-for="metronome" hidden>
             <h3>Metronome</h3>
@@ -3642,7 +3646,7 @@
           </section>
           <section class="pr-section pr-shared">
             <h3 data-not="oneminute">Speed and sound</h3>
-            <div class="pr-field" data-not="oneminute">Tempo
+            <div class="pr-field" data-not="oneminute"><label for="prTempo">Tempo</label>
               <span class="pr-tempo"><button id="prSlower" type="button" title="5 bpm slower">−</button><input id="prTempo" type="number" min="40" max="220" value="80" /><span>bpm</span><button id="prFaster" type="button" title="5 bpm faster">+</button></span>
             </div>
             <label class="pr-field" data-not="oneminute">Volume <span id="prVolumeText" class="muted">100%</span>
@@ -3667,6 +3671,9 @@
           </div>
         </aside>
         <main class="practice-stage">
+          <p id="prGoal" class="pr-goal"></p>
+          <p id="prSaveStatus" class="pr-save-status" role="status"></p>
+          <div id="prScoreEntry" hidden><label>Your clean changes <input id="prScoreTotal" type="number" min="0" max="999" value="0"></label><button type="button" id="prScoreSave">Save score</button><p>Each transition counts once; a return trip is two.</p></div>
           <div class="pr-shapes">
             <figure class="pr-now"><figcaption id="prNowCaption">Now</figcaption><div id="prNowName" class="pr-chord">–</div><div id="prNowDiagram" class="pr-diagram"></div><div id="prNowNote" class="pr-note"></div></figure>
             <figure class="pr-next"><figcaption id="prNextCaption">Next</figcaption><div id="prNextName" class="pr-chord small">–</div><div id="prNextDiagram" class="pr-diagram"></div></figure>
@@ -3686,7 +3693,7 @@
             <span data-legend="noodle"><i class="lg-safe"></i> notes that fit</span>
             <span data-legend="noodle"><i class="lg-tone"></i> the chord's own notes</span>
             <span data-legend="noodle"><i class="lg-root"></i> the key note</span>
-            <button id="prHelpButton2" type="button" class="link-button">How does this work?</button>
+            <button id="prHelpButton2" type="button" class="link-button">Help for this exercise</button>
           </div>
           <div id="prFingerNow" class="pr-finger-now" hidden></div>
           <pre id="prTab" class="pr-tab" hidden></pre>
@@ -3697,85 +3704,18 @@
           <div id="prTips" class="pr-tips"></div>
         </main>
       </div>
+<div id="prMobileGo" class="pr-mobile-go" hidden><span class="pr-mobile-tempo"><button id="prMobileSlower" type="button" aria-label="5 bpm slower">−</button><span id="prMobileTempo"></span><button id="prMobileFaster" type="button" aria-label="5 bpm faster">+</button></span><button id="prMobileStart" type="button" class="primary">▶ Start</button><button id="prMobileStop" type="button">■ Stop</button></div>
     </div>
-    <dialog id="prHelpDialog" class="pr-help">
-      <form method="dialog">
-        <h2>How Practice works</h2>
-        <details data-help="spider">
-          <summary>Finger exercises (the spider walk)</summary>
-          <p>Warms up the fretting hand: it builds finger independence, accuracy and stretch, which makes chord changes and fingerpicking easier.</p>
-          <h3>What the picture shows</h3>
-          <ul>
-            <li><strong>The neck, seen from the front, like tab</strong>: the A string is on top and the G string at the bottom. The nut is on the left; fret numbers are under the board. Hold the ukulele as usual; the G string is the one nearest your face.</li>
-            <li><strong>Your left hand</strong> (drawn above the neck): the grey box is where the hand sits, one finger per fret. Finger 1 (index) covers the box's first fret, 2 (middle) the next, then 3 (ring) and 4 (little finger). The finger in use reaches down to its string; the others hover, ready. The box slides along when the exercise moves up the neck.</li>
-            <li><span class="lg-now">1</span> <strong>Red circle</strong>: the note to play now. The number is the finger to use, the line it sits on is the string, and the column is the fret.</li>
-            <li><span class="lg-next">2</span> <strong>Blue dashed circle</strong>: the next note, so you can get ready.</li>
-            <li><span class="lg-held">1</span> <strong>Faint red</strong>: fingers still down from the notes before on this string. Leave them down as you walk up the frets; lift them when you move to the next string.</li>
-            <li><strong>Your right hand</strong>: the red arrow on the right points at the string to pluck. It's always the string the red circle is on: on the G line, pluck the G string. Use your thumb or index finger.</li>
-            <li><strong>The tab</strong> under the picture is the whole round, with the note now lit. The line under that says the same thing in words, e.g. "Middle finger (2) · C string · fret 2 · pluck the C string".</li>
-          </ul>
-          <h3>How to practise</h3>
-          <ol>
-            <li>Press <strong>Show me</strong> to watch and hear one slow round.</li>
-            <li>Choose <strong>Sound → Hear it, then you</strong>: the first round plays the notes, the next is just the click and you play, and so on.</li>
-            <li>Start slowly (60 bpm or less). Every note should ring clearly, without buzzing. When a round is clean, add 5 bpm.</li>
-            <li>Press just behind the fret wire, on your fingertips, with the thumb behind the neck. Keep fingers close to the strings when they're not in use.</li>
-            <li>When 1-2-3-4 is easy, try 1-3-2-4, 1-4-2-3 and 4-3-2-1, or the Warm-up (all four), and tick <strong>Move up a fret each time round</strong>.</li>
-          </ol>
-        </details>
-        <details data-help="strum">
-          <summary>Strum</summary>
-          <p>The big chord is the one to play now, with its diagram; the smaller one is next. The row of arrows is the strum pattern for one bar: ↓ down, ↑ up, ✕ a chuck (a strum with the strings damped), · a miss (keep the hand moving but don't touch the strings). The lit box is the stroke now, and the numbers under it are the count (1 & 2 & …). The dots are the beats of the bar; the big one is beat 1.</p>
-          <p>Keep your strumming hand moving down and up all the time, like a pendulum, and only touch the strings on the strokes shown.</p>
-          <p><strong>Progression</strong> fills in the chords of a common progression (I–V–vi–IV and others) in any key. The <strong>rhythm ladder</strong> climbs from quarter notes to eighths, triplets, sixteenths and a syncopated pattern, two bars each. <strong>Soft / loud</strong> alternates quiet and loud pairs of bars, for control.</p>
-        </details>
-        <details data-help="blues">
-          <summary>12-bar blues</summary>
-          <p>The 12 bars of the blues are shown as a grid of three lines, lighting up as you go. Choose the key; 7th chords give the bluesy sound. A <strong>quick change</strong> goes to the IV chord in bar 2; the <strong>turnaround</strong> puts the V chord in bar 12 to lead back to the start.</p>
-          <p><strong>Shuffle</strong>: on beats 2 and 4, put down one more finger two frets above a note of the chord (the second diagram shows where, and the note under it says which finger), then lift it on beats 1 and 3. That's the classic boogie rhythm.</p>
-        </details>
-        <details data-help="change">
-          <summary>Chord change</summary>
-          <p>Back and forth between a chord you know and the one you're learning, every bar or every 2 beats. Both diagrams are shown; the tips say which finger can stay down between the two shapes. Changes are counted: aim to make each change in time, without stopping, before speeding up.</p>
-        </details>
-        <details data-help="drill">
-          <summary>Chord shapes drill</summary>
-          <p>A chord name comes up with its diagram. In the silent bar ("Form it now") put the shape down; on the next bar strum it once and listen: every string should ring clearly. Then lift off completely, ready for the next one. Choose the chords to drill, or one of the sets: <b>In turn</b> goes through them as you typed them, round and round (type a song's changes, like Dm Dm F G); <b>Mixed up</b> picks them in any order.</p>
-        </details>
-        <details data-help="oneminute">
-          <summary>One-minute changes</summary>
-          <p>Choose two chords. Press Start, then change back and forth between them as fast as you can <em>cleanly</em> for one minute: tap <strong>Space</strong> (or the big button) every time you land a clean change. The app can't hear you, so be honest: every string should ring. Your score for that pair is saved, with a little graph of your last scores, so you can watch it climb day by day.</p>
-        </details>
-        <details data-help="notes">
-          <summary>Scales, picking, melodies and ear training</summary>
-          <p>These use the same fretboard as the finger exercises: the red dot is the note to play now, the dashed blue one is next, and a hollow dot left of the nut is an <strong>open string</strong> (don't fret it). The arrow on the right points at the string to pluck.</p>
-          <p><strong>Picking</strong>: the left hand holds the whole chord (pale dots); the right hand picks one string at a time. The letters say which finger: <strong>p</strong> thumb, <strong>i</strong> index, <strong>m</strong> middle, <strong>a</strong> ring.</p>
-          <p><strong>Scales</strong>: say the note names as you play. <strong>Sequences</strong> play the scale in small groups (1-2-3, 2-3-4…), which is how scales turn into tunes.</p>
-          <p><strong>Call and response</strong>: the app plays a short phrase with the fretboard hidden. Play it back by ear in the gap, then the answer is shown and played so you can check yourself.</p>
-        </details>
-        <details data-help="noodle">
-          <summary>Noodling over a backing</summary>
-          <p>The app strums a chord loop; you make things up on top. The dots on the fretboard are notes that fit the key: any of them will sound fine. The <strong>orange</strong> ones are the notes of the chord playing now (they change with the chord): landing on one when the chord changes sounds strong. The <strong>ringed</strong> dot is the key note, home.</p>
-          <p>Start with <strong>three or four notes</strong> only, then the pentatonic (five notes, nothing sounds wrong). <strong>Question and answer</strong>: the app plays a two-bar phrase, you answer in the next two bars. <strong>Rhythm ideas</strong> suggest a rhythm for each pair of bars, so you play with timing, not just notes.</p>
-          <p>Found a tune you like? <strong>Save as a new song</strong> makes a song with the backing chords and an empty tab block to write it down in.</p>
-        </details>
-        <details data-help="metronome">
-          <summary>Metronome</summary>
-          <p>A click to practise anything with. Choose the beats in a bar, an optional softer click in between (eighths or triplets), and whether beat 1 is accented. <strong>Tap tempo</strong>: tap the button along with a song (four times or more) to find its speed.</p>
-        </details>
-        <details data-help="routine all">
-          <summary>Progress and routines</summary>
-          <p>Time is counted while an exercise plays (the ⏱ clock). <strong>✓ That was clean</strong> marks a clean round: it's logged and the tempo goes up 5 bpm for next time. Each card shows when you last did it, your last and best tempo and the time spent; the top bar shows today's practice and how many days in a row. All of this is kept in <code>practice.json</code> in your songs folder.</p>
-          <p><strong>My routine</strong>: a few exercises back to back, each for a set number of minutes (counted while playing); it moves on by itself. Start one of the ready-made routines, edit it, or make your own. <strong>Next ▶</strong> skips to the next exercise.</p>
-        </details>
-        <details data-help="all">
-          <summary>Tempo, sound and the rest</summary>
-          <p>Choose a category on the left, then an exercise; <strong>← All exercises</strong> (or <strong>Esc</strong>) goes back to the menu. The badge says how hard it is: Beginner, Improver or Intermediate.</p>
-          <p><strong>Tempo</strong> changes straight away, even while playing. <strong>Volume</strong> is for the notes; the <strong>Metronome click</strong> marks every beat. <strong>Count in</strong> gives one bar of clicks first. <strong>Space</strong> starts and stops; <strong>Esc</strong> goes back to the menu, and from the menu closes Practice.</p>
-        </details>
-        <menu class="dialog-buttons"><button type="submit">Close</button></menu>
-      </form>
+    <dialog id="prHelpDialog" class="pr-help" aria-labelledby="prHelpTitle">
+      <form method="dialog"><div class="pr-help-head"><h2 id="prHelpTitle">Exercise help</h2><button type="submit" autofocus>Close help</button></div><div id="prHelpContent"></div></form>
     </dialog>
+
+
+
+
+
+
+
     <div id="karaoke" class="karaoke" hidden role="dialog" aria-label="Karaoke view">
       <div class="karaoke-bar">
         <div class="k-heading-block">
@@ -7699,14 +7639,14 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           }
         }
         const prChordOf = (rootSel, typeSel) => `${rootSel.value}${typeSel.value}`;
-        function prInstrument() { return songInstrument(effectiveConfig()).id; }
+        function prInstrument() { return $p('prInstrument')?.value || songInstrument(effectiveConfig()).id; }
         function prLibrary() { return chordLibraryFor(prInstrument()); }
         function prTuning() { return window.ukemusic.instrument(prInstrument()).strings; }
         function prDiagram(name, frets = null, fingers = null) {
           const library = prLibrary();
           const definition = frets ? T.definitionFromFrets(frets, name, fingers) : window.ukemusic.chordDefinition(library, name);
           if (!definition) return `<div class="pr-note">No diagram for ${escapeHtmlText(name)} on this instrument.</div>`;
-          return window.ukemusic.diagramSvg({ ...definition, name }, { left_handed: effectiveConfig()?.diagrams?.left_handed, show_fingers: true });
+          return window.ukemusic.diagramSvg({ ...definition, name }, { left_handed: $p('prLeftHanded')?.checked, show_fingers: true });
         }
         const chordList = (text) => String(text || '').split(/[\s,|]+/).filter((c) => c && window.ukemusic.parseSong(`[${c}]`, { useDelimiters: false }).some((n) => n.type === 'chord'));
         const strumBeats = (pattern) => (window.ukemusic.strums.find((s) => s.pattern === pattern)?.beats) || 4;
@@ -7723,20 +7663,24 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         function prSaveProgress() {
           try {
             PP.write(songsFolder(), pr.progress);
+            return true;
           } catch (error) {
             window.ukemusicLogError('Could not save practice progress', error);
+            $p('prSaveStatus').textContent = 'Practice could not be saved. Export a backup before closing.';
+            return false;
           }
         }
         function prRefreshToday() {
           if (!pr.progress) return;
           const today = todayKey();
-          const secs = PP.todaySeconds(pr.progress, today) + (pr.session ? pr.session.seconds : 0);
+          const secs = PP.todaySeconds(pr.progress, today) + prSessionSeconds();
           const streak = PP.streak(pr.progress, today);
           $p('prToday').textContent = `Today ${PP.formatMinutes(secs)}${streak > 1 ? ` · ${streak} days in a row` : ''}`;
         }
         // Time on an exercise counts while it plays; it's logged when it stops
         function prSessionStart() {
           if (!pr.exId) return;
+          pr.finishedSeconds = 0;
           pr.session = pr.session && pr.session.exId === pr.exId ? pr.session : { exId: pr.exId, seconds: 0, since: null };
           pr.session.since = performance.now();
           pr.session.tempo = pr.mode === 'oneminute' ? null : prTempo();
@@ -7762,16 +7706,85 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         }
         setInterval(() => {
           if (practiceEl.hidden || pr.view !== 'player') return;
-          const s = prSessionSeconds();
+          const s = pr.session ? prSessionSeconds() : (pr.finishedSeconds || 0);
+          prUpdateMobile();
+          if (!pr.demoPlaying && pr.schedule && player?.playing && player.position() >= pr.cleanAfter) { pr.cleanReady = true; $p('prClean').disabled = false; }
           $p('prTimer').textContent = `⏱ ${fmtClock(s)}`;
           if (pr.session && pr.session.since) prRefreshToday();
           prRoutineTick();
         }, 500);
 
+        function prCaptureSettings() {
+          return Object.fromEntries([...practiceEl.querySelectorAll('.practice-controls select, .practice-controls input')]
+            .filter((el) => el.id && el.id !== 'prVolume')
+            .map((el) => [el.id, el.type === 'checkbox' ? el.checked : el.value]));
+        }
+        function prApplySettings(settings) {
+          for (const [id, value] of Object.entries(settings || {})) {
+            const el = $p(id);
+            if (!el || !el.closest('.practice-controls') || !['INPUT', 'SELECT'].includes(el.tagName)) continue;
+            if (el.type === 'checkbox') el.checked = Boolean(value);
+            else if (el.tagName !== 'SELECT' || [...el.options].some((o) => o.value === String(value))) el.value = String(value);
+          }
+        }
+        function prSaveSettings() {
+          if (!pr.exId || !pr.progress || pr.restoring || pr.routine) return;
+          pr.progress.preferences = pr.progress.preferences || {};
+          pr.progress.preferences[pr.exId] = prCaptureSettings();
+          prSaveProgress();
+        }
+        function prContext() {
+          const settings = prCaptureSettings();
+          for (const id of Object.keys(settings)) {
+            const el = $p(id);
+            let parent = el;
+            let hidden = false;
+            while (parent && parent.id !== 'prControls') { if (parent.hidden) hidden = true; parent = parent.parentElement; }
+            if (hidden || ['prTempo', 'prBars', 'prCountIn', 'prClick', 'prAutoFaster', 'prSound'].includes(id)) delete settings[id];
+          }
+          return JSON.stringify(settings);
+        }
+        function prCancelAttempt() {
+          clearTimeout(pr.tick);
+          pr.tick = null;
+          pr.pendingScore = null;
+          $p('prScoreEntry').hidden = true;
+          if (pr.oneMinute?.running) prOneMinuteStop(false);
+          if (player?.playing) prStop();
+          cancelAnimationFrame(pr.raf);
+          pr.cleanReady = false;
+          $p('prClean').disabled = true;
+        }
+        function prShortcut(id) {
+          const e = PL.EXERCISES.find((x) => x.id === id);
+          if (!e) return null;
+          const b = document.createElement('button');
+          b.type = 'button'; b.textContent = e.title;
+          b.addEventListener('click', () => prOpen(id));
+          return b;
+        }
+        function prQuickLinks() {
+          const buttons = (pr.progress.recent || []).map(prShortcut).filter(Boolean);
+          $p('prRecent').hidden = !buttons.length;
+          $p('prRecentCards').replaceChildren(...buttons);
+          $p('prBeginnerCards').replaceChildren(...['downs', 'chord-change', 'spider-1234'].map(prShortcut));
+        }
+        function prUpdateMobile() {
+          const visible = pr.view === 'player';
+          $p('prSettingsToggle').hidden = !visible;
+          $p('prReset').hidden = !visible;
+          $p('prMobileGo').hidden = !visible;
+          $p('prMobileTempo').textContent = pr.mode === 'oneminute' ? '60 seconds' : prTempo() + ' bpm';
+          $p('prMobileStart').disabled = $p('prStart').disabled;
+          $p('prMobileStop').disabled = $p('prStop').disabled;
+          $p('prMobileSlower').hidden = $p('prMobileFaster').hidden = pr.mode === 'oneminute';
+        }
         // ── The menu ──
         function prRenderHome() {
           prLoadProgress();
           prRefreshToday();
+          prQuickLinks();
+          prUpdateMobile();
           $p('prCats').replaceChildren(...PL.CATEGORIES.map((c) => {
             const b = document.createElement('button');
             b.type = 'button';
@@ -7801,10 +7814,13 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             const meta = [];
             if (p && p.last_date) meta.push(`last ${p.last_date.slice(5).split('-').reverse().join('/')}`);
             if (p && p.last_tempo) meta.push(`${p.last_tempo} bpm`);
-            if (p && p.best_tempo) meta.push(`best ${p.best_tempo} bpm`);
+            const best = p?.contexts?.[p.last_context]?.best_tempo;
+            if (best) meta.push(`best ${best} bpm for last setup`);
+            else if (p?.best_tempo) meta.push(`earlier best ${p.best_tempo} bpm`);
             if (e.mode === 'oneminute') {
-              const best = PP.bestScore(pr.progress, e.id, null);
-              if (best !== null) meta.push(`best ${best} changes`);
+              const pair = p?.scores?.[p.scores.length - 1]?.label;
+              const best = PP.bestScore(pr.progress, e.id, pair || null);
+              if (best !== null) meta.push(`best ${best} changes${pair ? ' (' + pair.replace('>', ' → ') + ')' : ''}`);
             }
             if (p && p.seconds) meta.push(PP.formatMinutes(p.seconds));
             card.innerHTML = `<span class="pr-card-top"><strong>${escapeHtmlText(e.title)}</strong><span class="pr-badge ${e.level.toLowerCase()}">${e.level}</span></span>
@@ -7815,7 +7831,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           }));
         }
         function prShowHome() {
-          if (player && player.playing) prStop();
+          prSaveSettings();
+          prCancelAttempt();
           prSessionEnd();
           pr.view = 'home';
           pr.exId = null;
@@ -7827,15 +7844,19 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           $p('prClean').hidden = true;
           $p('prTitle').textContent = 'Free Practice';
           prRenderHome();
+          $p('prHelpButton').focus();
         }
 
         // Open an exercise: its trainer, with its preset (and your last tempo)
-        function prOpen(exId, { keepGoing = false } = {}) {
+        function prOpen(exId, { keepGoing = false, settings = null, reset = false } = {}) {
           const e = PL.EXERCISES.find((x) => x.id === exId);
           if (!e) return;
-          if (player && player.playing) prStop();
+          if (!reset) prSaveSettings();
+          prCancelAttempt();
           prSessionEnd();
           prSetup();
+          pr.restoring = true;
+          prApplySettings(pr.defaults);
           pr.view = 'player';
           pr.exId = e.id;
           pr.exDef = e;
@@ -7848,6 +7869,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           $p('prLevel').hidden = false;
           $p('prTimer').hidden = false;
           $p('prTimer').textContent = '⏱ 0:00';
+          pr.finishedSeconds = 0;
           $p('prClean').hidden = ['oneminute', 'metronome', 'noodle'].includes(e.mode);
           prShowMode(e.mode, { quiet: true });
           for (const [id, value] of Object.entries(e.set || {})) {
@@ -7865,18 +7887,48 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             } else el.value = String(value);
           }
           if (e.set && e.set.prProgression !== undefined) prApplyProgression();
-          const last = pr.progress?.exercises?.[e.id]?.last_tempo;
-          if (last && e.mode !== 'oneminute') $p('prTempo').value = String(last);
+          const saved = pr.progress?.preferences?.[e.id];
+          if (!reset) prApplySettings(settings || saved);
+          if (!reset && !saved && !settings) {
+            const last = pr.progress?.exercises?.[e.id]?.last_tempo;
+            if (last && e.mode !== 'oneminute') $p('prTempo').value = String(last);
+          }
+          pr.restoring = false;
           if (keepGoing && $p('prBars').querySelector('option[value="0"]')) $p('prBars').value = '0';
           $p('prNoodleSave').hidden = !e.create;
           pr.shown = {};
           pr.fret = null;
           prKindRows();
           prPreview();
-          prHelpFirstTime(e.mode);
+          pr.earCache = null;
+          pr.earRepeat = false;
+          pr.cleanReady = false;
+          $p('prClean').disabled = true;
+          $p('prGoal').textContent = window.ukemusic.practiceHelp.forExercise(e.id).goal;
+          $p('prSaveStatus').textContent = '';
+          practiceEl.classList.remove('pr-settings-open');
+          $p('prSettingsToggle').textContent = 'Edit settings';
+          $p('prSettingsToggle').setAttribute('aria-expanded', 'false');
+          prUpdateMobile();
+          $p('prSettingsToggle').focus();
         }
 
         // ── Routines ──
+        function prSettingsDescription(id, settings) {
+          const e = PL.EXERCISES.find((item) => item.id === id);
+          if (!e || !settings || !Object.keys(settings).length) return 'Exercise defaults';
+          const values = { ...e.set, ...settings };
+          const parts = [window.ukemusic.instrument(values.prInstrument || 'soprano').label];
+          if (['change','oneminute'].includes(e.mode)) parts.push((values.prFromRoot || 'C') + (values.prFromType || '') + ' → ' + (values.prToRoot || 'F') + (values.prToType || ''));
+          if (e.mode === 'strum') parts.push(values.prChords || 'C', values.prStrum === 'own' ? values.prStrumOwn : values.prStrum);
+          if (e.mode === 'spider') parts.push('start at fret ' + (values.prStartFret || 1));
+          if (e.mode === 'drill') parts.push(values.prDrillSet);
+          if (e.mode === 'blues') parts.push('key ' + values.prBluesKey);
+          if (e.mode === 'noodle') parts.push('key ' + values.prNoodleKey, PL.NOODLE_SETS[values.prNoodleNotes]?.name);
+          if (e.mode === 'notes') parts.push(values.prNotesKind === 'picking' ? values.prPickChords : 'key ' + values.prScaleRoot);
+          if (e.mode !== 'oneminute') parts.push((values.prTempo || 80) + ' bpm');
+          return parts.filter(Boolean).join(' · ');
+        }
         function prRenderRoutines() {
           const holder = $p('prRoutines');
           holder.replaceChildren();
@@ -7917,6 +7969,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             form.innerHTML = '';
             const name = Object.assign(document.createElement('input'), { type: 'text', value: routine.name, className: 'pr-routine-name' });
             name.addEventListener('input', () => { routine.name = name.value; });
+            name.setAttribute('aria-label', 'Routine name');
             form.appendChild(name);
             routine.steps.forEach((step, k) => {
               const line = document.createElement('div');
@@ -7928,19 +7981,31 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
                 for (const e of PL.EXERCISES.filter((x) => x.cat === c.id)) group.appendChild(new Option(e.title, e.id));
                 sel.appendChild(group);
               }
+              sel.setAttribute('aria-label', 'Exercise for step ' + (k + 1));
               sel.value = step.id;
-              sel.addEventListener('change', () => { step.id = sel.value; });
+              sel.addEventListener('change', () => { step.id = sel.value; delete step.settings; if (step.id === 'one-minute') step.minutes = 1; draw(); });
               const mins = Object.assign(document.createElement('input'), { type: 'number', min: 1, max: 30, value: step.minutes, className: 'pr-step-min' });
+              mins.setAttribute('aria-label', 'Minutes for step ' + (k + 1));
+              mins.disabled = step.id === 'one-minute';
+              if (mins.disabled) mins.value = step.minutes = 1;
               mins.addEventListener('change', () => { step.minutes = Math.max(1, Math.min(30, Number(mins.value) || 1)); });
               const rm = Object.assign(document.createElement('button'), { type: 'button', textContent: '✕', title: 'Remove this step' });
               rm.addEventListener('click', () => { routine.steps.splice(k, 1); draw(); });
-              line.append(sel, mins, Object.assign(document.createElement('span'), { textContent: 'min' }), rm);
+              const personalise = Object.assign(document.createElement('button'), { type: 'button', textContent: 'Use my saved settings' });
+              personalise.addEventListener('click', () => { step.settings = JSON.parse(JSON.stringify(pr.progress.preferences?.[step.id] || {})); draw(); });
+              const up = Object.assign(document.createElement('button'), { type: 'button', textContent: '↑', disabled: k === 0, title: 'Move step up' });
+              const down = Object.assign(document.createElement('button'), { type: 'button', textContent: '↓', disabled: k === routine.steps.length - 1, title: 'Move step down' });
+              up.addEventListener('click', () => { [routine.steps[k - 1], routine.steps[k]] = [routine.steps[k], routine.steps[k - 1]]; draw(); });
+              down.addEventListener('click', () => { [routine.steps[k + 1], routine.steps[k]] = [routine.steps[k], routine.steps[k + 1]]; draw(); });
+              const summary = document.createElement('span'); summary.className = 'pr-settings-summary';
+              summary.textContent = step.settings ? prSettingsDescription(step.id, step.settings) : 'Exercise defaults (configure the exercise first, then use its saved settings).';
+              line.append(sel, mins, Object.assign(document.createElement('span'), { textContent: 'min' }), up, down, rm, personalise, summary);
               form.appendChild(line);
             });
             const actions = document.createElement('div');
             actions.className = 'pr-routine-actions';
             const addStep = Object.assign(document.createElement('button'), { type: 'button', textContent: '+ Add an exercise' });
-            addStep.addEventListener('click', () => { routine.steps.push({ id: 'chord-change', minutes: 2 }); draw(); });
+            addStep.addEventListener('click', () => { routine.steps.push({ id: 'chord-change', minutes: 2, settings: JSON.parse(JSON.stringify(pr.progress.preferences?.['chord-change'] || {})) }); draw(); });
             const save = Object.assign(document.createElement('button'), { type: 'button', className: 'primary', textContent: 'Save routine' });
             save.addEventListener('click', () => {
               if (!routine.steps.length) return;
@@ -7973,12 +8038,14 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             prRoutineEnd(true);
             return;
           }
-          prOpen(step.id, { keepGoing: true });
+          if (!PL.EXERCISES.some((e) => e.id === step.id)) { r.step += 1; prRoutineStep(); return; }
+          prOpen(step.id, { keepGoing: true, settings: step.settings || {} });
           r.started = false;
           $p('prRoutineBar').hidden = false;
           prRoutineTick();
+          const stepIndex = r.step;
           setTimeout(() => {
-            if (pr.routine === r && pr.view === 'player') {
+            if (pr.routine === r && r.step === stepIndex && pr.view === 'player') {
               r.started = true;
               if (pr.mode === 'oneminute') prOneMinuteStart();
               else prStart();
@@ -8000,7 +8067,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         function prRoutineNext() {
           const r = pr.routine;
           if (!r) return;
-          if (player && player.playing) prStop();
+          prCancelAttempt();
           prSessionEnd();
           r.step += 1;
           prRoutineStep();
@@ -8028,7 +8095,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           $p('prNoodleKey').replaceChildren(...PL.KEYS.map((k) => new Option(k, k)));
           $p('prNoodleNotes').replaceChildren(...Object.entries(PL.NOODLE_SETS).map(([id, s]) => new Option(s.name, id)));
           $p('prSpider').replaceChildren(...F.PATTERNS.map((p) => new Option(p.name, p.id)));
-          $p('prScaleRoot').replaceChildren(...['C', 'D', 'E', 'F', 'G', 'A', 'Bb'].map((k) => new Option(k, k)));
+          $p('prScaleRoot').replaceChildren(...PL.KEYS.map((k) => new Option(k, k)));
           $p('prScale').replaceChildren(...Object.entries(NL.SCALES).map(([id, s]) => new Option(s.name, id)));
           $p('prPickPattern').replaceChildren(...NL.PICK_PATTERNS.map((p) => new Option(p.name, p.id)));
           $p('prMelody').replaceChildren(...NL.MELODIES.map((m) => new Option(m.name, m.id)));
@@ -8044,6 +8111,42 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           }));
           chips($p('prChordSets'), 'prChords', ['C Am F G', 'G C D', 'C F G7', 'A D E7', 'C G Am F', 'Am Dm E7']);
           chips($p('prDrillSets'), 'prDrillSet', ['C Am F G', 'G D Em C', 'C F G7', 'A D E7', 'Dm Bb C F', 'G7 C7 D7 A7']);
+          $p('prInstrument').replaceChildren(...window.ukemusic.instruments.map((i) => new Option(i.label, i.id)));
+          $p('prInstrument').value = songInstrument(effectiveConfig()).id;
+          $p('prLeftHanded').checked = Boolean(effectiveConfig()?.diagrams?.left_handed);
+          $p('prSettingsToggle').addEventListener('click', () => {
+            const open = practiceEl.classList.toggle('pr-settings-open');
+            $p('prSettingsToggle').textContent = open ? 'Back to playing' : 'Edit settings';
+            $p('prSettingsToggle').setAttribute('aria-expanded', String(open));
+          });
+          $p('prReset').addEventListener('click', () => { const id = pr.exId; delete pr.progress.preferences?.[id]; prOpen(id, { reset: true }); prSaveSettings(); });
+          for (const [mobile, original] of [['prMobileStart','prStart'],['prMobileStop','prStop'],['prMobileSlower','prSlower'],['prMobileFaster','prFaster']]) $p(mobile).addEventListener('click', () => { $p(original).click(); prUpdateMobile(); });
+          $p('prHelpDialog').addEventListener('close', () => { $p('prHelpButton').focus(); });
+          $p('prEarRepeat').addEventListener('click', () => { pr.earRepeat = true; prStart(); });
+          $p('prEarNew').addEventListener('click', () => { pr.earRepeat = false; pr.earCache = null; prStart(); });
+          $p('prScoreSave').addEventListener('click', prSaveEnteredScore);
+          $p('prExport').addEventListener('click', () => {
+            const data = JSON.stringify({ format: 'ukemusic-practice', data: pr.progress }, null, 2);
+            const a = document.createElement('a'); const url = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
+            a.href = url; a.download = 'ukemusic-practice.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 30000);
+            $p('prStorageStatus').textContent = 'Practice backup download requested.';
+          });
+          $p('prImport').addEventListener('change', async (event) => {
+            const file = event.target.files[0]; if (!file) return;
+            try {
+              const backup = JSON.parse(await file.text());
+              if (backup.format !== 'ukemusic-practice') throw new Error('Choose a ukemusic practice backup.');
+              const restored = PP.normalise(backup.data);
+              if (!confirm('Replace practice progress, recent exercises and routines on this device with this backup? Songs are kept.')) return;
+              pr.progress = restored;
+              if (!prSaveProgress()) throw new Error('The backup could not be saved on this device.');
+              prRenderHome();
+              $p('prStorageStatus').textContent = 'Practice backup restored.';
+            } catch (error) { $p('prStorageStatus').textContent = 'Could not restore: ' + error.message; }
+            finally { event.target.value = ''; }
+          });
+          $p('prStorageNote').textContent = location.protocol === 'file:' ? 'Progress and routines are saved in practice.json in your songs folder. Export a backup to move your personal practice history.' : 'Progress, recent exercises and routines are saved in this browser on this device. They are separate from songs and Dropbox sync. Export a practice backup before clearing browser data or changing devices.';
+          pr.defaults = prCaptureSettings();
           $p('prShowMe').addEventListener('click', () => prStart({ demo: true }));
           $p('prProgression').addEventListener('change', prApplyProgression);
           $p('prProgKey').addEventListener('change', prApplyProgression);
@@ -8091,39 +8194,33 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         // Rows of the Notes section that belong to one kind (scale, picking…)
         function prKindRows() {
           const kind = $p('prNotesKind').value;
-          for (const row of practiceEl.querySelectorAll('[data-kind]')) row.hidden = !row.dataset.kind.split(' ').includes(kind);
+          for (const row of practiceEl.querySelectorAll('[data-kind]')) row.hidden = pr.mode !== 'notes' || !row.dataset.kind.split(' ').includes(kind);
           for (const row of practiceEl.querySelectorAll('[data-not-kind]')) row.hidden = pr.mode === 'notes' && row.dataset.notKind.split(' ').includes(kind);
         }
 
         // "That was clean": log it, and go 5 bpm faster
         function prMarkClean() {
-          if (!pr.exId || !pr.progress) return;
-          const result = PP.logClean(pr.progress, pr.exId, { date: todayKey(), tempo: prTempo() });
+          if (!pr.exId || !pr.progress || !pr.cleanReady) return;
+          const tempo = pr.playedTempo || prTempo();
+          const context = pr.playedContext || prContext();
+          const result = PP.logClean(pr.progress, pr.exId, { date: todayKey(), tempo, context, settings: prCaptureSettings() });
           pr.progress = result.data;
-          prSaveProgress();
-          $p('prTempo').value = String(result.next);
-          $p('prWhere').textContent = `Logged: clean at ${result.next - 5} bpm. Next: ${result.next} bpm.`;
+          if ($p('prAutoFaster').checked) $p('prTempo').value = String(result.next);
+          pr.cleanReady = false; $p('prClean').disabled = true;
+          prSaveSettings();
+          $p('prSaveStatus').textContent = 'Clean round recorded at ' + tempo + ' bpm for this setup. ' + ($p('prAutoFaster').checked ? 'Next: ' + result.next + ' bpm.' : 'Repeat at this speed, or increase it when several rounds feel easy.');
           prChanged();
         }
 
         // ── Help ──
         function prHelp() {
-          const key = pr.view === 'home' ? (pr.cat === 'routine' ? 'routine' : 'all') : pr.mode;
-          for (const d of document.querySelectorAll('#prHelpDialog details')) d.open = d.dataset.help.split(' ').includes(key);
+          const help = window.ukemusic.practiceHelp.forExercise(pr.view === 'player' ? pr.exId : null);
+          $p('prHelpTitle').textContent = help.title;
+          $p('prHelpContent').innerHTML = (help.aim ? '<p>' + escapeHtmlText(help.aim) + '</p>' : '') + '<ol>' + help.steps.map((x) => '<li>' + escapeHtmlText(x) + '</li>').join('') + '</ol><p><strong>Goal: </strong>' + escapeHtmlText(help.goal) + '</p>';
           const dialog = $p('prHelpDialog');
           if (!dialog.open) dialog.showModal();
         }
-        function prHelpFirstTime(mode) {
-          if (!['spider', 'notes', 'noodle'].includes(mode)) return;
-          let seen = '';
-          try { seen = localStorage.getItem('ukemusic.practiceHelpSeen') || ''; } catch (_err) { seen = 'spider notes noodle'; }
-          const key = mode === 'notes' ? 'spider' : mode;
-          if (seen.split(' ').includes(key) || (key === 'spider' && seen === '1')) return;
-          try { localStorage.setItem('ukemusic.practiceHelpSeen', `${seen === '1' ? 'spider' : seen} ${key}`.trim()); } catch (_err) { /* fine */ }
-          prHelp();
-        }
 
-        // ── Which controls and which parts of the stage each trainer uses ──
         const STAGE = {
           strum: ['shapes', 'steps', 'beats'], blues: ['shapes', 'steps', 'beats', 'grid'], change: ['shapes', 'steps', 'beats'],
           drill: ['shapes', 'steps', 'beats'], spider: ['fret', 'legend', 'finger', 'tab', 'beats'], notes: ['fret', 'legend', 'finger', 'tab', 'beats'],
@@ -8157,6 +8254,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           $p('prNowCaption').textContent = mode === 'oneminute' ? 'From' : 'Now';
           $p('prNextCaption').textContent = mode === 'oneminute' ? 'To' : 'Next';
           pr.fret = null;
+          prUpdateMobile();
           if (!quiet) prPreview();
         }
 
@@ -8249,7 +8347,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           let tip = '';
           if (kind === 'scale') {
             notes = NL.scaleNotes({ root: $p('prScaleRoot').value, scale: $p('prScale').value, tuning, position: Number($p('prScalePos').value), rounds, upAndBack: $p('prScaleBack').checked, seq: Number($p('prSeq').value) });
-            tip = 'One finger per fret in the box: say the note names as you play them, and you\'ll soon know where they are.';
+            tip = 'One finger per fret in the box: say the note names as you play them. Keep the notes clear and even.';
           } else if (kind === 'picking') {
             const chords = chordList($p('prPickChords').value).map((name) => {
               const def = window.ukemusic.chordDefinition(prLibrary(), name);
@@ -8269,7 +8367,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             notes = NL.melodyNotes({ id: $p('prMelody').value, tuning, rounds });
             tip = 'One finger per fret: index on fret 1, middle on 2, ring on 3. Hum along: it helps your ear and your timing.';
           } else if (kind === 'ear') {
-            notes = NL.callResponseNotes({ root: $p('prScaleRoot').value, scale: 'majorPent', tuning, phrases: Math.max(2, rounds * 2) });
+            const earKey = [$p('prScaleRoot').value, $p('prEarLength').value, tuning.join(',')].join('|');
+            if (!pr.earCache || pr.earCache.key !== earKey) pr.earCache = { key: earKey, notes: NL.callResponseNotes({ root: $p('prScaleRoot').value, scale: 'majorPent', tuning, phrases: 1, length: Number($p('prEarLength').value) }) };
+            notes = pr.earCache.notes;
             tip = 'Listen to the phrase (the fretboard hides it), play it back in the gap, then see and hear the answer. It always starts on the key note.';
           }
           const key = [kind, $p('prScaleRoot').value, $p('prScale').value, $p('prScalePos').value, $p('prSeq').value, $p('prPickPattern').value, $p('prPickChords').value, $p('prMelody').value, rounds, tuning.join(',')].join('|');
@@ -8458,7 +8558,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const strings = ex.tuning.length;
           const maxFret = ex.notes && ex.notes.length ? Math.max(...ex.notes.map((n) => n.fret)) : 7;
           const frets = Math.max(8, maxFret + 1);
-          const key = `${strings}:${frets}:${ex.names.join('')}:${ex.noodle ? 'n' : 'x'}`;
+          const left = $p('prLeftHanded').checked;
+          const key = `${strings}:${frets}:${ex.names.join('')}:${ex.noodle ? 'n' : 'x'}:${left}`;
           if (pr.fret && pr.fret.key === key) return pr.fret;
           const W = 70;
           const X0 = 84;
@@ -8518,9 +8619,17 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const held = Array.from({ length: Math.max(6, strings) }, () => makeDot('held'));
           const next = makeDot('next');
           const now = makeDot('now');
+          if (left) {
+            const drawing = svgEl('g', { transform: `translate(${width} 0) scale(-1 1)` }, svg);
+            for (const child of [...svg.children]) if (child !== drawing) drawing.appendChild(child);
+            for (const text of drawing.querySelectorAll('text')) {
+              const x = Number(text.getAttribute('x')) || 0;
+              text.setAttribute('transform', `translate(${2 * x} 0) scale(-1 1)`);
+            }
+          }
           $p('prFret').replaceChildren(svg);
           pr.noodleKey = null;
-          pr.fret = { key, xOf, yOf, W, X0, Y0, hand, held, next, now, plucks, fingerEls, knuckleY, picker, pickText, safe };
+          pr.fret = { key, left, xOf, yOf, W, X0, Y0, hand, held, next, now, plucks, fingerEls, knuckleY, picker, pickText, safe };
           return pr.fret;
         }
         function prPlace(dot, note, fb, label = null) {
@@ -8666,6 +8775,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               const g = svgEl('g', { class: `safe${tone ? ' tone' : ''}${d.root ? ' root' : ''}`, transform: `translate(${fb.xOf(d.fret)} ${fb.yOf(d.string)})` }, fb.safe);
               svgEl('circle', { cx: 0, cy: 0, r: tone ? 13 : 9 }, g);
               const t = svgEl('text', { x: 0, y: 1 }, g);
+              if (fb.left) t.setAttribute('transform', 'scale(-1 1)');
               t.textContent = NOTE_NAMES[d.pc];
             }
           }
@@ -8700,6 +8810,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         async function prStart({ fromBar = 0, fromNote = 0, demo = false, countIn = $p('prCountIn').checked } = {}) {
           if (!player) return;
           if (pr.mode === 'oneminute') return;
+          if (pr.mode === 'notes' && $p('prNotesKind').value === 'ear' && !pr.earRepeat) pr.earCache = null;
+          prSaveSettings();
           if (player.playing) {
             pr.stopping = true;
             player.stop();
@@ -8750,7 +8862,16 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           $p('prStart').disabled = true;
           $p('prStop').disabled = false;
           prTips(ex);
-          if (!demo) prSessionStart();
+          if (!demo) {
+            prSessionPause(); prSessionStart();
+            pr.progress = PP.markStarted(pr.progress, pr.exId); prSaveProgress();
+            pr.playedTempo = prTempo(); pr.playedContext = prContext();
+            pr.cleanReady = false; $p('prClean').disabled = true;
+            const steps = ex.kind === 'notes' ? ex.notes.filter((n) => n.round === ex.notes[0]?.round).length : 16;
+            pr.cleanAfter = schedule.countInDuration + (ex.kind === 'notes' ? steps * schedule.step : 16 * 60 / prTempo());
+          }
+          pr.demoPlaying = demo;
+          prUpdateMobile();
           cancelAnimationFrame(pr.raf);
           pr.raf = requestAnimationFrame(prTick);
           await player.play(schedule, {
@@ -8790,7 +8911,15 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           return { ...schedule, events };
         }
         function prEnded() {
+          if (!pr.userStopped && !pr.ex?.demo && pr.schedule && pr.schedule.duration >= pr.cleanAfter) {
+            pr.cleanReady = true;
+            $p('prClean').disabled = false;
+          }
           prSessionPause();
+          if (!pr.routine) {
+            pr.finishedSeconds = prSessionSeconds();
+            prSessionEnd();
+          }
           $p('prStart').disabled = false;
           $p('prStop').disabled = true;
           prDrawBeats(pr.ex && pr.ex.beats ? pr.ex.beats : 4, -1);
@@ -8804,6 +8933,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           pr.barBase = 0;
           pr.changesBase = 0;
           pr.schedule = null;
+          prUpdateMobile();
           prRefreshToday();
         }
         function prStop() {
@@ -8814,6 +8944,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         }
         // A setting changed: carry on from where it is if playing, otherwise show it
         function prChanged() {
+          prSaveSettings();
+          pr.cleanReady = false; $p('prClean').disabled = true;
+          prUpdateMobile();
           if (pr.mode === 'oneminute') {
             if (!(pr.oneMinute && pr.oneMinute.running)) prPreview();
             return;
@@ -8953,12 +9086,14 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         // ── One-minute changes ──
         function prOneMinuteStart() {
           const ex = prExercise();
+          prCancelAttempt();
           if (!window.ukemusic.chordDefinition(prLibrary(), ex.to)) {
             prTips(ex);
             return;
           }
           pr.ex = ex;
-          pr.oneMinute = { running: true, count: 0, ends: performance.now() + (pr.minuteMs || 60000), label: `${ex.from}>${ex.to}` };
+          prSaveSettings(); pr.progress = PP.markStarted(pr.progress, pr.exId); prSaveProgress();
+          pr.oneMinute = { exId: pr.exId, from: ex.from, to: ex.to, routine: pr.routine, step: pr.routine?.step, running: true, count: 0, ends: performance.now() + (pr.minuteMs || 60000), label: `${ex.from}>${ex.to}` };
           prSessionStart();
           $p('prStart').disabled = true;
           $p('prStop').disabled = false;
@@ -8990,24 +9125,41 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         }
         function prOneMinuteStop(finished) {
           const om = pr.oneMinute;
-          if (!om) return;
+          if (!om || !om.running) return;
           om.running = false;
           cancelAnimationFrame(om.raf);
           prSessionPause();
+          if (!pr.routine) {
+            pr.finishedSeconds = prSessionSeconds();
+            prSessionEnd();
+          }
           $p('prStart').disabled = false;
           $p('prStop').disabled = true;
           $p('prCount').disabled = true;
           if (finished) {
-            const best = PP.bestScore(pr.progress, pr.exId, om.label);
-            pr.progress = PP.logScore(pr.progress, pr.exId, { date: todayKey(), count: om.count, label: om.label });
-            prSaveProgress();
-            $p('prBigMain').textContent = String(om.count);
-            $p('prBigSub').textContent = best === null ? 'changes: your first score for this pair' : (om.count > best ? `changes: a new best (was ${best})!` : `changes (best ${best})`);
-            prDrawScores(pr.ex);
-            if (pr.routine) setTimeout(() => prRoutineNext(), 2500);
+            pr.pendingScore = { exId: om.exId, label: om.label, from: om.from, to: om.to, routine: om.routine, step: om.step };
+            $p('prBigMain').textContent = 'Done';
+            $p('prBigSub').textContent = 'Enter your clean changes below, or use the live counter total.';
+            $p('prScoreTotal').value = String(om.count);
+            $p('prScoreEntry').hidden = false;
+            $p('prScoreTotal').focus();
           } else {
             $p('prBigSub').textContent = 'Stopped: not counted. Press Start for a full minute.';
           }
+          prUpdateMobile();
+        }
+        function prSaveEnteredScore() {
+          const attempt = pr.pendingScore;
+          const raw = $p('prScoreTotal').value;
+          const count = Number(raw);
+          if (!attempt || raw === '' || !Number.isInteger(count) || count < 0 || count > 999) { $p('prSaveStatus').textContent = 'Enter a whole number from 0 to 999.'; return; }
+          const best = PP.bestScore(pr.progress, attempt.exId, attempt.label);
+          pr.progress = PP.logScore(pr.progress, attempt.exId, { date: todayKey(), count, label: attempt.label });
+          prSaveProgress(); pr.pendingScore = null; $p('prScoreEntry').hidden = true;
+          $p('prBigMain').textContent = String(count);
+          $p('prBigSub').textContent = best === null ? 'Your first score for this pair' : 'Clean changes (earlier best ' + best + ')';
+          prDrawScores(attempt);
+          if (attempt.routine && pr.routine === attempt.routine && pr.routine.step === attempt.step) prRoutineNext();
         }
         function prDrawScores(ex) {
           const label = `${ex.from}>${ex.to}`;
@@ -9027,17 +9179,24 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const tempo = Number(effectiveConfig()?.song?.tempo);
           if (!pr.opened && tempo) $p('prTempo').value = String(Math.max(50, Math.min(120, tempo)));
           pr.opened = true;
+          pr.returnFocus = document.activeElement;
+          pr.inertElements = [...document.body.children].filter((el) => el !== practiceEl && el !== $p('prHelpDialog') && !['SCRIPT','STYLE'].includes(el.tagName) && !el.contains(practiceEl)).map((el) => ({ el, inert: el.inert }));
+          for (const item of pr.inertElements) item.el.inert = true;
           practiceEl.hidden = false;
+          practiceEl.focus();
           if (typeof exId === 'string' && PL.EXERCISES.some((e) => e.id === exId)) prOpen(exId);
           else prShowHome();
         }
         function closePractice() {
-          if (pr.oneMinute && pr.oneMinute.running) prOneMinuteStop(false);
+          prSaveSettings();
+          prCancelAttempt();
           if (player && player.playing) prStop();
           prSessionEnd();
           pr.routine = null;
           $p('prRoutineBar').hidden = true;
           practiceEl.hidden = true;
+          for (const item of pr.inertElements || []) item.el.inert = item.inert;
+          if (pr.returnFocus?.isConnected) pr.returnFocus.focus();
         }
         window.ukemusicPractice = openPractice;
         // 4.39: Learn → practise one of the song's changes, or its shapes
@@ -9063,7 +9222,12 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         document.getElementById('libPractice').addEventListener('click', () => openPractice());
         window.addEventListener('keydown', (event) => {
           if (practiceEl.hidden || document.querySelector('dialog[open]')) return;
-          if (event.key === 'Escape') {
+          if (event.key === 'Tab') {
+            const focusable = [...practiceEl.querySelectorAll('button, input, select, summary, [tabindex]')].filter((el) => !el.disabled && el.getClientRects().length);
+            const first = focusable[0], last = focusable[focusable.length - 1];
+            if (event.shiftKey && (document.activeElement === first || document.activeElement === practiceEl)) { event.preventDefault(); last?.focus(); }
+            else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+          } else if (event.key === 'Escape') {
             event.preventDefault();
             if (pr.view === 'player') {
               if (pr.routine) prRoutineEnd();
@@ -9082,9 +9246,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             else prStart();
           }
         });
-
         // ── Song / Notes tabs ───────────────────────────────────
-        function showTab(tab) {
+function showTab(tab) {
           const notes = tab === 'notes';
           const details = tab === 'details';
           const links = tab === 'links';

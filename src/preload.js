@@ -315,6 +315,8 @@ contextBridge.exposeInMainWorld('ukemusic', {
     melodySongText: (o) => practiceCatalog.melodySongText(o)
   },
   practiceProgress: {
+    normalise: (data) => practiceProgress.normalise(data),
+    markStarted: (data, id) => practiceProgress.markStarted(data, id),
     read: (folder) => practiceProgress.readProgress(folder),
     write: (folder, data) => practiceProgress.writeProgress(folder, data),
     logSession: (data, id, o) => { practiceProgress.logSession(data, id, o); return data; },
@@ -326,6 +328,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
     formatMinutes: (s) => practiceProgress.formatMinutes(s),
     defaults: () => practiceProgress.emptyProgress().routines
   },
+  practiceHelp: require('./practice-help'),
   fingers: {
     PATTERNS: fingerExercises.PATTERNS,
     FINGER_NAMES: fingerExercises.FINGER_NAMES,

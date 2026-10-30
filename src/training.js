@@ -20,7 +20,10 @@ const BLUES_KEYS = {
   A: ['A', 'D', 'E'],
   D: ['D', 'G', 'A'],
   F: ['F', 'Bb', 'C'],
-  E: ['E', 'A', 'B']
+  E: ['E', 'A', 'B'],
+  Db: ['Db', 'Gb', 'Ab'], Eb: ['Eb', 'Ab', 'Bb'],
+  'F#': ['F#', 'B', 'C#'], Ab: ['Ab', 'Db', 'Eb'],
+  Bb: ['Bb', 'Eb', 'F'], B: ['B', 'E', 'F#']
 };
 const ROOTS = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
 const TYPES = [
