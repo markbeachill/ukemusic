@@ -1,0 +1,26 @@
+{
+ "sections": [
+  {"key":"L","title":"Library","about":"Finding, adding and organising songs."},
+  {"key":"S","title":"Song sheet","about":"A song open: how it looks, key, capo, instrument, display."},
+  {"key":"P","title":"Playing","about":"Playback, karaoke and the group screen."},
+  {"key":"R","title":"Learn","about":"Learning a song by heart: from memory, quiz, changes, patterns, circle, learn sheet."},
+  {"key":"A","title":"Accompaniment","about":"Fingerpicking patterns, the tune, the pick sheet."},
+  {"key":"E","title":"Writing and editing","about":"Editing the words and chords, details, notes and the writing tools."},
+  {"key":"X","title":"Export and download","about":"Getting files out: PDFs, web pages, ChordPro, songbooks."},
+  {"key":"G","title":"Settings","about":"App-wide settings (desktop) and per-song choices."},
+  {"key":"F","title":"Free Practice","about":"Exercises, help, routines and progress."},
+  {"key":"D","title":"Devices and sync","about":"Dropbox, phone and tablet, sharing songs."}
+ ],
+ "items": {
+  "L1":"Song list","L2":"Search","L3":"Song actions menu","L4":"New song","L5":"Setlists","L6":"Paste from a website","L7":"Libraries menu","L9":"Add to a setlist","L10":"About","L11":"Library footer actions",
+  "S1":"Song open","S2":"Song overview","S3":"Further down the song","S4":"Key and capo changed","S5":"Another instrument","S6":"Display options","S7":"Chords in the words","S8":"Stage copy look","S10":"Playing choices for this song","S11":"Capo suggestions","S12":"Edit style (CSS)",
+  "P1":"Ready / paused","P2":"Playing","P3":"Karaoke","P4":"Group screen","P5":"Practice choices (loop, slower)","P6":"Group screen queue",
+  "R1":"Learn menu","R2":"From memory","R3":"Next chord? quiz","R4":"Quiz answered","R5":"Changes","R6":"Chord patterns","R7":"Circle of fifths","R8":"Trouble spots","R9":"Numbers","R10":"Learn sheet made","R11":"Learn sheet in the app","R12":"Shapes drill","R13":"Learn sheet (the file)",
+  "A1":"Accompaniment choices","A2":"Picking while playing","A3":"How picking works","A4":"Pick sheet","A5":"Tab in steps","A6":"Write the picking out","A7":"A pattern chosen",
+  "E1":"Words and chords","E2":"Details","E3":"Notes","E4":"Links","E5":"How to write (guide)","E6":"Chord shapes","E7":"Strum patterns","E8":"Guess the key","E9":"Save a key as a version","E10":"Earlier versions","E11":"ChordPro fields","E12":"Song's exports","E13":"File tab","E14":"Preview while editing","E15":"Insert buttons help","E16":"Editing help","E18":"Back on the sheet after editing",
+  "X0":"Export tab","X1":"Export / Download","X3":"Songbook PDF",
+  "G1":"This song's settings","G2":"Songs folder","G3":"Instrument and chord diagrams","G4":"How the chord sheet looks","G5":"Fonts, colours and printing","G6":"Stage copies","G7":"Playback and karaoke","G8":"App appearance",
+  "F1":"Practice menu","F2":"Start here","F3":"A category","F4":"Spider walk","F5":"Chord switching","F6":"One-minute changes","F7":"12-bar blues","F8":"Island strum","F9":"Metronome","F10":"Picking patterns","F11":"C major scale","F12":"Ear training","F13":"Free noodling","F14":"Exercise help","F15":"Exercise settings","F16":"My routine","F17":"Practice backup",
+  "D1":"Dropbox","D2":"Phone and tablet"
+ }
+}

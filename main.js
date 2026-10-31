@@ -22,6 +22,9 @@ const {
 } = require('electron');
 const log = require('./src/logger');
 
+// Tools such as the UI review (tools/ui-review) can run the app with a settings folder of its own,
+// so your own settings, songs folder and recent songs are left alone
+if (process.env.UKEMUSIC_USER_DATA) app.setPath('userData', process.env.UKEMUSIC_USER_DATA);
 log.init(app);
 log.info('main', `ukemusic v${require('./package.json').version} starting — Electron ${process.versions.electron}, ${process.platform} ${process.arch}, ${app.isPackaged ? 'packaged' : 'dev'}`);
 

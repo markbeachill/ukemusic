@@ -135,7 +135,10 @@ npm install
 npm test          # run all tests
 npm start         # launch in dev mode
 npm run build:web # the web player, into web/out (see web/README.md)
+npm run ui-review # pictures of every screen, for reviewing the interface (see tools/ui-review/README.md)
 ```
+
+Working on ukemusic with an AI assistant? [AGENTS.md](AGENTS.md) says where each kind of change goes and the rules the project keeps.
 
 ## Building
 

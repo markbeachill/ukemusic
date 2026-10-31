@@ -43,3 +43,6 @@ audit-text.txt
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# --- The UI review (npm run ui-review): made again whenever it is run ---
+UI review/

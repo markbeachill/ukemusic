@@ -61,3 +61,14 @@ test('the website: the gallery files are there, and the heading has no chord ove
   assert.ok(!read('site/index.html').includes('data-c="C"'));
   assert.ok(read('site/index.html').includes('href="gallery.html"'));
 });
+
+test('the UI review tool and the guide for AI assistants are there', () => {
+  for (const f of ['run.js', 'desktop.js', 'web.js', 'practice.js', 'build.js', 'page.html', 'catalog.json', 'README.md']) assert.ok(fs.existsSync(path.join(ROOT, 'tools', 'ui-review', f)), f);
+  const catalog = JSON.parse(read('tools/ui-review/catalog.json'));
+  const letters = catalog.sections.map((s) => s.key);
+  for (const id of Object.keys(catalog.items)) assert.ok(letters.includes(id.replace(/\d+$/, '')), `${id} is in a section`);
+  assert.match(read('package.json'), /"ui-review": "node tools\/ui-review\/run.js"/);
+  assert.match(read('main.js'), /UKEMUSIC_USER_DATA\) app\.setPath\('userData'/);
+  assert.ok(read('AGENTS.md').includes('tools/sync-practice.js --from-web'));
+  assert.match(read('.gitignore'), /^UI review\/$/m);
+});

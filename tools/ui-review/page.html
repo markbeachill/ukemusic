@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ukemusic UI review</title>
+<style>
+:root {
+  --bg: #f4f2ed; --panel: #ffffff; --ink: #1d2422; --muted: #66706c; --line: #e0dcd2;
+  --accent: #0e6b64; --accent-soft: #dcefeb; --desktop: #3657c9; --ipad: #b5531d; --iphone: #7a3fb0;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 6px 18px -8px rgba(0,0,0,.25);
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #141817; --panel: #1d2321; --ink: #e8eeeb; --muted: #9aa7a2; --line: #2e3734; --accent: #46b7ab; --accent-soft: #183530; --desktop: #8aa2ff; --ipad: #f0965f; --iphone: #c69af0; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #141817; --panel: #1d2321; --ink: #e8eeeb; --muted: #9aa7a2; --line: #2e3734; --accent: #46b7ab; --accent-soft: #183530; --desktop: #8aa2ff; --ipad: #f0965f; --iphone: #c69af0; color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.45 var(--sans); }
+button { font: inherit; color: inherit; cursor: pointer; }
+header { position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--line); }
+header h1 { font-size: 17px; margin: 0; }
+@media (max-width: 600px) { header h1 small { display: block; margin-left: 0; } }
+header h1 small { font-weight: 500; color: var(--muted); margin-left: 6px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; }
+.seg button { border: 0; background: transparent; padding: 6px 12px; border-right: 1px solid var(--line); }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.seg button .n { opacity: .7; font-size: 12px; margin-left: 4px; }
+.spacer { flex: 1; }
+.tool { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 5px 10px; }
+.layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); min-height: calc(100vh - 56px); }
+nav#side { position: sticky; top: 56px; align-self: start; height: calc(100vh - 56px); overflow: auto; border-right: 1px solid var(--line); padding: 10px 8px 40px; background: var(--panel); }
+nav#side .sec { margin: 8px 0 2px; }
+nav#side .sec > button { display: flex; width: 100%; align-items: baseline; gap: 8px; border: 0; background: none; text-align: left; padding: 6px 8px; border-radius: 7px; font-weight: 700; }
+nav#side .sec > button .k { font: 700 12px var(--sans); color: #fff; background: var(--accent); border-radius: 5px; padding: 1px 6px; }
+nav#side .sec > button .c { margin-left: auto; font-weight: 500; font-size: 12px; color: var(--muted); }
+nav#side ul { list-style: none; margin: 0; padding: 0 0 0 6px; }
+nav#side li button { display: flex; gap: 8px; width: 100%; border: 0; background: none; text-align: left; padding: 3px 8px; border-radius: 6px; font-size: 13.5px; align-items: center; }
+nav#side li button:hover, nav#side .sec > button:hover { background: var(--accent-soft); }
+nav#side li button.on { background: var(--accent-soft); font-weight: 700; }
+nav#side li .id { font: 600 12px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); min-width: 30px; }
+nav#side li .dots { margin-left: auto; display: inline-flex; gap: 3px; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--line); display: inline-block; }
+.dot.desktop.has { background: var(--desktop); } .dot.ipad.has { background: var(--ipad); } .dot.iphone.has { background: var(--iphone); }
+li.missing .name { color: var(--muted); }
+main { padding: 16px 22px 80px; min-width: 0; }
+.intro { color: var(--muted); max-width: 80ch; margin: 2px 0 14px; }
+h2.sec-title { margin: 26px 0 4px; font-size: 22px; scroll-margin-top: 70px; display: flex; gap: 10px; align-items: baseline; }
+h2.sec-title .k { font-size: 14px; color: #fff; background: var(--accent); border-radius: 6px; padding: 2px 8px; }
+.sec-about { color: var(--muted); margin: 0 0 12px; }
+.grid { display: grid; gap: 16px; }
+.grid.desktop { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+.grid.ipad { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.grid.iphone { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; scroll-margin-top: 70px; }
+.card .img { border: 0; padding: 0; background: #eceae4; display: block; width: 100%; }
+.card img { display: block; width: 100%; height: auto; }
+.card .meta { padding: 8px 10px 10px; }
+.card .t { font-weight: 700; display: flex; gap: 6px; align-items: baseline; }
+.card .t .id { font: 600 12px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+.card .cap { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.card.flash { outline: 3px solid var(--accent); }
+.badge { font-size: 11px; font-weight: 700; color: #fff; border-radius: 5px; padding: 1px 6px; text-transform: none; }
+.badge.desktop { background: var(--desktop); } .badge.ipad { background: var(--ipad); } .badge.iphone { background: var(--iphone); }
+/* compare */
+.rows { display: grid; gap: 10px; }
+.row { display: grid; grid-template-columns: 200px minmax(0, 1.9fr) minmax(0, 1fr) minmax(0, .62fr); gap: 12px; align-items: start; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px; scroll-margin-top: 104px; }
+.row .label { font-weight: 700; }
+.row .label .id { display: block; font: 600 12px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+.row .label button.focus { margin-top: 8px; border: 1px solid var(--line); background: var(--bg); border-radius: 7px; padding: 3px 9px; font-size: 13px; }
+.row .label .note-flag { display: inline-block; margin-top: 6px; font-size: 12px; color: var(--accent); }
+.cell { min-width: 0; }
+.cell .img { border: 1px solid var(--line); padding: 0; background: #eceae4; border-radius: 6px; overflow: hidden; display: block; width: 100%; }
+.cell img { display: block; width: 100%; height: auto; }
+.cell .cap { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+.none { border: 1px dashed var(--line); border-radius: 6px; color: var(--muted); font-size: 13px; padding: 18px 10px; text-align: center; }
+.colhead { display: grid; grid-template-columns: 200px minmax(0, 1.9fr) minmax(0, 1fr) minmax(0, .62fr); gap: 12px; padding: 0 11px; position: sticky; top: 56px; z-index: 5; background: var(--bg); padding-top: 6px; padding-bottom: 6px; }
+.focusview { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr) minmax(0, .62fr); gap: 16px; align-items: start; }
+.focusview h3 { margin: 0 0 6px; font-size: 14px; }
+.focus-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 12px; }
+.focus-head h2 { margin: 0; font-size: 22px; }
+.focus-head .id { font: 700 14px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+.notes { margin-top: 14px; }
+.notes textarea { width: 100%; min-height: 70px; border: 1px solid var(--line); border-radius: 8px; padding: 8px; font: inherit; background: var(--panel); color: var(--ink); }
+.notes label { font-weight: 700; font-size: 13px; }
+/* lightbox */
+#lb { position: fixed; inset: 0; z-index: 50; background: rgba(10,14,13,.92); display: none; flex-direction: column; color: #eef; }
+#lb.open { display: flex; }
+#lb .bar { display: flex; gap: 10px; align-items: center; padding: 8px 12px; flex-wrap: wrap; }
+#lb .bar .title { font-weight: 700; }
+#lb .bar .cap { color: #b8c4c0; font-size: 14px; }
+#lb .bar button { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; border-radius: 8px; padding: 5px 11px; }
+#lb .stage { flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center; padding: 6px 12px 16px; }
+#lb .stage img { max-width: 100%; max-height: 100%; object-fit: contain; box-shadow: 0 10px 40px rgba(0,0,0,.5); background: #fff; cursor: zoom-in; }
+#lb.zoom .stage { align-items: flex-start; justify-content: flex-start; }
+#lb.zoom .stage img { max-width: none; max-height: none; cursor: zoom-out; }
+#lb .count { color: #b8c4c0; font-size: 13px; }
+.notes-all { max-width: 900px; }
+.notes-all pre { white-space: pre-wrap; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  nav#side { position: static; height: auto; max-height: 40vh; border-right: 0; border-bottom: 1px solid var(--line); }
+  .row, .colhead { grid-template-columns: 1fr; }
+  .colhead { display: none; }
+  .focusview { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>ukemusic UI review <small id="ver"></small></h1>
+  <div class="seg" role="group" aria-label="View">
+    <button id="modeApp" aria-pressed="true">By app</button>
+    <button id="modeCompare" aria-pressed="false">Compare apps</button>
+    <button id="modeNotes" aria-pressed="false">Review notes</button>
+  </div>
+  <div class="seg" id="appSeg" role="group" aria-label="App">
+    <button data-app="desktop" aria-pressed="true">Desktop<span class="n"></span></button>
+    <button data-app="ipad" aria-pressed="false">iPad<span class="n"></span></button>
+    <button data-app="iphone" aria-pressed="false">iPhone<span class="n"></span></button>
+  </div>
+  <span class="spacer"></span>
+  <button class="tool" id="theme" title="Light or dark">Light / dark</button>
+</header>
+<div class="layout">
+  <nav id="side" aria-label="Sections and screens"></nav>
+  <main id="main"></main>
+</div>
+<div id="lb" role="dialog" aria-modal="true" aria-label="Screenshot">
+  <div class="bar">
+    <button id="lbPrev" title="Previous (←)">←</button>
+    <button id="lbNext" title="Next (→)">→</button>
+    <span class="badge" id="lbApp"></span>
+    <span class="title" id="lbTitle"></span>
+    <span class="cap" id="lbCap"></span>
+    <span class="spacer" style="flex:1"></span>
+    <span class="count" id="lbCount"></span>
+    <button id="lbZoom" title="Actual size (Z)">Actual size</button>
+    <button id="lbClose" title="Close (Esc)">Close</button>
+  </div>
+  <div class="stage" id="lbStage"><img id="lbImg" alt=""></div>
+</div>
+<script>
+const DATA = /*DATA*/null;
+const APPS = [{ id: 'desktop', name: 'Desktop' }, { id: 'ipad', name: 'iPad' }, { id: 'iphone', name: 'iPhone' }];
+const appName = (a) => APPS.find((x) => x.id === a).name;
+const $ = (id) => document.getElementById(id);
+const esc = (t) => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const state = { mode: 'app', app: 'desktop', item: null, section: null };
+const shotOf = (app, id) => DATA.shots[app][id];
+const src = (app, id) => `images/${app}/${id}.jpg`;
+const itemsOf = (sec) => sec.items;
+const allItems = () => DATA.sections.flatMap((s) => s.items);
+$('ver').textContent = DATA.subtitle;
+
+// review notes, kept in this browser
+const NOTES_KEY = 'ukemusic-ui-review-notes';
+let notes = {};
+try { notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '{}'); } catch (_e) { notes = {}; }
+const saveNotes = () => { try { localStorage.setItem(NOTES_KEY, JSON.stringify(notes)); } catch (_e) { /* not kept */ } };
+
+for (const b of document.querySelectorAll('#appSeg button')) b.querySelector('.n').textContent = Object.keys(DATA.shots[b.dataset.app]).length;
+
+function side() {
+  const nav = $('side');
+  nav.innerHTML = DATA.sections.map((s) => {
+    const n = state.mode === 'app' ? s.items.filter((i) => shotOf(state.app, i.id)).length : s.items.length;
+    const items = s.items.map((i) => {
+      const has = APPS.map((a) => `<span class="dot ${a.id}${shotOf(a.id, i.id) ? ' has' : ''}" title="${a.name}: ${shotOf(a.id, i.id) ? 'yes' : 'not in this app'}"></span>`).join('');
+      const missing = state.mode === 'app' && !shotOf(state.app, i.id);
+      return `<li class="${missing ? 'missing' : ''}"><button data-item="${i.id}" class="${state.item === i.id ? 'on' : ''}"><span class="id">${i.id}</span><span class="name">${esc(i.name)}</span><span class="dots">${has}</span></button></li>`;
+    }).join('');
+    return `<div class="sec"><button data-sec="${s.key}"><span class="k">${s.key}</span>${esc(s.title)}<span class="c">${n}</span></button><ul>${items}</ul></div>`;
+  }).join('');
+}
+$('side').addEventListener('click', (e) => {
+  const it = e.target.closest('[data-item]');
+  const sec = e.target.closest('[data-sec]');
+  if (it) {
+    const id = it.dataset.item;
+    if (state.mode === 'app') {
+      if (!shotOf(state.app, id)) { go(`compare-${id}`); return; }
+      go(`${state.app}-${id}`);
+    } else go(`compare-${id}`);
+  } else if (sec) {
+    if (state.mode === 'app') go(`${state.app}-${sec.dataset.sec}`);
+    else go(`compare-${sec.dataset.sec}`);
+  }
+});
+
+function renderApp() {
+  const a = state.app;
+  const main = $('main');
+  main.innerHTML = `<p class="intro">${esc(DATA.intro[a])} Click a picture to see it large; ← and → go through every screen of the ${appName(a)} in order. Each screen has an id (S4, R3…) that's the same in every app, so "R3 on the iPhone" is a picture you can find.</p>` + DATA.sections.map((s) => {
+    const cards = s.items.filter((i) => shotOf(a, i.id)).map((i) => {
+      const sh = shotOf(a, i.id);
+      return `<div class="card" id="card-${i.id}"><button class="img" data-open="${a}|${i.id}" aria-label="Open ${i.id} ${esc(i.name)}"><img loading="lazy" src="${src(a, i.id)}" width="${sh.w}" height="${sh.h}" alt="${esc(sh.caption)}"></button><div class="meta"><div class="t"><span class="id">${i.id}</span>${esc(i.name)}</div><div class="cap">${esc(sh.caption)}</div></div></div>`;
+    }).join('');
+    const missing = s.items.filter((i) => !shotOf(a, i.id));
+    const miss = missing.length ? `<p class="sec-about" style="font-size:13px">Not in the ${appName(a)}: ${missing.map((i) => `<a href="#compare-${i.id}">${i.id} ${esc(i.name)}</a>`).join(', ')}</p>` : '';
+    return cards ? `<h2 class="sec-title" id="sec-${s.key}"><span class="k">${s.key}</span>${esc(s.title)}</h2><p class="sec-about">${esc(s.about)}</p><div class="grid ${a}">${cards}</div>${miss}` : '';
+  }).join('');
+}
+
+function cell(a, id) {
+  const sh = shotOf(a, id);
+  if (!sh) return `<div class="cell"><div class="none">Not in the ${appName(a)}</div></div>`;
+  return `<div class="cell"><button class="img" data-open="${a}|${id}" aria-label="Open ${appName(a)} ${id}"><img loading="lazy" src="${src(a, id)}" width="${sh.w}" height="${sh.h}" alt="${esc(sh.caption)}"></button><div class="cap"><span class="badge ${a}">${appName(a)}</span> ${esc(sh.caption)}</div></div>`;
+}
+function renderCompare() {
+  const main = $('main');
+  const head = `<div class="colhead"><span></span>${APPS.map((a) => `<span><span class="badge ${a.id}">${a.name}</span></span>`).join('')}</div>`;
+  main.innerHTML = `<p class="intro">Each screen with the three apps side by side. "Look closer" shows one screen larger, with room for review notes; ← and → go to the next screen.</p>${head}` + DATA.sections.map((s) => `<h2 class="sec-title" id="sec-${s.key}"><span class="k">${s.key}</span>${esc(s.title)}</h2><p class="sec-about">${esc(s.about)}</p><div class="rows">${s.items.map((i) => `<div class="row" id="row-${i.id}"><div class="label"><span class="id">${i.id}</span>${esc(i.name)}<br><button class="focus" data-focus="${i.id}">Look closer</button>${notes[i.id] ? '<br><span class="note-flag">✎ has notes</span>' : ''}</div>${APPS.map((a) => cell(a.id, i.id)).join('')}</div>`).join('')}</div>`).join('');
+}
+function renderFocus(id) {
+  const list = allItems();
+  const k = list.findIndex((i) => i.id === id);
+  const it = list[k];
+  const sec = DATA.sections.find((s) => s.items.includes(it));
+  const prev = list[(k - 1 + list.length) % list.length];
+  const next = list[(k + 1) % list.length];
+  $('main').innerHTML = `<div class="focus-head"><button class="tool" data-go="compare-${sec.key}">← ${esc(sec.title)}</button><span class="id">${it.id}</span><h2>${esc(it.name)}</h2><span class="spacer" style="flex:1"></span><button class="tool" data-go="compare-${prev.id}" title="Previous (←)">← ${prev.id}</button><button class="tool" data-go="compare-${next.id}" title="Next (→)">${next.id} →</button></div>
+  <div class="focusview">${APPS.map((a) => `<div><h3><span class="badge ${a.id}">${a.name}</span></h3>${cell(a.id, it.id)}</div>`).join('')}</div>
+  <div class="notes"><label for="noteBox">Review notes for ${it.id} ${esc(it.name)} (kept in this browser; all notes are under Review notes)</label><textarea id="noteBox" placeholder="What works, what doesn't, what to change…">${esc(notes[it.id] || '')}</textarea></div>`;
+  $('noteBox').addEventListener('input', (e) => { const v = e.target.value; if (v.trim()) notes[it.id] = v; else delete notes[it.id]; saveNotes(); });
+}
+function renderNotes() {
+  const list = allItems().filter((i) => notes[i.id]);
+  const text = list.map((i) => `${i.id} ${i.name}\n${notes[i.id].trim()}\n`).join('\n');
+  $('main').innerHTML = `<div class="notes-all"><h2 style="margin-top:6px">Review notes</h2><p class="intro">Notes written under "Look closer" in Compare apps. They're kept in this browser only: copy them to keep or send them.</p>${list.length ? `<button class="tool" id="copyNotes">Copy all notes</button> <span id="copied" class="intro"></span><pre>${esc(text)}</pre>` : '<p>No notes yet.</p>'}</div>`;
+  if (list.length) $('copyNotes').addEventListener('click', async () => { try { await navigator.clipboard.writeText(text); $('copied').textContent = 'Copied.'; } catch (_e) { $('copied').textContent = 'Select the text and copy it.'; } });
+}
+$('main').addEventListener('click', (e) => {
+  const o = e.target.closest('[data-open]');
+  const f = e.target.closest('[data-focus]');
+  const g = e.target.closest('[data-go]');
+  if (o) { const [a, id] = o.dataset.open.split('|'); openLb(a, id); }
+  else if (f) go(`compare-${f.dataset.focus}`);
+  else if (g) go(g.dataset.go);
+});
+
+// lightbox: in By app, every screen of that app; in Compare, the same screen in each app, then the next
+let seq = []; let at = 0;
+function openLb(a, id) {
+  if (state.mode === 'app') seq = allItems().filter((i) => shotOf(a, i.id)).map((i) => [a, i.id]);
+  else seq = allItems().flatMap((i) => APPS.filter((x) => shotOf(x.id, i.id)).map((x) => [x.id, i.id]));
+  at = seq.findIndex(([x, y]) => x === a && y === id);
+  showLb(); $('lb').classList.add('open'); $('lbClose').focus();
+}
+function showLb() {
+  const [a, id] = seq[at];
+  const it = allItems().find((i) => i.id === id);
+  const sh = shotOf(a, id);
+  $('lbImg').src = src(a, id); $('lbImg').alt = sh.caption;
+  $('lbApp').textContent = appName(a); $('lbApp').className = `badge ${a}`;
+  $('lbTitle').textContent = `${id} ${it.name}`; $('lbCap').textContent = sh.caption;
+  $('lbCount').textContent = `${at + 1} of ${seq.length}`;
+  $('lb').classList.remove('zoom'); $('lbZoom').textContent = 'Actual size';
+}
+const lbStep = (d) => { at = (at + d + seq.length) % seq.length; showLb(); };
+const lbClose = () => $('lb').classList.remove('open');
+const lbZoom = () => { const z = $('lb').classList.toggle('zoom'); $('lbZoom').textContent = z ? 'Fit' : 'Actual size'; };
+$('lbPrev').onclick = () => lbStep(-1); $('lbNext').onclick = () => lbStep(1); $('lbClose').onclick = lbClose; $('lbZoom').onclick = lbZoom; $('lbImg').onclick = lbZoom;
+$('lbStage').addEventListener('click', (e) => { if (e.target === $('lbStage')) lbClose(); });
+document.addEventListener('keydown', (e) => {
+  if (e.target.matches('textarea, input')) return;
+  if ($('lb').classList.contains('open')) {
+    if (e.key === 'ArrowRight') lbStep(1); else if (e.key === 'ArrowLeft') lbStep(-1); else if (e.key === 'Escape') lbClose(); else if (e.key === 'z' || e.key === 'Z') lbZoom();
+    return;
+  }
+  if (state.mode === 'compare' && state.item && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+    const list = allItems(); const k = list.findIndex((i) => i.id === state.item);
+    go(`compare-${list[(k + (e.key === 'ArrowRight' ? 1 : -1) + list.length) % list.length].id}`);
+  }
+});
+
+// routing: #desktop, #ipad-S4, #compare, #compare-R3, #compare-L, #notes
+function go(h) { if (location.hash.slice(1) === h) route(); else location.hash = h; }
+function route() {
+  const h = decodeURIComponent(location.hash.slice(1)) || 'desktop';
+  const [m, rest] = [h.split('-')[0], h.split('-').slice(1).join('-')];
+  const isItem = (x) => allItems().some((i) => i.id === x);
+  const isSec = (x) => DATA.sections.some((s) => s.key === x);
+  if (m === 'notes') { state.mode = 'notes'; state.item = null; }
+  else if (m === 'compare') { state.mode = 'compare'; state.item = isItem(rest) ? rest : null; state.section = isSec(rest) ? rest : null; }
+  else { state.mode = 'app'; state.app = APPS.some((a) => a.id === m) ? m : 'desktop'; state.item = isItem(rest) ? rest : null; state.section = isSec(rest) ? rest : null; }
+  $('modeApp').setAttribute('aria-pressed', state.mode === 'app'); $('modeCompare').setAttribute('aria-pressed', state.mode === 'compare'); $('modeNotes').setAttribute('aria-pressed', state.mode === 'notes');
+  $('appSeg').style.visibility = state.mode === 'app' ? 'visible' : 'hidden';
+  for (const b of document.querySelectorAll('#appSeg button')) b.setAttribute('aria-pressed', b.dataset.app === state.app);
+  side();
+  if (state.mode === 'notes') { renderNotes(); window.scrollTo(0, 0); return; }
+  if (state.mode === 'compare' && state.item) { renderFocus(state.item); window.scrollTo(0, 0); return; }
+  if (state.mode === 'compare') renderCompare(); else renderApp();
+  const target = state.item ? $(`card-${state.item}`) : state.section ? $(`sec-${state.section}`) : null;
+  if (target) { target.scrollIntoView({ block: 'start' }); if (state.item) { target.classList.add('flash'); setTimeout(() => target.classList.remove('flash'), 1400); } }
+  else window.scrollTo(0, 0);
+  const on = document.querySelector('#side button.on'); if (on) on.scrollIntoView({ block: 'nearest' });
+}
+$('modeApp').onclick = () => go(state.app);
+$('modeCompare').onclick = () => go('compare');
+$('modeNotes').onclick = () => go('notes');
+for (const b of document.querySelectorAll('#appSeg button')) b.onclick = () => go(b.dataset.app);
+$('theme').onclick = () => { const r = document.documentElement; const dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches; r.dataset.theme = dark ? 'light' : 'dark'; };
+window.addEventListener('hashchange', route);
+route();
+</script>
+</body>
+</html>
