@@ -56,6 +56,8 @@ const DEFAULT_CONFIG = {
     stage_font: 'Consolas',
     stage_size: 18,
     stage_fit: true,
+    stage_two_chords: 'format', // 4.54: the two-page Stage copy: chords as the Stage format, 'above' or 'in' the words
+    stage_two_min: 12,          // 4.54: its smallest text, in points
     stage_format: 'compact',   // 4.52: Compact (chords in the words) is the default
     stage_compact: true,       // 4.52: settings from before then have been moved to Compact once
     stage_chorus: 'full',
@@ -794,9 +796,13 @@ function registerIpc() {
   // Render a complete HTML document to PDF in a hidden window, then save it to the song's exports.
   // Render a complete HTML document to a PDF (Buffer) in a hidden window
   let lastStageFit = null;
+  let lastTwoPager = null;
   async function renderPdf(html, pageSize = 'A4', printStyle = 'standard') {
+    // 4.54: the two-page Stage copy prints like a Stage copy, laid out by src/two-pager.js first
+    const twoPager = printStyle === 'stage2';
+    if (twoPager) printStyle = 'stage';
     const fitSetting = printStyle === 'stage' ? await readConfigObject().then((r) => r?.config?.export?.stage_fit).catch(() => true) : false;
-    const fitStage = printStyle === 'stage' && fitSetting !== false && String(fitSetting) !== 'false';
+    const fitStage = !twoPager && printStyle === 'stage' && fitSetting !== false && String(fitSetting) !== 'false';
     const tempFile = path.join(app.getPath('temp'), `ukemusic-print-${process.pid}-${Date.now()}.html`);
     // Printable area at 96 px per inch (page minus 0.6" margins all round)
     const letter = pageSize === 'Letter';
@@ -834,6 +840,15 @@ function registerIpc() {
           : '<div style="font-family:sans-serif;font-size:8px;color:#888;width:100%;text-align:center;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>',
         margins: { top: 0.6, bottom: 0.6, left: 0.6, right: 0.6 }
       });
+      if (twoPager) {
+        const source = await fsp.readFile(path.join(__dirname, 'src', 'two-pager.js'), 'utf8');
+        await printWindow.webContents.executeJavaScript(`${source}\n;0`);
+        const maxPx = await printWindow.webContents.executeJavaScript("parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stage-size')) || 18");
+        const minPx = await printWindow.webContents.executeJavaScript("Number(document.documentElement.dataset.tpMin) || 16");
+        lastTwoPager = await printWindow.webContents.executeJavaScript(`UkeTwoPager.fit({ W: Math.min(document.documentElement.clientWidth, ${contentWidth}), H: ${contentHeight - 8}, minPx: ${minPx}, maxPx: ${maxPx} })`);
+        log.info('main', `Two-page Stage PDF: ${JSON.stringify(lastTwoPager)}`);
+        return await print();
+      }
       await keepTogether();
       let pdf = await print();
       // 4.28: a Stage copy that runs onto more pages is printed again a little smaller (no smaller
@@ -874,6 +889,8 @@ function registerIpc() {
     }
   }
 
+  // 4.54: how the last two-page Stage copy came out: { cols, once, spacing, px, pages, fits }
+  handle('song:twoPagerResult', async () => lastTwoPager);
   handle('song:exportPdf', async (_event, { folder, subfolder, fileName, html, pageSize = 'A4', printStyle = 'standard' } = {}) => {
     const pdf = await renderPdf(html, pageSize, printStyle);
     return songs.writeExport(folder, fileName, pdf, subfolder);

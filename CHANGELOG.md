@@ -1,5 +1,18 @@
 # Changelog
 
+## v4.54.0
+
+### Three PDFs to choose from: Chord sheet, Stage, Two-page Stage
+- **The Export box now has three separate choices at the top**: the **Chord sheet PDF** (your style set, for printing), the **Stage PDF** (big and bold, for playing from) and the **Two-page Stage PDF** (for a music stand). The Stage PDF used to come with the chord sheet PDF every time; now you tick the ones you want. The web page (under More formats) still comes as both copies.
+- If you'd saved "Make these my usual" with the chord sheet PDF ticked, the Stage PDF stays ticked too, as before. Until you choose, the chord sheet and Stage PDFs are ticked.
+
+### The Two-page Stage PDF
+- The song laid out to fit two pages, so there's no page to turn mid-song. It goes in the Stage folder (and the gig folder, if you have one) as "… (stage, two pages).pdf".
+- **Its choices are on the ribbon's Export tab (Two-page Stage)**: the chords **above the words**, **in the words** (which fits the most) or **as the Stage format**; and the **smallest text**, 11 to 14 pt (12 pt to start with). They're also in Settings → Stage copies; both places stay the same.
+- It fits the song in this order, stopping as soon as it fits: the text as big as will go (up to the Stage size, down to the smallest size you choose); then the gaps closed up (no blank lines, less space between parts); then two columns a page, with a line between them; then a repeated chorus printed once ("Chorus — as before"). A verse or chorus is never split across columns or pages unless it's taller than a whole column. A song that fits on one page at the Stage size stays on one page.
+- The words are bold, so the smaller sizes stay easy to read at a music stand.
+- A song too long for two pages even then takes a third page, rather than going smaller (the export message says so, and suggests chords in the words or a smaller size on the ribbon).
+
 ## v4.53.0
 
 ### Tidier ribbon buttons

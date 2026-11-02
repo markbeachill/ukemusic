@@ -2265,7 +2265,7 @@
           <div class="ribbon-panel" data-ribbon-panel="export" role="tabpanel" hidden>
             <div class="rib-group">
               <div class="rib-items">
-                <button id="exportNowButton" class="rib-button" type="button" data-icon="export" title="Export this song: everything is ticked (chord sheet PDF and web page, Markdown, ChordPro, and the lyrics); untick what you don't need. PDFs and web pages come as a song copy in your style set (Song folder) and a Stage copy, bold and black for gigs (Stage folder).">Export now</button>
+                <button id="exportNowButton" class="rib-button" type="button" data-icon="export" title="Export this song: choose the chord sheet PDF (your style set, Song folder), the Stage PDF (bold and black for gigs, Stage folder), the two-page Stage PDF (for a music stand), and more formats">Export now</button>
                 <button id="openExportsButton" class="rib-button" type="button" data-icon="folder" title="Open this song's exports folder">Exports folder</button>
               </div>
               <span class="rib-label">Export</span>
@@ -2323,6 +2323,30 @@
                 </div>
               </div>
               <span class="rib-label">Stage copy</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <div class="rib-col">
+                  <div class="rib-field" title="Where the chords go on the two-page Stage PDF">
+                    <label for="ribTwoChords">Chords</label>
+                    <select id="ribTwoChords" data-config-path="export.stage_two_chords">
+                      <option value="above">Above the words</option>
+                      <option value="in">In the words</option>
+                      <option value="format">As Stage format</option>
+                    </select>
+                  </div>
+                  <div class="rib-field" title="The text is made as big as fits on two pages, but no smaller than this (the words are bold)">
+                    <label for="ribTwoMin">Smallest</label>
+                    <select id="ribTwoMin" data-config-path="export.stage_two_min">
+                      <option value="11">11 pt</option>
+                      <option value="12">12 pt</option>
+                      <option value="13">13 pt</option>
+                      <option value="14">14 pt</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <span class="rib-label">Two-page Stage</span>
             </div>
           </div>
 
@@ -2899,7 +2923,7 @@
                       </div>
                       <div class="field">
                         <span class="field-label">Usual export formats</span>
-                        <p class="help"><span id="usualFormatsText">The chord sheet PDF</span>. Change them in the Export box: tick what you want (More formats for the rest) and "Make these my usual". <button id="usualFormatsReset" type="button" class="link-button">Back to just the PDF</button></p>
+                        <p class="help"><span id="usualFormatsText">The chord sheet PDF</span>. Change them in the Export box: tick what you want (More formats for the rest) and "Make these my usual". <button id="usualFormatsReset" type="button" class="link-button">Back to the two PDFs</button></p>
                       </div>
                       <div class="field">
                         <label for="export-theme">HTML exports: background</label>
@@ -2960,6 +2984,25 @@
                           <option value="once">Don't repeat: print it once, then "Chorus — as before"</option>
                         </select>
                         <p class="help">Only parts the song marks with a heading ([[Chorus]], [[Refrain]]…) and only when the words and chords are exactly the same: a chorus that changes is printed in full. A song with no headings is always printed in full (Write → Chord patterns → "Write the part names into the song" adds them).</p>
+                      </div>
+                      <div class="field">
+                        <span class="field-label">Two-page Stage PDF (also on the ribbon: Export → Two-page Stage)</span>
+                        <div class="gig-row">
+                          <label for="export-stage_two_chords">Chords</label>
+                          <select id="export-stage_two_chords" data-config-path="export.stage_two_chords">
+                            <option value="format">As the Stage format</option>
+                            <option value="above">Above the words</option>
+                            <option value="in">In the words (fits more)</option>
+                          </select>
+                          <label for="export-stage_two_min">Smallest text</label>
+                          <select id="export-stage_two_min" data-config-path="export.stage_two_min">
+                            <option value="11">11 pt</option>
+                            <option value="12">12 pt</option>
+                            <option value="13">13 pt</option>
+                            <option value="14">14 pt</option>
+                          </select>
+                        </div>
+                        <p class="help">The song is fitted to two pages, in this order, stopping as soon as it fits: the text as big as will go (down to the smallest size here); then the gaps closed up (no blank lines, less space between parts); then two columns a page; then a repeated chorus printed once ("as before"). A part is never split across columns or pages unless it's taller than a whole column. The words are bold, so the smaller sizes stay easy to read. A song too long even then takes a third page.</p>
                       </div>
                       <div class="field">
                         <label class="check-line"><input id="export-stage_fit" type="checkbox" data-config-path="export.stage_fit" /> Shrink to fit fewer pages</label>
@@ -3262,14 +3305,15 @@
       <form id="exportForm" method="dialog">
         <h2 id="exportHeading">Export</h2>
         <p id="exportWhere" class="dialog-note"></p>
-        <p class="dialog-note">PDFs and web pages are made twice: a <strong>song</strong> copy in your style set (in the <em>Song</em> folder, or the key's own folder), and a <strong>Stage</strong> copy for playing from (in the <em>Stage</em> folder).</p>
-        <label class="export-main"><input type="checkbox" name="format" value="sheet_pdf" /> <strong>Chord sheet PDF</strong> — for printing (and its Stage copy)</label>
+        <label class="export-main"><input type="checkbox" name="format" value="sheet_pdf" /> <strong>Chord sheet PDF</strong> — for printing, in your style set (in the <em>Song</em> folder, or the key's own folder)</label>
+        <label class="export-main"><input type="checkbox" name="format" value="sheet_stage" /> <strong>Stage PDF</strong> — big and bold, for playing from (in the <em>Stage</em> folder)</label>
+        <label class="export-main" title="Chords above or in the words, and the smallest text: ribbon → Export → Two-page Stage"><input type="checkbox" name="format" value="sheet_stage2" /> <strong>Two-page Stage PDF</strong> — fitted to two pages, for a music stand with no page to turn (in the <em>Stage</em> folder)</label>
         <details id="exportMore" class="export-more">
           <summary>More formats</summary>
           <div class="export-grid">
             <fieldset>
               <legend>Chord sheet</legend>
-              <label><input type="checkbox" name="format" value="sheet_html" /> Web page (HTML)</label>
+              <label><input type="checkbox" name="format" value="sheet_html" /> Web page (HTML), song and Stage copies</label>
               <label><input type="checkbox" name="format" value="sheet_md" /> Text with formatting (Markdown), for notes apps</label>
               <label><input type="checkbox" name="format" value="sheet_cho" /> ChordPro (.cho), for other chord apps</label>
               <label class="export-sub" title="Songs with their tune written in ({melody} lines) also get it as music notation (an ABC block in each section), which ChordPro apps that draw ABC show as a stave. Apps that don't may show the ABC as text, so it's off unless you want it"><input type="checkbox" data-config-path="export.chordpro_abc" /> with the tune as notation (ABC), for apps that draw it</label>
@@ -4171,6 +4215,8 @@
             stage_font: 'Consolas',
             stage_size: 18,
             stage_fit: true,
+            stage_two_chords: 'format',
+            stage_two_min: 12,
             stage_format: 'compact',
             stage_chorus: 'full',
             stage_diagrams: 'song'
@@ -5125,6 +5171,78 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           return buildPreviewDocument(markup, docCss(stage, EXPORT_CSS), theme, title, docAttrs(config, { stage }));
         }
 
+        // ── 4.54: the Stage copy on two pages (src/two-pager.js fits it, in main.js renderPdf) ──
+        // Chords above or in the words: as the Stage format, or chosen for the two-pager
+        // (Settings → Stage copies → Two pages)
+        function twoPagerFormat(config = effectiveConfig()) {
+          const own = stageFormatId(config);
+          const want = config?.export?.stage_two_chords;
+          if (want === 'in') return 'compact';
+          if (want === 'above') return ['clear', 'brackets'].includes(own) ? own : 'clear';
+          return own;
+        }
+        const TWO_PAGER_CSS = `
+      html[data-two-pager] body { padding: 0; }
+      .tp-variant { display: none; }
+      .tp-probe { position: absolute; left: 0; top: 0; visibility: hidden; }
+      .tp-page { overflow: hidden; break-after: page; page-break-after: always; }
+      .tp-page:last-child { break-after: auto; page-break-after: auto; }
+      .tp-cols { display: flex; align-items: flex-start; }
+      .tp-cols-2 { background: linear-gradient(#b9b9b9, #b9b9b9) center / 1px 100% no-repeat; min-height: 40%; }
+      .tp-col > :first-child, .tp-head > :first-child { margin-top: 0 !important; }
+      .song-section.tp-piece + .song-section.tp-piece { margin-top: 0 !important; }
+      /* bold words: easier to read at a smaller size on a music stand */
+      html[data-two-pager] .inline-line, html[data-two-pager] .lyrics, html[data-two-pager] .lyric-line,
+      html[data-two-pager] .chord-table td.lyric, html[data-two-pager] .chord-table .lyric-row td { font-weight: 600 !important; }
+      /* the gaps closed up */
+      html[data-tp-spacing="tight"] .song-section { margin-top: 0.45em !important; }
+      html[data-tp-spacing="tight"] .line-group:has(> .lyrics:empty:only-child) { display: none; }
+      html[data-tp-spacing="tight"] .inline-line { line-height: 1.38 !important; }
+      html[data-tp-spacing="tight"] .lyric-line { line-height: 1.25 !important; }
+      html[data-tp-spacing="tight"] .chord-table td.chord, html[data-tp-spacing="tight"] .chord-table .chord-row td { padding-top: 0.15em !important; }
+      html[data-tp-spacing="tight"] .chord-table td.lyric, html[data-tp-spacing="tight"] .chord-table .lyric-row td { padding-bottom: 0.05em !important; }
+      html[data-tp-spacing="tight"] .section { margin-bottom: 0.15em !important; }
+      html[data-tp-spacing="tight"] .chord-diagrams { margin-bottom: 0.3em !important; }`;
+        function twoPagerDocument(semitones, config) {
+          const fmt = twoPagerFormat(config);
+          const cfg = mergeConfig(config, { export: { stage_format: fmt } });
+          const minPx = twoPagerMinPx(config);
+          const pageW = ((state.config?.export?.pdf_page_size === 'Letter' ? 8.5 : 8.27) - 1.2) * 96;
+          const colW = (pageW - 22) / 2;
+          const texts = [['0', getEditorValue()]];
+          // with repeated choruses printed once: kept for when the song won't fit otherwise
+          const once = stageText(getEditorValue(), mergeConfig(cfg, { export: { stage_chorus: 'once' } }));
+          if (config?.export?.stage_chorus === 'once') texts[0][1] = once;
+          else if (once !== getEditorValue()) texts.push(['1', once]);
+          const tabInPrint = config?.tablature?.in_print !== false && config?.tablature?.in_print !== 'false';
+          let markup = '';
+          for (const [onceFlag, text] of texts) {
+            let ir = window.ukemusic.transposeIR(window.ukemusic.parseSong(text, getParserOptions()), semitones - songCapo(config), transposeOptions());
+            if (!tabInPrint) ir = withoutTab(ir);
+            for (const cols of [1, 2]) {
+              let options = renderOptions(cfg);
+              options.tune = { ...(options.tune || {}), shift: semitones, key: keyAfter(semitones)?.name || '', keyGuessed: songKey()?.guessed === true };
+              if (options.layout === 'lines') options.maxLineChars = maxLineChars('stage');
+              options = stageRenderOptions(options, cfg);
+              if (cols === 2 && options.maxLineChars) {
+                // narrower columns, but the text may be smaller: as many letters as fit at the smallest size
+                options.maxLineChars = options.layout === 'lines'
+                  ? Math.max(18, Math.floor(maxLineChars('stage') * (colW / pageW) * (stageSettings().size / minPx)))
+                  : window.ukemusic.stageFormats.charsAcross(fmt, { pageWidthPx: colW, sizePx: minPx, monospaceChars: maxLineChars('stage') });
+              }
+              markup += `<div class="tp-variant" data-cols="${cols}" data-once="${onceFlag}">${exportHeader(semitones, cfg)}${window.ukemusic.renderHTML(ir, options)}${window.ukemusic.shorthandKeyHtml(ir)}</div>`;
+            }
+          }
+          const title = semitones ? `${state.song.title} — ${keyLabel(semitones)}` : state.song.title;
+          return buildPreviewDocument(markup, docCss(true, `${EXPORT_CSS}\n${TWO_PAGER_CSS}`), 'light', title, `${docAttrs(cfg, { stage: true })} data-two-pager data-tp-min="${minPx}"`);
+        }
+        window.ukemusicTwoPagerHtml = () => twoPagerDocument(state.transpose, effectiveConfig()); // for tests
+        // the smallest text for the two-pager: Settings → Stage copies → Two pages (in points; 12pt = 16px)
+        function twoPagerMinPx(config = effectiveConfig()) {
+          const pt = Number(config?.export?.stage_two_min) || 12;
+          return Math.round(Math.max(9, Math.min(18, pt)) * (96 / 72) * 2) / 2;
+        }
+
         function lyricsDocument(forPrint, printStyle = 'standard') {
           const stage = printStyle === 'stage';
           const ir = window.ukemusic.parseSong(getEditorValue(), getParserOptions());
@@ -5176,7 +5294,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           if (exportRecording) exportRecording.entries.push({ rel: `${subfolder}/${fileName}`, details: { ...exportRecording.details, page: pageSize } });
           // 4.22: every Stage PDF also goes in the gig folder, if there is one
           const gig = state.config?.export?.gig_folder;
-          if (printStyle === 'stage' && gig && state.config?.export?.gig_copy !== false && target) {
+          if ((printStyle === 'stage' || printStyle === 'stage2') && gig && state.config?.export?.gig_copy !== false && target) {
             try { await window.ukemusic.exportsCopyTo({ from: target, folder: gig, name: fileName }); if (exportRecording) exportRecording.gig += 1; } catch (error) { window.ukemusicLogError('Could not copy to the gig folder', error); }
           }
         }
@@ -5210,8 +5328,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           };
         }
 
-        // formats: sheet_pdf, sheet_html, sheet_md, lyrics_pdf, lyrics_txt, lyrics_html
-        // PDFs and web pages are always made twice: Standard, and Stage ("… (stage).pdf")
+        // formats: sheet_pdf (song copy), sheet_stage (Stage copy), sheet_stage2 (Stage on two pages),
+        // sheet_html (both copies), sheet_md, sheet_cho, lyrics_pdf, lyrics_txt, lyrics_html
         const PRINT_STYLES = ['standard', 'stage'];
         const STAGE_FOLDER = 'Stage';
         const styledName = (fileName, style) => (style === 'stage' ? fileName.replace(/(\.[^.]+)$/, ' (stage)$1') : fileName);
@@ -5239,6 +5357,16 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           }
         }
 
+        // 4.54: the Stage PDF is its own choice (it used to come with the chord sheet PDF). A usual
+        // list saved before then that has the chord sheet PDF gets the Stage PDF too, as it did.
+        const MAIN_FORMATS = ['sheet_pdf', 'sheet_stage', 'sheet_stage2'];
+        function usualFormats(config) {
+          const usual = String(config?.export?.usual_formats || '').split(',').map((x) => x.trim()).filter(Boolean);
+          if (!usual.length) return ['sheet_pdf', 'sheet_stage'];
+          if (!config?.export?.usual_stage_split && usual.includes('sheet_pdf') && !usual.includes('sheet_stage')) usual.push('sheet_stage');
+          return usual;
+        }
+
         async function runExportInner(formats, allVersions, config, instrument, written, sheetFormats) {
 
           if (sheetFormats.length) {
@@ -5251,12 +5379,18 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               for (const printStyle of PRINT_STYLES) {
                 const where = printStyle === 'stage' ? STAGE_FOLDER : subfolder; // every Stage copy in exports/Stage
                 exportRecording.details = exportDetails(printStyle, semitones, config);
-                if (formats.includes('sheet_pdf')) {
+                if (formats.includes(printStyle === 'stage' ? 'sheet_stage' : 'sheet_pdf')) {
                   await writePdf(where, styledName(name('pdf'), printStyle), sheetDocument(semitones, config, { forPrint: true, printStyle }), written, printStyle);
                 }
                 if (formats.includes('sheet_html')) {
                   await writeExport(where, styledName(name('html'), printStyle), sheetDocument(semitones, config, { printStyle }), written);
                 }
+              }
+              // 4.54: the Stage copy on two pages, for a music stand
+              if (formats.includes('sheet_stage2')) {
+                exportRecording.details = { ...exportDetails('stage', semitones, config), kind: 'stage2' };
+                await writePdf(STAGE_FOLDER, name('pdf').replace(/\.pdf$/i, ' (stage, two pages).pdf'), twoPagerDocument(semitones, config), written, 'stage2');
+                try { state.lastTwoPager = await window.ukemusic.twoPagerResult(); } catch (_e) { state.lastTwoPager = null; }
               }
               { const d = exportDetails('standard', semitones, config); exportRecording.details = { app: d.app, kind: d.kind, look: d.look, key: d.key }; }
               if (formats.includes('sheet_md')) {
@@ -5342,10 +5476,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const boxes = [...form.querySelectorAll('input[name="format"]')];
           // 4.22: your usual formats ticked. 4.33: until you choose, just the chord sheet PDF (and
           // its Stage copy); the rest are under More formats
-          const usual = String(state.config?.export?.usual_formats || '').split(',').map((x) => x.trim()).filter(Boolean);
-          const ticked = usual.length ? usual : ['sheet_pdf'];
+          const ticked = usualFormats(state.config);
           boxes.forEach((box) => { box.checked = ticked.includes(box.value); });
-          document.getElementById('exportMore').open = ticked.some((f) => f !== 'sheet_pdf');
+          document.getElementById('exportMore').open = ticked.some((f) => !MAIN_FORMATS.includes(f));
           document.getElementById('exportMakeUsual').checked = false;
           const gig = state.config?.export?.gig_folder;
           document.getElementById('exportGigNote').textContent = gig && state.config?.export?.gig_copy !== false ? `Stage PDFs are also copied to your gig folder: ${gig}` : '';
@@ -5396,7 +5529,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           if (!choice) return;
 
           // Remember the choices for next time
-          if (document.getElementById('exportMakeUsual').checked) state.config.export.usual_formats = choice.formats.join(',');
+          if (document.getElementById('exportMakeUsual').checked) { state.config.export.usual_formats = choice.formats.join(','); state.config.export.usual_stage_split = true; }
           state.config.export.all_versions = choice.allVersions;
           state.config.export.pdf_page_size = pageSize.value;
           persistConfig().catch((err) => window.ukemusicLogError('Could not save export choices', err));
@@ -5405,10 +5538,14 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           setStatusMessage('Exporting…');
           showToast('Exporting…', { busy: true });
           try {
+            state.lastTwoPager = null;
             const written = await runExport(choice);
+            // 4.54: say when the two-page Stage copy couldn't get onto two pages
+            const two = state.lastTwoPager;
+            const twoNote = two && !two.fits ? ` The Two-page Stage PDF needed ${two.pages} pages even at the smallest text: choose chords in the words, or a smaller smallest text (ribbon → Export → Two-page Stage).` : '';
             showToast(
               `Export complete — ${written.length} file${written.length === 1 ? '' : 's'} saved`,
-              { detail: written.length === 1 ? `exports\\${written[0]}` : `in this song's exports folder${(choice.formats.includes('learn_sheet') || choice.formats.includes('pick_sheet')) ? ' (learn and pick sheets in its learn folder)' : ''}`, action: 'Open folder', onAction: openExports }
+              { detail: (written.length === 1 ? `exports\\${written[0]}` : `in this song's exports folder${(choice.formats.includes('learn_sheet') || choice.formats.includes('pick_sheet')) ? ' (learn and pick sheets in its learn folder)' : ''}`) + twoNote, action: 'Open folder', onAction: openExports }
             );
           } catch (err) {
             setStatusMessage(`Export failed: ${err.message}`);
@@ -5759,6 +5896,14 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             }
 
             target[key] = nextValue;
+            // the same setting can be in more than one place (4.54: the two-page Stage choices are in
+            // Settings and on the ribbon): keep the others showing it
+            if (!saveToSong) {
+              document.querySelectorAll('[data-config-path]').forEach((other) => {
+                if (other === element || other.getAttribute('data-config-path') !== dotted || other.dataset.scope === 'song') return;
+                if (other.type === 'checkbox') other.checked = Boolean(nextValue); else other.value = String(nextValue ?? '');
+              });
+            }
             try {
               if (saveToSong) {
                 await persistSongSettings();
@@ -5780,9 +5925,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const gig = state.config?.export?.gig_folder || '';
           document.getElementById('gigFolderPath').textContent = gig || 'Not chosen';
           document.getElementById('gigFolderClear').disabled = !gig;
-          const names = { sheet_pdf: 'sheet PDF', sheet_html: 'sheet web page', sheet_md: 'Markdown', sheet_cho: 'ChordPro', lyrics_pdf: 'lyrics PDF', lyrics_txt: 'lyrics text', lyrics_html: 'lyrics web page' };
-          const usual = String(state.config?.export?.usual_formats || '').split(',').map((x) => x.trim()).filter(Boolean);
-          document.getElementById('usualFormatsText').textContent = usual.length ? `Ticked: ${usual.map((u) => names[u] || u).join(', ')}` : 'The chord sheet PDF (and its Stage copy)';
+          const names = { sheet_stage: 'Stage PDF', sheet_stage2: 'two-page Stage PDF', sheet_pdf: 'sheet PDF', sheet_html: 'sheet web page', sheet_md: 'Markdown', sheet_cho: 'ChordPro', lyrics_pdf: 'lyrics PDF', lyrics_txt: 'lyrics text', lyrics_html: 'lyrics web page' };
+          const usual = String(state.config?.export?.usual_formats || '').trim() ? usualFormats(state.config) : [];
+          document.getElementById('usualFormatsText').textContent = usual.length ? `Ticked: ${usual.map((u) => names[u] || u).join(', ')}` : 'The chord sheet PDF and the Stage PDF';
         }
         document.getElementById('gigFolderChoose').addEventListener('click', async () => {
           const folder = await window.ukemusic.chooseFolder({ title: 'Choose your gig folder', defaultPath: state.config?.export?.gig_folder || undefined });

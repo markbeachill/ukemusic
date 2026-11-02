@@ -226,6 +226,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
   spokenChord: (name) => require('./voice-cues').spokenChord(name),
   links: (() => { const l = require('./links'); return { cleanUrl: l.cleanUrl, youtubeId: l.youtubeId, linkKind: l.linkKind, defaultTitle: l.defaultTitle }; })(),
   exportPdf: (payload) => ipcRenderer.invoke('song:exportPdf', payload),
+  twoPagerResult: () => ipcRenderer.invoke('song:twoPagerResult'),
   learnSheet: (payload) => ipcRenderer.invoke('song:learnSheet', payload),
   learnRead: (payload) => ipcRenderer.invoke('song:learnRead', payload),
   learnWrite: (payload) => ipcRenderer.invoke('song:learnWrite', payload),

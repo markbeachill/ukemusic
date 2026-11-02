@@ -431,6 +431,10 @@ The same choice is in **Settings → How the chord sheet looks**, and it applies
 
 **Library → Check songs fit one screen…** tells you which songs need a page turn before the night.
 
+### On a music stand: the Stage copy on two pages
+
+**Export → Two-page Stage PDF** fits the song onto two pages, so you never turn a page mid-song. It makes the text as big as will fit, then closes up the gaps, then uses two columns a page, then prints a repeated chorus once. On the ribbon's Export tab (Two-page Stage) you choose the chords above or in the words, and the smallest text it may use (12 pt to start with). The same habits help: a blank line or a heading between parts, since parts are kept together.
+
 
 ---
 
