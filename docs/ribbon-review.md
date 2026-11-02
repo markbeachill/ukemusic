@@ -2,7 +2,7 @@
 
 Reviewed 2 November 2026 against ukemusic 4.52.0 with the uncommitted "Tidier ribbon buttons" changes, from the UI review pictures (`npm run ui-review -- desktop`) and the ribbon at 1440 and 1120 pixels wide.
 
-Findings 1 (folding instead of wrapping) and 4 (labels and alignment) have been done, with the Accompaniment tab renamed Picking; see CHANGELOG.md (Unreleased).
+Findings 1 (folding instead of wrapping) and 4 (labels and alignment) have been done, with the Accompaniment tab renamed Picking; see CHANGELOG.md (v4.53.0).
 
 ## Overall assessment
 

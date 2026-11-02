@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v4.53.0
 
 ### Tidier ribbon buttons
 - Ribbon buttons size to their text with a small minimum, wrap longer labels, and align icons and controls at the top. Dropdowns keep the room their choices need.
