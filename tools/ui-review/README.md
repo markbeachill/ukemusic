@@ -52,6 +52,8 @@ Every run writes **`run-log.txt`** into the review folder: what each step did, a
 
 Running only some apps or sections keeps the pictures from earlier runs, so you can fill gaps: `npm run ui-review -- ipad iphone F`. The pictures are kept in your computer's temporary folder (`ukemusic-ui-review`), so after a restart that clears it, run the whole review once before running parts of it.
 
+If the log says Playwright's browser **"Executable doesn't exist"** (it happens after Playwright is installed or updated, for example by `npm install`), run `npx playwright install chromium` once; the review checks for it before it starts.
+
 If a step fails every time, the app has probably changed (a button renamed or moved): fix that step in `desktop.js`, `web.js` or `practice.js`, as in "Adding a screen" below.
 
 ## How it works

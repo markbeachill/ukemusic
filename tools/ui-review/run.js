@@ -53,6 +53,16 @@ function serve(root) {
   if (!pageOnly) {
     if (!need('playwright', 'Install it once with:  npm install --no-save playwright   then:  npx playwright install chromium')) process.exit(1);
     if (apps.includes('desktop') && !process.env.UKEMUSIC_ELECTRON && !need('electron', 'Run  npm install  in the project folder first.')) process.exit(1);
+    // Playwright's own Chromium (for the iPad and iPhone, and the learn and pick sheet pictures):
+    // after Playwright is installed or updated, it has to be downloaded once
+    try {
+      const { chromium } = require(require.resolve('playwright', { paths: [REPO, __dirname] }));
+      const browser = await chromium.launch();
+      await browser.close();
+    } catch (_e) {
+      console.error('\nThe UI review needs Playwright\'s browser, which isn\'t installed (or Playwright was updated).\nRun this once, then run the review again:\n\n    npx playwright install chromium\n');
+      process.exit(1);
+    }
     logStream = fs.createWriteStream(path.join(WORK, 'run-log.txt'));
     say(`UI review ${new Date().toISOString()}: taking pictures (${[...apps, ...sections].join(' ')}). Working folder: ${WORK}\n`);
     if (apps.includes('desktop')) {

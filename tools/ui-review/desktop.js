@@ -20,6 +20,18 @@ const ELECTRON = process.env.UKEMUSIC_ELECTRON || require(path.join(REPO, 'node_
 const W = 1440, H = 900;
 const log = (...a) => console.log('desktop', ...a);
 const manifest = [];
+// the manifest (what's been taken, with captions) is saved after every picture, so a run that
+// stops part-way keeps what it took; when only some sections run, the last run's are kept too
+const MANIFEST = path.join(WORK, 'manifest-desktop.json');
+let earlier = [];
+try { if (only.length) earlier = JSON.parse(fs.readFileSync(MANIFEST, 'utf8')); } catch (_e) { /* a first run */ }
+function record(item) {
+  manifest.push(item);
+  let all = earlier.slice();
+  for (const m of manifest) { all = all.filter((x) => x.id !== m.id); all.push(m); }
+  fs.mkdirSync(WORK, { recursive: true });
+  fs.writeFileSync(MANIFEST, JSON.stringify(all, null, 1));
+}
 const shotPath = (id) => path.join(OUT, `${id}.jpg`);
 
 // an original practice tune with tab, for "The tab, in steps" (not a real song)
@@ -85,7 +97,7 @@ async function launch() {
     await tidy(p);
     await p.waitForTimeout(150);
     await p.screenshot({ path: shotPath(id), type: 'jpeg', quality: 85 });
-    manifest.push({ id, caption });
+    record({ id, caption });
     log('shot', id, caption);
   };
   // a step: if it goes wrong, close whatever is open and try once more, then report it ("!!")
@@ -266,7 +278,7 @@ async function launch() {
     await page.waitForFunction(() => /Learn sheet made|Could not/.test(document.getElementById('toastMessage')?.textContent || ''), null, { timeout: 40000 });
     await page.waitForTimeout(300);
     await page.evaluate(() => { const t = document.getElementById('toast'); t.dataset.keep = '1'; });
-    await page.screenshot({ path: shotPath('R10'), type: 'jpeg', quality: 85 }); manifest.push({ id: 'R10', caption: 'Learn sheet: made, with Open' }); log('shot R10');
+    await page.screenshot({ path: shotPath('R10'), type: 'jpeg', quality: 85 }); record({ id: 'R10', caption: 'Learn sheet: made, with Open' }); log('shot R10');
     const dir = path.join(SONGS, "It's a Long Way to Tipperary", 'learn');
     const html = fs.readdirSync(dir).find((f) => f.endsWith('.html'));
     fs.copyFileSync(path.join(dir, html), path.join(WORK, 'learn-sheet.html'));
@@ -360,25 +372,24 @@ async function launch() {
   });
 
   // the learn and pick sheets the app made, as pictures of the files themselves
+  // (needs Playwright's own Chromium: if it isn't installed, these two are skipped, not the run)
   if (!only.length || only.includes('R') || only.includes('A')) {
-    const { chromium } = require('playwright');
-    const browser = await chromium.launch();
-    const sheet = await browser.newPage({ viewport: { width: 1100, height: 1500 } });
-    for (const [file, id, caption] of [['learn-sheet.html', 'R13', 'The learn sheet the app makes (web page and PDF, in the song\'s learn folder)'], ['pick-sheet.html', 'A4', 'The pick sheet the app makes (web page and PDF, in the song\'s learn folder)']]) {
-      const f = path.join(WORK, file);
-      if (!fs.existsSync(f)) continue;
-      await sheet.goto(require('url').pathToFileURL(f).href); await sheet.waitForTimeout(800);
-      await sheet.screenshot({ path: shotPath(id), type: 'jpeg', quality: 85 });
-      manifest.push({ id, caption });
+    try {
+      const { chromium } = require('playwright');
+      const browser = await chromium.launch();
+      const sheet = await browser.newPage({ viewport: { width: 1100, height: 1500 } });
+      for (const [file, id, caption] of [['learn-sheet.html', 'R13', 'The learn sheet the app makes (web page and PDF, in the song\'s learn folder)'], ['pick-sheet.html', 'A4', 'The pick sheet the app makes (web page and PDF, in the song\'s learn folder)']]) {
+        const f = path.join(WORK, file);
+        if (!fs.existsSync(f)) continue;
+        await sheet.goto(require('url').pathToFileURL(f).href); await sheet.waitForTimeout(800);
+        await sheet.screenshot({ path: shotPath(id), type: 'jpeg', quality: 85 });
+        record({ id, caption });
+      }
+      await browser.close();
+    } catch (e) {
+      log(`!! R13, A4 (the learn and pick sheets): ${e.message.split('\n')[0]}`);
     }
-    await browser.close();
   }
-  // the manifest: what was taken (when only some sections were run, merged with the last run)
-  const MF = path.join(WORK, 'manifest-desktop.json');
-  let all = [];
-  try { if (only.length) all = JSON.parse(fs.readFileSync(MF, 'utf8')); } catch (_e) { /* a new one */ }
-  for (const m of manifest) { all = all.filter((x) => x.id !== m.id); all.push(m); }
-  fs.writeFileSync(MF, JSON.stringify(all, null, 1));
   log('done:', manifest.length, 'pictures');
   await app.close();
 })().catch((e) => { console.error(e); process.exit(1); });

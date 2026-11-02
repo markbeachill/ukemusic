@@ -18,6 +18,18 @@ const DEV = which === 'ipad'
 delete DEV.defaultBrowserType;
 const OUT = path.join(WORK, 'shots', which);
 const manifest = [];
+// the manifest (what's been taken, with captions) is saved after every picture, so a run that
+// stops part-way keeps what it took; when only some sections run, the last run's are kept too
+const MANIFEST = path.join(WORK, `manifest-${which}.json`);
+let earlier = [];
+try { if (only.length) earlier = JSON.parse(fs.readFileSync(MANIFEST, 'utf8')); } catch (_e) { /* a first run */ }
+function record(item) {
+  manifest.push(item);
+  let all = earlier.slice();
+  for (const m of manifest) { all = all.filter((x) => x.id !== m.id); all.push(m); }
+  fs.mkdirSync(WORK, { recursive: true });
+  fs.writeFileSync(MANIFEST, JSON.stringify(all, null, 1));
+}
 const log = (...a) => console.log(which, ...a);
 
 (async () => {
@@ -32,7 +44,7 @@ const log = (...a) => console.log(which, ...a);
   const shot = async (id, caption, { full = false } = {}) => {
     await p.waitForTimeout(150);
     await p.screenshot({ path: path.join(OUT, `${id}.jpg`), fullPage: full, type: 'jpeg', quality: 85 });
-    manifest.push({ id, caption });
+    record({ id, caption });
     log('shot', id);
   };
   // a step: if it goes wrong, close whatever is open and try once more, then report it ("!!")
@@ -217,11 +229,6 @@ const log = (...a) => console.log(which, ...a);
     await practiceShots(p, shot, log, { phone: which === 'iphone' });
   });
 
-  const manifestPath = path.join(WORK, `manifest-${which}.json`);
-  let all = [];
-  try { if (only.length) all = JSON.parse(fs.readFileSync(manifestPath, 'utf8')); } catch (_error) { /* first run */ }
-  for (const item of manifest) { all = all.filter(previous => previous.id !== item.id); all.push(item); }
-  fs.writeFileSync(manifestPath, JSON.stringify(all, null, 1));
   log('done:', manifest.length, 'pictures');
   await b.close();
 })().catch((e) => { console.error(e); process.exit(1); });
