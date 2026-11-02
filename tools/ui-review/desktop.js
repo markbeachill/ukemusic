@@ -4,6 +4,7 @@
 //   node tools/ui-review/desktop.js <work folder> [section letters, e.g. L S]
 const { _electron: electron } = require('playwright');
 const fs = require('fs');
+const assert = require('assert');
 const path = require('path');
 const practiceShots = require('./practice.js');
 
@@ -87,7 +88,25 @@ async function launch() {
     manifest.push({ id, caption });
     log('shot', id, caption);
   };
-  const safe = async (label, fn) => { if (only.length && !only.includes(label.replace(/[0-9a-z]+$/, ''))) return; try { await fn(); } catch (e) { log(`!! ${label}: ${e.message.split('\n')[0]}`); } };
+  // a step: if it goes wrong, close whatever is open and try once more, then report it ("!!")
+  const reset = async () => {
+    await page.keyboard.press('Escape').catch(() => {});
+    await page.evaluate(() => {
+      for (const d of document.querySelectorAll('dialog[open]')) d.close();
+      for (const id of ['karaokeClose', 'practiceClose']) { const b = document.getElementById(id); if (b && b.offsetParent) b.click(); }
+    }).catch(() => {});
+    for (const w of app.windows().slice(1)) await w.close().catch(() => {});
+    await page.waitForTimeout(800);
+  };
+  const safe = async (label, fn) => {
+    if (only.length && !only.includes(label.replace(/[0-9a-z]+$/, ''))) return;
+    for (let attempt = 1; attempt <= 2; attempt += 1) {
+      try { await fn(); return; } catch (e) {
+        log(`${attempt === 1 ? 'retrying' : '!!'} ${label}: ${e.message.split('\n')[0]}`);
+        await reset();
+      }
+    }
+  };
   const closeDialogs = () => page.evaluate(() => { for (const d of document.querySelectorAll('dialog[open]')) d.close(); });
   const dialog = async (button, id, caption, dlg) => safe(id, async () => {
     await closeDialogs();
@@ -145,7 +164,27 @@ async function launch() {
   await safe('L8', async () => { await library(); await page.click('#libPhone'); await page.waitForSelector('#phoneDialog[open]'); await page.waitForTimeout(500); await shot('D2', 'Phone and tablet: songs to and from the web player'); await closeDialogs(); });
 
   // ── S: The song sheet ──
-  await safe('S1', async () => { await open('The Wild Rover'); await tab('Song'); await shot('S1', 'A song open: the words and chords, and the chord sheet beside them'); });
+  await safe('S1', async () => {
+    await open('The Wild Rover');
+    // Catch ribbon-height jumps at a normal and a narrower desktop width.
+    for (const width of [W, 1120]) {
+      await size(width, H);
+      const heights = [];
+      for (const name of ['Song', 'Write', 'ThisSong', 'View', 'Export', 'Play', 'Learn', 'Pick', 'Settings']) {
+        await tab(name);
+        const geometry = await page.evaluate(() => ({
+          height: document.querySelector('.app-shell > .header').getBoundingClientRect().height,
+          isolated: [...document.querySelectorAll('.ribbon-panel[hidden]')].every(panel => panel.inert && getComputedStyle(panel).visibility === 'hidden')
+        }));
+        assert.ok(geometry.isolated, `Inactive ribbon panels must be hidden and inert: ${name}`);
+        heights.push(geometry.height);
+      }
+      assert.ok(Math.max(...heights) - Math.min(...heights) < 1, `Ribbon height changes at ${width}px: ${heights.join(', ')}`);
+      log('ribbon height stable', width, heights[0]);
+    }
+    await size(W, H); await tab('Song');
+    await shot('S1', 'A song open: the words and chords, and the chord sheet beside them');
+  });
   await safe('S3', async () => {
     await page.evaluate(() => { const p = document.getElementById('preview'); p.contentWindow.scrollTo(0, 700); });
     await page.waitForTimeout(500); await shot('S3', 'Further down the song');
@@ -234,8 +273,8 @@ async function launch() {
   });
   await safe('R12', async () => { await tab('Learn'); await page.click('#learnDrillButton'); await page.waitForTimeout(1500); await shot('R12', 'Shapes: drill this song\'s chord shapes in Free Practice'); await page.click('#practiceClose').catch(() => page.keyboard.press('Escape')); await page.waitForTimeout(600); });
 
-  // ── A: Accompaniment ──
-  await safe('A1', async () => { await open("Brahms' Lullaby"); await tab('Pick'); await shot('A1', 'Accompaniment: choose a picking pattern'); });
+  // ── A: Picking (the Accompaniment button on the web player) ──
+  await safe('A1', async () => { await open("Brahms' Lullaby"); await tab('Pick'); await shot('A1', 'Picking: choose a picking pattern'); });
   await safe('A2', async () => {
     await page.check('#pickTune').catch(() => {});
     await page.click('#pickPlayButton'); await page.waitForTimeout(7000);
@@ -265,7 +304,13 @@ async function launch() {
   await safe('E11', async () => { await page.click('#tabChordPro'); await page.waitForTimeout(500); await shot('E11', 'ChordPro fields'); });
   await safe('E12', async () => { await page.click('#tabExports'); await page.waitForTimeout(500); await shot('E12', 'The song\'s exports'); await page.click('#tabSong'); });
   await dialog('#shapesButton', 'E6', 'Chord shapes: choose a shape for each chord', 'shapeDialog');
-  await dialog('#strumsButton', 'E7', 'Strum patterns: the strum library', 'strumDialog');
+  await safe('E7', async () => {
+    await closeDialogs();
+    await app.evaluate(({ Menu }) => Menu.getApplicationMenu().getMenuItemById('song-strums').click());
+    await page.waitForSelector('#strumDialog[open]');
+    await shot('E7', 'Help → Strums: the strum library');
+    await closeDialogs();
+  });
   await dialog('#guessKeyButton', 'E8', 'Guess the key', 'keyDialog');
   await dialog('#guideButton', 'E5', 'How to write: the guide', 'guideDialog');
   await safe('E9', async () => { await tab('ThisSong'); await page.click('#saveVersionButton'); await page.waitForSelector('#versionDialog[open]'); await page.waitForTimeout(500); await shot('E9', 'Save this key as a version'); await closeDialogs(); });
@@ -309,7 +354,7 @@ async function launch() {
 
   // ── F: Free Practice ──
   await safe('F', async () => {
-    await library(); await page.click('#libPractice'); await page.waitForTimeout(1500);
+    await library(); await page.click('#libPractice'); await page.waitForSelector('#practice:not([hidden])', { timeout: 15000 }); await page.waitForTimeout(1500);
     await practiceShots(page, shot, log, { phone: false });
     await page.click('#practiceClose').catch(() => {});
   });

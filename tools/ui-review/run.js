@@ -15,7 +15,7 @@ const WORK = path.join(os.tmpdir(), 'ukemusic-ui-review');
 const args = process.argv.slice(2);
 const outAt = args.indexOf('--out');
 const OUT = outAt >= 0 ? path.resolve(args[outAt + 1]) : path.join(REPO, 'UI review');
-const rest = args.filter((a, i) => i !== outAt && i !== outAt + 1);
+const rest = args.filter((a, i) => outAt < 0 || (i !== outAt && i !== outAt + 1));
 const pageOnly = rest.includes('--page');
 const APPS = ['desktop', 'ipad', 'iphone'];
 let apps = rest.filter((a) => APPS.includes(a));
@@ -25,9 +25,14 @@ const sections = rest.filter((a) => /^[A-Z]$/.test(a));
 function need(mod, fix) {
   try { require.resolve(mod, { paths: [REPO, __dirname] }); return true; } catch (_e) { console.error(`\nThe UI review needs ${mod}. ${fix}\n`); return false; }
 }
+// what each step printed goes to the screen and to run-log.txt (copied into the review folder)
+let logStream = null;
+function say(text) { process.stdout.write(text); if (logStream) logStream.write(text); }
 function run(file, argv) {
   return new Promise((resolve) => {
-    const child = spawn(process.execPath, [path.join(__dirname, file), ...argv], { stdio: 'inherit', cwd: REPO });
+    const child = spawn(process.execPath, [path.join(__dirname, file), ...argv], { stdio: ['ignore', 'pipe', 'pipe'], cwd: REPO });
+    child.stdout.on('data', (d) => say(String(d)));
+    child.stderr.on('data', (d) => say(String(d)));
     child.on('exit', (code) => resolve(code));
   });
 }
@@ -48,10 +53,11 @@ function serve(root) {
   if (!pageOnly) {
     if (!need('playwright', 'Install it once with:  npm install --no-save playwright   then:  npx playwright install chromium')) process.exit(1);
     if (apps.includes('desktop') && !process.env.UKEMUSIC_ELECTRON && !need('electron', 'Run  npm install  in the project folder first.')) process.exit(1);
-    console.log(`UI review: taking pictures (${apps.join(', ')}). Working folder: ${WORK}`);
+    logStream = fs.createWriteStream(path.join(WORK, 'run-log.txt'));
+    say(`UI review ${new Date().toISOString()}: taking pictures (${[...apps, ...sections].join(' ')}). Working folder: ${WORK}\n`);
     if (apps.includes('desktop')) {
       const code = await run('desktop.js', [WORK, ...sections]);
-      if (code) console.log(`The desktop pictures stopped early (exit ${code}).`);
+      if (code) say(`!! The desktop pictures stopped early (exit ${code}).\n`);
     }
     const web = apps.filter((a) => a !== 'desktop');
     if (web.length) {
@@ -61,12 +67,14 @@ function serve(root) {
       const server = await serve(path.join(REPO, 'web', 'out'));
       const url = `http://127.0.0.1:${server.address().port}/index.html`;
       for (const device of web) {
-        const c = await run('web.js', [device, url, WORK]);
-        if (c) console.log(`The ${device} pictures stopped early (exit ${c}).`);
+        const c = await run('web.js', [device, url, WORK, ...sections]);
+        if (c) say(`!! The ${device} pictures stopped early (exit ${c}).\n`);
       }
       server.close();
     }
   }
+  if (logStream) await new Promise((resolve) => logStream.end(resolve));
+  logStream = null;
   await run('build.js', [WORK, OUT]);
   console.log(`\nOpen ${path.join(OUT, 'index.html')} in a browser.`);
 })();

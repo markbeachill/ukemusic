@@ -22,12 +22,15 @@ test('exporting twice the same day leaves one "Exported" line in the notes', () 
   assert.strictEqual((songs.readNotes(song.folder).match(/Exported/g) || []).length, 2, 'another line in between: a new line');
 });
 
-test('one name per action: the menus and the ribbon agree', () => {
+test('short ribbon labels and the Help menu retain the writing actions', () => {
   const main = fs.readFileSync(path.join(__dirname, '..', 'main.js'), 'utf8');
   const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   for (const old of ['Convert Chord Lines', 'Paste Chord Sheet', 'Strum Library', 'Edit Style Set']) assert.ok(!main.includes(old), old);
-  for (const now of ['Tidy Chords Above Words', 'Paste from Website', 'Strum Patterns', 'Edit Style…', 'Guess the Key']) assert.ok(main.includes(now), now);
-  assert.ok(!/>Process Import</.test(html) && />Tidy chords above words</.test(html));
-  assert.ok(/>Guess the key…</.test(html) && />Strum patterns…</.test(html) && />Close song</.test(html));
+  for (const now of ['Tidy Chords Above Words', 'Paste from Website', "label: 'Strums…'", 'Edit Style…', 'Guess the Key']) assert.ok(main.includes(now), now);
+  assert.ok(!/>Process Import</.test(html) && />Tidy chords</.test(html));
+  assert.ok(/>Guess key</.test(html) && />Close</.test(html));
+  const help = main.slice(main.indexOf("label: 'Help'"), main.indexOf('Menu.setApplicationMenu'));
+  assert.ok(help.includes("id: 'song-strums'") && help.includes("sendMenuAction('strum-library')"));
+  assert.ok(!html.includes('id="strumsButton"') && html.includes('function openStrumLibrary()'));
   assert.ok(/label: 'Write',/.test(main) && /label: 'Play',/.test(main), 'menu bar names match the ribbon tabs');
 });

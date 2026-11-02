@@ -1,7 +1,16 @@
 // Free Practice screens, the same markup in the desktop app and the web player.
 // shot(id, caption) takes a picture; p is the page; log prints.
 module.exports = async function practiceShots(p, shot, log, { phone = false } = {}) {
-  const safe = async (label, fn) => { try { await fn(); } catch (e) { log(`!! practice ${label}: ${e.message.split('\n')[0]}`); } };
+  // a step: if it goes wrong, go back to the practice menu and try once more, then report it ("!!")
+  const safe = async (label, fn) => {
+    for (let attempt = 1; attempt <= 2; attempt += 1) {
+      try { await fn(); return; } catch (e) {
+        log(`${attempt === 1 ? 'retrying' : '!!'} practice ${label}: ${e.message.split('\n')[0]}`);
+        await p.evaluate(() => { document.getElementById('prHelpDialog')?.close(); for (const id of ['prStop', 'prMobileStop', 'prBack']) { const b = document.getElementById(id); if (b && !b.disabled) b.click(); } }).catch(() => {});
+        await p.waitForTimeout(800);
+      }
+    }
+  };
   const pick = (sel, text) => ({ click: () => p.evaluate(([sel, text]) => { const e = [...document.querySelectorAll(sel)].find((x) => x.textContent.includes(text)); if (!e) throw new Error('no ' + text); e.scrollIntoView({ block: 'center' }); e.click(); }, [sel, text]) });
   const card = (title) => pick('#prCards .pr-card, #prBeginnerCards button, #prRecentCards button', title);
   const cat = (name) => pick('#prCats .pr-cat', name);

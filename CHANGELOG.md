@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased
+
+### Tidier ribbon buttons
+- Ribbon buttons size to their text with a small minimum, wrap longer labels, and align icons and controls at the top. Dropdowns keep the room their choices need.
+- File uses **Close**, **Save**, **Save new**, **Rename**, **Versions**, **Import file**, **Paste from web**, **Tidy chords** and **Setlist**. Archive is removed from this ribbon; library archiving remains available.
+- Write uses **Insert tab**, **Chords**, **B I U**, **Guess key**, **Patterns**, **Undo**, **Redo** and **Writing**. Strums moves to **Help → Strums**; the redundant “Selected words” label is removed.
+- **This song** is renamed **Song**, with its controls unchanged.
+- Learn uses **Play in new key**, **Practise trouble spots** and **Circle of fifths**. The chord-help button says **Play with fewer chords**, **Play with chord numbers** or **Play without chords**, matching the chosen help in both desktop and web.
+- **Choose picking** replaces **Change here**; it still changes the pattern from the current line onwards. Picking help uses the new name.
+- Ribbon tabs share one height so switching tools does not move the song. Inactive tools stay hidden and cannot receive keyboard focus.
+- **The ribbon no longer wraps onto a second row in a smaller window.** When a tab's tools don't fit, groups fold from the right into a single button each (**Practice ▾**, **Strum patterns ▾**…), which opens that group below it. The tabs close up a little in a narrow window, so Hide and Close stay in view.
+- **One layout on every tab.** Large buttons have the icon over the name; smaller controls sit in neat columns of two rows, all lined up from the top, with the group's name underneath. A group with one setting is named by its group (no label repeated above it); a group with two settings labels each beside it (Tempo and Time, Sound and Feel, Set and Show).
+- Some groups are split so each name says what's in it: File has **Save** and **Song file**; Song has **Tempo and time** and **Strum where none is written**, with the written strum shown under it; Play has **Play**, **Full screen**, **Practice**, **Sound and feel** and **Count in and voice**; Learn has **Play from memory**, **Test yourself** and **Another key**; Picking has **The tune**. On Song, the key's − and + sit under the key, beside Keys ▾.
+- A setting this song has its own value for says so in its group's name (**· this song**).
+- **Accompaniment is now called Picking.**
+- Section captions provide context below the controls, with fewer repeated labels above. Play uses **Loop current section**, **Speed up each loop**, **Auto feel** and **Even**. Detailed explanations remain in the bottom hint line; dropdowns retain accessible names.
+
 ## v4.52.0
 
 ### Compact Stage copies by default

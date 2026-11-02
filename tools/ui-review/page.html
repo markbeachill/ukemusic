@@ -46,6 +46,12 @@ nav#side li .dots { margin-left: auto; display: inline-flex; gap: 3px; }
 .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--line); display: inline-block; }
 .dot.desktop.has { background: var(--desktop); } .dot.ipad.has { background: var(--ipad); } .dot.iphone.has { background: var(--iphone); }
 li.missing .name { color: var(--muted); }
+.dot.miss { background: transparent; box-shadow: inset 0 0 0 2px #d08a00; }
+.none.warn { border-color: #d08a00; color: #9a6200; background: #fff7e6; }
+.warnbox { border: 1px solid #d08a00; background: #fff7e6; color: #5c3b00; border-radius: 10px; padding: 10px 14px; margin: 0 0 14px; font-size: 14px; }
+.warnbox code { font-size: 13px; }
+.warnbox details { margin-top: 6px; }
+.warnbox pre { white-space: pre-wrap; font-size: 12px; max-height: 240px; overflow: auto; }
 main { padding: 16px 22px 80px; min-width: 0; }
 .intro { color: var(--muted); max-width: 80ch; margin: 2px 0 14px; }
 h2.sec-title { margin: 26px 0 4px; font-size: 22px; scroll-margin-top: 70px; display: flex; gap: 10px; align-items: baseline; }
@@ -151,6 +157,14 @@ const $ = (id) => document.getElementById(id);
 const esc = (t) => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const state = { mode: 'app', app: 'desktop', item: null, section: null };
 const shotOf = (app, id) => DATA.shots[app][id];
+const notTaken = (app, id) => (DATA.missing && DATA.missing[app] || []).includes(id);
+const rerun = (app, id) => `npm run ui-review -- ${app} ${id.replace(/\d+$/, '')}`;
+function warnBox(apps) {
+  const lines = apps.filter((a) => (DATA.missing[a] || []).length).map((a) => `<li><b>${appName(a)}</b>: ${DATA.missing[a].length} not taken (${DATA.missing[a].join(' ')})</li>`).join('');
+  if (!lines) return '';
+  const log = (DATA.failed || []).length ? `<details><summary>What went wrong (from run-log.txt)</summary><pre>${esc(DATA.failed.join('\n'))}</pre></details>` : '';
+  return `<div class="warnbox"><b>Some screens weren't taken in the last run</b>, so they're missing here (marked with an orange ring). Run that part again, for example <code>${esc(rerun(apps.find((a) => (DATA.missing[a] || []).length), DATA.missing[apps.find((a) => (DATA.missing[a] || []).length)][0]))}</code>.<ul style="margin:6px 0 0">${lines}</ul>${log}</div>`;
+}
 const src = (app, id) => `images/${app}/${id}.jpg`;
 const itemsOf = (sec) => sec.items;
 const allItems = () => DATA.sections.flatMap((s) => s.items);
@@ -169,7 +183,7 @@ function side() {
   nav.innerHTML = DATA.sections.map((s) => {
     const n = state.mode === 'app' ? s.items.filter((i) => shotOf(state.app, i.id)).length : s.items.length;
     const items = s.items.map((i) => {
-      const has = APPS.map((a) => `<span class="dot ${a.id}${shotOf(a.id, i.id) ? ' has' : ''}" title="${a.name}: ${shotOf(a.id, i.id) ? 'yes' : 'not in this app'}"></span>`).join('');
+      const has = APPS.map((a) => `<span class="dot ${a.id}${shotOf(a.id, i.id) ? ' has' : notTaken(a.id, i.id) ? ' miss' : ''}" title="${a.name}: ${shotOf(a.id, i.id) ? 'yes' : notTaken(a.id, i.id) ? 'not taken in the last run' : 'not in this app'}"></span>`).join('');
       const missing = state.mode === 'app' && !shotOf(state.app, i.id);
       return `<li class="${missing ? 'missing' : ''}"><button data-item="${i.id}" class="${state.item === i.id ? 'on' : ''}"><span class="id">${i.id}</span><span class="name">${esc(i.name)}</span><span class="dots">${has}</span></button></li>`;
     }).join('');
@@ -194,26 +208,29 @@ $('side').addEventListener('click', (e) => {
 function renderApp() {
   const a = state.app;
   const main = $('main');
-  main.innerHTML = `<p class="intro">${esc(DATA.intro[a])} Click a picture to see it large; ← and → go through every screen of the ${appName(a)} in order. Each screen has an id (S4, R3…) that's the same in every app, so "R3 on the iPhone" is a picture you can find.</p>` + DATA.sections.map((s) => {
+  main.innerHTML = warnBox([a]) + `<p class="intro">${esc(DATA.intro[a])} Click a picture to see it large; ← and → go through every screen of the ${appName(a)} in order. Each screen has an id (S4, R3…) that's the same in every app, so "R3 on the iPhone" is a picture you can find.</p>` + DATA.sections.map((s) => {
     const cards = s.items.filter((i) => shotOf(a, i.id)).map((i) => {
       const sh = shotOf(a, i.id);
       return `<div class="card" id="card-${i.id}"><button class="img" data-open="${a}|${i.id}" aria-label="Open ${i.id} ${esc(i.name)}"><img loading="lazy" src="${src(a, i.id)}" width="${sh.w}" height="${sh.h}" alt="${esc(sh.caption)}"></button><div class="meta"><div class="t"><span class="id">${i.id}</span>${esc(i.name)}</div><div class="cap">${esc(sh.caption)}</div></div></div>`;
     }).join('');
-    const missing = s.items.filter((i) => !shotOf(a, i.id));
-    const miss = missing.length ? `<p class="sec-about" style="font-size:13px">Not in the ${appName(a)}: ${missing.map((i) => `<a href="#compare-${i.id}">${i.id} ${esc(i.name)}</a>`).join(', ')}</p>` : '';
-    return cards ? `<h2 class="sec-title" id="sec-${s.key}"><span class="k">${s.key}</span>${esc(s.title)}</h2><p class="sec-about">${esc(s.about)}</p><div class="grid ${a}">${cards}</div>${miss}` : '';
+    const absent = s.items.filter((i) => !shotOf(a, i.id) && !notTaken(a, i.id));
+    const failed = s.items.filter((i) => notTaken(a, i.id));
+    const miss = (failed.length ? `<p class="sec-about" style="font-size:13px;color:#9a6200">Not taken in the last run: ${failed.map((i) => `${i.id} ${esc(i.name)}`).join(', ')}. Run <code>${esc(rerun(a, failed[0].id))}</code> again.</p>` : '')
+      + (absent.length ? `<p class="sec-about" style="font-size:13px">Not in the ${appName(a)}: ${absent.map((i) => `<a href="#compare-${i.id}">${i.id} ${esc(i.name)}</a>`).join(', ')}</p>` : '');
+    return cards || failed.length ? `<h2 class="sec-title" id="sec-${s.key}"><span class="k">${s.key}</span>${esc(s.title)}</h2><p class="sec-about">${esc(s.about)}</p><div class="grid ${a}">${cards}</div>${miss}` : '';
   }).join('');
 }
 
 function cell(a, id) {
   const sh = shotOf(a, id);
+  if (!sh && notTaken(a, id)) return `<div class="cell"><div class="none warn">Not taken in the last run. Run <code>${esc(rerun(a, id))}</code> again.</div></div>`;
   if (!sh) return `<div class="cell"><div class="none">Not in the ${appName(a)}</div></div>`;
   return `<div class="cell"><button class="img" data-open="${a}|${id}" aria-label="Open ${appName(a)} ${id}"><img loading="lazy" src="${src(a, id)}" width="${sh.w}" height="${sh.h}" alt="${esc(sh.caption)}"></button><div class="cap"><span class="badge ${a}">${appName(a)}</span> ${esc(sh.caption)}</div></div>`;
 }
 function renderCompare() {
   const main = $('main');
   const head = `<div class="colhead"><span></span>${APPS.map((a) => `<span><span class="badge ${a.id}">${a.name}</span></span>`).join('')}</div>`;
-  main.innerHTML = `<p class="intro">Each screen with the three apps side by side. "Look closer" shows one screen larger, with room for review notes; ← and → go to the next screen.</p>${head}` + DATA.sections.map((s) => `<h2 class="sec-title" id="sec-${s.key}"><span class="k">${s.key}</span>${esc(s.title)}</h2><p class="sec-about">${esc(s.about)}</p><div class="rows">${s.items.map((i) => `<div class="row" id="row-${i.id}"><div class="label"><span class="id">${i.id}</span>${esc(i.name)}<br><button class="focus" data-focus="${i.id}">Look closer</button>${notes[i.id] ? '<br><span class="note-flag">✎ has notes</span>' : ''}</div>${APPS.map((a) => cell(a.id, i.id)).join('')}</div>`).join('')}</div>`).join('');
+  main.innerHTML = warnBox(APPS.map((x) => x.id)) + `<p class="intro">Each screen with the three apps side by side. "Look closer" shows one screen larger, with room for review notes; ← and → go to the next screen.</p>${head}` + DATA.sections.map((s) => `<h2 class="sec-title" id="sec-${s.key}"><span class="k">${s.key}</span>${esc(s.title)}</h2><p class="sec-about">${esc(s.about)}</p><div class="rows">${s.items.map((i) => `<div class="row" id="row-${i.id}"><div class="label"><span class="id">${i.id}</span>${esc(i.name)}<br><button class="focus" data-focus="${i.id}">Look closer</button>${notes[i.id] ? '<br><span class="note-flag">✎ has notes</span>' : ''}</div>${APPS.map((a) => cell(a.id, i.id)).join('')}</div>`).join('')}</div>`).join('');
 }
 function renderFocus(id) {
   const list = allItems();

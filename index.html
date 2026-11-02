@@ -119,6 +119,12 @@
       }
 
       /* ── Ribbon: tabs of tools ──────────────────────────── */
+      /* Every panel shares one grid row. Inactive panels size that row but stay
+         invisible and inert, so changing tabs never moves the song below it. */
+      .ribbon { display: grid; grid-template-columns: minmax(0, 1fr); }
+      .ribbon-tabs { grid-area: 1 / 1; }
+      .ribbon-panel { grid-area: 2 / 1; }
+      .ribbon-hint { grid-area: 3 / 1; }
       .ribbon-tabs {
         display: flex;
         gap: 4px;
@@ -155,18 +161,18 @@
         min-height: 92px;
         background: var(--ribbon-bg);
       }
-      .ribbon-panel[hidden] { display: none; }
+      .ribbon-panel[hidden] { display: flex; visibility: hidden; pointer-events: none; }
 
       .rib-group {
         display: grid;
         grid-template-rows: 1fr auto;
         gap: 2px;
-        padding: 0 10px;
+        padding: 0 6px;
         border-right: 1px solid var(--border);
       }
       .rib-group:last-child { border-right: 0; }
-      .rib-items { display: flex; align-items: center; gap: 4px; }
-      .rib-fields { gap: 12px; align-items: flex-end; padding-bottom: 4px; }
+      .rib-items { display: flex; align-items: flex-start; gap: 2px; }
+      .rib-fields { gap: 6px; align-items: flex-start; padding-bottom: 4px; }
       .rib-label {
         text-align: center;
         font-size: 11px;
@@ -178,11 +184,14 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 4px;
-        min-width: 74px;
+        width: max-content;
+        min-width: 56px;
+        max-width: 88px;
+        flex-shrink: 0;
         min-height: 62px;
-        padding: 6px 8px;
+        padding: 4px;
         border: 1px solid transparent;
         border-radius: 9px;
         background: transparent;
@@ -191,8 +200,11 @@
         font-size: 12.5px;
         line-height: 1.15;
         cursor: pointer;
-        white-space: nowrap;
+        white-space: normal;
+        text-align: center;
       }
+      .rib-button.rib-button-wide { width: 104px; min-width: 104px; max-width: 104px; }
+      .rib-button-label { display: block; max-width: 100%; line-height: 1.15; white-space: normal; }
       .rib-button svg { color: var(--accent); }
       .rib-button:hover:not(:disabled) { background: var(--accent-soft); border-color: var(--accent-line); }
       .rib-button:disabled { opacity: 0.45; cursor: default; }
@@ -202,7 +214,7 @@
       .rib-field label { font-size: 12px; }
       .rib-row { display: flex; gap: 4px; align-items: center; }
       .rib-stack { display: grid; gap: 4px; }
-      .rib-menu { position: relative; align-self: end; }
+      .rib-menu { position: relative; align-self: start; }
       .rib-menu summary { list-style: none; cursor: pointer; white-space: nowrap; }
       .rib-menu summary::-webkit-details-marker { display: none; }
       .rib-menu-items { position: absolute; z-index: 30; top: calc(100% + 4px); left: 0; display: grid; min-width: 240px; padding: 6px; background: var(--panel-bg, #fff); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); }
@@ -1377,21 +1389,17 @@
          practice CSS that tools/sync-practice.js replaces with the web copy, so they were lost in 4.50) */
       .css-sets { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin: 4px 0 10px; font-size: 13px; }
       .css-sets input { width: 200px; }
-      .rib-fields .rib-button-inline { min-height: 52px; align-self: flex-end; }
+      .rib-fields .rib-button-inline { min-height: 52px; align-self: flex-start; }
       #viewStyleSet { width: auto; min-width: 0; max-width: 140px; }
       #viewStrumSize { max-width: 110px; }
       #viewLayout, #viewTune { max-width: 130px; }
       [data-ribbon-panel="play"] select { max-width: 125px; }
-      .rib-stack { display: grid; gap: 4px; align-self: center; }
-      .rib-stack .rib-field { display: grid; grid-template-columns: 44px auto; align-items: center; gap: 6px; }
+      .rib-stack { display: grid; gap: 4px; align-self: start; }
+      .rib-stack .rib-field { display: grid; grid-template-columns: auto; align-items: center; gap: 0; }
       .rib-stack .rib-field[hidden] { display: none; }
       .rib-stack label { margin: 0; }
-      [data-ribbon-panel="play"] .rib-fields { gap: 8px; }
-      [data-ribbon-panel="play"] .rib-group { padding: 0 8px; }
       #playTempoInput { width: 56px; }
       [data-ribbon-panel="view"] select { max-width: 150px; }
-      [data-ribbon-panel="view"] .rib-fields { gap: 8px; }
-      [data-ribbon-panel="view"] .rib-group { padding: 0 8px; }
       .rib-fields .rib-button-inline { min-width: 60px; padding: 4px 6px; }
       .about-dialog { width: min(640px, 94vw); max-height: 86vh; }
       /* 4.39: Learn */
@@ -1875,6 +1883,59 @@
       .key-sure.medium { color: #b45309; }
       .key-sure.low { color: #b91c1c; }
       .key-reasons { margin: 0 0 10px; padding-left: 18px; display: grid; gap: 4px; font-size: 14px; }
+
+      /* ── 4.53: the ribbon's layout ──
+         One standard for every tab. Each group is the same height: large buttons (an icon over the
+         name, at most two lines), or columns of small controls (.rib-col) on two rows of the same
+         height, everything lined up from the top, with the group's name underneath. A group with
+         one setting has no label of its own; one with two settings labels each, beside it.
+         When the window is too narrow for a tab's tools they don't wrap onto a second row: groups
+         fold, from the right, into one ▾ button each (foldRibbon), which opens the group below it. */
+      :root { --rib-row: 28px; --rib-gap: 6px; --rib-h: 62px; }
+      .ribbon-panel { flex-wrap: nowrap; align-items: stretch; min-height: 0; padding: 6px 4px 0; }
+      .ribbon-panel > .rib-group { position: relative; display: grid; grid-template-rows: var(--rib-h) auto; gap: 3px; padding: 0 9px; flex: none; }
+      .ribbon-panel .rib-items { display: flex; align-items: flex-start; gap: 4px; height: var(--rib-h); padding: 0; }
+      .ribbon-panel .rib-button { height: var(--rib-h); min-height: 0; justify-content: flex-start; padding: 5px 4px 2px; }
+      .ribbon-panel .rib-col { display: grid; grid-auto-rows: var(--rib-row); row-gap: var(--rib-gap); align-content: start; justify-items: start; padding: 0 2px; }
+      .ribbon-panel .rib-col > [hidden] { display: none; }
+      .ribbon-panel .rib-col .rib-field { display: flex; align-items: center; gap: 6px; height: var(--rib-row); font-size: 12px; color: var(--muted); }
+      .ribbon-panel .rib-col .rib-field label { font-size: 12px; }
+      /* a column of labelled settings: the labels in one column, the controls lined up beside them */
+      .ribbon-panel .rib-col:has(> .rib-field > label) { grid-template-columns: auto auto; column-gap: 6px; align-items: center; }
+      .ribbon-panel .rib-col:has(> .rib-field > label) > .rib-field { display: contents; }
+      .ribbon-panel .rib-col:has(> .rib-field > label) > .rib-field[hidden] { display: none; }
+      .ribbon-panel .rib-col:has(> .rib-field > label) > .rib-field > label { justify-self: end; }
+      .ribbon-panel .rib-col:has(> .rib-field > label) > :not(.rib-field) { grid-column: 1 / -1; }
+      .ribbon-panel .rib-col .rib-row { display: flex; align-items: center; gap: 4px; height: var(--rib-row); }
+      .ribbon-panel .rib-col select,
+      .ribbon-panel .rib-col input[type="number"],
+      .ribbon-panel .rib-col .rib-small { height: var(--rib-row); box-sizing: border-box; padding-top: 0; padding-bottom: 0; line-height: calc(var(--rib-row) - 2px); }
+      .ribbon-panel .rib-col .rib-small { min-width: 30px; }
+      .ribbon-panel .rib-col select { max-width: 200px; }
+      .ribbon-panel #viewLayout, .ribbon-panel #viewTune { max-width: 190px; }
+      /* a narrow window: the tabs themselves close up, so Hide and Close stay in view */
+      @media (max-width: 1060px) { .ribbon-tab { padding: 7px 11px 8px; } .ribbon-tabs { gap: 0; } }
+      .ribbon-panel .rib-col input[type="number"] { width: 58px; }
+      .ribbon-panel .rib-col .rib-menu { align-self: center; }
+      .rib-check { display: flex; align-items: center; gap: 6px; height: var(--rib-row); font-size: 13px; color: var(--text); white-space: nowrap; cursor: pointer; }
+      .rib-unit { font-size: 12px; color: var(--muted); }
+      .rib-note, .ribbon-panel #writtenAccompaniment { display: block; font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; line-height: var(--rib-row); }
+      .ribbon-panel .rib-col-strum { grid-template-rows: var(--rib-row) var(--rib-row); }
+      .ribbon-panel .rib-label { white-space: nowrap; align-self: end; }
+      /* a setting this song has its own value for: the group's name says so (the select is marked too) */
+      .ribbon-panel .rib-group:has(.rib-own) > .rib-label::after { content: " · this song"; color: var(--accent-dark); font-weight: 600; }
+      .rib-field.has-own > label::after { content: none; }
+      /* folded groups */
+      .ribbon-panel .rib-fold { display: none; }
+      .ribbon-panel .rib-group.folded > .rib-items { display: none; }
+      .ribbon-panel .rib-group.folded > .rib-fold { display: flex; }
+      .ribbon-panel .rib-group.folded > .rib-label { visibility: hidden; }
+      .ribbon-panel .rib-group.folded.open > .rib-items {
+        display: flex; position: absolute; z-index: 40; top: calc(100% + 2px); left: 0;
+        height: auto; min-height: var(--rib-h); padding: 8px 10px; gap: 6px;
+        background: var(--panel-bg, #fff); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      }
+      .ribbon-panel .rib-group.folded.open > .rib-fold { background: var(--accent-soft); border-color: var(--accent-line); }
     </style>
   </head>
   <body>
@@ -1895,12 +1956,12 @@
           <div class="ribbon-tabs" role="tablist">
             <button id="ribbonTabSong" class="ribbon-tab" type="button" role="tab" data-ribbon="song" title="Close, save, bring in and export songs">File</button>
             <button id="ribbonTabWrite" class="ribbon-tab" type="button" role="tab" data-ribbon="write" title="Help with writing the song: tab, strums, key, tidying">Write</button>
-            <button id="ribbonTabThisSong" class="ribbon-tab" type="button" role="tab" data-ribbon="thissong" title="Saved song settings; transpose and practice speed are temporary playing choices">This song</button>
+            <button id="ribbonTabThisSong" class="ribbon-tab" type="button" role="tab" data-ribbon="thissong" title="Saved song settings; transpose and practice speed are temporary playing choices">Song</button>
             <button id="ribbonTabView" class="ribbon-tab" type="button" role="tab" data-ribbon="view" title="How the song looks: chord diagrams, text size, strum patterns, layout">Display</button>
             <button id="ribbonTabExport" class="ribbon-tab" type="button" role="tab" data-ribbon="export" title="PDFs, web pages, lyrics and ChordPro files, into the song's exports folder">Export</button>
             <button id="ribbonTabPlay" class="ribbon-tab" type="button" role="tab" data-ribbon="play" title="Play, stop, karaoke, tempo and how playback sounds">Play</button>
             <button id="ribbonTabLearn" class="ribbon-tab" type="button" role="tab" data-ribbon="learn" title="Learn the song: play it from memory, practise its changes, think in numbers, and make a learn sheet">Learn</button>
-            <button id="ribbonTabPick" class="ribbon-tab" type="button" role="tab" data-ribbon="pick" title="Fingerpick the song instead of strumming: choose a pattern, play it, make a pick sheet, and learn any tab in steps">Accompaniment</button>
+            <button id="ribbonTabPick" class="ribbon-tab" type="button" role="tab" data-ribbon="pick" title="Fingerpick the song instead of strumming: choose a pattern, play it, make a pick sheet, and learn any tab in steps">Picking</button>
             <button id="ribbonTabSettings" class="ribbon-tab" type="button" role="tab" data-ribbon="settings" title="Settings for this song and the defaults for all songs">Settings</button>
             <span class="ribbon-end">
               <button id="ribbonHide" class="ribbon-close ribbon-hide" type="button" title="Hide the tools, for more room (click any tab, or this again, to show them)" aria-label="Hide the tools"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -1908,29 +1969,37 @@
             </span>
           </div>
 
+          <!-- 4.53: every group is the same height: large buttons (an icon over the name), or a column
+               of up to two rows of small controls (.rib-col), all from the top, with the group's name
+               underneath. A group with one setting has no label of its own (its name says what it is);
+               a group with two has a short label beside each. -->
           <div class="ribbon-panel" data-ribbon-panel="song" role="tabpanel">
             <div class="rib-group">
               <div class="rib-items">
-                <button id="closeSongButton" class="rib-button" type="button" data-icon="close" title="Close this song and go back to the library (asks first if there are unsaved changes)">Close song</button>
                 <button id="saveButton" class="rib-button" type="button" data-icon="save" title="Save this song (Ctrl+S)">Save</button>
-                <button id="saveAsButton" class="rib-button" type="button" data-icon="saveAs" title="Make a new song from this one: asks for the new song's name">Save as new</button>
-                <button id="renameButton" class="rib-button" type="button" data-icon="rename" title="Give this song a new name (its folder and file are renamed, and setlists follow)">Rename…</button>
-                <button id="historyButton" class="rib-button" type="button" data-icon="history" title="Earlier versions of this song: every save keeps the one before (the last 20). Look at one and put it back.">Earlier versions…</button>
-                <button id="deleteSongButton" class="rib-button" type="button" data-icon="archive" title="Archive this song: put it away (Your songs → Archived songs), from where it can come back or be deleted for good">Archive</button>
+                <button id="saveAsButton" class="rib-button" type="button" data-icon="saveAs" title="Make a new song from this one: asks for the new song's name">Save new</button>
+                <button id="historyButton" class="rib-button" type="button" data-icon="history" title="Earlier versions of this song: every save keeps the one before (the last 20). Look at one and put it back.">Versions</button>
               </div>
-              <span class="rib-label">This song</span>
+              <span class="rib-label">Save</span>
             </div>
             <div class="rib-group">
               <div class="rib-items">
-                <button id="importButton" class="rib-button" type="button" data-icon="import" title="Bring in a text or ChordPro (.cho) file from your computer as a new song">Import text file</button>
-                <button id="pasteSheetButton" class="rib-button" type="button" data-icon="paste" title="Paste a song from a website (chords above the words, tab or ChordPro) and have it tidied (Ctrl+Shift+V)">Paste from website</button>
-                <button id="convertLinesButton" class="rib-button" type="button" data-icon="convert" title="Tidy chords above words: songs copied from websites often have the chords on their own line above the words. This moves them into the words, as [C]hords, so the app can play, transpose and lay them out. Check the lines it marks afterwards.">Tidy chords above words</button>
+                <button id="renameButton" class="rib-button" type="button" data-icon="rename" title="Give this song a new name (its folder and file are renamed, and setlists follow)">Rename</button>
+                <button id="closeSongButton" class="rib-button" type="button" data-icon="close" title="Close this song and go back to the library (asks first if there are unsaved changes)">Close</button>
+              </div>
+              <span class="rib-label">Song file</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <button id="importButton" class="rib-button" type="button" data-icon="import" title="Bring in a text or ChordPro (.cho) file from your computer as a new song">Import file</button>
+                <button id="pasteSheetButton" class="rib-button" type="button" data-icon="paste" title="Paste a song from a website (chords above the words, tab or ChordPro) and have it tidied (Ctrl+Shift+V)">Paste from web</button>
+                <button id="convertLinesButton" class="rib-button" type="button" data-icon="convert" title="Tidy chords above words: songs copied from websites often have the chords on their own line above the words. This moves them into the words, as [C]hords, so the app can play, transpose and lay them out. Check the lines it marks afterwards.">Tidy chords</button>
               </div>
               <span class="rib-label">Bring in</span>
             </div>
             <div class="rib-group">
               <div class="rib-items">
-                <button id="addToSetlistButton" class="rib-button" type="button" data-icon="setlist" title="Add this song to a setlist (for a gig, jam or club night). Setlists are in the library, where you can make a songbook PDF.">Add to setlist…</button>
+                <button id="addToSetlistButton" class="rib-button" type="button" data-icon="setlist" title="Add this song to a setlist (for a gig, jam or club night). Setlists are in the library, where you can make a songbook PDF.">Setlist</button>
               </div>
               <span class="rib-label">Organise</span>
             </div>
@@ -1940,30 +2009,28 @@
             <div class="rib-group">
               <div class="rib-items">
                 <button id="insertTabButton" class="rib-button" type="button" data-icon="tab" title="Add an empty tab block for your instrument's strings below the cursor. In a tab block, typing writes over the dashes.">Insert tab</button>
-                <button id="shapesButton" class="rib-button" type="button" data-icon="shape" title="Choose another fingering for a chord in this song, or type your own. You can also click a chord diagram in the preview.">Chord shapes…</button>
-                <button id="strumsButton" class="rib-button" type="button" data-icon="strums" title="Strum patterns: common patterns and what they're good for. Hear one, add it to the song, or make it the default.">Strum patterns…</button>
+                <button id="shapesButton" class="rib-button" type="button" data-icon="shape" title="Choose another fingering for a chord in this song, or type your own. You can also click a chord diagram in the preview.">Chords</button>
               </div>
               <span class="rib-label">Add</span>
             </div>
             <div class="rib-group">
               <div class="rib-items">
-                <div class="rib-field rib-format" title="Bold, italic or underline the selected words. In the song they're written **bold**, *italic* and __underline__">
-                  <label>Selected words</label>
-                  <span class="rib-format-row">
+                <div class="rib-col rib-format" title="Bold, italic or underline the selected words. In the song they're written **bold**, *italic* and __underline__">
+                  <span class="rib-row rib-format-row">
                     <button id="boldButton" class="rib-small" type="button" title="Bold (Ctrl+B): **words**"><strong>B</strong></button>
                     <button id="italicButton" class="rib-small" type="button" title="Italic (Ctrl+I): *words*"><em>I</em></button>
                     <button id="underlineButton" class="rib-small" type="button" title="Underline (Ctrl+U): __words__"><u>U</u></button>
                   </span>
                 </div>
               </div>
-              <span class="rib-label">Format</span>
+              <span class="rib-label">Format words</span>
             </div>
             <div class="rib-group">
               <div class="rib-items">
-                <button id="guessKeyButton" class="rib-button" type="button" data-icon="key" title="Suggest which key the song is in, from its chords: the likeliest keys, the reasons, and how sure it is (Ctrl+K)">Guess the key…</button>
-                <button id="patternsButton" class="rib-button" type="button" data-icon="patterns" title="The song's chords as numbers (I IV V…), the familiar progressions in it, and which sections share one: a way to remember the song">Chord patterns</button>
+                <button id="guessKeyButton" class="rib-button" type="button" data-icon="key" title="Suggest which key the song is in, from its chords: the likeliest keys, the reasons, and how sure it is (Ctrl+K)">Guess key</button>
+                <button id="patternsButton" class="rib-button" type="button" data-icon="patterns" title="The song's chords as numbers (I IV V…), the familiar progressions in it, and which sections share one: a way to remember the song">Patterns</button>
               </div>
-              <span class="rib-label">Check and tidy</span>
+              <span class="rib-label">Check</span>
             </div>
             <div class="rib-group">
               <div class="rib-items">
@@ -1974,7 +2041,7 @@
             </div>
             <div class="rib-group">
               <div class="rib-items">
-                <button id="guideButton" class="rib-button" type="button" data-icon="help" title="Everything you can type in a song, with examples: chords, bars, repeats, sections, strums and tab (F1)">How to write</button>
+                <button id="guideButton" class="rib-button" type="button" data-icon="help" title="Everything you can type in a song, with examples: chords, bars, repeats, sections, strums and tab (F1)">Writing</button>
               </div>
               <span class="rib-label">Help</span>
             </div>
@@ -1982,193 +2049,216 @@
 
           <div class="ribbon-panel" data-ribbon-panel="thissong" role="tabpanel" hidden>
             <div class="rib-group">
-              <div class="rib-items rib-fields">
-                <div class="rib-field" title="The key you see and play in: the original, or a version you saved in another key">
-                  <label for="versionSelect">Key</label>
+              <div class="rib-items">
+                <div class="rib-col" title="The key you see and play in: the original, or a version you saved in another key">
+                  <div class="rib-field"><select id="versionSelect" aria-label="Key" title="The original key, or a version you saved in another key"></select></div>
                   <div class="rib-row">
-                    <select id="versionSelect" title="The original key, or a version you saved in another key"></select>
-                    <button id="transposeDown" class="rib-small" type="button" title="Try it one semitone lower">−</button>
-                    <button id="transposeUp" class="rib-small" type="button" title="Try it one semitone higher">+</button>
+                    <button id="transposeDown" class="rib-small" type="button" title="Try it one semitone lower" aria-label="One semitone lower">−</button>
+                    <button id="transposeUp" class="rib-small" type="button" title="Try it one semitone higher" aria-label="One semitone higher">+</button>
+                    <details class="rib-menu" id="keyMenu">
+                      <summary class="rib-small" title="Save the key you're looking at, remove a saved key, or make it the song's own key">Keys ▾</summary>
+                      <div class="rib-menu-items">
+                        <button id="saveVersionButton" type="button" title="Keep this song in another key as a version, alongside the original">Save this key as a version…</button>
+                        <button id="removeVersionButton" type="button" title="Remove this version (its exports are kept)">Remove this version</button>
+                        <button id="rekeyButton" type="button" title="Rewrite the song in the key you're looking at: the chords in the song itself change, and the old key is kept as a saved version">Make this the song's key…</button>
+                      </div>
+                    </details>
                   </div>
                 </div>
-                <details class="rib-menu" id="keyMenu">
-                  <summary class="rib-small" title="Save the key you're looking at, remove a saved key, or make it the song's own key">Keys ▾</summary>
-                  <div class="rib-menu-items">
-                    <button id="saveVersionButton" type="button" title="Keep this song in another key as a version, alongside the original">Save this key as a version…</button>
-                    <button id="removeVersionButton" type="button" title="Remove this version (its exports are kept)">Remove this version</button>
-                    <button id="rekeyButton" type="button" title="Rewrite the song in the key you're looking at: the chords in the song itself change, and the old key is kept as a saved version">Make this the song's key…</button>
-                  </div>
-                </details>
               </div>
               <span class="rib-label">Key</span>
             </div>
             <div class="rib-group">
-              <div class="rib-items rib-fields">
-                <div class="rib-field" title="Play easier shapes with a capo. The chords and diagrams show the shapes to play; playback still sounds in the song's key. Saved with the song.">
-                  <label for="capoSelect">Capo</label>
-                  <div class="rib-row">
-                    <select id="capoSelect" title="Play easier shapes with a capo. The chords and diagrams show the shapes to play; playback still sounds in the song's key. Saved with the song.">
+              <div class="rib-items">
+                <div class="rib-col" title="Play easier shapes with a capo. The chords and diagrams show the shapes to play; playback still sounds in the song's key. Saved with the song.">
+                  <div class="rib-field">
+                    <select id="capoSelect" aria-label="Capo" title="Play easier shapes with a capo. The chords and diagrams show the shapes to play; playback still sounds in the song's key. Saved with the song.">
                       <option value="0">None</option>
                       <option value="1">1</option><option value="2">2</option><option value="3">3</option>
                       <option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option>
                     </select>
-                    <button id="capoSuggestButton" class="rib-small" type="button" title="Find the capo position with the easiest shapes for this song on your instrument">Suggest…</button>
                   </div>
+                  <button id="capoSuggestButton" class="rib-small" type="button" title="Find the capo position with the easiest shapes for this song on your instrument">Suggest…</button>
                 </div>
               </div>
               <span class="rib-label">Capo</span>
             </div>
             <div class="rib-group">
-              <div class="rib-items rib-fields">
-                <div class="rib-field" title="The instrument for this song: chord diagrams, tab, playback and export names. Saved with the song.">
-                  <label for="instrumentSelect">Instrument</label>
-                  <select id="instrumentSelect" class="instrument-select" data-config-path="song.instrument" data-scope="song" title="The instrument for this song: chord diagrams, tab, playback and export names. Saved with the song.">
-                    <option value="soprano">Ukulele</option>
-                    <option value="lowg">Ukulele (low G)</option>
-                    <option value="baritone">Baritone uke</option>
-                    <option value="guitar">Guitar</option>
-                  </select>
+              <div class="rib-items">
+                <div class="rib-col">
+                  <div class="rib-field" title="The instrument for this song: chord diagrams, tab, playback and export names. Saved with the song.">
+                    <select id="instrumentSelect" class="instrument-select" aria-label="Instrument" data-config-path="song.instrument" data-scope="song" title="The instrument for this song: chord diagrams, tab, playback and export names. Saved with the song.">
+                      <option value="soprano">Ukulele</option>
+                      <option value="lowg">Ukulele (low G)</option>
+                      <option value="baritone">Baritone uke</option>
+                      <option value="guitar">Guitar</option>
+                    </select>
+                  </div>
                 </div>
               </div>
               <span class="rib-label">Instrument</span>
             </div>
             <div class="rib-group">
-              <div class="rib-items rib-fields">
-                <div class="rib-field" title="Tempo in beats per minute, for playback and karaoke. Saved with the song.">
-                  <label for="tempoInput">Tempo (bpm)</label>
-                  <input id="tempoInput" type="number" min="40" max="240" step="1" data-config-path="song.tempo" data-scope="song" title="Tempo in beats per minute, for playback and karaoke (in 6/8, beats are dotted quarters: two a bar). Saved with the song." />
-                </div>
-                <div class="rib-field" title="Beats in each bar. Saved with the song.">
-                  <label for="beatsSelect">Time signature</label>
-                  <select id="beatsSelect" data-config-path="song.beats_per_bar" data-scope="song" title="Beats in each bar. Saved with the song.">
-                    <option value="4">4/4</option>
-                    <option value="3">3/4</option>
-                    <option value="2">2/4</option>
-                    <option value="6">6/8</option>
-                  </select>
-                </div>
-                <div class="rib-field" title="The strum played where the song has no {pattern} of its own, or a picking pattern instead (Pick: …). Saved with the song; Default follows Settings → All songs.">
-                  <label for="songStrumSelect">Unmarked passages</label>
-                  <select id="songStrumSelect" title="The strum played where the song has no {pattern} of its own, or a picking pattern instead (Pick: …). Saved with the song; Default follows Settings → All songs."></select>
+              <div class="rib-items">
+                <div class="rib-col">
+                  <div class="rib-field" title="Tempo in beats per minute, for playback and karaoke. Saved with the song.">
+                    <label for="tempoInput">Tempo</label>
+                    <span class="rib-row"><input id="tempoInput" type="number" min="40" max="240" step="1" data-config-path="song.tempo" data-scope="song" title="Tempo in beats per minute, for playback and karaoke (in 6/8, beats are dotted quarters: two a bar). Saved with the song." /><span class="rib-unit">bpm</span></span>
+                  </div>
+                  <div class="rib-field" title="Beats in each bar. Saved with the song.">
+                    <label for="beatsSelect">Time</label>
+                    <select id="beatsSelect" data-config-path="song.beats_per_bar" data-scope="song" title="Beats in each bar. Saved with the song.">
+                      <option value="4">4/4</option>
+                      <option value="3">3/4</option>
+                      <option value="2">2/4</option>
+                      <option value="6">6/8</option>
+                    </select>
+                  </div>
                 </div>
               </div>
-              <span class="rib-label">Timing</span>
+              <span class="rib-label">Tempo and time</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <div class="rib-col rib-col-strum">
+                  <div class="rib-field" title="The strum played where the song has no {pattern} of its own, or a picking pattern instead (Pick: …). Saved with the song; Default follows Settings → All songs.">
+                    <select id="songStrumSelect" aria-label="Strum for unmarked passages" title="The strum played where the song has no {pattern} of its own, or a picking pattern instead (Pick: …). Saved with the song; Default follows Settings → All songs."></select>
+                  </div>
+                </div>
+              </div>
+              <span class="rib-label">Strum where none is written</span>
             </div>
           </div>
 
           <div class="ribbon-panel" data-ribbon-panel="view" role="tabpanel" hidden>
             <div class="rib-group">
-              <div class="rib-items rib-fields">
-                <div class="rib-field" title="A whole look for every song: colours, fonts, sizes, diagrams. Each set can be edited">
-                  <label for="viewStyleSet">Style set</label>
-                  <select id="viewStyleSet" title="Choose the look of every song: Classic, Big and clear, Songbook, Ink saver, or your own"></select>
+              <div class="rib-items">
+                <div class="rib-col">
+                  <div class="rib-field" title="A whole look for every song: colours, fonts, sizes, diagrams. Each set can be edited">
+                    <label for="viewStyleSet">Set</label>
+                    <select id="viewStyleSet" title="Choose the look of every song: Classic, Big and clear, Songbook, Ink saver, or your own"></select>
+                  </div>
+                  <div class="rib-field" title="Song: the song copies, in the style set you chose. Stage: the Stage copies (bold and black, for gigs), which always use the Stage style">
+                    <label for="viewLook">Show</label>
+                    <select id="viewLook" data-config-path="general.look" title="See the song copy (in your style set), or the Stage copy (the Stage style). Edit style… edits the one you\'re looking at">
+                      <option value="standard">Song sheet</option>
+                      <option value="stage">Stage copy</option>
+                    </select>
+                  </div>
                 </div>
-                <div class="rib-field" title="Song: the song copies, in the style set you chose. Stage: the Stage copies (bold and black, for gigs), which always use the Stage style">
-                  <label for="viewLook">Look</label>
-                  <select id="viewLook" data-config-path="general.look" title="See the song copy (in your style set), or the Stage copy (the Stage style). Edit style… edits the one you\'re looking at">
-                    <option value="standard">Song sheet</option>
-                    <option value="stage">Stage copy</option>
-                  </select>
-                </div>
-                <button id="editStylesheetButton" class="rib-button rib-button-inline" type="button" data-icon="brush" title="Edit the style set in use (CSS): colours, spacing, fonts. Or save it as a new set of your own">Edit style…</button>
+                <button id="editStylesheetButton" class="rib-button" type="button" data-icon="brush" title="Edit the style set in use (CSS): colours, spacing, fonts. Or save it as a new set of your own">Edit style…</button>
               </div>
               <span class="rib-label">Style</span>
             </div>
             <div class="rib-group">
-              <div class="rib-items rib-fields">
-                <div class="rib-field" title="Where the chord diagrams go, or none">
-                  <label for="viewDiagrams">Chord diagrams</label>
-                  <select id="viewDiagrams" title="Where the chord diagrams go: at the top of the song, where each chord is first used, or none">
-                    <option value="song_start">At the top</option>
-                    <option value="first_use">Where first used</option>
-                    <option value="none">None</option>
-                  </select>
+              <div class="rib-items">
+                <div class="rib-col">
+                  <div class="rib-field" title="Where the chord diagrams go, or none">
+                    <select id="viewDiagrams" aria-label="Chord diagrams" title="Where the chord diagrams go: at the top of the song, where each chord is first used, or none">
+                      <option value="song_start">At the top</option>
+                      <option value="first_use">Where first used</option>
+                      <option value="none">None</option>
+                    </select>
+                  </div>
                 </div>
-                <div class="rib-checks">
-                  <label title="Mirror the diagrams for a left-handed instrument (all songs)"><input id="viewLeftHanded" type="checkbox" /> Left-handed (all songs)</label>
-                  <label title="No diagram for the chords everyone knows: C, G, Am, F… (all songs; change the list in Settings → All songs)"><input id="viewSkipCommon" type="checkbox" /> Hide common</label>
+                <div class="rib-col">
+                  <label class="rib-check" title="Mirror the diagrams for a left-handed instrument; applies to all songs"><input id="viewLeftHanded" type="checkbox" /> Left-handed</label>
+                  <label class="rib-check" title="No diagram for the chords everyone knows: C, G, Am, F… (all songs; change the list in Settings → All songs)"><input id="viewSkipCommon" type="checkbox" /> Hide common</label>
                 </div>
               </div>
-              <span class="rib-label">Diagrams</span>
+              <span class="rib-label">Chord diagrams</span>
             </div>
             <div class="rib-group">
-              <div class="rib-items rib-fields">
-                <div class="rib-field" title="The size of the song's words and chords (on screen, in exports and PDFs)">
-                  <label>Text size</label>
+              <div class="rib-items">
+                <div class="rib-col" title="The size of the song's words and chords (on screen, in exports and PDFs)">
                   <div class="rib-row">
                     <button id="viewTextSmaller" class="rib-small" type="button" title="Smaller text">A−</button>
                     <span id="viewTextSize" class="rib-value">14</span>
                     <button id="viewTextBigger" class="rib-small" type="button" title="Bigger text">A+</button>
-                    <button id="viewTextReset" class="rib-small" type="button" title="Back to the usual size">Usual</button>
                   </div>
-                </div>
-                <div class="rib-field" title="Songs with their tune written in ({melody} lines): the tune as music on a staff. A strip at the top shows each tune once, with its chords; Over every line puts a staff above each line, like a printed songbook">
-                  <label for="viewTune">The tune</label>
-                  <select id="viewTune" title="The tune as notes on a staff (songs with {melody} lines): once, at the top; over every line, songbook style; or hidden. Saved with the song, and used in its PDFs and web pages">
-                    <option value="strip">A strip at the top</option>
-                    <option value="lines">Over every line</option>
-                    <option value="off">Hidden</option>
-                  </select>
+                  <button id="viewTextReset" class="rib-small" type="button" title="Back to the usual size">Usual</button>
                 </div>
               </div>
-              <span class="rib-label">Text and tune</span>
+              <span class="rib-label">Text size</span>
             </div>
             <div class="rib-group">
-              <div class="rib-items rib-fields">
-                <div class="rib-field" title="How {strum patterns} are shown">
-                  <label for="viewStrumStyle">Strum patterns</label>
-                  <select id="viewStrumStyle" title="How {strum patterns} are shown">
-                    <option value="comic">Info box: bold</option>
-                    <option value="clean">Info box: light</option>
-                    <option value="compact">One line</option>
-                    <option value="plain">Plain</option>
-                  </select>
-                </div>
-                <div class="rib-field" title="How big plain strum patterns are, compared with the words (--plain-strum-scale in the style set)">
-                  <label for="viewStrumSize">Plain strums</label>
-                  <select id="viewStrumSize" title="When strum patterns are shown Plain: how big they are, compared with the words (all songs; kept in the style set)">
-                    <option value="1">As the words</option>
-                    <option value="1.2">Bigger</option>
-                    <option value="1.5">Large</option>
-                    <option value="1.8">Extra large</option>
-                  </select>
-                </div>
-                <div class="rib-field" title="Chords on a line above the words, or in columns">
-                  <label for="viewLayout">Layout</label>
-                  <select id="viewLayout" title="Where the chords go: above the words, in columns, in the words, or the chords alone">
-                    <option value="lines">Chords above the words</option>
-                    <option value="table">Chords above, in columns</option>
-                    <option value="inline">Chords in the words</option>
-                    <option value="chords">Chords only</option>
-                  </select>
-                </div>
-                <details class="rib-menu" id="tabMenu">
-                  <summary class="rib-small" title="How tab looks: fret numbers, size, a box, faint lines (all songs)">Tab look ▾</summary>
-                  <div class="rib-menu-items tab-menu-items">
-                <div class="rib-field" title="How the fret numbers in tab look">
-                  <label for="viewTabFrets">Frets</label>
-                  <select id="viewTabFrets" data-config-path="tablature.frets" title="How the fret numbers in tab look (all songs)">
-                    <option value="chord">Coloured</option>
-                    <option value="bold">Bold</option>
-                    <option value="plain">Plain</option>
-                  </select>
-                </div>
-                <div class="rib-field" title="Tab size, compared with the words">
-                  <label for="viewTabSize">Size</label>
-                  <select id="viewTabSize" data-config-path="tablature.size" title="Tab size, compared with the words (all songs)">
-                    <option value="same">As the words</option>
-                    <option value="smaller">Smaller</option>
-                    <option value="larger">Larger</option>
-                  </select>
-                </div>
-                <div class="rib-checks">
-                  <label title="A light shaded box behind each tab block (all songs)"><input id="viewTabBox" type="checkbox" data-config-path="tablature.box" /> Box</label>
-                  <label title="Fainter dashes and string names, so the fret numbers stand out (all songs)"><input id="viewTabFaint" type="checkbox" data-config-path="tablature.faint" /> Faint lines</label>
-                </div>
+              <div class="rib-items">
+                <div class="rib-col">
+                  <div class="rib-field" title="Songs with their tune written in ({melody} lines): the tune as music on a staff. A strip at the top shows each tune once, with its chords; Over every line puts a staff above each line, like a printed songbook">
+                    <select id="viewTune" aria-label="The tune as notes" title="The tune as notes on a staff (songs with {melody} lines): once, at the top; over every line, songbook style; or hidden. Saved with the song, and used in its PDFs and web pages">
+                      <option value="strip">A strip at the top</option>
+                      <option value="lines">Over every line</option>
+                      <option value="off">Hidden</option>
+                    </select>
                   </div>
-                </details>
+                </div>
               </div>
-              <span class="rib-label">Sheet and tab</span>
+              <span class="rib-label">The tune as notes</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <div class="rib-col">
+                  <div class="rib-field" title="How {strum patterns} are shown">
+                    <label for="viewStrumStyle">Show as</label>
+                    <select id="viewStrumStyle" title="How {strum patterns} are shown">
+                      <option value="comic">Info box: bold</option>
+                      <option value="clean">Info box: light</option>
+                      <option value="compact">One line</option>
+                      <option value="plain">Plain</option>
+                    </select>
+                  </div>
+                  <div class="rib-field" title="How big plain strum patterns are, compared with the words (--plain-strum-scale in the style set)">
+                    <label for="viewStrumSize">Plain size</label>
+                    <select id="viewStrumSize" title="When strum patterns are shown Plain: how big they are, compared with the words (all songs; kept in the style set)">
+                      <option value="1">As the words</option>
+                      <option value="1.2">Bigger</option>
+                      <option value="1.5">Large</option>
+                      <option value="1.8">Extra large</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <span class="rib-label">Strum patterns</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <div class="rib-col">
+                  <div class="rib-field" title="Chords on a line above the words, or in columns">
+                    <select id="viewLayout" aria-label="Layout" title="Where the chords go: above the words, in columns, in the words, or the chords alone">
+                      <option value="lines">Chords above the words</option>
+                      <option value="table">Chords above, in columns</option>
+                      <option value="inline">Chords in the words</option>
+                      <option value="chords">Chords only</option>
+                    </select>
+                  </div>
+                  <details class="rib-menu" id="tabMenu">
+                    <summary class="rib-small" title="How tab looks: fret numbers, size, a box, faint lines (all songs)">Tab look ▾</summary>
+                    <div class="rib-menu-items tab-menu-items">
+                      <div class="rib-field" title="How the fret numbers in tab look">
+                        <label for="viewTabFrets">Frets</label>
+                        <select id="viewTabFrets" data-config-path="tablature.frets" title="How the fret numbers in tab look (all songs)">
+                          <option value="chord">Coloured</option>
+                          <option value="bold">Bold</option>
+                          <option value="plain">Plain</option>
+                        </select>
+                      </div>
+                      <div class="rib-field" title="Tab size, compared with the words">
+                        <label for="viewTabSize">Size</label>
+                        <select id="viewTabSize" data-config-path="tablature.size" title="Tab size, compared with the words (all songs)">
+                          <option value="same">As the words</option>
+                          <option value="smaller">Smaller</option>
+                          <option value="larger">Larger</option>
+                        </select>
+                      </div>
+                      <div class="rib-checks">
+                        <label title="A light shaded box behind each tab block (all songs)"><input id="viewTabBox" type="checkbox" data-config-path="tablature.box" /> Box</label>
+                        <label title="Fainter dashes and string names, so the fret numbers stand out (all songs)"><input id="viewTabFaint" type="checkbox" data-config-path="tablature.faint" /> Faint lines</label>
+                      </div>
+                    </div>
+                  </details>
+                </div>
+              </div>
+              <span class="rib-label">Layout and tab</span>
             </div>
           </div>
 
@@ -2176,49 +2266,63 @@
             <div class="rib-group">
               <div class="rib-items">
                 <button id="exportNowButton" class="rib-button" type="button" data-icon="export" title="Export this song: everything is ticked (chord sheet PDF and web page, Markdown, ChordPro, and the lyrics); untick what you don't need. PDFs and web pages come as a song copy in your style set (Song folder) and a Stage copy, bold and black for gigs (Stage folder).">Export now</button>
+                <button id="openExportsButton" class="rib-button" type="button" data-icon="folder" title="Open this song's exports folder">Exports folder</button>
               </div>
               <span class="rib-label">Export</span>
             </div>
             <div class="rib-group">
-              <div class="rib-items rib-fields">
-                <div class="rib-field" title="Paper size for PDFs">
-                  <label for="exportPageQuick">Page</label>
-                  <select id="exportPageQuick" data-config-path="export.pdf_page_size" title="Paper size for PDFs">
-                    <option value="A4">A4</option>
-                    <option value="Letter">Letter</option>
-                  </select>
-                </div>
-                <div class="rib-checks">
-                  <label title="Export the original and every saved key, not just the key you're looking at"><input id="exportAllQuick" type="checkbox" data-config-path="export.all_versions" /> Every saved key</label>
-                  <label title="Untick to leave tab blocks out of PDFs (they stay in the song and on screen)"><input id="exportTabInPrint" type="checkbox" data-config-path="tablature.in_print" /> Tab in PDFs</label>
-                </div>
-                <div class="rib-field" title="This song's Verse 1, Chorus and so on: show them, make them small, or hide them to print fewer pages. Kept with the song. A heading on its own (a cue like &quot;Chorus&quot;) always stays.">
-                  <label for="exportSections">Section names</label>
-                  <select id="exportSections" title="Verse 1, Chorus…: show, small, or hidden (fewer pages). Default follows Settings. Also shown in the preview">
-                    <option value="default">Default</option>
-                    <option value="show">Show</option>
-                    <option value="small">Small</option>
-                    <option value="hide">Hide</option>
-                  </select>
-                </div>
-                <div class="rib-field" title="How this song's Stage copy looks (for a gig, or practising at home). Default follows Settings.">
-                  <label for="exportStageFormat">Stage</label>
-                  <select id="exportStageFormat">
-                    <option value="default">Default</option>
-                    <option value="compact">Compact</option>
-                    <option value="clear">Clear</option>
-                    <option value="brackets">Brackets</option>
-                    <option value="heavy">Heavy</option>
-                  </select>
+              <div class="rib-items">
+                <div class="rib-col">
+                  <div class="rib-field" title="Paper size for PDFs">
+                    <label for="exportPageQuick">Paper</label>
+                    <select id="exportPageQuick" data-config-path="export.pdf_page_size" title="Paper size for PDFs">
+                      <option value="A4">A4</option>
+                      <option value="Letter">Letter</option>
+                    </select>
+                  </div>
+                  <label class="rib-check" title="Untick to leave tab blocks out of PDFs (they stay in the song and on screen)"><input id="exportTabInPrint" type="checkbox" data-config-path="tablature.in_print" /> Tab in PDFs</label>
                 </div>
               </div>
-              <span class="rib-label">Options</span>
+              <span class="rib-label">PDFs</span>
             </div>
             <div class="rib-group">
               <div class="rib-items">
-                <button id="openExportsButton" class="rib-button" type="button" data-icon="folder" title="Open this song's exports folder">Exports folder</button>
+                <div class="rib-col">
+                  <label class="rib-check" title="Export the original and every saved key, not just the key you're looking at"><input id="exportAllQuick" type="checkbox" data-config-path="export.all_versions" /> Every saved key</label>
+                </div>
               </div>
-              <span class="rib-label">Files</span>
+              <span class="rib-label">Keys</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <div class="rib-col">
+                  <div class="rib-field" title="This song's Verse 1, Chorus and so on: show them, make them small, or hide them to print fewer pages. Kept with the song. A heading on its own (a cue like &quot;Chorus&quot;) always stays.">
+                    <select id="exportSections" aria-label="Section names" title="Verse 1, Chorus…: show, small, or hidden (fewer pages). Default follows Settings. Also shown in the preview">
+                      <option value="default">Default</option>
+                      <option value="show">Show</option>
+                      <option value="small">Small</option>
+                      <option value="hide">Hide</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <span class="rib-label">Section names</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <div class="rib-col">
+                  <div class="rib-field" title="How this song's Stage copy looks (for a gig, or practising at home). Default follows Settings.">
+                    <select id="exportStageFormat" aria-label="Stage copy format">
+                      <option value="default">Default</option>
+                      <option value="compact">Compact</option>
+                      <option value="clear">Clear</option>
+                      <option value="brackets">Brackets</option>
+                      <option value="heavy">Heavy</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <span class="rib-label">Stage copy</span>
             </div>
           </div>
 
@@ -2227,111 +2331,132 @@
               <div class="rib-items">
                 <button id="playButton" class="rib-button" type="button" data-icon="play" title="Play the song here, beside the editor: the preview follows the words, with the chord, the strum and the next shapes above it (F5)">Play</button>
                 <button id="stopButton" class="rib-button" type="button" data-icon="stop" title="Stop playing (Shift+F5)" disabled>Stop</button>
-                <button id="resetPracticeChoices" class="rib-button" type="button" title="Return to the original key, full practice speed and no section loop">Original key / full speed</button><button id="playFromStartButton" class="rib-button" type="button" data-icon="restart" title="Play from the top of the song (also while it's playing). Tip: while it plays, click a line in the preview to jump there">Restart</button>
-                <button id="karaokeButton" class="rib-button" type="button" data-icon="karaoke" title="Karaoke: full screen, with big words lighting up as they're sung, the strum and the chord shapes">Karaoke</button>
-                <button id="sessionButton" class="rib-button" type="button" data-icon="screen" title="Session screen: the whole song on one screen, as big as it will go, for a group to play from (on the TV or projector, if one is plugged in)">Group screen</button>
+                <button id="playFromStartButton" class="rib-button" type="button" data-icon="restart" title="Play from the top of the song (also while it's playing). Tip: while it plays, click a line in the preview to jump there">Restart</button>
               </div>
               <span class="rib-label">Play</span>
             </div>
             <div class="rib-group">
-              <div class="rib-items rib-fields">
-                <div class="rib-field" title="How fast the song plays, in beats per minute. Saved with the song; change it while playing and it carries on at the new speed.">
-                  <label for="playTempoInput">Tempo (bpm)</label>
+              <div class="rib-items">
+                <button id="karaokeButton" class="rib-button" type="button" data-icon="karaoke" title="Karaoke: full screen, with big words lighting up as they're sung, the strum and the chord shapes">Karaoke</button>
+                <button id="sessionButton" class="rib-button" type="button" data-icon="screen" title="Session screen: the whole song on one screen, as big as it will go, for a group to play from (on the TV or projector, if one is plugged in)">Group screen</button>
+              </div>
+              <span class="rib-label">Full screen</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <div class="rib-col" title="How fast the song plays, in beats per minute. Saved with the song; change it while playing and it carries on at the new speed.">
                   <div class="rib-row">
-                    <button id="tempoSlower" class="rib-small" type="button" title="5 bpm slower">−</button>
-                    <input id="playTempoInput" type="number" min="40" max="240" step="1" data-config-path="song.tempo" data-scope="song" title="How fast the song plays, in beats per minute. Saved with the song; change it while playing and it carries on at the new speed." />
-                    <button id="tempoFaster" class="rib-small" type="button" title="5 bpm faster">+</button>
+                    <button id="tempoSlower" class="rib-small" type="button" title="5 bpm slower" aria-label="5 bpm slower">−</button>
+                    <input id="playTempoInput" aria-label="Tempo in beats per minute" type="number" min="40" max="240" step="1" data-config-path="song.tempo" data-scope="song" title="How fast the song plays, in beats per minute. Saved with the song; change it while playing and it carries on at the new speed." />
+                    <button id="tempoFaster" class="rib-small" type="button" title="5 bpm faster" aria-label="5 bpm faster">+</button>
                   </div>
                 </div>
                 <button id="tapTempoButton" class="rib-button" type="button" data-icon="metronome" title="Tap along to a recording (four taps or more) to set this song's tempo">Tap tempo</button>
               </div>
-              <span class="rib-label">Speed</span>
+              <span class="rib-label">Tempo (bpm)</span>
             </div>
             <div class="rib-group">
-              <div class="rib-items rib-fields">
-                <div class="rib-checks">
-                  <label title="Play just the section the cursor is in (the [[Verse]], [[Chorus]]…), over and over until you press Stop"><input id="loopSection" type="checkbox" /> Loop the section I'm in</label>
-                  <label title="Each time round, play a little faster (5% more each time) until full speed"><input id="speedUp" type="checkbox" /> Speed up each time round</label>
+              <div class="rib-items">
+                <div class="rib-col">
+                  <label class="rib-check" title="Repeat the verse or chorus containing the cursor until you press Stop"><input id="loopSection" type="checkbox" /> Loop current section</label>
+                  <label class="rib-check" title="Increase by 5% after each loop, up to full speed"><input id="speedUp" type="checkbox" /> Speed up each loop</label>
                 </div>
-                <div class="rib-field" title="Practise slower without changing the song's tempo">
-                  <label for="practiceSpeed">Practice speed</label>
-                  <select id="practiceSpeed" title="Practise slower without changing the song's tempo">
-                    <option value="100">Full speed</option>
-                    <option value="90">90%</option>
-                    <option value="80">80%</option>
-                    <option value="75">75%</option>
-                    <option value="70">70%</option>
-                    <option value="60">60%</option>
-                    <option value="50">50%</option>
-                  </select>
+                <div class="rib-col">
+                  <div class="rib-field" title="Practise slower without changing the song's tempo">
+                    <label for="practiceSpeed">Speed</label>
+                    <select id="practiceSpeed" title="Practise slower without changing the song's saved tempo">
+                      <option value="100">Full speed</option>
+                      <option value="90">90%</option>
+                      <option value="80">80%</option>
+                      <option value="75">75%</option>
+                      <option value="70">70%</option>
+                      <option value="60">60%</option>
+                      <option value="50">50%</option>
+                    </select>
+                  </div>
+                  <button id="resetPracticeChoices" class="rib-small" type="button" title="Return to the original key, full practice speed and no section loop">Original key / full speed</button>
                 </div>
               </div>
               <span class="rib-label">Practice</span>
             </div>
             <div class="rib-group">
-              <div class="rib-items rib-fields">
-                <div class="rib-stack">
-                <div class="rib-field" id="playSoundField" title="How playback sounds on a ukulele (all songs)">
-                  <label for="playSoundSelect">Sound</label>
-                  <select id="playSoundSelect" data-config-path="playback.sound" title="How playback sounds on a ukulele or baritone (all songs)">
-                    <option value="sampled">Real ukulele</option>
-                    <option value="standard">Plucked string</option>
-                    <option value="hollow">Hollow body</option>
-                  </select>
-                </div>
-                <div class="rib-field" id="playGuitarSoundField" title="How playback sounds on a guitar (all songs)" hidden>
-                  <label for="playGuitarSoundSelect">Sound</label>
-                  <select id="playGuitarSoundSelect" data-config-path="playback.guitar_sound" title="How playback sounds on a guitar (all songs)">
-                    <option value="steel">Steel strings</option>
-                    <option value="nylon">Nylon strings</option>
-                  </select>
-                </div>
-                <div class="rib-field" title="Straight, or swung: the in-between strums come a little late for a long-short lilt. Auto swings the Island strum lightly. Write {swing D-DU-UDU} in a song to swing just that pattern.">
-                  <label for="playFeel">Feel</label>
-                  <select id="playFeel" title="Straight or swung strumming (this song, or all songs). Auto: the Island strum gets a light swing, the rest are straight">
-                    <option value="auto">As written</option>
-                    <option value="straight">Straight</option>
-                    <option value="light">Light swing</option>
-                    <option value="swing">Swing</option>
-                    <option value="shuffle">Shuffle</option>
-                  </select>
-                </div>
-                </div>
-                <details class="rib-menu" id="voiceMenu" title="Count in, follow the words, start at the cursor, and a speaking voice">
-                  <summary class="rib-small">Options ▾</summary>
-                  <div class="rib-menu-items voice-menu-items">
-                  <label title="Count one bar of clicks before the song starts (all songs)"><input id="playCountIn" type="checkbox" data-config-path="playback.count_in" /> Count in</label>
-                  <label title="Light up the line being played in the preview (all songs)"><input id="playFollow" type="checkbox" data-config-path="playback.follow" /> Follow the words</label>
-                  <label title="Start from the line the cursor is on instead of the top (all songs)"><input id="playFromCursor" type="checkbox" data-config-path="playback.from_cursor" /> Start at the cursor</label>
-                    <p class="voice-note"><strong>Voice</strong></p>
-                    <label title="Say the count-in: one, two, three, four"><input id="voiceCount" type="checkbox" data-config-path="playback.voice_count" /> Count in out loud</label>
-                    <label title="Say what's coming, just before it: Chorus, Verse 2…"><input id="voiceSections" type="checkbox" data-config-path="playback.voice_sections" /> Say what's next (Chorus, Verse 2…)</label>
-                    <label title="Say the next chord just before it changes: G seven, A minor…"><input id="voiceChords" type="checkbox" data-config-path="playback.voice_chords" /> Say the next chord</label>
-                    <p class="voice-note">Uses your computer's own voice. All songs.</p>
+              <div class="rib-items">
+                <div class="rib-col rib-stack">
+                  <div class="rib-field" id="playSoundField" title="How playback sounds on a ukulele (all songs)">
+                    <label for="playSoundSelect">Sound</label>
+                    <select id="playSoundSelect" data-config-path="playback.sound" title="Instrument sound for all songs">
+                      <option value="sampled">Real ukulele</option>
+                      <option value="standard">Plucked string</option>
+                      <option value="hollow">Hollow body</option>
+                    </select>
                   </div>
-                </details>
+                  <div class="rib-field" id="playGuitarSoundField" title="How playback sounds on a guitar (all songs)" hidden>
+                    <label for="playGuitarSoundSelect">Sound</label>
+                    <select id="playGuitarSoundSelect" data-config-path="playback.guitar_sound" title="Guitar sound for all songs">
+                      <option value="steel">Steel strings</option>
+                      <option value="nylon">Nylon strings</option>
+                    </select>
+                  </div>
+                  <div class="rib-field" title="Straight, or swung: the in-between strums come a little late for a long-short lilt. Auto swings the Island strum lightly. Write {swing D-DU-UDU} in a song to swing just that pattern.">
+                    <label for="playFeel">Feel</label>
+                    <select id="playFeel" title="Auto feel follows the song: Island gets a light swing, other strums stay even. Even uses equal beat divisions.">
+                      <option value="auto">Auto feel</option>
+                      <option value="straight">Even</option>
+                      <option value="light">Light swing</option>
+                      <option value="swing">Swing</option>
+                      <option value="shuffle">Shuffle</option>
+                    </select>
+                  </div>
+                </div>
               </div>
-              <span class="rib-label">How it plays</span>
+              <span class="rib-label">Sound and feel</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <div class="rib-col">
+                  <details class="rib-menu" id="voiceMenu" title="Count in, follow the words, start at the cursor, and a speaking voice">
+                    <summary class="rib-small">Options ▾</summary>
+                    <div class="rib-menu-items voice-menu-items">
+                    <label title="Count one bar of clicks before the song starts (all songs)"><input id="playCountIn" type="checkbox" data-config-path="playback.count_in" /> Count in</label>
+                    <label title="Light up the line being played in the preview (all songs)"><input id="playFollow" type="checkbox" data-config-path="playback.follow" /> Follow the words</label>
+                    <label title="Start from the line the cursor is on instead of the top (all songs)"><input id="playFromCursor" type="checkbox" data-config-path="playback.from_cursor" /> Start at the cursor</label>
+                      <p class="voice-note"><strong>Voice</strong></p>
+                      <label title="Say the count-in: one, two, three, four"><input id="voiceCount" type="checkbox" data-config-path="playback.voice_count" /> Count in out loud</label>
+                      <label title="Say what's coming, just before it: Chorus, Verse 2…"><input id="voiceSections" type="checkbox" data-config-path="playback.voice_sections" /> Say what's next (Chorus, Verse 2…)</label>
+                      <label title="Say the next chord just before it changes: G seven, A minor…"><input id="voiceChords" type="checkbox" data-config-path="playback.voice_chords" /> Say the next chord</label>
+                      <p class="voice-note">Uses your computer's own voice. All songs.</p>
+                    </div>
+                  </details>
+                </div>
+              </div>
+              <span class="rib-label">Count in and voice</span>
             </div>
           </div>
 
           <!-- 4.39: Learn (src/learn.js) -->
           <div class="ribbon-panel" data-ribbon-panel="learn" role="tabpanel" hidden>
             <div class="rib-group">
-              <div class="rib-items rib-fields">
-                <div class="rib-field">
-                  <label for="learnStage">Chords shown</label>
-                  <select id="learnStage" title="How much help: the chords the first time each part comes, then from memory; the numbers only; or no chords at all">
-                    <option value="repeats">First time only</option>
-                    <option value="numbers">As numbers only</option>
-                    <option value="none">None</option>
-                  </select>
+              <div class="rib-items">
+                <div class="rib-col">
+                  <div class="rib-field" title="How much chord help when you play from memory">
+                    <label for="learnStage">Help</label>
+                    <select id="learnStage" title="Choose the chord help for learning: chords on the first pass, chord numbers, or no chords">
+                      <option value="repeats">Chords first time</option>
+                      <option value="numbers">Chord numbers</option>
+                      <option value="none">No chords</option>
+                    </select>
+                  </div>
                 </div>
-                <button id="learnPlayButton" class="rib-button" type="button" data-icon="karaoke" title="Karaoke with the chords fading: play along from memory. Click a hidden chord (?) to see it; the ones you needed go in your trouble spots">From memory</button>
-                <button id="learnQuizButton" class="rib-button" type="button" data-icon="quiz" title="What comes next? The song's chord changes one at a time: pick the next chord, and hear each answer">Next chord?</button>
-                <button id="learnTroubleButton" class="rib-button" type="button" data-icon="flag" title="Trouble spots: where you stumble, from playing from memory, the quiz, or ⚑ Trouble here in karaoke. Loop each one slowly">Trouble</button>
+                <button id="learnPlayButton" class="rib-button" type="button" data-icon="karaoke" title="Play with the selected amount of chord help. Click a hidden chord (?) to reveal it and mark it for practice.">Play with fewer chords</button>
               </div>
-              <span class="rib-label">Remember it</span>
+              <span class="rib-label">Play from memory</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <button id="learnQuizButton" class="rib-button" type="button" data-icon="quiz" title="What comes next? The song's chord changes one at a time: pick the next chord, and hear each answer">Next chord?</button>
+                <button id="learnTroubleButton" class="rib-button rib-button-wide" type="button" data-icon="flag" title="Trouble spots: where you stumble, from playing from memory, the quiz, or ⚑ Trouble here in karaoke. Loop each one slowly">Practise trouble spots</button>
+              </div>
+              <span class="rib-label">Test yourself</span>
             </div>
             <div class="rib-group">
               <div class="rib-items">
@@ -2341,20 +2466,26 @@
               <span class="rib-label">Fingers</span>
             </div>
             <div class="rib-group">
-              <div class="rib-items rib-fields">
-                <label class="rib-check" title="The chords on the sheet as numbers in the key: I is home, IV and V are away (the chord diagrams are hidden while the numbers show)"><input id="learnNumbers" type="checkbox" /> Numbers</label>
-                <div class="rib-field">
-                  <label for="learnKey">Another key</label>
-                  <select id="learnKey" title="Play it in another key, thinking in numbers"></select>
+              <div class="rib-items">
+                <div class="rib-col">
+                  <label class="rib-check" title="The chords on the sheet as numbers in the key: I is home, IV and V are away (the chord diagrams are hidden while the numbers show)"><input id="learnNumbers" type="checkbox" /> On the sheet</label>
                 </div>
-                <button id="learnKeyButton" class="rib-button" type="button" data-icon="key" title="Play from memory in the other key: the chords show as numbers, with what each number is in that key">Play it</button>
               </div>
               <span class="rib-label">Numbers</span>
             </div>
             <div class="rib-group">
               <div class="rib-items">
+                <div class="rib-col">
+                  <div class="rib-field"><select id="learnKey" aria-label="New key" title="Choose a new key for playing with chord numbers"></select></div>
+                </div>
+                <button id="learnKeyButton" class="rib-button" type="button" data-icon="key" title="Play in the selected new key, with the chords shown as numbers">Play in new key</button>
+              </div>
+              <span class="rib-label">Another key</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
                 <button id="learnSheetButton" class="rib-button" type="button" data-icon="export" title="One page to learn the song from: the chord map, the chords, the changes to practise and how to learn it. A PDF and a web page in the song's learn folder">Learn sheet</button>
-                <button id="learnCircleButton" class="rib-button" type="button" data-icon="circle" title="The circle of fifths: the song's chords lit, the key's family shaded, and how it moves">Circle</button>
+                <button id="learnCircleButton" class="rib-button" type="button" data-icon="circle" title="The circle of fifths: the song's chords lit, the key's family shaded, and how it moves">Circle of fifths</button>
                 <button id="learnPatternsButton" class="rib-button" type="button" data-icon="patterns" title="The song's chords as numbers, the familiar progressions in it, and which parts share them">Patterns</button>
               </div>
               <span class="rib-label">Understand it</span>
@@ -2363,13 +2494,13 @@
 
           <div class="ribbon-panel" data-ribbon-panel="pick" role="tabpanel" hidden>
             <div class="rib-group">
-              <div class="rib-items rib-fields">
-                <div class="rib-field" title="How this song is picked instead of strummed. Saved with the song: playback, karaoke and the pick sheet all use it">
-                  <label for="pickPattern">Pattern</label>
-                  <select id="pickPattern" title="How this song is picked instead of strummed. Saved with the song: playback, karaoke and the pick sheet all use it"></select>
-                  <span id="pickPatternText" class="pick-pattern-text"></span>
+              <div class="rib-items">
+                <div class="rib-col">
+                  <div class="rib-field" title="How this song is picked instead of strummed. Saved with the song: playback, karaoke and the pick sheet all use it">
+                    <select id="pickPattern" aria-label="Picking pattern" title="How this song is picked instead of strummed. Saved with the song: playback, karaoke and the pick sheet all use it"></select>
+                  </div>
+                  <span id="pickPatternText" class="pick-pattern-text rib-note"></span>
                 </div>
-                <label class="rib-check" title="Play the song's tune quietly over the chords, to learn how it goes (it needs {melody} lines in the song). Saved with the song"><input id="pickTune" type="checkbox" /> Play the tune</label>
               </div>
               <span class="rib-label">Picking pattern</span>
             </div>
@@ -2378,9 +2509,17 @@
                 <button id="pickPlayButton" class="rib-button" type="button" data-icon="play" title="Play the song picked, beside the editor (the strip shows the strings to pick). Slower: Play → Practice speed">Play</button>
                 <button id="pickStopButton" class="rib-button" type="button" data-icon="stop" title="Stop playing (Shift+F5)" disabled>Stop</button>
                 <button id="pickKaraokeButton" class="rib-button" type="button" data-icon="karaoke" title="Karaoke, picked: the strip at the top shows each string as it's picked">Karaoke</button>
+              </div>
+              <span class="rib-label">Play</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <div class="rib-col">
+                  <label class="rib-check" title="Play the song's tune quietly over the chords, to learn how it goes (it needs {melody} lines in the song). Saved with the song"><input id="pickTune" type="checkbox" /> Play the tune</label>
+                </div>
                 <button id="pickFirstNoteButton" class="rib-button" type="button" data-icon="metronome" title="Hear the first note you sing (set it in Info → First note). It's also sounded with the first click of the count-in">First note</button>
               </div>
-              <span class="rib-label">Play it</span>
+              <span class="rib-label">The tune</span>
             </div>
             <div class="rib-group">
               <div class="rib-items">
@@ -2392,7 +2531,7 @@
             <div class="rib-group">
               <div class="rib-items">
                 <details class="rib-menu" id="pickChangeMenu" title="Change the pattern from the line the cursor is on: adds a {pick} line to the song, which you can edit">
-                  <summary class="rib-button" data-icon="sliders">Change here ▾</summary>
+                  <summary class="rib-button" data-icon="sliders">Choose picking ▾</summary>
                   <div class="rib-menu-items" id="pickChangeItems"></div>
                 </details>
                 <details class="rib-menu" id="pickWriteMenu" title="Write the picking out as tab you can change note by note: just the line the cursor is on, or the whole song as a new song">
@@ -3443,7 +3582,7 @@
         </ol>
         <p><b>Tab and chord boxes.</b> Tab is the usual way to write picking: one line per string (the top line is the A string), and a number says which fret to hold as you pick that string (0 is open). Chord boxes show the shape for your left hand. With picked chords, the two go together: hold the whole chord shape, and every number in the tab is already under a finger. So you read the chord, and let the tab tell your right hand which strings and when.</p>
         <p><b>The pick sheet</b> sets the song out like a fingerstyle songbook: the pattern counted out, the chord boxes, then each line as tab with the chord over the bar where it starts and the words underneath. It's in the song's learn folder, and in Export.</p>
-        <p><b>Changing the pattern part-way.</b> The pattern chosen here is where the song starts. To change it for a verse, a chorus or a single line, put the cursor there and use <b>Change here</b>: it adds a line to the song, which you can edit like a strum line:</p>
+        <p><b>Changing the pattern part-way.</b> The pattern chosen here is where the song starts. To change it for a verse, a chorus or a single line, put the cursor there and use <b>Choose picking</b>: it adds a line to the song, which you can edit like a strum line:</p>
         <pre class="pick-help-code">{pick: up and back}        a pattern by name
 {pick: g C E A E C}        your own, by string (g+A together, - a rest)
 {pick: p i m a m i}        your own, by finger
@@ -6425,11 +6564,11 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           }
         });
 
-        document.getElementById('strumsButton').addEventListener('click', () => {
+        function openStrumLibrary() {
           const beats = Number(effectiveConfig()?.song?.beats_per_bar) || 4;
           renderStrumList([4, 3, 6, 2].includes(beats) ? beats : 4);
           document.getElementById('strumDialog').showModal();
-        });
+        }
         document.getElementById('strumClose').addEventListener('click', () => {
           state.userStopped = true;
           if (player && player.playing) player.stop();
@@ -6835,7 +6974,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
 
         function setPlayingUi(playing) {
           playButton.disabled = false;
-          playButton.textContent = playing ? 'Pause' : 'Play';
+          UkeSongUI.setControlLabel(playButton, playing ? 'Pause' : 'Play');
           stopButton.disabled = !playing;
           document.getElementById('pickStopButton').disabled = !playing;   // 4.44: and on the Pick tab
           if (!playing) {
@@ -7092,7 +7231,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           });
           if (!schedule.bars.length) {
             setStatusMessage(range
-              ? `Nothing to play in ${range.label} — add some chords there, or untick "Loop the section I'm in".`
+              ? `Nothing to play in ${range.label} — add some chords there, or untick "Loop current section".`
               : 'Nothing to play — add some chords (and check the cursor isn\'t below the last chord).');
             return;
           }
@@ -7705,8 +7844,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         async function toggleSongPlayback() {
           try {
             if (!player?.playing) { playSong(); return; }
-            if (player.paused) { await player.resume(); playButton.textContent = 'Pause'; }
-            else { await player.pause(); playButton.textContent = 'Resume'; }
+            if (player.paused) { await player.resume(); UkeSongUI.setControlLabel(playButton, 'Pause'); }
+            else { await player.pause(); UkeSongUI.setControlLabel(playButton, 'Resume'); }
           } catch (error) { setStatusMessage(error.message); }
         }
         playButton.addEventListener('click', toggleSongPlayback);
@@ -9958,6 +10097,9 @@ function showTab(tab) {
         }
         const songChordList = (ir) => [...new Set(ir.filter((n) => n.type === 'chord' && !n.noChord && !n.hidden && n.content).map((n) => n.content))];
 
+        const updateMemoryPlayLabel = () => UkeSongUI.setControlLabel(document.getElementById('learnPlayButton'), UkeSongUI.memoryPlayLabel(document.getElementById('learnStage').value));
+        document.getElementById('learnStage').addEventListener('change', updateMemoryPlayLabel);
+        updateMemoryPlayLabel();
         document.getElementById('learnPlayButton').addEventListener('click', () => playSong({ karaoke: true, learn: { stage: document.getElementById('learnStage').value } }));
         document.getElementById('learnPatternsButton').addEventListener('click', openPatterns);
         // 4.43: the tab in steps: the chords strummed, the picking on open strings, then both
@@ -10019,7 +10161,7 @@ function showTab(tab) {
           const minor = key?.mode === 'minor';
           const choices = window.ukemusic.keys.choices().filter((k) => /m$/.test(k) === minor && (!key || window.ukemusic.keys.parse(k)?.tonic !== key.tonic));
           const before = select.value;
-          select.replaceChildren(...choices.map((k) => new Option(k, k)));
+          select.replaceChildren(...choices.map((k) => new Option(`Key ${k}`, k)));
           const friendly = (minor ? ['Am', 'Em', 'Dm'] : ['G', 'C', 'F', 'D', 'A']).find((k) => choices.includes(k));
           select.value = choices.includes(before) ? before : (friendly || choices[0] || '');
         }
@@ -10133,8 +10275,7 @@ function showTab(tab) {
         function updateTroubleCount() {
           const n = troubleCache.store.spots.length;
           const button = document.getElementById('learnTroubleButton');
-          const label = [...button.childNodes].find((x) => x.nodeType === Node.TEXT_NODE && x.textContent.trim());
-          if (label) label.textContent = n ? `Trouble (${n})` : 'Trouble';
+          UkeSongUI.setControlLabel(button, n ? `Practise trouble spots (${n})` : 'Practise trouble spots');
         }
         async function learnAddTrouble(items) {
           let store = await learnLoadTrouble();
@@ -10650,7 +10791,7 @@ function showTab(tab) {
           const playedHere = schedule.bars.filter((b) => b.line === lineNo);
           if (!playedHere.length) { setStatusMessage('Put the cursor on a line of chords to write it out.'); return; }
           if (!playedHere.every((b) => b.pickNotes && b.pickNotes.length)) {
-            setStatusMessage('This line is strummed (or has a stop or N.C.): choose a pattern first (Pick → Pattern, or Change here), then write it out.');
+            setStatusMessage('This line is strummed (or has a stop or N.C.): choose a pattern first (Pick → Pattern, or Choose picking), then write it out.');
             return;
           }
           const out = window.ukemusic.pickSong.writePickedSong(text, L.ir, schedule, { instrument: L.instrument.id, beats, compound: beats === 6, only: new Set([lineNo]) });
@@ -10754,7 +10895,7 @@ function showTab(tab) {
               openCapoDialog();
               break;
             case 'strum-library':
-              document.getElementById('strumsButton').click();
+              openStrumLibrary();
               break;
             case 'insert-tab':
               insertTabBlock();
@@ -10900,6 +11041,19 @@ function showTab(tab) {
           if (!d) return '';
           return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
         }
+        // 4.53: each ribbon group's ▾ button, shown instead of the group when the window is too
+        // narrow for the tab (foldRibbon, below)
+        for (const group of document.querySelectorAll('.ribbon-panel > .rib-group')) {
+          const name = group.querySelector('.rib-label')?.textContent.trim() || 'More';
+          const fold = document.createElement('button');
+          fold.type = 'button';
+          fold.className = 'rib-button rib-fold';
+          fold.dataset.icon = group.querySelector('.rib-items [data-icon]')?.dataset.icon || 'sliders';
+          fold.textContent = `${name} ▾`;
+          fold.title = `${name}: the tools in this group (the window is too narrow to show them all)`;
+          fold.setAttribute('aria-expanded', 'false');
+          group.prepend(fold);
+        }
         for (const element of document.querySelectorAll('[data-icon]')) {
           const name = element.dataset.icon;
           if (element.tagName === 'SPAN') {
@@ -10909,6 +11063,8 @@ function showTab(tab) {
             element.insertAdjacentHTML('afterbegin', iconSvg(name, size));
           }
         }
+        // A shared two-line label slot keeps ribbon icons aligned at either button width.
+        for (const button of document.querySelectorAll('.rib-button')) UkeSongUI.setControlLabel(button, button.textContent.trim());
 
         // Strum box styles in the app window too (strum library cards)
         document.head.insertAdjacentHTML('beforeend', `<style>${window.ukemusic.strumCss()}
@@ -10940,6 +11096,7 @@ function showTab(tab) {
           }
           for (const panel of document.querySelectorAll('.ribbon-panel')) {
             panel.hidden = panel.dataset.ribbonPanel !== name;
+            panel.inert = panel.hidden;
           }
           try { localStorage.setItem(RIBBON_KEY, name); } catch (_err) { /* not kept: fine */ }
         }
@@ -10950,6 +11107,36 @@ function showTab(tab) {
         try { firstRibbon = localStorage.getItem(RIBBON_KEY) || 'song'; } catch (_err) { /* default */ }
         showRibbon(document.querySelector(`.ribbon-tab[data-ribbon="${firstRibbon}"]`) ? firstRibbon : 'song');
 
+        // 4.53: when a tab's tools don't fit the window, fold groups into their ▾ buttons, from the
+        // right, rather than wrapping them onto a second row
+        function closeFolds(except) {
+          for (const g of document.querySelectorAll('.rib-group.open')) if (g !== except) { g.classList.remove('open'); g.querySelector('.rib-fold')?.setAttribute('aria-expanded', 'false'); }
+        }
+        function foldRibbon() {
+          closeFolds();
+          for (const panel of document.querySelectorAll('.ribbon-panel')) {
+            const groups = [...panel.querySelectorAll(':scope > .rib-group')];
+            for (const g of groups) g.classList.remove('folded');
+            for (let i = groups.length - 1; i >= 0 && panel.scrollWidth > panel.clientWidth + 1; i -= 1) groups[i].classList.add('folded');
+          }
+        }
+        for (const fold of document.querySelectorAll('.rib-fold')) {
+          fold.addEventListener('click', (event) => {
+            event.stopPropagation();
+            const group = fold.closest('.rib-group');
+            closeFolds(group);
+            const open = group.classList.toggle('open');
+            fold.setAttribute('aria-expanded', String(open));
+          });
+        }
+        document.addEventListener('click', (event) => { if (!event.target.closest('.rib-group.open')) closeFolds(); });
+        document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeFolds(); });
+        let foldTimer = 0;
+        window.addEventListener('resize', () => { clearTimeout(foldTimer); foldTimer = setTimeout(foldRibbon, 80); });
+        document.fonts?.ready?.then(foldRibbon);
+        foldRibbon();
+        window.ukemusicFoldRibbon = foldRibbon; // for tests
+
         // Bring an element into view: its ribbon tab, or out from behind the library.
         // (Used by keyboard-free flows and by the end-to-end tests.)
         function revealElement(element) {
@@ -10958,6 +11145,8 @@ function showTab(tab) {
           if (menu) menu.open = true;
           const panel = element.closest('.ribbon-panel');
           if (panel && panel.hidden) showRibbon(panel.dataset.ribbonPanel);
+          const folded = element.closest('.rib-group.folded');
+          if (folded && !folded.classList.contains('open')) { closeFolds(folded); folded.classList.add('open'); }
           if (!element.closest('#library, dialog, #settingsPanel, #karaoke, #toast') && !libraryEl.hidden) hideLibrary();
         }
         window.ukemusicReveal = (selector) => revealElement(document.querySelector(selector));
@@ -10975,13 +11164,25 @@ function showTab(tab) {
         // ── Hint bar: says what the thing under the mouse does ──
         const ribbonHint = document.getElementById('ribbonHint');
         const RIBBON_HINT_DEFAULT = 'Point at a button to see what it does.';
+        const RIBBON_HINTS = {
+          song: 'Save, bring in or organise songs.',
+          write: 'Write and edit the song. Strum patterns are in Help → Strums.',
+          thissong: 'Song settings are saved with the song; trying another key is temporary.',
+          view: 'Choose the song display. Point at a control for its scope and details.',
+          play: 'Loop repeats the current section. Practice speed leaves the saved tempo unchanged.',
+          learn: 'Choose chord help, practise changes or play in a new key.',
+          pick: 'Choose a picking pattern. In the song writes a pattern change at the cursor.',
+          export: 'Make files to print, share or use elsewhere.',
+          settings: 'Choose settings for this song or defaults for all songs.'
+        };
+        const defaultRibbonHint = () => RIBBON_HINTS[document.querySelector('.ribbon-tab.active')?.dataset.ribbon] || RIBBON_HINT_DEFAULT;
         const headerEl = document.querySelector('.app-shell > .header');
         function hintFor(target) {
           const holder = target.closest('[title]');
           if (!holder || !headerEl.contains(holder)) return '';
-          const name = holder.classList.contains('rib-field')
+          const name = holder.getAttribute('aria-label') || (holder.classList.contains('rib-field')
             ? holder.querySelector('label')?.textContent
-            : (holder.textContent || '').trim();
+            : (holder.tagName === 'SELECT' ? '' : (holder.textContent || '').trim()));
           const title = holder.getAttribute('title');
           return name && !title.startsWith(name) && name.length < 30 ? `${name}: ${title}` : title;
         }
@@ -11000,9 +11201,14 @@ function showTab(tab) {
           }
         });
         headerEl.addEventListener('mouseleave', () => {
-          ribbonHint.textContent = RIBBON_HINT_DEFAULT;
+          ribbonHint.textContent = defaultRibbonHint();
           ribbonHint.classList.remove('active');
         });
+        for (const tab of document.querySelectorAll('.ribbon-tab')) tab.addEventListener('click', () => {
+          ribbonHint.textContent = defaultRibbonHint();
+          ribbonHint.classList.remove('active');
+        });
+        ribbonHint.textContent = defaultRibbonHint();
         function flashHint(text) {
           ribbonHint.textContent = text;
           ribbonHint.classList.add('active');
@@ -11117,7 +11323,7 @@ function showTab(tab) {
           songStrumSelect.value = own || '';
           songStrumSelect.disabled = !state.song;
           let written = document.getElementById('writtenAccompaniment');
-          if (!written) { written = document.createElement('small'); written.id = 'writtenAccompaniment'; songStrumSelect.parentElement.append(written); }
+          if (!written) { written = document.createElement('small'); written.id = 'writtenAccompaniment'; (songStrumSelect.closest('.rib-col') || songStrumSelect.parentElement).append(written); }
           const rhythm = window.ukemusic.parseSong(getEditorValue(), getParserOptions()).find(n => n.type === 'rhythm' && !n.stop && !n.feelOnly && n.content);
           written.textContent = rhythm ? 'As written: ' + (rhythm.strumName || rhythm.content) : 'No explicit pattern; uses fallback';
           document.getElementById('rekeyButton').disabled = !state.song || !state.transpose;
@@ -12135,10 +12341,6 @@ function showTab(tab) {
           await showLibrary();
         }
         document.getElementById('closeSongButton').addEventListener('click', closeSong);
-        document.getElementById('deleteSongButton').addEventListener('click', () => {
-          if (!state.song) { showToast('Nothing to delete', { detail: 'This song hasn\'t been saved.' }); return; }
-          deleteSong(state.song.folder, state.song.title);
-        });
         window.ukemusicShowLibrary = () => showLibrary(); // for the end-to-end tests
         window.ukemusicVoiceCues = () => state.voiceCues || [];
         document.getElementById('libBackButton').addEventListener('click', hideLibrary);

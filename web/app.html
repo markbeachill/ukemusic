@@ -416,7 +416,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
       <div id="moreTools" class="more-tools gutter" role="group" aria-label="More settings" hidden>
         <p class="settings-scope">Playing choices · this song on this device</p><button id="resetPlaying" class="btn" type="button">Reset playing choices</button><div id="moreFirst"></div>
         <div class="tool"><label for="timeSel">Time signature</label><select id="timeSel"><option value="2">2/4</option><option value="3">3/4</option><option value="4">4/4</option><option value="6">6/8</option></select></div>
-        <div class="tool"><label for="feelSel">Feel</label><select id="feelSel" title="Swing: the second of each pair of strokes comes late, long-short"><option value="auto">Auto</option><option value="straight">Straight</option><option value="light">Light swing</option><option value="swing">Swing</option><option value="shuffle">Shuffle</option></select></div>
+        <div class="tool"><select id="feelSel" aria-label="Rhythmic feel" title="Auto feel follows the song; Even uses equal beat divisions"><option value="auto">Auto feel</option><option value="straight">Even</option><option value="light">Light swing</option><option value="swing">Swing</option><option value="shuffle">Shuffle</option></select></div>
         <details id="displaySettings"><summary>Display · all songs on this device</summary><div id="displayText"></div><div class="tool"><label for="layout">Sheet</label><select id="layout">
           <option value="lines">Chords above</option><option value="inline">Chords in the words</option><option value="table">Columns</option><option value="chords">Chords only</option></select></div>
         <div class="tool"><label for="diagrams">Shapes</label><select id="diagrams">
@@ -550,9 +550,8 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
   <h2>Learn this song</h2>
   <p class="note">Get it into your head and your fingers, so you can play it without the sheet.</p>
   <div class="learn-memory">
-    <label for="learnStage">Chords shown</label>
-    <select id="learnStage"><option value="repeats">The first time only</option><option value="numbers">As numbers only</option><option value="none">None</option></select>
-    <button id="learnPlay" class="btn primary" type="button">▶ From memory</button>
+    <select id="learnStage" aria-label="Chord help"><option value="repeats">Chords first time</option><option value="numbers">Chord numbers</option><option value="none">No chords</option></select>
+    <button id="learnPlay" class="btn primary" type="button">Play with fewer chords</button>
   </div>
   <p class="note">Karaoke with the chords fading: each part's chords the first time it comes and a <b>?</b> after that, then numbers only, then none. Tap a <b>?</b> to see the chord.</p>
   <div class="choice-list">
@@ -590,7 +589,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
     <p><b>Tab and chord boxes.</b> Tab is the usual way to write picking: one line per string (the top line is A), and a number says which fret to hold as you pick that string (0 is open). With picked chords, hold the whole chord shape: every number in the tab is already under a finger. So read the chord, and let the tab tell your right hand which strings and when.</p>
     <p><b>The pick sheet</b> sets the song out like a fingerstyle songbook: the pattern counted out, the chord boxes, then each line as tab with the chord over the bar where it starts and the words underneath.</p>
     <p><b>The tune.</b> A song can carry its tune on a line above the words, by note name in the written key: <code>{melody: E E F G | G F E D | C C D E | E. D/2 D2}</code>. E2 is two beats, E/2 half a beat, E. a beat and a half, r a rest; each note is the nearest to the one before (' up an octave, , down). Lines with the same chords share the tune. Then <b>Play the tune</b> plays it quietly over the chords, and <b>Chord melody</b> makes a picked solo from it.</p>
-    <p><b>Changing the pattern part-way.</b> A song can change pattern with a line like <code>{pick: travis}</code> or its own pattern, <code>{pick: g C E A E C}</code> (by string) or <code>{pick: p i m a}</code> (by finger); <code>{pick: strum}</code> goes back to strumming. Write them in the desktop app (Pick → Change here).</p>
+    <p><b>Changing the pattern part-way.</b> A song can change pattern with a line like <code>{pick: travis}</code> or its own pattern, <code>{pick: g C E A E C}</code> (by string) or <code>{pick: p i m a}</code> (by finger); <code>{pick: strum}</code> goes back to strumming. Write them in the desktop app (Pick → Choose picking).</p>
     <p><b>Learning it.</b> Hold one chord and play the pattern until your picking hand does it on its own. Then change chords on beat 1. Then the song, slowly, a little faster each day.</p>
   </div>
   <div class="dialog-actions"><button id="pickHelpClose" class="btn primary" type="button">Close</button></div>
@@ -2279,6 +2278,9 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     return { p, ir, key: analysis.key || key, analysis, lib: library(), inst: U.instrument(p.instrument) };
   }
   const songChordList = (ir) => [...new Set(ir.filter((n) => n.type === 'chord' && !n.noChord && !n.hidden && n.content).map((n) => n.content))];
+  const updateMemoryPlayLabel = () => UkeSongUI.setControlLabel($('learnPlay'), UkeSongUI.memoryPlayLabel($('learnStage').value));
+  $('learnStage').addEventListener('change', updateMemoryPlayLabel);
+  updateMemoryPlayLabel();
   $('learnBtn').addEventListener('click', () => { stop(); $('learnDialog').showModal(); });
   $('learnClose').addEventListener('click', () => $('learnDialog').close());
   $('learnPlay').addEventListener('click', () => {

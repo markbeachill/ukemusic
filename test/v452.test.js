@@ -67,6 +67,7 @@ test('the UI review tool and the guide for AI assistants are there', () => {
   const catalog = JSON.parse(read('tools/ui-review/catalog.json'));
   const letters = catalog.sections.map((s) => s.key);
   for (const id of Object.keys(catalog.items)) assert.ok(letters.includes(id.replace(/\d+$/, '')), `${id} is in a section`);
+  for (const [app, ids] of Object.entries(catalog.notIn || {})) for (const id of ids) assert.ok(catalog.items[id], `notIn.${app}: ${id} is a screen`);
   assert.match(read('package.json'), /"ui-review": "node tools\/ui-review\/run.js"/);
   assert.match(read('main.js'), /UKEMUSIC_USER_DATA\) app\.setPath\('userData'/);
   assert.ok(read('AGENTS.md').includes('tools/sync-practice.js --from-web'));

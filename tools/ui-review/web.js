@@ -10,6 +10,7 @@ const practiceShots = require('./practice.js');
 const which = process.argv[2] || 'ipad';
 const URL = process.argv[3] || 'http://localhost:8770/index.html';
 const WORK = path.resolve(process.argv[4] || path.join(require('os').tmpdir(), 'ukemusic-ui-review'));
+const only = process.argv.slice(5);
 // the area Safari leaves for the page, in portrait: an iPad (10th/11th generation, Air) and an iPhone 15
 const DEV = which === 'ipad'
   ? { ...devices['iPad (gen 11)'], viewport: { width: 820, height: 1106 }, screen: { width: 820, height: 1180 }, deviceScaleFactor: 2 }
@@ -20,7 +21,7 @@ const manifest = [];
 const log = (...a) => console.log(which, ...a);
 
 (async () => {
-  fs.rmSync(OUT, { recursive: true, force: true });
+  if (!only.length) fs.rmSync(OUT, { recursive: true, force: true });
   fs.mkdirSync(OUT, { recursive: true });
   const b = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
   const ctx = await b.newContext(DEV);
@@ -34,7 +35,18 @@ const log = (...a) => console.log(which, ...a);
     manifest.push({ id, caption });
     log('shot', id);
   };
-  const safe = async (label, fn) => { try { await fn(); } catch (e) { log(`!! ${label}: ${e.message.split('\n')[0]}`); } };
+  // a step: if it goes wrong, close whatever is open and try once more, then report it ("!!")
+  const safe = async (label, fn) => {
+    if (only.length && !only.includes(label.replace(/[0-9a-z]+$/, ''))) return;
+    for (let attempt = 1; attempt <= 2; attempt += 1) {
+      try { await fn(); return; } catch (e) {
+        log(`${attempt === 1 ? 'retrying' : '!!'} ${label}: ${e.message.split('\n')[0]}`);
+        await p.keyboard.press('Escape').catch(() => {});
+        await p.evaluate(() => { for (const d of document.querySelectorAll('dialog[open]')) d.close(); const k = document.getElementById('karaokeClose'); if (k && k.offsetParent) k.click(); }).catch(() => {});
+        await p.waitForTimeout(800);
+      }
+    }
+  };
   const closeDialogs = () => p.evaluate(() => { for (const d of document.querySelectorAll('dialog[open]')) d.close(); });
   const home = async () => { await p.goto(URL); await p.waitForTimeout(1800); };
   const open = async (title) => {
@@ -201,11 +213,15 @@ const log = (...a) => console.log(which, ...a);
 
   // ── F: Free Practice ──
   await safe('F', async () => {
-    await home(); await p.click('#libPractice'); await p.waitForTimeout(1500);
+    await home(); await p.click('#libPractice'); await p.waitForSelector('#practice:not([hidden])', { timeout: 15000 }); await p.waitForTimeout(1500);
     await practiceShots(p, shot, log, { phone: which === 'iphone' });
   });
 
-  fs.writeFileSync(path.join(WORK, `manifest-${which}.json`), JSON.stringify(manifest, null, 1));
+  const manifestPath = path.join(WORK, `manifest-${which}.json`);
+  let all = [];
+  try { if (only.length) all = JSON.parse(fs.readFileSync(manifestPath, 'utf8')); } catch (_error) { /* first run */ }
+  for (const item of manifest) { all = all.filter(previous => previous.id !== item.id); all.push(item); }
+  fs.writeFileSync(manifestPath, JSON.stringify(all, null, 1));
   log('done:', manifest.length, 'pictures');
   await b.close();
 })().catch((e) => { console.error(e); process.exit(1); });

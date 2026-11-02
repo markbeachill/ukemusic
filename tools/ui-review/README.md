@@ -29,6 +29,7 @@ It doesn't touch your own songs or settings: the app runs with a settings folder
 ```
 npm run ui-review -- desktop          only the desktop app (or ipad, or iphone, or two of them)
 npm run ui-review -- desktop R A      only the Learn and Accompaniment screens of the desktop app
+npm run ui-review -- ipad iphone R    only Learn on the iPad and iPhone
 npm run ui-review -- --page           only remake the page, from the pictures already taken
 npm run ui-review -- --out "D:\UI review 4.52"     somewhere else (to keep an earlier review)
 ```
@@ -45,6 +46,14 @@ Each screen has an **id** (a section letter and a number, like S4 or R3) and a *
 
 The iPad and iPhone pictures are taken in a browser set to the device's screen size, touch and user agent (an iPad in portrait, an iPhone 15), not in Safari on a real device: small differences are possible, and things only a real device does (the share sheet, the keyboard) aren't shown.
 
+## If screens are missing
+
+Every run writes **`run-log.txt`** into the review folder: what each step did, and a line starting `!!` for each step that failed (after one retry). The review page marks a screen that wasn't taken with an **orange ring** and "Not taken in the last run", with the command to take it again; "Not in the iPad" means that app doesn't have that screen (from `notIn` in `catalog.json`).
+
+Running only some apps or sections keeps the pictures from earlier runs, so you can fill gaps: `npm run ui-review -- ipad iphone F`. The pictures are kept in your computer's temporary folder (`ukemusic-ui-review`), so after a restart that clears it, run the whole review once before running parts of it.
+
+If a step fails every time, the app has probably changed (a button renamed or moved): fix that step in `desktop.js`, `web.js` or `practice.js`, as in "Adding a screen" below.
+
 ## How it works
 
 | File | What it does |
@@ -53,7 +62,7 @@ The iPad and iPhone pictures are taken in a browser set to the device's screen s
 | `desktop.js` | Opens the desktop app (with Playwright's Electron support), goes to each screen and takes its picture. |
 | `web.js` | The same for the web player, as an iPad or an iPhone. |
 | `practice.js` | The Free Practice screens: the same for both apps, so one set of steps. |
-| `catalog.json` | The sections, and each screen's id and name. |
+| `catalog.json` | The sections, each screen's id and name, and (`notIn`) the screens each app doesn't have. |
 | `build.js` | Puts the pictures and the page together in the `UI review` folder. |
 | `page.html` | The review page (the list of screens is put into it by `build.js`). |
 
@@ -61,7 +70,7 @@ Each picture is saved as `<id>.jpg`, with its caption in the manifest for that a
 
 ## Adding a screen
 
-1. Give it an id and a name in `catalog.json` (`"R14": "Play it in another key"`): the next free number in its section. If the same screen is in more than one app, it has the same id in each.
+1. Give it an id and a name in `catalog.json` (`"R14": "Play it in another key"`): the next free number in its section. If the same screen is in more than one app, it has the same id in each. If an app doesn't have it, add the id to that app's list under `notIn`.
 2. Add the step that opens it and takes the picture:
    - desktop, in `desktop.js`: `await dialog('#someButton', 'R14', 'Caption', 'someDialog');` for a button that opens a dialog, or `await safe('R14', async () => { …; await shot('R14', 'Caption'); });` for anything else;
    - web player, in `web.js`: `await dlg('#someButton', 'R14', 'Caption');` or the same `safe(…)` form.

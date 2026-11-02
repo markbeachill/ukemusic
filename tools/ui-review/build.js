@@ -43,20 +43,31 @@ for (const app of APPS) {
   }
 }
 
+// a screen an app has (it isn't in catalog.notIn) but with no picture: its step failed, or that
+// section hasn't been run yet. The page says so, rather than "Not in the iPad".
+const notIn = catalog.notIn || {};
+const missing = {};
+for (const app of APPS) missing[app] = Object.keys(catalog.items).filter((id) => !(notIn[app] || []).includes(id) && !shots[app][id]);
+
 const num = (id) => Number((id.match(/\d+/) || [0])[0]);
 const sections = catalog.sections.map((s) => ({
   ...s,
   items: Object.keys(catalog.items)
-    .filter((id) => id.replace(/\d+$/, '') === s.key && APPS.some((a) => shots[a][id]))
+    .filter((id) => id.replace(/\d+$/, '') === s.key && APPS.some((a) => shots[a][id] || missing[a].includes(id)))
     .sort((a, b) => num(a) - num(b))
     .map((id) => ({ id, name: catalog.items[id] }))
 }));
-const unused = Object.keys(catalog.items).filter((id) => !APPS.some((a) => shots[a][id]));
+// the run's log: the steps that went wrong (lines starting "!!")
+const logFile = path.join(WORK, 'run-log.txt');
+const failed = fs.existsSync(logFile) ? fs.readFileSync(logFile, 'utf8').split(/\r?\n/).filter((l) => l.includes('!! ')).slice(0, 200) : [];
+if (fs.existsSync(logFile)) fs.copyFileSync(logFile, path.join(OUT, 'run-log.txt'));
 const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 const data = {
   subtitle: `version ${version} · pictures taken ${today}`,
   sections,
   shots,
+  missing,
+  failed,
   intro: {
     desktop: 'The desktop app (Windows, Mac and Linux), in a 1440 × 900 window, with the public-domain songs.',
     ipad: 'The web player on an iPad (820 × 1106, portrait, as Safari shows it), with the public-domain songs. Taken in a browser set to the iPad\'s size, touch and user agent, not on a real iPad.',
@@ -80,5 +91,6 @@ fs.writeFileSync(path.join(OUT, 'README.txt'), [
 ].join('\n'));
 
 console.log(`UI review: ${APPS.map((a) => `${a} ${Object.keys(shots[a]).length}`).join(', ')} pictures, in ${OUT}`);
-if (unused.length) console.log(`Screens in catalog.json with no picture in any app: ${unused.join(' ')}`);
+for (const app of APPS) if (missing[app].length) console.log(`  Not taken for ${app} (${missing[app].length}): ${missing[app].join(' ')}`);
+if (APPS.some((a) => missing[a].length)) console.log('  Run those again, e.g.  npm run ui-review -- ipad F  (see run-log.txt for why a step failed).');
 for (const p of problems) console.log(`  ! ${p}`);

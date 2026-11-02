@@ -411,7 +411,6 @@ function buildMenu() {
         { id: 'song-capo', label: 'Suggest a Capo…', click: () => sendMenuAction('suggest-capo') },
         { id: 'song-patterns', label: 'Chord Patterns…', click: () => sendMenuAction('chord-patterns') },
         { type: 'separator' },
-        { id: 'song-strums', label: 'Strum Patterns…', click: () => sendMenuAction('strum-library') },
         { id: 'song-tab', label: 'Insert Tab Block', click: () => sendMenuAction('insert-tab') }
       ]
     },
@@ -425,6 +424,8 @@ function buildMenu() {
     {
       label: 'Help',
       submenu: [
+        { id: 'song-strums', label: 'Strums…', click: () => sendMenuAction('strum-library') },
+        { type: 'separator' },
         {
           label: 'Open Log File',
           click: () => {

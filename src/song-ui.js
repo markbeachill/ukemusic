@@ -60,18 +60,32 @@
       if (previous?.isConnected) previous.focus();
     };
   }
+  function memoryPlayLabel(stage) {
+    return stage === 'numbers' ? 'Play with chord numbers' : stage === 'none' ? 'Play without chords' : 'Play with fewer chords';
+  }
+  function setControlLabel(button, text) {
+    if (!button.classList.contains('rib-button')) { button.textContent = text; return; }
+    let label = button.querySelector('.rib-button-label');
+    if (!label) {
+      label = document.createElement('span'); label.className = 'rib-button-label';
+      for (const node of [...button.childNodes]) if (node.nodeType === 3) node.remove();
+      button.append(label);
+    }
+    label.textContent = text;
+    button.classList.toggle('rib-button-wide', text.length > 21);
+  }
   function updateTransport(player) {
     const label = player.playing ? (player.paused ? 'Resume' : 'Pause') : 'Play';
     for (const id of ['playButton', 'quickPlay', 'pickPlayButton', 'karaokePlay', 'playBtn']) {
       const button = document.getElementById(id);
-      if (button) { button.textContent = label; button.disabled = false; }
+      if (button) { setControlLabel(button, label); button.disabled = false; }
     }
     for (const id of ['quickStop', 'stopButton', 'pickStopButton', 'karaokeStop']) {
       const button = document.getElementById(id);
       if (button) button.disabled = !player.playing;
     }
   }
-  const api = { createSaveQueue, deletionInfo, enterOverlay, updateTransport };
+  const api = { createSaveQueue, deletionInfo, enterOverlay, updateTransport, memoryPlayLabel, setControlLabel };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.UkeSongUI = api;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -42,6 +42,7 @@ Most of the music logic lives in `src/` as plain functions, used by both. Change
 | Exports and PDFs | `main.js` (printing to PDF), `index.html` (the Export dialog), `src/exports-map.js` | |
 | The Session (group) screen | `src/session-view.js`, `src/session-fit.js`, `src/session-screen.js` | Desktop: `session.html`; web: `web/app.html` |
 | The web player's own screens | `web/app.html` | Shared helpers in `src/song-ui.js`; songs from files: `src/song-files.js`; Dropbox: `src/cloud-sync.js`; offline copy: `web/sw-template.js` |
+| The desktop ribbon (its tabs and tools) | `index.html`: keep to the layout rules in the comment `4.53: the ribbon's layout` (groups of large buttons or two-row columns, a label only when a group has more than one setting, groups fold rather than wrap); `test/ribbon-layout.test.js` checks them | Run `npm run ui-review -- desktop` and look at every tab, also in a narrow window |
 | Anything only in the desktop window | `index.html` (find the feature's ids: buttons are `id="…Button"`, dialogs `<dialog id="…Dialog">`) | Exposing `src/` code to the window: `src/preload.js` |
 | The website | Home page: `site/index.html`; other pages: `web/pages.js`; pages made from the docs: `web/docs.js`; gallery files: `site/gallery/` | Pictures in `site/img/` (not `session.webp`); built and published by `.github/workflows/web.yml` |
 | Installers and releases | `package.json` (`build`), `.github/workflows/release.yml` | |
