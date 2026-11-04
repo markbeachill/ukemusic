@@ -377,6 +377,12 @@ function readSongSettings(folder) {
   const raw = normalizeValue(ini.parse(text));
   const picked = pickSongSettings(raw);
   picked.song.settings_format = Number(getPath(raw, 'song.settings_format')) || 1;
+  // 4.55: the one-line strum box is the default for every song, so a strum style a song kept
+  // from before then is let go (one saved after then carries rhythm.strum_compact, and stays)
+  if (getPath(raw, 'rhythm.strum_compact') !== true && getPath(picked, 'rhythm.style') !== undefined) {
+    deletePath(picked, 'rhythm.style');
+    if (picked.rhythm && !Object.keys(picked.rhythm).length) delete picked.rhythm;
+  }
   return picked;
 }
 
@@ -397,6 +403,7 @@ function writeSongSettings(folder, settings) {
   }
   for (const p of ['song.capo', 'song.settings_format']) deletePath(kept, p);
   const out = mergeObjects(kept, picked);
+  setPath(out, 'rhythm.strum_compact', true);   // 4.55: written after the one-line strum box became the default
   const header = '; ukemusic song settings: this song\'s facts (key, tempo, versions…) plus any setting\n'
     + '; you made custom for this song. Anything not listed here uses the global default.\n';
   writeFileSafe(file, header + ini.stringify(out, { whitespace: true }));

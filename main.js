@@ -36,7 +36,7 @@ const DEFAULT_CONFIG = {
   library: { songs_folder: '', libraries: '', last_song: '', show_notes_on_open: true, start_screen: 'library', starters_added: false, starters_info: false },
   song: { instrument: 'soprano', key: 'auto' },
   parsing: { use_delimiters: true },
-  rhythm: { enable: true, placement: 'above_chords', align: false, notation: 'raw', style: 'comic' },
+  rhythm: { enable: true, placement: 'above_chords', align: false, notation: 'raw', style: 'compact', strum_compact: true },
   export: {
     default_format: 'html',
     include_stylesheet: true,
@@ -171,6 +171,11 @@ async function readConfigObject() {
   if (parsed.export && parsed.export.stage_compact !== true) {
     if (!parsed.export.stage_format || parsed.export.stage_format === 'clear') parsed.export.stage_format = 'compact';
     parsed.export.stage_compact = true;
+  }
+  // 4.55: the one-line strum box became the default for every song: settings from before then
+  // move to it once (a style chosen after this is kept)
+  if (!parsed.rhythm || parsed.rhythm.strum_compact !== true) {
+    parsed.rhythm = { ...(parsed.rhythm || {}), style: 'compact', strum_compact: true };
   }
   return { raw, config: mergeConfig(cloneDefaultConfig(), parsed) };
 }

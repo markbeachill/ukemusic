@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### The one-line strum box for every song
+- **Strum patterns are shown on one line by default**: the time, arrows, letters and the pattern's name, and now **the tempo** on the song's first pattern (`3/4  120 bpm  ↓ · ↓ ↑ ↓ ↑  D>-DUDU  Waltz`). The info boxes, with the count under the arrows, are still in Display → Strum patterns → Show as, and in Settings.
+- **For every song, once:** your settings move to One line, and a strum style a song had of its own from before is let go. A style you choose after this, for all songs or for one, is kept. The web player uses One line too.
+
+### The Two-page Stage PDF: one page when it fits
+- **It now tries one page first.** If the whole song goes on one page without the text getting smaller than your smallest size (12 pt to start with), you get one page; otherwise two, as before. Before, a song that the ordinary Stage PDF squeezed onto one page could come out on two. With the public-domain songs it's now never longer than the Stage PDF, and five of them that take two pages there fit on one.
+
 ### The website, for search engines and AI assistants
 - **A Free Practice page** (`/practice/`): all 39 exercises by category, with their levels and aims, the routines, how progress works, the public-domain songs, and **Start free practice**. It's made from the practice catalogue itself, so it always matches the app.
 - **`app/#practice`** opens the web player straight into Free Practice.

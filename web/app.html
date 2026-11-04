@@ -1704,7 +1704,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     if (stage) { sheet.dataset.style = 'stage'; sheet.dataset.stageFormat = p.stageFormat; } else { delete sheet.dataset.style; delete sheet.dataset.stageFormat; }
     let options = {
       layout: look.layout,
-      strumStyle: 'clean',
+      strumStyle: 'compact',
       beatsPerBar: p.beats,
       tempo: p.tempo,
       diagrams: { enable: look.diagrams !== 'none', placement: look.diagrams, show_fingers: true, skip_common: look.hideCommon === true },
@@ -1871,7 +1871,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   function sheetDocument(stage) {
     const p = prefs();
     const lib = library();
-    const base = { tune: tuneOptions(), layout: stage ? 'lines' : look.layout, strumStyle: 'clean', beatsPerBar: p.beats, tempo: p.tempo, diagrams: { enable: true, placement: 'song_start', show_fingers: true, skip_common: look.hideCommon === true }, chordLibrary: lib, maxLineChars: stage ? 48 : 0 };
+    const base = { tune: tuneOptions(), layout: stage ? 'lines' : look.layout, strumStyle: 'compact', beatsPerBar: p.beats, tempo: p.tempo, diagrams: { enable: true, placement: 'song_start', show_fingers: true, skip_common: look.hideCommon === true }, chordLibrary: lib, maxLineChars: stage ? 48 : 0 };
     const ir = currentIr(stage ? stageText(played(view.song.text)) : played(view.song.text));
     const body = U.renderHTML(ir, stage ? stageOptions(base, 48, 680, 20) : base) + (U.shorthandKeyHtml ? U.shorthandKeyHtml(ir) : '');
     const k = keyText();

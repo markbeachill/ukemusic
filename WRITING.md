@@ -177,7 +177,7 @@ A strum pattern goes in curly brackets on a line of its own. It applies from the
 
 The pattern is spread evenly over one bar. `D-DU-UDU` is eight slots in a 4/4 bar, so each is half a beat: **1 & 2 & 3 & 4 &**.
 
-On the sheet, a pattern is shown as a strum box with arrows, letters and the count. If it's a common pattern, its name is shown too (Island, Waltz…). **Write → Strum patterns** has a library of patterns to hear and add.
+On the sheet, a pattern is shown on one line: the time (and the tempo, on the song's first pattern), arrows, letters and, for a common pattern, its name. **Display → Strum patterns → Show as** can show it as a box with the count (1 & 2 &) under the arrows instead. **Write → Strum patterns** has a library of patterns to hear and add.
 
 ### Changing the time
 
@@ -433,7 +433,7 @@ The same choice is in **Settings → How the chord sheet looks**, and it applies
 
 ### On a music stand: the Stage copy on two pages
 
-**Export → Two-page Stage PDF** fits the song onto two pages, so you never turn a page mid-song. It makes the text as big as will fit, then closes up the gaps, then uses two columns a page, then prints a repeated chorus once. On the ribbon's Export tab (Two-page Stage) you choose the chords above or in the words, and the smallest text it may use (12 pt to start with). The same habits help: a blank line or a heading between parts, since parts are kept together.
+**Export → Two-page Stage PDF** fits the song onto one page if it will go, or two, so you never turn a page mid-song. It makes the text as big as will fit (but no smaller than the smallest size you choose), then closes up the gaps, then uses two columns a page, then prints a repeated chorus once. On the ribbon's Export tab (Two-page Stage) you choose the chords above or in the words, and the smallest text it may use (12 pt to start with). The same habits help: a blank line or a heading between parts, since parts are kept together.
 
 
 ---

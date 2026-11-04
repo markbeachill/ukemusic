@@ -8,7 +8,7 @@
 // Styles (Settings → Look → Strum patterns), so more can be added later:
 //   comic    bold black box with a solid time panel and a drop shadow ("info box")
 //   clean    light rounded box, quieter
-//   compact  one line: time, arrows, letters, name (good for printing long songs)
+//   compact  one line: time (and tempo), arrows, letters, name: the default from 4.55
 //   plain    the pattern as typed (letters, or arrows if chosen), as before
 //
 // Readability: every size is relative to the sheet's own font (--monospace-size), and
@@ -147,7 +147,9 @@ function renderStrum(text, ctx = {}) {
   if (style === 'compact') {
     const arrows = partSteps.map(arrowSpans).join('<span class="sb-sep">|</span>');
     const letters = partSteps.map((p) => p.map((s) => (s.stroke === '-' ? '-' : s.stroke) + (s.accent ? '>' : '')).join('')).join(' | ');
-    return `<div class="${classes}"><span class="sb-time">${escapeHtml(label)}${ctx.timeChanged ? ' <em>new time</em>' : ''}</span>`
+    // the time, and on the song's first box the tempo, as on the other styles (4.55)
+    const tempoShown = ctx.first && !ctx.timeChanged && bpm ? ` <span class="sb-bpm">${escapeHtml(bpm)}</span>` : '';
+    return `<div class="${classes}"><span class="sb-time">${escapeHtml(label)}${tempoShown}${ctx.timeChanged ? ' <em>new time</em>' : ''}</span>`
       + `${ownName ? `<span class="sb-ref">${escapeHtml(ownName)}</span>` : ''}`
       + `<span class="sb-arrows">${arrows}</span><span class="sb-letters">${escapeHtml(letters)}</span>`
       + `${libraryName ? `<span class="sb-name">${escapeHtml(libraryName)}</span>` : ''}`
@@ -222,6 +224,7 @@ function strumCss() {
   .strum-box.style-compact { display: inline-flex; align-items: baseline; gap: 0.7em; border: 1.5px solid var(--text-color, #111); border-radius: 0.3em; padding: 0.1em 0.7em 0.1em 0; }
   .strum-box.style-compact .sb-time { background: var(--text-color, #111); color: var(--bg-color, #fff); padding: 0.15em 0.5em; font-size: 1.05em; }
   .strum-box.style-compact .sb-time em { font-style: normal; font-size: 0.8em; text-transform: uppercase; margin-left: 0.3em; }
+  .strum-box.style-compact .sb-bpm { font-weight: 700; font-size: 0.8em; margin-left: 0.35em; white-space: nowrap; }
   .strum-box.style-compact .sb-arrows { display: inline-flex; gap: 0.25em; }
   .strum-box.style-compact .sb-a { font-size: 1.3em; }
   .strum-box.style-compact .sb-letters { font: 700 1em var(--monospace-font, "Courier New", monospace); }

@@ -2201,9 +2201,9 @@
                   <div class="rib-field" title="How {strum patterns} are shown">
                     <label for="viewStrumStyle">Show as</label>
                     <select id="viewStrumStyle" title="How {strum patterns} are shown">
+                      <option value="compact">One line</option>
                       <option value="comic">Info box: bold</option>
                       <option value="clean">Info box: light</option>
-                      <option value="compact">One line</option>
                       <option value="plain">Plain</option>
                     </select>
                   </div>
@@ -2335,7 +2335,7 @@
                       <option value="format">As Stage format</option>
                     </select>
                   </div>
-                  <div class="rib-field" title="The text is made as big as fits on two pages, but no smaller than this (the words are bold)">
+                  <div class="rib-field" title="The text is made as big as fits on one page (or, if it won't go, two), but no smaller than this (the words are bold)">
                     <label for="ribTwoMin">Smallest</label>
                     <select id="ribTwoMin" data-config-path="export.stage_two_min">
                       <option value="11">11 pt</option>
@@ -2876,12 +2876,12 @@
                       <div class="field">
                         <label for="rhythm-style">Strum patterns: style</label>
                         <select id="rhythm-style" data-config-path="rhythm.style">
-                          <option value="comic">Info box: bold (black box, time on the left)</option>
-                          <option value="clean">Info box: light (thin rounded box)</option>
-                          <option value="compact">One line (time, arrows, letters, name)</option>
+                          <option value="compact">One line (time and tempo, arrows, letters, name)</option>
+                          <option value="comic">Info box: bold (black box, time on the left, with the count)</option>
+                          <option value="clean">Info box: light (thin rounded box, with the count)</option>
                           <option value="plain">Plain: just the pattern as typed</option>
                         </select>
-                        <p class="help">The boxes show the time signature, the pattern's name, arrows, letters and the count (1 &amp; 2 &amp;). They're sized from the sheet's font and print clearly in black and white. Write <code>{3/4 D-DUDU}</code> to change the time from there on.</p>
+                        <p class="help">One line (the usual) shows the time signature, the tempo on the song's first pattern, arrows, letters and the pattern's name, and takes the least room. The info boxes add the count (1 &amp; 2 &amp;) under the arrows. They're sized from the sheet's font and print clearly in black and white. Write <code>{3/4 D-DUDU}</code> to change the time from there on.</p>
                       </div>
                       <div class="field">
                         <label for="rhythm-notation">Plain style shows</label>
@@ -3002,7 +3002,7 @@
                             <option value="14">14 pt</option>
                           </select>
                         </div>
-                        <p class="help">The song is fitted to two pages, in this order, stopping as soon as it fits: the text as big as will go (down to the smallest size here); then the gaps closed up (no blank lines, less space between parts); then two columns a page; then a repeated chorus printed once ("as before"). A part is never split across columns or pages unless it's taller than a whole column. The words are bold, so the smaller sizes stay easy to read. A song too long even then takes a third page.</p>
+                        <p class="help">The song is fitted to <strong>one page</strong> if it will go without the text getting smaller than the smallest size here, otherwise to two. Each time it tries, in this order, stopping as soon as it fits: the text as big as will go (down to the smallest size here); then the gaps closed up (no blank lines, less space between parts); then two columns a page; then a repeated chorus printed once ("as before"). A part is never split across columns or pages unless it's taller than a whole column. The words are bold, so the smaller sizes stay easy to read. A song too long even then takes a third page.</p>
                       </div>
                       <div class="field">
                         <label class="check-line"><input id="export-stage_fit" type="checkbox" data-config-path="export.stage_fit" /> Shrink to fit fewer pages</label>
@@ -3307,7 +3307,7 @@
         <p id="exportWhere" class="dialog-note"></p>
         <label class="export-main"><input type="checkbox" name="format" value="sheet_pdf" /> <strong>Chord sheet PDF</strong> — for printing, in your style set (in the <em>Song</em> folder, or the key's own folder)</label>
         <label class="export-main"><input type="checkbox" name="format" value="sheet_stage" /> <strong>Stage PDF</strong> — big and bold, for playing from (in the <em>Stage</em> folder)</label>
-        <label class="export-main" title="Chords above or in the words, and the smallest text: ribbon → Export → Two-page Stage"><input type="checkbox" name="format" value="sheet_stage2" /> <strong>Two-page Stage PDF</strong> — fitted to two pages, for a music stand with no page to turn (in the <em>Stage</em> folder)</label>
+        <label class="export-main" title="Chords above or in the words, and the smallest text: ribbon → Export → Two-page Stage"><input type="checkbox" name="format" value="sheet_stage2" /> <strong>Two-page Stage PDF</strong> — on one page if it fits, otherwise two, for a music stand with no page to turn (in the <em>Stage</em> folder)</label>
         <details id="exportMore" class="export-more">
           <summary>More formats</summary>
           <div class="export-grid">
@@ -4196,7 +4196,7 @@
           library: { songs_folder: '', libraries: '', last_song: '', show_notes_on_open: true, start_screen: 'library', starters_added: false, starters_info: false },
           song: { instrument: 'soprano', key: 'auto' },
           parsing: { use_delimiters: true },
-          rhythm: { enable: true, placement: 'above_chords', align: false, notation: 'raw', style: 'comic' },
+          rhythm: { enable: true, placement: 'above_chords', align: false, notation: 'raw', style: 'compact', strum_compact: true },
           export: {
             default_format: 'html',
             include_stylesheet: true,
@@ -5048,7 +5048,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           return {
             layout: config?.export?.layout || 'lines',
             rhythmNotation: config?.rhythm?.notation || 'raw',
-            strumStyle: config?.rhythm?.style || 'comic',
+            strumStyle: config?.rhythm?.style || 'compact',
             beatsPerBar: Number(config?.song?.beats_per_bar) || 4,
             tempo: Number(config?.song?.tempo) || 0,
             swing: config?.playback?.swing || 'auto',
@@ -6667,7 +6667,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               <div class="actions"><button type="button" data-act="hear">▶ Hear</button><button type="button" data-act="insert">Add to song</button><button type="button" data-act="default">Make default</button></div>`;
             card.querySelector('h3').textContent = strum.name;
             card.querySelector('.level').textContent = `${strum.style} · ${strum.level}`;
-            const boxStyle = effectiveConfig()?.rhythm?.style || 'comic';
+            const boxStyle = effectiveConfig()?.rhythm?.style || 'compact';
             card.querySelector('.pattern').innerHTML = boxStyle === 'plain'
               ? patternHtml(strum.pattern)
               : window.ukemusic.renderStrum(strum.pattern, { style: boxStyle, beats: strum.beats, timeLabel: timeLabel(strum.beats) });
@@ -13358,7 +13358,7 @@ ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or del
           document.getElementById('viewDiagrams').value = diagrams.enable === false || diagrams.placement === 'none' ? 'none' : (diagrams.placement || 'song_start');
           document.getElementById('viewLeftHanded').checked = state.config?.diagrams?.left_handed === true;
           document.getElementById('viewSkipCommon').checked = state.config?.diagrams?.skip_common === true || state.config?.diagrams?.skip_common === 'true';
-          document.getElementById('viewStrumStyle').value = config?.rhythm?.style || 'comic';
+          document.getElementById('viewStrumStyle').value = config?.rhythm?.style || 'compact';
           document.getElementById('viewLayout').value = config?.export?.layout || 'lines';
           document.getElementById('viewTune').value = ['strip', 'lines', 'off'].includes(config?.export?.tune_notation) ? config.export.tune_notation : 'strip';
           document.getElementById('playFeel').value = ['straight', 'light', 'swing', 'shuffle'].includes(config?.playback?.swing) ? config.playback.swing : 'auto';

@@ -64,3 +64,9 @@ test('a usual list from before 4.54 with the chord sheet PDF still gets the Stag
   assert.deepStrictEqual(usualFormats({ export: { usual_formats: 'sheet_pdf', usual_stage_split: true } }), ['sheet_pdf']);
   assert.deepStrictEqual(usualFormats({ export: { usual_formats: 'sheet_stage2', usual_stage_split: true } }), ['sheet_stage2']);
 });
+
+test('it tries one page before two (4.55)', () => {
+  const src = read('src/two-pager.js');
+  assert.match(src, /let chosen = fitIn\(1\) \|\| fitIn\(2\);/);
+  assert.match(html, /on one page if it fits, otherwise two/);
+});

@@ -1,11 +1,12 @@
-// The Stage copy on two pages (4.54): the song laid out to fit two pages, for a music stand with
-// no page to turn. Runs in the page that prints it (main.js renderPdf, printStyle 'stage2'):
+// The Stage copy on two pages (4.54): the song laid out to fit one page or two, for a music stand
+// with no page to turn. Runs in the page that prints it (main.js renderPdf, printStyle 'stage2'):
 // main.js runs this file there, then calls UkeTwoPager.fit(...).
 //
 // The document holds the song more than once (renderer: twoPagerDocument): each version is a
 // <div class="tp-variant" data-cols="1|2" data-once="0|1">, the same song laid out for one column
-// or two, and with every chorus, or repeated choruses as "as before". fit() tries, in order, and
-// keeps the first that fits on two pages:
+// or two, and with every chorus, or repeated choruses as "as before". fit() looks for ONE page first
+// (4.55: the whole song in view, if it goes without the text going below the smallest size), then
+// two. For each, it tries these in order and keeps the first that fits:
 //   1. one column, the usual spacing, the text as big as it will go (down to the smallest size);
 //   2. one column, the gaps closed up (blank lines gone, less space between parts);
 //   3. two columns a page, gaps closed;
@@ -126,21 +127,25 @@
       setSize(px, step.spacing);
       return pack(find(step.cols, step.once), { W, H, cols: step.cols, probe }).pages.length;
     };
-    let chosen = null;
-    for (const step of steps) {
-      if (!find(step.cols, step.once)) continue;
-      if (pagesAt(step, minPx) > 2) continue;
-      // the biggest text that still fits on two pages (half-pixel steps)
-      let lo = minPx;
-      let hi = maxPx;
-      if (pagesAt(step, hi) <= 2) lo = hi;
-      while (hi - lo > 0.5) {
-        const mid = Math.round(((lo + hi) / 2) * 2) / 2;
-        if (pagesAt(step, mid) <= 2) lo = mid; else hi = mid;
+    // The first layout (in the order above) that fits on `limit` pages at the smallest size, with
+    // the biggest text that still fits (half-pixel steps)
+    const fitIn = (limit) => {
+      for (const step of steps) {
+        if (!find(step.cols, step.once)) continue;
+        if (pagesAt(step, minPx) > limit) continue;
+        let lo = minPx;
+        let hi = maxPx;
+        if (pagesAt(step, hi) <= limit) lo = hi;
+        while (hi - lo > 0.5) {
+          const mid = Math.round(((lo + hi) / 2) * 2) / 2;
+          if (pagesAt(step, mid) <= limit) lo = mid; else hi = mid;
+        }
+        return { ...step, px: lo };
       }
-      chosen = { ...step, px: lo };
-      break;
-    }
+      return null;
+    };
+    // One page if it will go (no smaller than the smallest size), otherwise two
+    let chosen = fitIn(1) || fitIn(2);
     if (!chosen) {
       // too long for two pages even at the smallest size: the fewest pages
       let best = null;
