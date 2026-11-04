@@ -4,7 +4,7 @@
 // stands on its own, so some things are said on more than one page.
 const fs = require('fs');
 const path = require('path');
-const { AI_PROMPT } = require('../src/ai-prompt');
+const { AI_PROMPT, AI_PRACTICE_PROMPT, AI_CHAT_URL } = require('../src/ai-prompt');
 
 const APP = path.join(__dirname, '..');
 const SITE = path.join(APP, 'site');
@@ -226,7 +226,7 @@ const PAGES = [
 
 // "Your songs": every way in, and the AI prompt
 const SONGS_PAGE = {
-  file: 'songs.html', title: 'Bring your songs', blurb: 'Paste chord sheets from websites, import ChordPro songbooks, type songs, or use an AI chat to tidy a difficult one.',
+  file: 'songs.html', title: 'Bring your songs', blurb: 'Paste chord sheets from websites, import ChordPro songbooks, type songs, or use an AI chat to tidy a difficult one or get a song ready to practise.',
   body: () => `
 <div class="page-hero"><div class="wrap">
   <p class="eyebrow">Your songs</p>
@@ -240,7 +240,7 @@ const SONGS_PAGE = {
     <div class="card"><h3>Paste from a website</h3><p>Copy a chord sheet from a website and use <b>File → Paste from website</b>. Chords on their own line above the words are moved into the words for you.</p></div>
     <div class="card"><h3>Your club's songbook</h3><p>A whole folder of ChordPro songs comes in at once, one song each, with tags and links; each subfolder becomes a setlist. Strum marks clubs write in the brackets come in as written.</p></div>
     <div class="card"><h3>Type it</h3><p>Words and chords in square brackets: <code>[C]Oh my [G7]darling</code>. The <a href="guide.html">song guide</a> has everything else: strums, timings, tab.</p></div>
-    <div class="card"><h3>A difficult sheet? Ask an AI</h3><p>PDFs, scans and sheets where the spacing is lost: an AI chat can tidy them into ukemusic's format. <a href="#ai">How, with a prompt to copy</a>.</p></div>
+    <div class="card"><h3>A difficult sheet? Ask an AI</h3><p>PDFs, scans and sheets where the spacing is lost: an AI chat can tidy them into ukemusic's format, or get a song ready to practise. <a href="#ai">How, with prompts to copy</a>.</p></div>
   </div>
   <div class="note-box" style="margin-top:20px"><p><b>On a phone or tablet?</b> The web player takes song files, ChordPro, a zipped songs folder or the desktop app's file, and you can write songs there too. <a href="phone.html">How to put it on your Home Screen and keep your songs safe</a>.</p></div>
 </div></section>
@@ -249,13 +249,17 @@ const SONGS_PAGE = {
   <h2>Tidy a chord sheet with an AI chat</h2>
   <p class="intro">ukemusic's own import handles most chord sheets. For the awkward ones (a PDF where the chords have lost their places, a sheet that says "two bars of Dm" in words, chords at the top and words somewhere else), an AI chat such as Claude, ChatGPT or Gemini can do the tidying.</p>
   <ol class="steps">
-    <li><span><strong>Open an AI chat</strong> and paste the chord sheet in (or attach the PDF).</span></li>
-    <li><span><strong>Copy the prompt below</strong> into the same message, so the AI knows ukemusic's format. (In the desktop app it's there too: <b>File → Paste from website → Copy AI prompt</b>.)</span></li>
+    <li><span><strong><a href="${AI_CHAT_URL}" target="_blank" rel="noopener">Open an AI chat</a></strong> (Claude, or ChatGPT, Gemini…) and paste the chord sheet in (or attach the PDF).</span></li>
+    <li><span><strong>Copy one of the prompts below</strong> into the same message, so the AI knows ukemusic's format. (They're in the apps too: in the desktop app <b>File → Paste from website</b>, in the web player <b>Edit → Help from an AI chat</b>.)</span></li>
     <li><span><strong>Copy its answer into ukemusic</strong> with <b>File → Paste from website</b>, and save.</span></li>
     <li><span><strong>Press Play and check it</strong> against the original. The chords are usually right; the timing (how many bars each chord lasts) is the part to listen for.</span></li>
   </ol>
-  <h3 style="margin-top:32px">The prompt</h3>
+  <h3 style="margin-top:32px">The prompt: tidy a sheet</h3>
+  <p>Puts a difficult sheet into ukemusic's format, and nothing more.</p>
   <div class="prompt-box"><pre id="aiPrompt">${esc(AI_PROMPT)}</pre><button class="btn primary" type="button" data-copy="aiPrompt">Copy the prompt</button></div>
+  <h3 style="margin-top:32px">The prompt: ready to practise</h3>
+  <p>For a song you want to practise, play along with and learn, from a website or already in ukemusic: it also gives each chord its length so playback follows the recording, names the parts the same way each time, suggests strums for your level, and lists what to check by ear and how to practise the hard bits. Fill in the first few lines about you and the song.</p>
+  <div class="prompt-box"><pre id="aiPracticePrompt">${esc(AI_PRACTICE_PROMPT)}</pre><button class="btn primary" type="button" data-copy="aiPracticePrompt">Copy the prompt</button></div>
   <div class="note-box" style="margin-top:28px"><p><b>Your sheet, your responsibility.</b> Use songs you have the right to use: your own copy, for your own practice or your club's. The prompt asks the AI to work only from the sheet you give it, and not to add or invent any words. ukemusic itself only ships songs that are out of copyright, and your songs stay on your computer.</p></div>
 </div></section>
 <section><div class="wrap">

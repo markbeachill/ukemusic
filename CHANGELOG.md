@@ -1,5 +1,19 @@
 # Changelog
 
+## v4.56.0
+
+### Help from an AI chat, in more places
+- **File → Paste from website** has a second prompt, **Copy AI prompt: ready to practise**: as well as putting a sheet into ukemusic's format, it asks the AI to give each chord its length (so playback follows the recording), name the parts the same way each time, suggest strums for your level, and list what to check by ear and how to practise the hard bits. It takes the sheet you've pasted in the window or, if that's empty, the song that's open, with its title.
+- **An "open an AI chat" link** beside the prompts opens Claude in your browser (any AI chat will do).
+- **The web player** has both prompts and the link under **Edit → Help from an AI chat**.
+- **The website's Bring your songs page** has both prompts to copy, and the link.
+
+### Tidier spacing between parts
+- **No more double gap before a heading.** A blank line at the end of a part, followed by the next part's heading, showed both the blank line and the heading's own space. Now only the heading's space shows. Two or more blank lines in a row show as one. With the part names hidden, the blank line still separates the parts.
+
+### The website's pictures
+- Every picture on the website and in the gallery is retaken from the app as it is now (`npm run site-pictures`), and the gallery has the Two-page Stage PDF.
+
 ## v4.55.0
 
 ### The one-line strum box for every song

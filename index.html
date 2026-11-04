@@ -3220,9 +3220,12 @@
           </div>
         </div>
         <p id="convertReport" class="dialog-note"></p>
-        <p class="dialog-note" id="convertAiNote">A difficult sheet (a PDF, a scan, the timing written in words)? <b>Copy AI prompt</b>, paste it into an AI chat such as Claude, ChatGPT or Gemini with the chord sheet, then paste its answer here. Check the timing when you play it.</p>
+        <p class="dialog-note" id="convertAiNote">Help from an AI chat (Claude, ChatGPT, Gemini…): copy a prompt, <a href="https://claude.ai/new" target="_blank" rel="noopener" id="convertAiOpen" title="Opens Claude in your browser; any AI chat will do">open an AI chat</a>, paste the prompt with the chord sheet, then paste its answer here. <b>Copy AI prompt</b> tidies a difficult sheet (a PDF, a scan, the timing written in words) into ukemusic's format. <b>Ready to practise</b> also sorts out each chord's timing, the parts and the strums, and lists what to check by ear and how to practise it; with a song open and nothing pasted here, it takes that song. Check the timing when you play it.</p>
         <div class="dialog-actions">
+          <div class="ai-buttons" style="display:flex;gap:8px;flex-wrap:wrap">
           <button id="convertAiPrompt" type="button" title="Copy a prompt that tells an AI chat ukemusic's song format, to tidy a difficult chord sheet">Copy AI prompt</button>
+          <button id="convertAiPractice" type="button" title="Copy a prompt that gets the song ready to practise, play along with and learn: the timing, the parts, strums, what to check by ear (with the sheet pasted here, or the song that's open)">Copy AI prompt: ready to practise</button>
+          </div>
           <div class="right">
             <button id="convertCancel" type="button">Cancel</button>
             <button id="convertInsert" type="button">Insert at cursor</button>
@@ -6817,6 +6820,24 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           button.textContent = done ? 'Copied ✓' : 'Couldn\'t copy';
           setTimeout(() => { button.textContent = 'Copy AI prompt'; }, 2200);
         });
+        // 4.56: the practice prompt, with the sheet pasted here (or the open song) already in it
+        document.getElementById('convertAiPractice').addEventListener('click', async (event) => {
+          const button = event.currentTarget;
+          const pasted = document.getElementById('convertInput').value;
+          const cfg = state.song ? effectiveConfig() : state.config;
+          const inst = cfg?.song?.instrument || 'soprano';
+          const prompt = window.ukemusic.aiPracticePrompt({
+            title: state.song?.title || '',
+            artist: state.song ? (cfg?.song?.artist || '') : '',
+            instrument: inst === 'baritone' ? 'baritone ukulele (DGBE)' : inst === 'guitar' ? 'guitar (EADGBE)' : '',
+            text: pasted.trim() ? pasted : (state.song ? getEditorValue() : '')
+          });
+          let done = window.ukemusic.copyText(prompt);
+          if (!done) { try { await navigator.clipboard.writeText(prompt); done = true; } catch (_e) { /* no clipboard */ } }
+          button.textContent = done ? 'Copied ✓' : 'Couldn\'t copy';
+          setTimeout(() => { button.textContent = 'Copy AI prompt: ready to practise'; }, 2200);
+        });
+
         warningLabel.addEventListener('click', () => {
           if (warningLabel.classList.contains('clickable')) convertCurrentSong();
         });

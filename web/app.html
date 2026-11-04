@@ -478,7 +478,8 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
           <button class="btn" type="button" data-ins="{melody: }" data-back="1" title="The tune of the next line, by note name: {melody: E E F G | G F E D}">♪ Tune</button>
           <button id="editPreviewBtn" class="btn" type="button" aria-pressed="false" title="See the chord sheet">Preview</button>
         </div>
-<details class="note"><summary>Help with insertion buttons</summary><p>Chord inserts [ ] before a word, for example [C]Hello. Heading inserts [[Verse 1]] on its own line. Strum inserts a pattern such as {D-DU-UDU}. The bar line | separates bars. Tune inserts note names for the next line, for example {melody: E E F G}.</p></details><div id="editWrap" class="edit-wrap">
+<details class="note"><summary>Help with insertion buttons</summary><p>Chord inserts [ ] before a word, for example [C]Hello. Heading inserts [[Verse 1]] on its own line. Strum inserts a pattern such as {D-DU-UDU}. The bar line | separates bars. Tune inserts note names for the next line, for example {melody: E E F G}.</p></details>
+<details class="note ai-help"><summary>Help from an AI chat</summary><p>For a chord sheet from a website or a PDF, or to get a song ready to practise: copy a prompt, <a href="https://claude.ai/new" target="_blank" rel="noopener">open an AI chat</a> (Claude, or ChatGPT, Gemini…), paste the prompt with the chord sheet, then paste its answer here in place of the words. <b>Tidy a sheet</b> puts a difficult sheet into ukemusic's format. <b>Ready to practise</b> also sorts out each chord's timing, the parts and the strums, and lists what to check by ear; it takes this song as it is, so paste the website's sheet here first if that's what you have.</p><div class="add-row"><button id="aiPromptBtn" class="btn" type="button">Copy prompt: tidy a sheet</button><button id="aiPracticeBtn" class="btn" type="button">Copy prompt: ready to practise</button></div></details><div id="editWrap" class="edit-wrap">
           <div class="editor-box"><div id="editorHost"></div><textarea id="editorFallback" spellcheck="false" autocapitalize="off" autocomplete="off" hidden aria-label="The song: words with the chords in square brackets"></textarea></div>
           <div id="editSheet" class="sheet edit-preview"></div>
         </div>
@@ -1453,6 +1454,24 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
       $('saveRecovery').hidden = value !== 'failed';
     }});
   }
+  // 4.56: the AI prompts (src/ai-prompt.js, the same as the desktop app's and the website's)
+  async function copyPrompt(button, text, label) {
+    let done = false;
+    try { await navigator.clipboard.writeText(text); done = true; } catch (_e) { /* no clipboard */ }
+    button.textContent = done ? 'Copied ✓' : 'Couldn’t copy';
+    setTimeout(() => { button.textContent = label; }, 2200);
+  }
+  $('aiPromptBtn').addEventListener('click', (e) => copyPrompt(e.currentTarget, U.aiPrompt, 'Copy prompt: tidy a sheet'));
+  $('aiPracticeBtn').addEventListener('click', (e) => {
+    const song = view.song || {};
+    const inst = (song.settings && song.settings.song && song.settings.song.instrument) || '';
+    copyPrompt(e.currentTarget, U.aiPracticePrompt({
+      title: $('fTitle').value || song.title || '',
+      artist: $('fArtist').value || '',
+      instrument: inst === 'baritone' ? 'baritone ukulele (DGBE)' : inst === 'guitar' ? 'guitar (EADGBE)' : '',
+      text: editorText()
+    }), 'Copy prompt: ready to practise');
+  });
   function editorText() {
     if (edit.usingCM) { const v = U.editorGetValue(); if (v !== null && v !== undefined) return v; }
     return $('editorFallback').value;

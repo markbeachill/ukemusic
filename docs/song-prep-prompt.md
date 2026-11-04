@@ -2,6 +2,8 @@
 
 For a chord sheet from a website (or a song already in ukemusic) that you want to practise, play along to and learn from, not just read. Copy everything in the box into an AI chat (Claude, ChatGPT, Gemini…), fill in the first few lines, and paste your sheet at the end.
 
+It's in the apps too: **Copy AI prompt: ready to practise** in the desktop app's File → Paste from website (it fills in the song that's open, or the sheet pasted there), and **Edit → Help from an AI chat** in the web player. The text is kept in `src/ai-prompt.js` (`AI_PRACTICE_PROMPT`); a test checks this copy matches.
+
 It goes further than **Copy AI prompt** in File → Paste from website, which only changes the sheet into ukemusic's format. This one also sorts out the timing so playback is right, gives parts consistent names so Learn and the Stage copy work well, suggests strums, and tells you what to check by ear.
 
 ## How to use it

@@ -240,6 +240,8 @@ contextBridge.exposeInMainWorld('ukemusic', {
   pickSong: require('./pick-song'),
   // 4.42: the prompt for tidying a chord sheet with an AI chat (also on the website), and a copy
   aiPrompt: require('./ai-prompt').AI_PROMPT,
+  aiPracticePrompt: (details) => require('./ai-prompt').practicePrompt(details),
+  aiChatUrl: require('./ai-prompt').AI_CHAT_URL,
   copyText: (text) => {
     try { require('electron').clipboard.writeText(String(text)); return true; } catch (_e) { return false; }
   },

@@ -59,6 +59,12 @@ body {
 }
 
 .lyrics:empty { min-height: var(--verse-spacing); }
+/* 4.56: a blank line that ends a part isn't shown when the next part's heading follows (the
+   heading leaves its own gap: both together looked like double spacing), and two or more blank
+   lines in a row show as one. With the part names hidden, the blank line is the gap, so it stays. */
+.song-section > .line-group:last-child:has(> .lyrics:empty:only-child) { display: none; }
+[data-sections="hide"] .song-section:not(.section-cue) > .line-group:last-child:has(> .lyrics:empty:only-child) { display: block; }
+.line-group:has(> .lyrics:empty:only-child) + .line-group:has(> .lyrics:empty:only-child) { display: none; }
 
 .chords {
   font-family: var(--monospace-font);
