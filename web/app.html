@@ -2650,6 +2650,8 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       showStarterMode(false);
     }
     renderLibrary();
+    // app/#practice opens Free Practice (the website's "Start free practice" links here)
+    if (/^#practice$/i.test(location.hash)) setTimeout(() => { const b = $('libPractice'); if (b) b.click(); }, 0);
     // 4.47: Dropbox: back from signing in, and a sync to start
     showCloudMode();
     await cloudReturn();

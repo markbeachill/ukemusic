@@ -45,6 +45,7 @@ Most of the music logic lives in `src/` as plain functions, used by both. Change
 | The desktop ribbon (its tabs and tools) | `index.html`: keep to the layout rules in the comment `4.53: the ribbon's layout` (groups of large buttons or two-row columns, a label only when a group has more than one setting, groups fold rather than wrap); `test/ribbon-layout.test.js` checks them | Run `npm run ui-review -- desktop` and look at every tab, also in a narrow window |
 | Anything only in the desktop window | `index.html` (find the feature's ids: buttons are `id="…Button"`, dialogs `<dialog id="…Dialog">`) | Exposing `src/` code to the window: `src/preload.js` |
 | The website | Home page: `site/index.html`; other pages: `web/pages.js`; pages made from the docs: `web/docs.js`; gallery files: `site/gallery/` | Pictures in `site/img/` (not `session.webp`); built and published by `.github/workflows/web.yml` |
+| Search engines and AI assistants (what the site says about itself) | Free Practice page `practice/` and `sitemap.xml`: `web/pages.js` (`PRACTICE_PAGE`, made from `src/practice-catalog.js`); home page title, description and JSON-LD: `site/index.html`; the web player's title, description and `<noscript>`: `web/build.js` | Only claims checked against the code (`docs/discoverability-audit.md`); keep the JSON-LD matching what the page says; `test/discoverability.test.js`; owner steps in `docs/discoverability-checklist.md` |
 | Installers and releases | `package.json` (`build`), `.github/workflows/release.yml` | |
 
 ## Tests

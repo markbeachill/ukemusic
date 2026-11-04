@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### The website, for search engines and AI assistants
+- **A Free Practice page** (`/practice/`): all 39 exercises by category, with their levels and aims, the routines, how progress works, the public-domain songs, and **Start free practice**. It's made from the practice catalogue itself, so it always matches the app.
+- **`app/#practice`** opens the web player straight into Free Practice.
+- **Every page** has a canonical address and share-preview tags. The home page and the practice page have structured data (schema.org), and there's a **sitemap**.
+- **The web player** has a proper title and description, and says what it is when JavaScript is off.
+- **The home page** says it's free, open source and has Free Practice in its title and description, and no longer says the web player can't edit songs (it can, since 4.47).
+- **README:** a "What is ukemusic?" section at the top.
+- The audit, the facts it checked, and the steps for Search Console, Bing and GitHub are in `docs/discoverability-audit.md` and `docs/discoverability-checklist.md`.
+
 ## v4.54.0
 
 ### Three PDFs to choose from: Chord sheet, Stage, Two-page Stage

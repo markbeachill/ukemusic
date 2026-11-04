@@ -46,3 +46,7 @@ desktop.ini
 
 # --- The UI review (npm run ui-review): made again whenever it is run ---
 UI review/
+
+# --- Made by web/pages.js on each website build ---
+site/practice/
+site/sitemap.xml

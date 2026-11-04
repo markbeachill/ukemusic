@@ -8,6 +8,7 @@ const { AI_PROMPT } = require('../src/ai-prompt');
 
 const APP = path.join(__dirname, '..');
 const SITE = path.join(APP, 'site');
+const SITE_URL = 'https://markbeachill.github.io/ukemusic/';   // canonical addresses, sitemap, structured data
 const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 /** The menu at the top of every page: what you want to do, then getting it */
@@ -33,7 +34,7 @@ function siteFooter() {
   return `<footer>
   <div class="wrap">
     <span>ukemusic by Mark Beachill · MIT licence · <a class="repo-link" href="https://github.com/markbeachill/ukemusic">ukemusic on GitHub</a></span>
-    <span class="ref">Reference: <a href="gallery.html">Gallery</a> · <a href="dropbox.html">Shared Dropbox folder</a> · <a href="phone.html">Phone and tablet</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a></span>
+    <span class="ref">Reference: <a href="gallery.html">Gallery</a> · <a href="dropbox.html">Shared Dropbox folder</a> · <a href="phone.html">Phone and tablet</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a> · <a href="practice/">Free Practice: all exercises</a></span>
     <button class="theme" id="theme" type="button">Light / dark</button>
   </div>
 </footer>`;
@@ -101,6 +102,21 @@ footer .ref a { color: var(--muted); }
 .g-what { color: var(--muted); font-size: 14px; line-height: 1.45; }
 .g-more { margin-top: 16px; color: var(--muted); font-size: 15px; }
 nav.links a[aria-current] { color: var(--ink); }
+.facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+.facts li { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; color: var(--muted); }
+.facts li strong { display: block; color: var(--ink); font-size: 18px; margin-bottom: 2px; }
+.ex-cat { margin: 0 0 34px; }
+.ex-cat h3 { font-size: 21px; margin: 0 0 4px; }
+.ex-cat > p { color: var(--muted); margin: 0 0 12px; }
+.ex-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+.ex-list li { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.ex-list .ex-name { font-weight: 700; color: var(--ink); }
+.ex-list .ex-level { font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--teal-ink); margin-left: 6px; white-space: nowrap; }
+.ex-list .ex-aim { display: block; color: var(--muted); font-size: 15px; margin-top: 3px; }
+.songs-pd { columns: 2; column-gap: 36px; color: var(--muted); }
+@media (max-width: 760px) { .songs-pd { columns: 1; } }
+.faq h3 { font-size: 18px; margin: 22px 0 4px; }
+.faq p { margin: 0; color: var(--muted); max-width: 70ch; }
 @media (min-width: 861px) and (max-width: 980px) { nav.links { gap: 14px; } }
 `;
 
@@ -147,7 +163,7 @@ const PAGES = [
     solo: ['Free Practice: no song needed', 'Routines for the days you have ten minutes', 'One-minute chord changes, with your scores kept', 'Your progress over the weeks'],
     group: ['Warm up together with an exercise on the big screen', 'Everyone strums the same pattern with the metronome', 'Loop the tricky bit of the club\'s next song, slowly', 'Count in, and keep the room in time'],
     features: [
-      { h3: 'Free Practice', p: ['39 exercises, marked beginner, improver or intermediate: warm-ups, chord switching, strumming patterns, fingerpicking, scales and noodling. Open an exercise and start; Help gives instructions for that exercise only.', 'Your last three started exercises are at the top, and each exercise remembers your settings. On a phone, Edit settings opens the controls while the playing view keeps the exercise and Start/Stop together.', 'Progress, scores and personal routines stay on this device between visits. Keep your practice safe has a separate practice backup; Dropbox song sync and song backups do not include practice history.'], img: 'practice.webp', alt: 'Free Practice: exercise cards by category and level' },
+      { h3: 'Free Practice', p: ['39 exercises, marked beginner, improver or intermediate: warm-ups, chord switching, strumming patterns, fingerpicking, scales and noodling. Open an exercise and start; Help gives instructions for that exercise only.', 'Your last three started exercises are at the top, and each exercise remembers your settings. On a phone, Edit settings opens the controls while the playing view keeps the exercise and Start/Stop together.', 'Progress, scores and personal routines stay on this device between visits. Keep your practice safe has a separate practice backup; Dropbox song sync and song backups do not include practice history.', '<a href="practice/">See all 39 exercises, by category</a>'], img: 'practice.webp', alt: 'Free Practice: exercise cards by category and level' },
       { h3: 'Practise your songs', p: ['Press Play and hear the song on a real ukulele, the way it\'s written. Slow it down, loop the part you\'re learning, or have it speed up a little each time round.'], list: ['Waltzes, swing and shuffle feel, picked out from the strum', 'Tap the tempo, or count yourself in', 'The strum lit up as it plays, with the next chord shapes'], img: 'playing.webp', alt: 'A song playing, the current line and its strum lit' },
       { h3: 'Practise the hard changes', p: ['Learn → The changes lists every change in the song, hardest first, with what each finger does. One click turns any of them into a drill, or a one-minute challenge with your best score kept.'], img: 'changes.webp', h: 860, alt: 'The changes in a song, hardest first, each with Practise and One minute buttons' }
     ],
@@ -505,6 +521,142 @@ ${bookHtml}
   }
 };
 
+// ── Free Practice, as a page of its own (practice/): every exercise written out from the practice
+// catalogue itself, so the page always matches the app; for people, search engines and AI assistants
+// who need to see what's there without running the app
+const PRACTICE_PAGE = {
+  file: 'practice/index.html', dir: 'practice', path: 'practice/', image: 'practice.webp',
+  title: 'Free, open-source ukulele practice: 39 exercises in your browser',
+  blurb: '',
+  body() {
+    const catalog = require('../src/practice-catalog');
+    const { MELODIES } = require('../src/note-exercises');
+    const exercises = catalog.EXERCISES;
+    const cats = catalog.CATEGORIES.filter((c) => exercises.some((e) => e.cat === c.id));
+    const count = (level) => exercises.filter((e) => e.level === level).length;
+    const n = exercises.length;
+    const songs = starterSongs();
+    this.blurb = `ukemusic's Free Practice: ${n} ukulele exercises in ${cats.length} categories (warm-ups, chord changes, strumming, fingerpicking, scales and melodies, improvising), with a metronome, routines and progress. Free and open source (MIT), in your browser, no account.`;
+    const catHtml = cats.map((c) => `<div class="ex-cat" id="${esc(c.id)}">
+  <h3>${esc(c.name)} <small style="color:var(--muted);font-weight:500">(${exercises.filter((e) => e.cat === c.id).length})</small></h3>
+  <p>${esc(c.aim)}.</p>
+  <ul class="ex-list">${exercises.filter((e) => e.cat === c.id).map((e) => `<li><span class="ex-name">${esc(e.title)}</span><span class="ex-level">${esc(e.level)}</span><span class="ex-aim">${esc(e.aim)}</span></li>`).join('')}</ul>
+</div>`).join('\n');
+    const routines = catalog.DEFAULT_ROUTINES.map((r) => `<li><strong>${esc(r.name)}:</strong> ${r.steps.map((st) => `${esc(exercises.find((e) => e.id === st.id).title)} (${st.minutes} min)`).join(', ')}</li>`).join('');
+    const progressions = catalog.PROGRESSIONS.map((x) => esc(x.name)).join(', ');
+    const tunes = MELODIES.map((m) => esc(m.name)).join(', ');
+    this.jsonld = {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'WebPage', '@id': `${SITE_URL}practice/#page`, url: `${SITE_URL}practice/`, name: `${PRACTICE_PAGE.title} · ukemusic`,
+          description: this.blurb, inLanguage: 'en', isPartOf: { '@id': `${SITE_URL}#website` }, about: { '@id': `${SITE_URL}app/#webapp` },
+          primaryImageOfPage: `${SITE_URL}img/practice.webp`
+        },
+        {
+          '@type': 'WebApplication', '@id': `${SITE_URL}app/#webapp`, name: 'ukemusic web player', url: `${SITE_URL}app/`,
+          applicationCategory: 'EducationalApplication', applicationSubCategory: 'Ukulele practice',
+          operatingSystem: 'Any (in a web browser)', browserRequirements: 'A current browser with JavaScript: Safari, Chrome, Edge or Firefox',
+          isAccessibleForFree: true, offers: { '@type': 'Offer', price: '0', priceCurrency: 'GBP' },
+          license: 'https://github.com/markbeachill/ukemusic/blob/main/LICENSE',
+          softwareVersion: require('../package.json').version,
+          screenshot: `${SITE_URL}img/practice.webp`,
+          featureList: [
+            `${n} practice exercises in ${cats.length} categories: ${cats.map((c) => c.name).join(', ')}`,
+            'Metronome with tap tempo; tempo set per exercise',
+            'Ready-made and your own practice routines',
+            'Progress kept on your device: time practised, days in a row, best tempo, one-minute change scores',
+            `${songs.length} public-domain songs to play along with`,
+            'Works offline once opened; no account'
+          ],
+          author: { '@type': 'Person', name: 'Mark Beachill' }
+        },
+        {
+          '@type': 'SoftwareSourceCode', name: 'ukemusic source code', codeRepository: 'https://github.com/markbeachill/ukemusic',
+          programmingLanguage: 'JavaScript', license: 'https://github.com/markbeachill/ukemusic/blob/main/LICENSE',
+          targetProduct: { '@id': `${SITE_URL}app/#webapp` }
+        }
+      ]
+    };
+    return `
+<div class="page-hero"><div class="wrap">
+  <p class="eyebrow">Free Practice</p>
+  <h1>Free, open-source ukulele practice</h1>
+  <p class="lede">${n} short exercises for warm-ups, chord changes, strumming, fingerpicking, scales and tunes, and improvising, shown on a moving fretboard in time with a metronome. Part of ukemusic: free, open source, and in your browser, with nothing to install and no account.</p>
+  <div class="cta"><a class="btn primary" href="app/#practice">Start free practice</a><a class="btn" href="https://github.com/markbeachill/ukemusic">See the source on GitHub</a><span class="note">Free · MIT licence · phones, tablets and computers</span></div>
+</div></div>
+<section><div class="wrap">
+  <h2>At a glance</h2>
+  <ul class="facts">
+    <li><strong>${n} exercises</strong>in ${cats.length} categories: ${count('Beginner')} beginner, ${count('Improver')} improver, ${count('Intermediate')} intermediate</li>
+    <li><strong>Routines</strong>${catalog.DEFAULT_ROUTINES.length} ready-made, timed, back to back, or make your own</li>
+    <li><strong>Progress</strong>time practised today, days in a row, your best tempo and one-minute scores, kept on your device</li>
+    <li><strong>Free and open source</strong>MIT licence; no account, no adverts, no tracking</li>
+    <li><strong>Anywhere</strong>in any current browser on a phone, tablet or computer; works offline once opened</li>
+    <li><strong>${songs.length} public-domain songs</strong>to play along with when you've warmed up</li>
+  </ul>
+</div></section>
+<section><div class="wrap">
+  <div class="feature"><div class="text"><h2>Who it's for</h2>
+    <p>Beginners finding their way round the neck, self-taught players filling in gaps, and improvers who want a routine. Each exercise says what it's for and what to aim at, and <strong>Start here</strong> gives a beginner three short exercises: steady down-strums on C, the change from C to F, and a slow finger warm-up.</p>
+    <p>Open an exercise and press Start: the notes or chords show on a fretboard as they come, in time with the metronome. Make it slower or faster, change the chords, key or pattern, and the exercise remembers your settings.</p></div>
+    <div class="shot"><img src="img/practice.webp" loading="lazy" width="1360" height="860" alt="ukemusic Free Practice: the categories down the side, and the warm-up exercises as cards, each marked beginner, improver or intermediate"></div></div>
+</div></section>
+<section><div class="wrap">
+  <p class="eyebrow">The exercises</p>
+  <h2>All ${n} exercises</h2>
+  <p class="intro">Every exercise in Free Practice, by category, with its level and what it's for. All of them are in the free web player and in the desktop app.</p>
+${catHtml}
+  <div class="ex-cat"><h3>My routine</h3><p>A few exercises back to back, timed, for the days you have ten minutes. Two are ready to use, and you can make your own:</p><ul>${routines}</ul></div>
+  <p style="color:var(--muted)">Common progressions practises ${progressions}, in any key. Melody repetition has ${tunes}.</p>
+</div></section>
+<section><div class="wrap">
+  <h2>How it keeps you going</h2>
+  <ul>
+    <li><strong>A metronome</strong> in every exercise, and on its own with tap tempo.</li>
+    <li><strong>Slower and faster</strong>: each exercise remembers its tempo, and your best tempo for each setup.</li>
+    <li><strong>One-minute changes</strong>: count how many clean changes you make in sixty seconds between two chords, and watch your best score.</li>
+    <li><strong>Clean rounds</strong>: press "That was clean" when a round goes well.</li>
+    <li><strong>Today and days in a row</strong> at the top of the screen.</li>
+  </ul>
+  <div class="note-box"><p><strong>It doesn't listen to you play.</strong> There's no microphone or pitch detection: you decide when a round was clean, and you count your one-minute changes. Your progress stays on the device you practise on (in the browser for the web player, in your songs folder for the desktop app), with its own backup.</p></div>
+</div></section>
+<section><div class="wrap">
+  <div class="feature flip"><div class="text"><h2>Then play some songs</h2>
+    <p>ukemusic comes with songs that are out of copyright, with their words, chords and strums, to play along with (slowed down or looped), sing with karaoke, or learn by heart:</p>
+    <ul class="songs-pd">${songs.map((x) => `<li>${esc(x.title)}${x.by ? ` <span style="color:var(--muted)">(${esc(x.by)})</span>` : ''}</li>`).join('')}</ul>
+    <p>Each one notes where it comes from and why it's free to use. Add your own songs too: <a href="songs.html">bring your songs</a>.</p></div>
+    <div class="shot"><img src="img/playing.webp" loading="lazy" width="1360" height="860" alt="The Wild Rover playing in ukemusic: the current line lit, with its chord, the strum and the next chord shapes"></div></div>
+</div></section>
+<section><div class="wrap">
+  <h2>In your browser, or on your computer</h2>
+  <p class="intro">Free Practice is the same in both. The web player needs nothing installed: open it, or add it to your Home Screen to use it like an app and offline. The desktop app (Windows, Mac, Linux) adds drills made from the chord changes in your own songs, and keeps your progress in your songs folder.</p>
+  <div class="next-pages"><a class="btn primary" href="app/#practice">Start free practice</a><a class="btn" href="./#get">Download the desktop app</a><a class="btn" href="practise.html">Practising your songs</a><a class="btn" href="phone.html">Phone and tablet</a></div>
+</div></section>
+<section class="faq"><div class="wrap">
+  <h2>Questions</h2>
+  <h3>Is it really free?</h3><p>Yes. ukemusic is free and open source under the MIT licence. There's no paid version, no account and no adverts.</p>
+  <h3>Where's the source code?</h3><p>On GitHub: <a href="https://github.com/markbeachill/ukemusic">github.com/markbeachill/ukemusic</a>, with the <a href="https://github.com/markbeachill/ukemusic/blob/main/LICENSE">licence</a> and the <a href="https://github.com/markbeachill/ukemusic/blob/main/THIRD_PARTY_NOTICES.md">third-party notices</a> (the ukulele sounds are CC0 recordings from FreePats).</p>
+  <h3>Does it work on an iPhone, iPad or Android phone?</h3><p>Yes: the web player runs in Safari, Chrome, Edge and Firefox. Add it to your Home Screen and it opens like an app, and works without a connection.</p>
+  <h3>Is it only for ukulele?</h3><p>It's for ukulele (GCEA) first. Songs can also be shown and played for baritone ukulele and guitar.</p>
+  <h3>Do I need to read music?</h3><p>No. Exercises show the notes and chords on a fretboard as they come, and songs are chord sheets with the strum written out.</p>
+</div></section>`;
+  }
+};
+
+/** The starter songs with their words (the same as the web player's): [{ title, by }] */
+function starterSongs() {
+  try {
+    const lib = require('../src/song-library');
+    const root = path.join(APP, 'public domain songs', 'Public Domain Songs');
+    return lib.listSongs(root).filter((x) => !/needs words/i.test(String(x.tags || ''))).map((x) => {
+      const r = lib.readSong(x.folder);
+      const song = (r.settings && r.settings.song) || {};
+      return { title: x.title, by: [song.artist, song.year].filter(Boolean).join(', ') };
+    });
+  } catch (_e) { return []; }
+}
+
 function pageBody(p) {
   const rows = p.features.map((f, i) => featureRow(f, i % 2 === 1)).join('\n');
   return `
@@ -533,13 +685,23 @@ ${rows}
 }
 
 function wrapPage(p, body, siteCss) {
-  return `<!doctype html>
+  const url = SITE_URL + (p.path !== undefined ? p.path : p.file);
+  const ld = p.jsonld ? `\n<script type="application/ld+json">\n${JSON.stringify(p.jsonld, null, 2).replace(/</g, '\\u003c')}\n</script>` : '';
+  const html = `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(p.title)} · ukemusic</title>
 <meta name="description" content="${esc(p.blurb)}">
+<link rel="canonical" href="${esc(url)}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ukemusic">
+<meta property="og:url" content="${esc(url)}">
+<meta property="og:title" content="${esc(p.title)}">
+<meta property="og:description" content="${esc(p.blurb)}">
+<meta property="og:image" content="${SITE_URL}img/${esc(p.image || 'editor.webp')}">
+<meta name="twitter:card" content="summary_large_image">${ld}
 <link rel="icon" href="img/icon-64.png">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -560,6 +722,8 @@ ${THEME_SCRIPT}
 </body>
 </html>
 `;
+  // a page in a folder (practice/): its links and pictures are one level up
+  return p.dir ? html.replace(/((?:href|src)=")(?![a-z][a-z0-9+.-]*:|#|\/)/gi, '$1../') : html;
 }
 
 function build() {
@@ -570,8 +734,24 @@ function build() {
   fs.writeFileSync(path.join(SITE, PHONE_PAGE.file), wrapPage(PHONE_PAGE, PHONE_PAGE.body(), siteCss));
   fs.writeFileSync(path.join(SITE, DROPBOX_PAGE.file), wrapPage(DROPBOX_PAGE, DROPBOX_PAGE.body(), siteCss));
   fs.writeFileSync(path.join(SITE, GALLERY_PAGE.file), wrapPage(GALLERY_PAGE, GALLERY_PAGE.body(), siteCss));
-  return [...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file];
+  const practiceBody = PRACTICE_PAGE.body();   // (sets its description and structured data)
+  fs.mkdirSync(path.join(SITE, PRACTICE_PAGE.dir), { recursive: true });
+  fs.writeFileSync(path.join(SITE, PRACTICE_PAGE.file), wrapPage(PRACTICE_PAGE, practiceBody, siteCss));
+  fs.writeFileSync(path.join(SITE, 'sitemap.xml'), sitemap());
+  return [...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, PRACTICE_PAGE.file, 'sitemap.xml'];
 }
 
-module.exports = { build, PAGES, SONGS_PAGE, PHONE_PAGE, DROPBOX_PAGE, GALLERY_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
+/** sitemap.xml: every page of the website, for search engines (submit it in Google Search Console and
+ *  Bing Webmaster Tools; the host's robots.txt isn't ours, so it can't point to it) */
+function sitemap() {
+  const docs = ['guide.html', 'chordpro.html', 'changes.html', 'how-learn-works.html'];
+  const paths = ['', PRACTICE_PAGE.path, 'app/', ...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, ...docs];
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${paths.map((x) => `  <url><loc>${SITE_URL}${x}</loc></url>`).join('\n')}
+</urlset>
+`;
+}
+
+module.exports = { build, wrapPage, PRACTICE_PAGE, sitemap, SITE_URL, PAGES, SONGS_PAGE, PHONE_PAGE, DROPBOX_PAGE, GALLERY_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
 if (require.main === module) console.log('pages:', build().join(', '));

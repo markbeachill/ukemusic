@@ -13,6 +13,7 @@
 <p align="center">
   <a href="https://markbeachill.github.io/ukemusic/"><b>Website</b></a> ·
   <a href="https://markbeachill.github.io/ukemusic/app/"><b>Try it in your browser</b></a> ·
+  <a href="https://markbeachill.github.io/ukemusic/practice/"><b>Free Practice</b></a> ·
   <a href="https://github.com/markbeachill/ukemusic/releases/latest"><b>Download</b></a> ·
   <a href="https://markbeachill.github.io/ukemusic/gallery.html"><b>Gallery</b></a>
 </p>
@@ -28,7 +29,15 @@
   <img src="site/img/editor.webp" width="900" alt="ukemusic: the song typed on the left, the finished chord sheet with chord shapes and the strum pattern on the right">
 </p>
 
-Free and open source, for ukulele first, with baritone ukulele and guitar too. A desktop app for Windows, Mac and Linux, and a web player for phones, tablets and any browser.
+## What is ukemusic?
+
+**Free, open-source software for learning and practising ukulele**, with baritone ukulele and guitar too. It's MIT-licensed, with no account, no adverts and no paid version.
+
+- **Practise:** [Free Practice](https://markbeachill.github.io/ukemusic/practice/) has 39 exercises in six categories (warm-ups and finger work, chords and changes, strumming and rhythm, fingerpicking, scales and melody, improvising), shown on a moving fretboard in time with a metronome, plus timed routines and your progress (time practised, days in a row, best tempo, one-minute change scores). It's all in the free web player.
+- **Learn songs:** play along on real ukulele sounds, karaoke, learn a song by heart with the chords fading out, and drills for its hardest chord changes.
+- **Make chord sheets:** type the words with the chords in square brackets (or paste a sheet from a website), and get the chord sheet, the shapes, the strum, Stage copies for gigs, and songbooks.
+- **Music to start with:** 10 public-domain songs with their words, chords and strums (Amazing Grace, Danny Boy, Scarborough Fair, The Wild Rover and more), each with a note of where it comes from.
+- **Try it now:** the [web player](https://markbeachill.github.io/ukemusic/app/) runs in any current browser on a phone, tablet or computer, and works offline once opened. The desktop app is for Windows, Mac and Linux ([download](https://github.com/markbeachill/ukemusic/releases/latest)).
 
 ## Write it like this
 

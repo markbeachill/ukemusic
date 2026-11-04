@@ -36,7 +36,19 @@ const head = [
   '<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">',
   "<script>if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>"
 ].join('\n');
-const page = '<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n' + head + '\n' + html;
+// For search engines and anyone without JavaScript (the app itself needs it): what this is, in words
+const about = [
+  '<title>ukemusic web player: free ukulele songs, play-along and Free Practice</title>',
+  '<meta name="description" content="The free, open-source ukemusic web player: ukulele songs to play along with and learn by heart, and Free Practice with 39 exercises. Runs in your browser, works offline, no account.">',
+  '<link rel="canonical" href="https://markbeachill.github.io/ukemusic/app/">'
+].join('\n');
+const noscript = '<noscript><div style="max-width:42em;margin:2em auto;padding:0 16px;font:17px/1.5 system-ui,sans-serif">'
+  + '<h1>ukemusic web player</h1>'
+  + '<p>The free, open-source ukemusic web player: public-domain ukulele songs to play along with, sing with karaoke and learn by heart; your own songs to write and keep on this device; and Free Practice, 39 exercises for warm-ups, chord changes, strumming, fingerpicking, scales and improvising, with a metronome, routines and progress.</p>'
+  + '<p>It needs JavaScript. Without it, read about it here: <a href="../practice/">Free Practice: all 39 exercises</a> · <a href="../">the ukemusic website</a> · <a href="https://github.com/markbeachill/ukemusic">the source code on GitHub</a> (MIT licence).</p>'
+  + '</div></noscript>';
+const page = '<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n' + about + '\n' + head + '\n' + html.replace('<title>ukemusic web</title>', '').replace('\n<div id="app">', () => '\n' + noscript + '\n<div id="app">');
+if (!page.includes(noscript)) throw new Error('noscript not placed');
 fs.mkdirSync('out/icons', { recursive: true });
 for (const f of fs.readdirSync('icons')) fs.copyFileSync('icons/' + f, 'out/icons/' + f);
 fs.writeFileSync('out/manifest.webmanifest', JSON.stringify({
