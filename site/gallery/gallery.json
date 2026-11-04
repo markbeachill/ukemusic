@@ -5,6 +5,7 @@
   "pages": {
    "sheet.pdf": 3,
    "stage.pdf": 2,
+   "stage2.pdf": 1,
    "lyrics.pdf": 2,
    "lyrics-stage.pdf": 2,
    "learn.pdf": 3,
@@ -15,8 +16,9 @@
   "title": "Brahms' Lullaby",
   "slug": "brahms-lullaby",
   "pages": {
-   "sheet.pdf": 2,
+   "sheet.pdf": 1,
    "stage.pdf": 1,
+   "stage2.pdf": 1,
    "lyrics.pdf": 1,
    "lyrics-stage.pdf": 1,
    "learn.pdf": 2,
@@ -29,6 +31,7 @@
   "pages": {
    "sheet.pdf": 2,
    "stage.pdf": 1,
+   "stage2.pdf": 1,
    "lyrics.pdf": 1,
    "lyrics-stage.pdf": 1,
    "learn.pdf": 3,

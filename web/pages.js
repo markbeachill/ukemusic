@@ -468,6 +468,7 @@ const DROPBOX_PAGE = {
 const GALLERY_KINDS = [
   { file: 'sheet.pdf', name: 'Chord sheet', what: 'The song to print: the chord shapes and the strum at the top, the chords over the words.' },
   { file: 'stage.pdf', name: 'Stage copy', what: 'For a gig or a club night: big plain words with the chords in them (Compact), the fewest pages.' },
+  { file: 'stage2.pdf', name: 'Two-page Stage', what: 'For a music stand: the Stage copy fitted to one page if it goes, or two, so there\'s no page to turn.' },
   { file: 'learn.pdf', name: 'Learn sheet', what: 'The chords and what each one does, the parts of the song, the chord map with its patterns, the changes to practise and the circle of fifths.' },
   { file: 'pick.pdf', name: 'Pick sheet', what: 'The song set out for fingerpicking: the pattern counted out, then the song as tab with the chords over it and the words under it.' },
   { file: 'lyrics.pdf', name: 'Words only', what: 'The words, for singers, with the section names.' }
@@ -515,7 +516,7 @@ ${songs}
 ${bookHtml}
 <section><div class="wrap">
   <h2>Making them</h2>
-  <p class="intro">In the desktop app: <strong>Export → Export now</strong> for a song (tick the kinds you want), <strong>Learn → Learn sheet</strong>, <strong>Accompaniment → Pick sheet</strong>, and <strong>Songbook PDF…</strong> on a setlist. The Stage copy comes with each chord sheet; its look (Compact, Clear, Brackets or Heavy) is in <strong>Export → Stage</strong>. The web player prints and saves PDFs from <strong>Download</strong>.</p>
+  <p class="intro">In the desktop app: <strong>Export → Export now</strong> for a song (tick the kinds you want: the chord sheet, the Stage PDF and the Two-page Stage PDF are at the top), <strong>Learn → Learn sheet</strong>, <strong>Picking → Pick sheet</strong>, and <strong>Songbook PDF…</strong> on a setlist. The Stage copy's look (Compact, Clear, Brackets or Heavy) is on the <strong>Export</strong> tab, with the Two-page Stage's choices beside it. The web player prints and saves PDFs from <strong>Download</strong>.</p>
   <div class="next-pages" style="margin-top:20px"><a class="btn" href="chord-sheets.html">Chord sheets</a><a class="btn" href="learn.html">Learn a song</a><a class="btn" href="perform.html">Perform</a></div>
 </div></section>`;
   }
