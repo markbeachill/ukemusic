@@ -9,7 +9,7 @@
 - **The website's Bring your songs page** has both prompts to copy, and the link.
 
 ### Tidier spacing between parts
-- **No more double gap before a heading.** A blank line at the end of a part, followed by the next part's heading, showed both the blank line and the heading's own space. Now only the heading's space shows. Two or more blank lines in a row show as one. With the part names hidden, the blank line still separates the parts.
+- **No more double gaps before a heading.** Blank lines just before a part's heading (one or several) showed as well as the heading's own space. Now only the heading's space shows, and two or more blank lines in a row inside a part show as one. It works with every style set, including ones you've changed. With the part names hidden, the blank line still separates the parts.
 
 ### The website's pictures
 - Every picture on the website and in the gallery is retaken from the app as it is now (`npm run site-pictures`), and the gallery has the Two-page Stage PDF.

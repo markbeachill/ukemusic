@@ -40,12 +40,18 @@ test('the web player and the website: both prompts and the link', () => {
   assert.ok(body.includes(`href="${ai.AI_CHAT_URL}"`));
 });
 
-test('no double gap before a part\'s heading', () => {
-  const css = read('src/default-style.css');
-  assert.match(css, /\.song-section > \.line-group:last-child:has\(> \.lyrics:empty:only-child\) \{ display: none; \}/);
-  assert.match(css, /\[data-sections="hide"\] \.song-section:not\(\.section-cue\) > \.line-group:last-child:has\(> \.lyrics:empty:only-child\) \{ display: block; \}/);
-  assert.match(css, /\.line-group:has\(> \.lyrics:empty:only-child\) \+ \.line-group:has\(> \.lyrics:empty:only-child\) \{ display: none; \}/);
-  // the renderer still writes the blank line (the CSS decides), so line numbers don't move
-  const html = require('../src/renderer-html').renderHtml(require('../src/parser').parseSong ? require('../src/parser').parseSong('[[Verse]]\n[C]a\n\n[[Chorus]]\n[F]b') : require('../src/parser').parse('[[Verse]]\n[C]a\n\n[[Chorus]]\n[F]b'), {});
-  assert.match(html, /<div class="line-group"><div class="lyrics"><\/div><\/div>\n<\/section>/);
+test('no double gap before a part\'s heading, whatever the style set', () => {
+  const { renderHtml, sheetCss } = require('../src/renderer-html');
+  const parse = require('../src/parser').parseSong || require('../src/parser').parse;
+  // two blank lines before a heading, and three in a row inside a part
+  const html = renderHtml(parse('[[Verse]]\n[C]a\n\n\n[[Chorus]]\n[F]b\n\n\n\n[C]c'), {});
+  const blanks = html.split('\n').filter((l) => /<div class="lyrics"><\/div><\/div>$/.test(l));
+  assert.deepStrictEqual(blanks.map((l) => (l.match(/class="line-group([^"]*)"/) || [])[1].trim()), ['blank-before-heading', 'blank-before-heading', '', 'blank-extra', 'blank-extra']);
+  // the rule that hides them is in the CSS every sheet gets (not in a style set you can edit)
+  const css = sheetCss();
+  assert.match(css, /\.line-group\.blank-extra \{ display: none; \}/);
+  assert.match(css, /\.line-group\.blank-before-heading \{ display: none; \}/);
+  assert.match(css, /\[data-sections="hide"\] \.line-group\.blank-before-heading \{ display: block; \}/);
+  assert.match(read('src/preload.js'), /strumCss: \(\) => strumBox\.strumCss\(\) \+ renderHtml\.sheetCss\(\)/);
+  assert.match(read('web/build.js'), /renderHtml\.sheetCss\(\)/);
 });

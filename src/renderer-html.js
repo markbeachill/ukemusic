@@ -658,8 +658,16 @@ function addRepeatMark(html, count) {
 }
 
 /** CSS for the bar lines, repeat marks and the inline / chords-only layouts (added with strumCss) */
+// A blank line in the song, as rendered; and the same, marked to be hidden (4.56)
+const BLANK_LINE = '<div class="line-group"><div class="lyrics"></div></div>';
+const BLANK_BEFORE_HEADING = '<div class="line-group blank-before-heading"><div class="lyrics"></div></div>';
+const BLANK_EXTRA = '<div class="line-group blank-extra"><div class="lyrics"></div></div>';
+
 function sheetCss() {
   return `
+  .line-group.blank-extra { display: none; }
+  .line-group.blank-before-heading { display: none; }
+  [data-sections="hide"] .line-group.blank-before-heading { display: block; }
   .chord-grid .bar { color: var(--text-color, #333); font-weight: 400; }
   .chord-grid .bar-repeat { color: var(--text-color, #333); font-weight: 700; }
   .repeat-mark { font-family: var(--font-family, system-ui, sans-serif); font-weight: 800; color: var(--text-color, #333); border: 1.5px solid currentColor; border-radius: 0.3em; padding: 0 0.35em; margin-left: 0.4em; white-space: nowrap; }
@@ -745,6 +753,9 @@ function renderHtml(irNodes, options = {}) {
     if (repeat) html = addRepeatMark(html, repeat.count);
     const isHeading = label === null && group.length === 1 && group[0].type === 'structure';
     if (isHeading) {
+      // 4.56: blank lines just before a heading are marked: the heading leaves its own gap, so
+      // they're hidden (sheetCss), except when the part names are hidden
+      for (let i = output.length - 1; i >= 0 && (output[i] === BLANK_LINE || output[i] === BLANK_EXTRA); i -= 1) output[i] = BLANK_BEFORE_HEADING;
       closeSection();
       sectionAt = output.length;
       output.push('<section class="song-section">');
@@ -758,7 +769,9 @@ function renderHtml(irNodes, options = {}) {
     // (a {melody} or {pick} line takes no room: the group is the line of words after it)
     const line = (group.find((node) => typeof node.line === 'number' && node.type !== 'melody' && node.type !== 'pick') || group.find((node) => typeof node.line === 'number'))?.line;
     if (staves && line && staves.has(line)) { html = staves.get(line) + html; staves.delete(line); }
-    output.push(`<div class="line-group"${line ? ` data-line="${line}"` : ''}>${html}</div>`);
+    const out = `<div class="line-group"${line ? ` data-line="${line}"` : ''}>${html}</div>`;
+    // two or more blank lines in a row show as one
+    output.push(out === BLANK_LINE && (output[output.length - 1] === BLANK_LINE || output[output.length - 1] === BLANK_EXTRA) ? BLANK_EXTRA : out);
   }
   closeSection();
 
