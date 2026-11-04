@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v4.55.0
 
 ### The one-line strum box for every song
 - **Strum patterns are shown on one line by default**: the time, arrows, letters and the pattern's name, and now **the tempo** on the song's first pattern (`3/4  120 bpm  ↓ · ↓ ↑ ↓ ↑  D>-DUDU  Waltz`). The info boxes, with the count under the arrows, are still in Display → Strum patterns → Show as, and in Settings.

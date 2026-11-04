@@ -114,7 +114,7 @@ The guides and the changelog are pages of [the website](https://markbeachill.git
 - Click a chord diagram to choose another **chord shape** for the song.
 - Shorthand: `[Em:2]` for a 2-beat chord, `[N.C.]` for a pause, `[C x3]` for three bars, `| C | F | % | G7 C |` for a line of bars, `(x2)` to repeat a line, `{A: D-DU-UDU}` … `{A}` for named strums, `{stop}`.
 - **View → Layout**: chords above the words, in columns, in the words, or chords only.
-- Strum patterns show as **info boxes** (time signature, name, arrows, letters, count), in a choice of styles including plain; `{3/4 D-DUDU}` changes the time from there on.
+- Strum patterns show on **one line** (time signature and tempo, arrows, letters, name), or as info boxes with the count, or plain; `{3/4 D-DUDU}` changes the time from there on.
 - The song is on the left and its preview on the right, kept in step: scroll the song and the preview follows; click a preview line to jump to it in the song.
 
 ## The website and releases
