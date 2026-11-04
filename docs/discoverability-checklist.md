@@ -35,7 +35,7 @@ Then in a browser:
 2. Verify it with **HTML tag**: Google shows a `<meta name="google-site-verification" content="…">` line.
    - Paste it into `site/index.html` just after the `<link rel="canonical" …>` line, commit, push, wait for the website to rebuild, then press **Verify**.
    - Keep the line there afterwards: removing it un-verifies the site.
-3. **Sitemaps** → add `sitemap.xml` → Submit.
+3. **Sitemaps** → in "Add a new sitemap" type the **full address** `https://markbeachill.github.io/ukemusic/sitemap.xml` → Submit. It should show as `/ukemusic/sitemap.xml`; if it shows as `/sitemap.xml`, Google is looking at the top of github.io, where there's nothing: remove it and add the full address. "Couldn't fetch" straight after submitting a sitemap that does open in a browser usually clears within a day.
 4. **URL inspection** → `https://markbeachill.github.io/ukemusic/practice/` → **Request indexing**. Do the same for the home page and `app/`.
 5. Note the date. Indexing a new site can take days to a few weeks.
 
