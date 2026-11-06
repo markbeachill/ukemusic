@@ -46,3 +46,42 @@ test('wired up: the main window gets the menu; the page offers chord items for t
   assert.match(read('src/preload.js'), /editorContextPoint: \(x, y\)/);
   assert.match(read('src/codemirror-ukemusic.js'), /contextPoint\(x, y\) \{/);
 });
+
+// The website (4.58): what Bing's Site Scan checks
+const pages = require('../web/pages');
+const docs = fs.readFileSync(path.join(ROOT, 'web/docs.js'), 'utf8');
+const titleOf = (p) => p.seoTitle || `${p.title} · ukemusic`;
+
+test('every website page: a title of 25 to 70 characters and a description of 50 to 160', () => {
+  const all = [...pages.PAGES, pages.SONGS_PAGE, pages.PHONE_PAGE, pages.DROPBOX_PAGE, pages.GALLERY_PAGE, pages.PRACTICE_PAGE];
+  pages.PRACTICE_PAGE.body(); // sets its description
+  for (const p of all) {
+    assert.ok(titleOf(p).length >= 25 && titleOf(p).length <= 70, `${p.file} title: ${titleOf(p)}`);
+    assert.ok(p.blurb.length >= 50 && p.blurb.length <= 160, `${p.file} description: ${p.blurb.length}`);
+  }
+  const home = read('site/index.html');
+  assert.ok(home.match(/<title>([^<]*)<\/title>/)[1].length <= 70);
+  assert.ok(home.match(/<meta name="description" content="([^"]*)"/)[1].length <= 160);
+  assert.ok(read('web/build.js').match(/<meta name="description" content="([^"]*)"/)[1].length <= 160);
+});
+
+test('the documents have a canonical address and a long enough title and description', () => {
+  assert.match(docs, /<link rel="canonical" href="https:\/\/markbeachill\.github\.io\/ukemusic\/\$\{esc\(p\.html\)\}">/);
+  for (const m of docs.matchAll(/seoTitle: "([^"]+)"/g)) assert.ok(m[1].length >= 25 && m[1].length <= 70, m[1]);
+  for (const m of docs.matchAll(/blurb: '([^']+)'/g)) assert.ok(m[1].length >= 50 && m[1].length <= 160, m[1]);
+});
+
+test('one main heading on the web player (Your songs is a second-level heading)', () => {
+  const app = read('web/app.html');
+  assert.ok(app.includes('<h2 id="libTitle">Your songs</h2>') && !app.includes('<h1 id="libTitle">'));
+});
+
+test('the gallery\'s song pages have a title, description and address; doing it twice changes nothing', () => {
+  for (const slug of ['wild-rover', 'brahms-lullaby', 'danny-boy']) {
+    const html = read(`site/gallery/${slug}/sheet.html`);
+    assert.match(html, /<title>[^<]+: ukulele chord sheet · ukemusic gallery<\/title>/);
+    assert.match(html, /<meta name="description" content="[^"]{50,160}">/);
+    assert.ok(html.includes(`<link rel="canonical" href="https://markbeachill.github.io/ukemusic/gallery/${slug}/sheet.html">`));
+    assert.strictEqual(pages.galleryPageHead(html, 'X', slug), html);
+  }
+});

@@ -82,7 +82,7 @@ button { cursor: pointer; }
 .practice-cta { flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 18px; border: 0; border-radius: 12px; background: #c2410c; color: #fff; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
 .practice-cta:hover { background: #9a3412; }
 .practice-cta:focus-visible { outline: 3px solid #fdba74; outline-offset: 2px; }
-.library h1 { margin: 0; font-size: 28px; letter-spacing: -0.02em; text-wrap: balance; }
+#libTitle { margin: 0; font-size: 28px; letter-spacing: -0.02em; text-wrap: balance; }
 .library .sub { margin: 4px 0 0; color: var(--muted); }
 .search { width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); }
 .songs { display: grid; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--surface); }
@@ -323,7 +323,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 }
 @media (max-width: 420px) {
   .now-chord { font-size: 28px; }
-  .library h1 { font-size: 24px; }
+  #libTitle { font-size: 24px; }
   .fields .pair { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
@@ -366,7 +366,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
       <div class="lib-head">
         <button id="libPractice" class="practice-cta" type="button" title="Warm-ups, chords, strumming, picking, scales and routines: no song needed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l4 18H5z"/><path d="m12 15 5-9"/><path d="M7.5 15h9"/></svg>Free Practice</button>
         <div>
-        <h1 id="libTitle">Your songs</h1>
+        <h2 id="libTitle">Your songs</h2>
         <p id="libSub" class="sub">Play along, practise, and write your own. Your songs are kept on this device: add them from files, and back them up.</p>
         </div>
       </div>

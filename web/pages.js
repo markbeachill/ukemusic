@@ -157,7 +157,7 @@ const PAGES = [
     more: '<p>How it works things out, and how far to trust it: <a href="how-learn-works.html">How Learn works</a>.</p>'
   },
   {
-    file: 'practise.html', title: 'Practise', blurb: 'Free Practice with a moving fretboard and a metronome, and your songs slowed down, looped and sped up.',
+    file: 'practise.html', seoTitle: 'Ukulele practice: exercises, metronome, slowed-down songs · ukemusic', title: 'Practise', blurb: 'Free Practice with a moving fretboard and a metronome, and your songs slowed down, looped and sped up.',
     eyebrow: 'Practise', h1: 'Practise a little, often, and see it add up',
     lede: 'Warm-ups, chord changes, strumming, picking and scales, each with a moving fretboard and a metronome. And your own songs: slowed down, looped, and a little faster each time round.',
     solo: ['Free Practice: no song needed', 'Routines for the days you have ten minutes', 'One-minute chord changes, with your scores kept', 'Your progress over the weeks'],
@@ -173,7 +173,7 @@ const PAGES = [
     more: ''
   },
   {
-    file: 'perform.html', title: 'Perform', blurb: 'Stage copies you can read at a glance, the Session screen for club nights, setlists and songbooks.',
+    file: 'perform.html', seoTitle: 'Perform: Stage copies, setlists and the Session screen · ukemusic', title: 'Perform', blurb: 'Stage copies you can read at a glance, the Session screen for club nights, setlists and songbooks.',
     eyebrow: 'Perform', h1: 'From the music stand to the big screen',
     lede: 'Clear Stage copies for the gig, a Session screen that fills the TV for a club night, and setlists that go song by song with a clicker.',
     solo: ['A Stage copy: big, bold and easy to scan', 'The web player on a tablet on your music stand', 'Setlists, and a songbook PDF of the whole set', 'Stage PDFs copied to your gig folder as you export'],
@@ -190,7 +190,7 @@ const PAGES = [
     more: ''
   },
   {
-    file: 'teach.html', title: 'Teach', blurb: 'For club leaders and teachers: one song file becomes handouts, the screen at the front, learn sheets and practice at home.',
+    file: 'teach.html', seoTitle: 'Teach ukulele: handouts, the club screen and learn sheets · ukemusic', title: 'Teach', blurb: 'For club leaders and teachers: one song file becomes handouts, the screen at the front, learn sheets and practice at home.',
     eyebrow: 'Teach', h1: 'Run a club or a class from one song file',
     lede: 'Type or import a song once, and it becomes the handout, the screen at the front of the room, a learn sheet for homework, and something to play along with at home.',
     solo: ['Prepare at home: the song in the group\'s key, with the shapes you teach', 'Make handouts: song sheet, Stage copy, words only, learn sheet', 'A songbook PDF for the term from a setlist', 'Bring in a whole folder of the club\'s ChordPro songs at once'],
@@ -207,7 +207,7 @@ const PAGES = [
     more: '<div class="note-box"><p><b>What it doesn\'t do yet:</b> there are no student accounts and no sharing server. You share songs as a file (or printouts), and players load them into the web player. Ideas for teaching features are welcome on <a class="repo-link" href="https://github.com/markbeachill/ukemusic">GitHub</a>.</p></div>'
   },
   {
-    file: 'chord-sheets.html', title: 'Chord sheets', blurb: 'Clear chord sheets in any key, capo or instrument, with chord shapes and the strum.',
+    file: 'chord-sheets.html', seoTitle: 'Ukulele chord sheets in any key, with shapes and strums · ukemusic', title: 'Chord sheets', blurb: 'Clear chord sheets in any key, capo or instrument, with chord shapes and the strum.',
     eyebrow: 'Chord sheets', h1: 'Clear chord sheets, in any key',
     lede: 'Bring a song in, or type it with the chords in square brackets. ukemusic draws the sheet with the chord shapes and the strum, in any key, for any instrument, and prints it beautifully.',
     solo: ['Any key in a click, or a capo with the shapes to finger', 'Ukulele, baritone or guitar, left-handed too', 'Choose a different shape for a chord, kept with the song', 'Every save keeps the earlier versions'],
@@ -226,7 +226,7 @@ const PAGES = [
 
 // "Your songs": every way in, and the AI prompt
 const SONGS_PAGE = {
-  file: 'songs.html', title: 'Bring your songs', blurb: 'Paste chord sheets from websites, import ChordPro songbooks, type songs, or use an AI chat to tidy a difficult one or get a song ready to practise.',
+  file: 'songs.html', seoTitle: 'Bring your songs: paste, import or type chord sheets · ukemusic', title: 'Bring your songs', blurb: 'Paste chord sheets from websites, import ChordPro songbooks, type songs, or use an AI chat to tidy a difficult one or get a song ready to practise.',
   body: () => `
 <div class="page-hero"><div class="wrap">
   <p class="eyebrow">Your songs</p>
@@ -271,7 +271,7 @@ const SONGS_PAGE = {
 
 // "Phone and tablet" (4.45): the web player as an app, getting songs in, keeping them safe
 const PHONE_PAGE = {
-  file: 'phone.html', title: 'Phone and tablet', blurb: 'ukemusic on an iPad, iPhone, Android or Chromebook: put it on your Home Screen, bring your songs in, write and change them, and keep them safe.',
+  file: 'phone.html', seoTitle: 'Ukulele songs and practice on your phone or tablet · ukemusic', title: 'Phone and tablet', blurb: 'ukemusic on an iPad, iPhone, Android or Chromebook: put it on your Home Screen, bring your songs in, write and change them, and keep them safe.',
   body: () => `
 <div class="page-hero"><div class="wrap">
   <p class="eyebrow">Phone and tablet</p>
@@ -484,7 +484,7 @@ const GALLERY_SONGS = {
 };
 const GALLERY_PAGE = {
   file: 'gallery.html', title: 'Gallery: what ukemusic makes',
-  blurb: 'Real files made by ukemusic from public-domain songs: chord sheets, Stage copies, learn sheets, pick sheets, a songbook, and the song as ChordPro, Markdown and a web page.',
+  blurb: 'Real files made by ukemusic from public-domain songs: chord sheets, Stage copies, learn and pick sheets, a songbook, ChordPro, Markdown and a web page.',
   body: () => {
     let list = [];
     try { list = JSON.parse(fs.readFileSync(path.join(SITE, 'gallery', 'gallery.json'), 'utf8')); } catch (_e) { /* no gallery yet */ }
@@ -532,6 +532,7 @@ ${bookHtml}
 const PRACTICE_PAGE = {
   file: 'practice/index.html', dir: 'practice', path: 'practice/', image: 'practice.webp',
   title: 'Free, open-source ukulele practice: 39 exercises in your browser',
+  seoTitle: 'Free ukulele practice: 39 exercises in your browser · ukemusic', // under 70 characters (Bing)
   blurb: '',
   body() {
     const catalog = require('../src/practice-catalog');
@@ -541,7 +542,8 @@ const PRACTICE_PAGE = {
     const count = (level) => exercises.filter((e) => e.level === level).length;
     const n = exercises.length;
     const songs = starterSongs();
-    this.blurb = `ukemusic's Free Practice: ${n} ukulele exercises in ${cats.length} categories (warm-ups, chord changes, strumming, fingerpicking, scales and melodies, improvising), with a metronome, routines and progress. Free and open source (MIT), in your browser, no account.`;
+    // under 160 characters (Bing's Site Scan)
+    this.blurb = `Free Practice: ${n} ukulele exercises (warm-ups, chord changes, strumming, picking, scales, improvising) with a metronome and routines. Free, in your browser.`;
     const catHtml = cats.map((c) => `<div class="ex-cat" id="${esc(c.id)}">
   <h3>${esc(c.name)} <small style="color:var(--muted);font-weight:500">(${exercises.filter((e) => e.cat === c.id).length})</small></h3>
   <p>${esc(c.aim)}.</p>
@@ -697,7 +699,7 @@ function wrapPage(p, body, siteCss) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${esc(p.title)} · ukemusic</title>
+<title>${esc(p.seoTitle || `${p.title} · ukemusic`)}</title>
 <meta name="description" content="${esc(p.blurb)}">
 <link rel="canonical" href="${esc(url)}">
 <meta property="og:type" content="website">
@@ -746,6 +748,17 @@ function build() {
   return [...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, PRACTICE_PAGE.file, 'sitemap.xml'];
 }
 
+/** A gallery song's web page (sheet.html, as the app exports it) with a title, a description and
+ *  its address, for search engines (Bing's Site Scan asks for them). Done once: running it again
+ *  changes nothing. */
+function galleryPageHead(html, title, slug) {
+  if (/<meta name="description"/.test(html)) return html;
+  const head = `<title>${esc(title)}: ukulele chord sheet · ukemusic gallery</title>\n`
+    + `    <meta name="description" content="${esc(title)}, a public-domain song, as a ukulele chord sheet web page made by ukemusic: the chords above the words, the chord shapes and the strum.">\n`
+    + `    <link rel="canonical" href="${SITE_URL}gallery/${esc(slug)}/sheet.html">`;
+  return html.replace(/<title>[^<]*<\/title>/, () => head);
+}
+
 /** sitemap.xml: every page of the website, for search engines (submit it in Google Search Console and
  *  Bing Webmaster Tools; the host's robots.txt isn't ours, so it can't point to it) */
 function sitemap() {
@@ -758,5 +771,5 @@ ${paths.map((x) => `  <url><loc>${SITE_URL}${x}</loc></url>`).join('\n')}
 `;
 }
 
-module.exports = { build, wrapPage, PRACTICE_PAGE, sitemap, SITE_URL, PAGES, SONGS_PAGE, PHONE_PAGE, DROPBOX_PAGE, GALLERY_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
+module.exports = { build, wrapPage, galleryPageHead, PRACTICE_PAGE, sitemap, SITE_URL, PAGES, SONGS_PAGE, PHONE_PAGE, DROPBOX_PAGE, GALLERY_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
 if (require.main === module) console.log('pages:', build().join(', '));

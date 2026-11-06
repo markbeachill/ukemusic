@@ -381,6 +381,10 @@ async function finish(base) {
         const info = { title: t, slug, pages: {} };
         for (const [k, parts] of Object.entries(files(t))) {
           fs.copyFileSync(songFile(t, ...parts), path.join(dir, k));
+          if (k === 'sheet.html') { // a title, description and address for search engines
+            const page = path.join(dir, k);
+            fs.writeFileSync(page, require(path.join(REPO, 'web', 'pages.js')).galleryPageHead(fs.readFileSync(page, 'utf8'), t, slug));
+          }
           if (k.endsWith('.pdf')) {
             const r = await pdfPages(songFile(t, ...parts), { pages: [1], box: [360, 520] });
             info.pages[k] = r.pages;

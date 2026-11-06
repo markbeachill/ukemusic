@@ -15,10 +15,10 @@ const REPO = (() => {
 })();
 
 const PAGES = [
-  { md: 'WRITING.md', html: 'guide.html', title: 'How to write songs', nav: 'Song guide', blurb: 'Everything you can type in a ukemusic song, with examples. The same guide is in the app: Write → How to write.', ownIntro: true },
-  { md: 'CHORDPRO.md', html: 'chordpro.html', title: 'ukemusic and ChordPro', nav: 'ChordPro', blurb: 'What ukemusic does with ChordPro files, what it writes, and what it adds.' },
-  { md: 'CHANGELOG.md', html: 'changes.html', title: "What's new", nav: "What's new", blurb: 'The changes in each version, newest first.' },
-  { md: 'docs/explanation/how-learn-works.md', html: 'how-learn-works.html', title: 'How Learn works', nav: 'How Learn works', blurb: 'What the Learn tab works out from a song, how it helps you practise, and how far to trust it.' }
+  { md: 'WRITING.md', html: 'guide.html', seoTitle: "How to write a song in ukemusic: the song guide", title: 'How to write songs', nav: 'Song guide', blurb: 'Everything you can type in a ukemusic song, with examples. The same guide is in the app: Write → How to write.', ownIntro: true },
+  { md: 'CHORDPRO.md', html: 'chordpro.html', seoTitle: "ukemusic and ChordPro: what it reads and writes", title: 'ukemusic and ChordPro', nav: 'ChordPro', blurb: 'What ukemusic does with ChordPro files, what it writes, and what it adds.' },
+  { md: 'CHANGELOG.md', html: 'changes.html', seoTitle: "What's new in ukemusic: the changes in every version", title: "What's new", nav: "What's new", blurb: 'What changed in each version of ukemusic, the free ukulele app: new features, fixes and improvements, newest first.' },
+  { md: 'docs/explanation/how-learn-works.md', html: 'how-learn-works.html', seoTitle: "How Learn works: learning a ukulele song by heart · ukemusic", title: 'How Learn works', nav: 'How Learn works', blurb: 'What the Learn tab works out from a song, how it helps you practise, and how far to trust it.' }
 ];
 const BY_MD = Object.fromEntries(PAGES.map((p) => [p.md, p.html]));
 
@@ -44,8 +44,9 @@ function page(p, html, sections, siteCss) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${esc(p.title)} · ukemusic</title>
+<title>${esc(p.seoTitle || `${p.title} · ukemusic`)}</title>
 <meta name="description" content="${esc(p.blurb)}">
+<link rel="canonical" href="https://markbeachill.github.io/ukemusic/${esc(p.html)}">
 <link rel="icon" href="img/icon-64.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

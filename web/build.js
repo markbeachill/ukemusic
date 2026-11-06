@@ -39,7 +39,7 @@ const head = [
 // For search engines and anyone without JavaScript (the app itself needs it): what this is, in words
 const about = [
   '<title>ukemusic web player: free ukulele songs, play-along and Free Practice</title>',
-  '<meta name="description" content="The free, open-source ukemusic web player: ukulele songs to play along with and learn by heart, and Free Practice with 39 exercises. Runs in your browser, works offline, no account.">',
+  '<meta name="description" content="The free, open-source ukemusic web player: play along with ukulele songs, learn them by heart, and 39 practice exercises. Works offline, no account.">',
   '<link rel="canonical" href="https://markbeachill.github.io/ukemusic/app/">'
 ].join('\n');
 const noscript = '<noscript><div style="max-width:42em;margin:2em auto;padding:0 16px;font:17px/1.5 system-ui,sans-serif">'

@@ -7,6 +7,10 @@
 - **In the song itself, right-click a chord** for **Chord shape for G…** (choose the shape you play) and **Practise changing G to Am** (Free Practice's chord switching, with that chord and the next one in the song). The names are the chords as the sheet shows them, in the key you're viewing and with your capo.
 - **Anywhere in the song**, the menu also has **Paste from website…**, **Tidy chords above words** and **Insert tab block**. Paste goes where you right-clicked, and a tab block goes on the line below it.
 
+### The website, for search engines
+- **Every page has a title and description of the right length** for Bing and Google (titles under 70 characters, descriptions under 160), and the short ones (Perform, Practise, Teach…) say more about what's there.
+- **The guide pages and the gallery's song sheets** now have their own address and description for search engines, and the web player has one main heading.
+
 ## v4.57.0
 
 ### A song's settings are saved with the song
