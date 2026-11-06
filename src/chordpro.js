@@ -10,7 +10,10 @@
 //   {start_of_tab} … {end_of_tab}    ```tab … ```
 //   {comment: Strum D-DU-UDU}        {D-DU-UDU}   (ChordPro has no strum directive)
 //   {comment: Anything else}         [[Anything else]]
-//   [|]                              []           (bar marker)
+//   [|]  ([*|] from ukemusic, 4.63)  []           (bar marker)
+//   {start_of_grid} | C . . . |      | C |        (4.63: bar lines, a cell a beat, both ways)
+//   [C][*↓] [*x] [Bm7][*+][Am7]      [C↓] [x] [Bm7.Am7]   (4.63: songbook marks as annotations)
+//   <b> <i> <u>                      ** * __      (4.63: markup in, and out when asked)
 //   {key} {time} {artist} → song settings; {define} → the song's chord shapes;
 //   {tempo} {capo} {artist} … → notes (tempo is not applied)
 // Pure functions, unit tested.
@@ -103,12 +106,17 @@ function convertInline(line) {
   let prefix = '';
   let repeat = 0;
   const lead = line.match(/^\s*\[\*([^\]]+)\]\s*/);
-  if (lead && !/^\s*\[\*(stop)\]/i.test(line) && line.slice(lead[0].length).trim()) {
+  if (lead && !/^\s*\[\*(stop|x[↓↑]*|mute[↓↑]*|\||\+)\]/i.test(line) && line.slice(lead[0].length).trim()) {
     prefix = `[[${lead[1].trim()}]] `;
     line = line.slice(lead[0].length);
   }
   // ukemusic's annotations (4.34), before anything else
   line = line
+    // 4.63: songbook marks written as annotations: [C][*↓] -> [C↓], [*x] -> [x], [Bm7][*+][Am7] -> [Bm7.Am7], [*|] -> []
+    .replace(/\[([^\]*][^\]]*)\]\[\*([↓↑!]+)\]/g, '[$1$2]')
+    .replace(/\[([^\]*][^\]]*)\]\[\*\+\]\[([^\]*][^\]]*)\]/g, '[$1.$2]')
+    .replace(/\[\*((?:x|mute)[↓↑]*)\]/gi, '[$1]')
+    .replace(/\[\*\|\]/g, '[|]')
     .replace(/\[\*stop\]\s*(?=\[)/gi, '{stop}')
     .replace(/\[([^\]*][^\]]*)\]\[\*[x×](\d{1,2})\]/g, '[$1 x$2]')
     .replace(/\[([^\]*][^\]]*)\]\[\*(\d{1,2}) beats?\]/g, '[$1:$2]');
@@ -168,9 +176,76 @@ function strumBox(arrows, counts, beatsPerBar = 4) {
   return patterns.join(' | ');
 }
 
+/**
+ * 4.63: a line of a ChordPro grid -> a ukemusic bar line. A cell is a beat: "| G . C . |" -> "| G C |"
+ * (equal shares), "| D . . A |" -> "| D:3 A:1 |"; "/" and "." keep the chord going, "%" repeats a
+ * bar, "%%" the last two; text before the first bar line is the line's label, "(x2)" after the
+ * last is a repeat. Repeat and ending signs (|: :| |1) count as bar lines.
+ */
 function gridLine(line) {
-  const chords = line.split(/[\s|.]+/).filter((t) => isChordName(t));
-  return chords.length ? chords.map((c) => `[${c}]`).join(' ') : null;
+  const t = line.replace(/:\|:|:\|\d*>?|\|:|\|\||\|\.|\|\d+/g, '|');
+  const first = t.indexOf('|');
+  const last = t.lastIndexOf('|');
+  if (first < 0 || first === last) return null;
+  const left = t.slice(0, first).trim();
+  const right = t.slice(last + 1).trim();
+  const resolved = [];   // each bar's tokens ("G", "D:3"…), for % and %%
+  const out = [];
+  let lastChord = '';
+  let skip = 0;
+  for (const measure of t.slice(first + 1, last).split('|')) {
+    const cells = measure.trim().split(/\s+/).filter(Boolean);
+    if (skip && cells.every((c) => c === '.' || c === '/')) { skip -= 1; continue; }
+    skip = 0;
+    if (cells.length === 1 && cells[0] === '%' && resolved.length) {
+      resolved.push(resolved[resolved.length - 1]);
+      out.push('%');
+      continue;
+    }
+    if (cells.length === 1 && cells[0] === '%%' && resolved.length >= 2) {
+      const two = resolved.slice(-2);
+      resolved.push(...two);
+      out.push(...two.map((tokens) => tokens.join(' ')));
+      skip = 1;
+      continue;
+    }
+    const runs = [];
+    let shared = false;   // chords sharing a beat (F~G): ukemusic has whole beats, so the bar is split evenly
+    for (const cell of cells) {
+      if (cell.includes('~')) shared = true;
+      if (cell === '.' || cell === '/') {
+        if (runs.length) runs[runs.length - 1].n += 1;
+        else if (lastChord) runs.push({ name: lastChord, n: 1 });
+        continue;
+      }
+      for (const part of cell.split('~')) {
+        const name = chordName(part);
+        if (name) runs.push({ name, n: 1 });
+      }
+    }
+    if (!runs.length) continue;
+    lastChord = runs[runs.length - 1].name;
+    const even = shared || runs.every((r) => r.n === runs[0].n);
+    const tokens = runs.map((r) => (runs.length === 1 || even ? r.name : `${r.name}:${r.n}`));
+    resolved.push(tokens);
+    out.push(tokens.join(' '));
+  }
+  if (!out.length) return left ? `[[${left}]]` : null;
+  const rep = right.match(/^\(?\s*[x×]\s*(\d{1,2})\s*\)?$/i);
+  return `${left ? `[[${left}]] ` : ''}| ${out.join(' | ')} |${rep ? ` (x${rep[1]})` : ''}`;
+}
+
+/** 4.63: ChordPro markup in the words -> ukemusic's: <b> -> **, <i> -> *, <u> -> __ (and
+ *  <strong> <em>); other tags (<span …>) are taken out. In a harmony part the italics are
+ *  ukemusic's own, so they're just taken out. Lines without tags are left exactly as they are. */
+function markupToMarkers(line, harmony = false) {
+  if (!/<\/?(b|i|u|strong|em|span|sup|sub|tt|big|small|s)\b[^>]*>/i.test(line)) return line;
+  return line
+    .replace(/<\/?(b|strong)>/gi, '**')
+    .replace(/<\/?(i|em)>/gi, harmony ? '' : '*')
+    .replace(/<\/?u>/gi, '__')
+    .replace(/<\/?(span|sup|sub|tt|big|small|s)\b[^>]*>/gi, '')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 }
 
 /**
@@ -189,6 +264,8 @@ function chordProToUkemusic(input) {
   let tabTimeNext = '';   // 4.44: {x_ukemusic_tab_time: 4/4} before {start_of_tab}
   let inTab = false;
   let inGrid = false;
+  let ownGridNext = false;       // 4.63: the next grid is ukemusic's bar lines (no "Instrumental" heading)
+  let inHarmony = false;         // 4.63: between {x_voice: harmony} and {x_voice: lead}
   let inAbc = null;              // 4.44: inside {start_of_abc} … {end_of_abc}: { label, lines }
   const abcBlocks = [];          // ABC tunes found, matched to the lines after them at the end
   const hasOwnTune = lines.some((l) => /^\s*\{\s*x_ukemusic_melody/.test(l));
@@ -230,6 +307,7 @@ function chordProToUkemusic(input) {
       }
       continue;
     }
+    if (/^\s*#\s*ukemusic:\s*bars\s*$/.test(line)) { ownGridNext = true; continue; }   // 4.63: our bar lines' grid follows
     if (/^\s*#\s*ukemusic:/.test(line)) continue;   // 4.44: ukemusic's own note on its directives (written again on export)
     if (/^\s*#/.test(line)) { keptOther.push(line.trim()); continue; } // ChordPro comment line: kept
 
@@ -246,7 +324,7 @@ function chordProToUkemusic(input) {
         if (converted) out.push(converted);
         continue;
       }
-      out.push(convertInline(line));
+      out.push(convertInline(markupToMarkers(line, inHarmony)));
       continue;
     }
 
@@ -275,7 +353,8 @@ function chordProToUkemusic(input) {
       keptFields.push({ name, value });
     } else if (name === 'x_voice') {
       // 4.34: harmony lines (in italics) until {x_voice: lead}
-      out.push(/^harmony/i.test(value) ? '{harmony}' : '{lead}');
+      inHarmony = /^harmony/i.test(value);
+      out.push(inHarmony ? '{harmony}' : '{lead}');
     } else if (name === 'x_ukemusic_pick') {
       // 4.44: {x_ukemusic_pick: up and back} / {x_ukemusic_pick: V: g C E A} / {x_ukemusic_pick: V:}
       const named = value.match(/^([A-Za-z][\w-]*):\s*(.*)$/);
@@ -310,7 +389,10 @@ function chordProToUkemusic(input) {
       tabTimeNext = '';
       inTab = true;
     } else if (name === 'start_of_grid') {
-      heading(value || 'Instrumental');
+      // a label, as {start_of_grid: Intro} or label="Intro"; shape="…" is how it's drawn
+      const label = /=/.test(value || '') ? ((value.match(/label\s*=\s*"([^"]*)"/) || [])[1] || '') : (value || '');
+      if (label || !ownGridNext) heading(label || 'Instrumental');
+      ownGridNext = false;
       inGrid = true;
     } else if (name === 'start_of_strum') {
       inStrum = { label: value, lines: [] };
@@ -562,9 +644,36 @@ function ukemusicToChordPro(irNodes, info = {}) {
     if (abcFor.has(-1)) out.push('{start_of_abc}', abcFor.get(-1), '{end_of_abc}', '');
   }
   const nameNote = (shift) => (n) => require('./versions').transposeName(n, shift, null);
+  // 4.63: bar lines (| C | G | % |) go out as ChordPro grid sections, a cell for each beat:
+  // "| G . C . |" is G for two beats then C. Lines next to each other share a grid. The
+  // "# ukemusic: bars" comment (never shown) tells ukemusic it's its own, so it comes back as it was.
+  const markup = Boolean(info.markup);
+  let grid = [];
+  const flushGrid = () => {
+    if (!grid.length) return;
+    const most = Math.max(...grid.map((g) => g.bars.length));
+    out.push('# ukemusic: bars', `{start_of_grid shape="1+${most}x${beats}+1"}`);
+    for (const g of grid) out.push(`${g.label ? `${g.label} ` : ''}| ${g.bars.map((cells) => cells.join(' ')).join(' | ')} |${g.repeat ? ` (x${g.repeat})` : ''}`);
+    out.push('{end_of_grid}');
+    grid = [];
+  };
+  /** A bar's cells: each chord for its beats ("G . C ."), "%" for a repeated bar */
+  const barCells = (nodes) => {
+    if (nodes.some((n) => n.mark === '%')) return ['%'];
+    const chords = nodes.filter((n) => n.type === 'chord' && !n.hidden);
+    if (!chords.length) return ['.'];
+    let lengths = chords.map((n) => (n.beats ? n.beats : n.share ? n.share * beats : beats / chords.length));
+    lengths = lengths.map((l) => Math.max(1, Math.round(l)));
+    // whole beats only: anything over or under the bar comes off or goes on the last chord
+    const total = lengths.reduce((a, b) => a + b, 0);
+    lengths[lengths.length - 1] = Math.max(1, lengths[lengths.length - 1] + beats - total);
+    return chords.flatMap((n, i) => [n.content, ...Array(lengths[i] - 1).fill('.')]);
+  };
   let groupIndex = -1;
   for (let group of allGroups) {
     groupIndex += 1;
+    const isGridLine = group.some((n) => n.grid);
+    if (!isGridLine) flushGrid();
     // 4.44: {pick} and {melody} lines are ukemusic's own: ChordPro's custom directives (x_), which
     // other ChordPro apps ignore and ukemusic reads back
     const own = group.filter((n) => n.type === 'pick' || n.type === 'melody' || n.type === 'keychange');
@@ -622,14 +731,14 @@ function ukemusicToChordPro(irNodes, info = {}) {
     const rest = group.filter((n) => n.type !== 'rhythm' && n.type !== 'repeat');
     if (!rest.length) continue;
     if (rest.some((n) => n.grid)) {
-      // a bar line: "| [C] | [G] [C] | % |"
-      const bars = [];
-      for (const n of rest) {
-        if (!n.grid || n.hidden) continue;
-        (bars[n.gridBar] = bars[n.gridBar] || []).push(n.mark ? n.mark : `[${n.content}]`);
-      }
-      const label = rest[0].type === 'structure' ? `[*${rest[0].content}] ` : '';
-      out.push(`${label}| ${bars.filter(Boolean).map((b) => b.join(' ')).join(' | ')} |${repeat ? ` (x${repeat.count})` : ''}`);
+      // a bar line: a line of the grid (4.63; it used to be "| [C] | [G] [C] | % |" in the words)
+      const byBar = [];
+      for (const n of rest) if (n.grid) (byBar[n.gridBar] = byBar[n.gridBar] || []).push(n);
+      grid.push({
+        label: rest[0].type === 'structure' ? rest[0].content.trim() : '',
+        bars: byBar.filter(Boolean).map(barCells),
+        repeat: repeat ? repeat.count : 0
+      });
       continue;
     }
     // inline [[Label]] at the start of a line -> ChordPro annotation [*Label]
@@ -638,21 +747,47 @@ function ukemusicToChordPro(irNodes, info = {}) {
       // 4.34: ukemusic's shorthand as ChordPro annotations ([*text]), which other apps print
       // above the words but don't treat as chords; ukemusic reads them back
       if (n.type === 'chord') {
-        if (n.muted) return `[${n.written || 'x'}]`;                       // [x] [mute↓] as written
-        if (n.pair) return n.part === 0 ? `[${rest.filter((p) => p.pair && p.line === n.line && p.offset === n.offset).map((p) => p.content).join('.')}]` : '';
+        // 4.63: songbook marks as annotations, so other apps show a real chord name and the mark
+        // above it (they used to see "C↓" or "x" as chord names): [C↓] -> [C][*↓], [x] -> [*x],
+        // [Bm7.Am7] -> [Bm7][*+][Am7], [] -> [*|]; ukemusic reads each back as it was
+        if (n.muted) return `[*${n.written || 'x'}]`;
+        if (n.pair) return n.part === 0 ? rest.filter((p) => p.pair && p.line === n.line && p.offset === n.offset).map((p) => `[${p.content}]`).join('[*+]') : '';
         const extra = n.bars > 1 ? `[*×${n.bars}]` : (n.beats ? `[*${n.beats} beat${n.beats > 1 ? 's' : ''}]` : '');
-        return `${n.stopped && !n.marks ? '[*stop]' : ''}[${n.content}${n.marks || ''}]${extra}`;
+        return `${n.stopped && !n.marks ? '[*stop]' : ''}[${n.content}]${n.marks ? `[*${n.marks}]` : ''}${extra}`;
       }
-      if (n.type === 'bar') return '[|]';
+      if (n.type === 'bar') return '[*|]';
+      // 4.63: bold, italic and underline as ChordPro markup (<b> <i> <u>), when asked for
+      if (markup && n.type === 'lyric' && (n.styles || n.harmony)) return styledMarkup(n.content, n.styles, n.harmony);
       if (n.type === 'structure') return '';
       return n.content;
     }).join('');
     const line = label ? `${label} ${body.replace(/^ +/, '')}` : body;
     out.push(repeat ? `${line.replace(/\s+$/, '')} (x${repeat.count})` : line);
   }
+  flushGrid();
   close();
   while (out.length && out[out.length - 1] === '') out.pop();
   return `${out.join('\n')}\n`;
+}
+
+/** 4.63: words with ukemusic's styles (1 bold, 2 italic, 4 underline per character) as ChordPro
+ *  markup; a harmony line is in italics, as ukemusic shows it */
+function styledMarkup(text, styles = [], harmony = false) {
+  const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  let out = '';
+  let i = 0;
+  while (i < text.length) {
+    const bits = (styles && styles[i]) || 0;
+    let j = i + 1;
+    while (j < text.length && (((styles && styles[j]) || 0) === bits)) j += 1;
+    let piece = esc(text.slice(i, j));
+    if (bits & 4) piece = `<u>${piece}</u>`;
+    if (bits & 2 && !harmony) piece = `<i>${piece}</i>`;
+    if (bits & 1) piece = `<b>${piece}</b>`;
+    out += piece;
+    i = j;
+  }
+  return harmony && text.trim() ? `<i>${out}</i>` : out;
 }
 
 module.exports = { looksLikeChordPro, chordProToUkemusic, ukemusicToChordPro };

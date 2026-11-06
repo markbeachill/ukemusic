@@ -54,6 +54,7 @@ const DEFAULT_CONFIG = {
     gig_copy: true,
     usual_formats: '',
     chordpro_abc: false,   // 4.44: ChordPro exports carry the tune as notation ({start_of_abc})
+    chordpro_markup: false, // 4.63: ChordPro exports carry bold, italic and underline (<b> <i> <u>)
     stage_font: 'Consolas',
     stage_size: 18,
     stage_fit: true,

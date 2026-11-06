@@ -3326,6 +3326,7 @@
               <label><input type="checkbox" name="format" value="sheet_md" /> Text with formatting (Markdown), for notes apps</label>
               <label><input type="checkbox" name="format" value="sheet_cho" /> ChordPro (.cho), for other chord apps</label>
               <label class="export-sub" title="Songs with their tune written in ({melody} lines) also get it as music notation (an ABC block in each section), which ChordPro apps that draw ABC show as a stave. Apps that don't may show the ABC as text, so it's off unless you want it"><input type="checkbox" data-config-path="export.chordpro_abc" /> with the tune as notation (ABC), for apps that draw it</label>
+              <label class="export-sub" title="Bold, italic and underlined words go out as ChordPro markup (&lt;b&gt; &lt;i&gt; &lt;u&gt;), and a harmony part in italics. Apps that don't know the markup may show the tags as text, so it's off unless you want it"><input type="checkbox" data-config-path="export.chordpro_markup" /> with bold, italic and underline (ChordPro markup)</label>
             </fieldset>
             <fieldset>
               <legend>Words only</legend>
@@ -5508,7 +5509,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
                   // 4.44: the tune, in the key the chords are written in here (and as notation, if asked)
                   tuneShift: semitones - songCapo(config),
                   tuneSound: semitones,
-                  abc: [true, 'true'].includes(config?.export?.chordpro_abc ?? state.config?.export?.chordpro_abc)
+                  abc: [true, 'true'].includes(config?.export?.chordpro_abc ?? state.config?.export?.chordpro_abc),
+                  markup: [true, 'true'].includes(config?.export?.chordpro_markup ?? state.config?.export?.chordpro_markup) // 4.63
                 });
                 await writeExport(subfolder, name('cho'), content, written);
               }

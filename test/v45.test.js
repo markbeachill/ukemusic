@@ -120,7 +120,7 @@ test('[[Chorus]] (x2) is still a label, not a repeat', () => {
 });
 test('ChordPro export keeps the shorthand readable', () => {
   const out = chordpro.ukemusicToChordPro(parse('[[Intro]] | C | G7 C | % |\nI [C x2]come (x2)'));
-  assert.ok(out.includes('[*Intro] | [C] | [G7] [C] | % |'));
+  assert.ok(out.includes('{start_of_grid shape="1+3x4+1"}\nIntro | C . . . | G7 . C . | % |\n{end_of_grid}'), out); // 4.63: a grid
   assert.ok(out.includes('I [C][*×2]come (x2)'), out); // 4.34: bars as an annotation
 });
 

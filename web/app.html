@@ -548,6 +548,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
     <button type="button" data-dl="stage"><strong>Stage chord sheet</strong><span>Big and easy to scan at a gig, in the Stage format chosen for this song</span></button>
     <button type="button" data-dl="lyrics"><strong>Lyrics only (.txt)</strong><span>The words, without chords</span></button>
     <button type="button" data-dl="chordpro"><strong>ChordPro (.txt)</strong><span>For other chord apps</span></button>
+    <label class="check-row" title="Bold, italic and underlined words as ChordPro markup (&lt;b&gt; &lt;i&gt; &lt;u&gt;). Apps that don't know it may show the tags as text"><input id="dlMarkup" type="checkbox"> ChordPro with bold, italic and underline</label>
   </div>
   <div class="dialog-actions"><button id="dlClose" class="btn" type="button">Close</button></div>
 </dialog>
@@ -1913,6 +1914,8 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     frame.srcdoc = sheetDocument(false); document.body.append(frame);
   });
   $('dlClose').addEventListener('click', () => $('downloadDialog').close());
+  $('dlMarkup').checked = local.get('chordproMarkup', false) === true; // 4.63: remembered on this device
+  $('dlMarkup').addEventListener('change', () => local.set('chordproMarkup', $('dlMarkup').checked));
   function sheetDocument(stage) {
     const p = prefs();
     const lib = library();
@@ -1941,7 +1944,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       if (kind === 'lyrics') file = { filename: `${t} (lyrics).txt`, data: U.renderLyricsText(U.parseSong(view.song.text, parserOptions), { title: view.song.title }) };
       if (kind === 'chordpro') {
         const p = prefs();
-        file = { filename: `${t}${keyPart} (ChordPro).txt`, data: U.ukemusicToChordPro(currentIr(), { title: view.song.title, artist: view.song.settings?.song?.artist || '', year: view.song.settings?.song?.year || '', capo: p.capo || '', tempo: p.tempo, time: p.beats === 6 ? '6/8' : `${p.beats}/4`, key: '', tuneShift: p.transpose - p.capo }) };
+        file = { filename: `${t}${keyPart} (ChordPro).txt`, data: U.ukemusicToChordPro(currentIr(), { title: view.song.title, artist: view.song.settings?.song?.artist || '', year: view.song.settings?.song?.year || '', capo: p.capo || '', tempo: p.tempo, time: p.beats === 6 ? '6/8' : `${p.beats}/4`, key: '', tuneShift: p.transpose - p.capo, markup: $('dlMarkup').checked }) }; // 4.63: markup if ticked
       }
       const type = file.filename.endsWith('.html') ? 'text/html' : 'text/plain';
       if (await saveFile({ ...file, type })) $('downloadDialog').close();

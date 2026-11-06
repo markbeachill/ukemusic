@@ -42,7 +42,7 @@ Nothing in the file is thrown away. Whatever ukemusic doesn't turn into part of 
 | `{start_of_bridge}` / `{sob}` | `[[Bridge]]` |
 | `{start_of_x_intro: Intro}`, `{start_of_x_solo}`, any other `{start_of_…}` | A heading: `[[Intro]]`, `[[Solo]]` |
 | `{start_of_tab}` … `{end_of_tab}` | A tab block (` ```tab ` … ` ``` `), which plays |
-| `{start_of_grid}` … `{end_of_grid}` | A bar line of chords: `| C | G | % |` |
+| `{start_of_grid}` … `{end_of_grid}` | Bar lines, a cell a beat: `\| C . . . \| G . D . \| % \|` becomes `\| C \| G D \| % \|`, and `\| D . . A \|` becomes `\| D:3 A:1 \|`. `/` and `.` keep the chord going, `%%` repeats two bars, text before the first bar line is the line's label, and `x2` after the last is a repeat |
 | `{comment: Anything}` / `{c}` / `{ci}` / `{highlight}` | `[[Anything]]`, a heading |
 | `[*Riff 1]` at the start of a line | `[[Riff 1]]`, a label on that line |
 
@@ -81,8 +81,11 @@ Chords in the words are the same in both formats. ukemusic also reads chord name
 | `[x]`, `[mute↓]`, `[x↓↓]` | Muted strums: a "chk" |
 | `[.]`, `[…]`, `[G…]` | Keep the chord going |
 | `[Bm7.Am7]` | Two chords sharing the bar |
-| `[|]`, `[/]` | A bar line |
+| `[\|]`, `[/]` | A bar line |
 | `[x2]` at the end of a line | Play the line twice |
+| `[C][*↓]`, `[*x]`, `[Bm7][*+][Am7]`, `[*\|]` | The same marks, as ukemusic writes them in ChordPro (below): `[C↓]`, `[x]`, `[Bm7.Am7]`, `[]` |
+
+**Bold, italic and underline:** ChordPro markup in the words, `<b>…</b>`, `<i>…</i>` and `<u>…</u>` (and `<strong>`, `<em>`), becomes `**…**`, `*…*` and `__…__`. Other tags, such as `<span …>`, are taken out.
 
 ### Chord shapes
 
@@ -122,19 +125,21 @@ Export → ChordPro (or the download menu in the web player) writes the song in 
 | `{stop}[C]` in a line | `[*stop][C]` |
 | `[C x3]` (three bars) | `[C][*×3]` |
 | `[G:2]` (two beats) | `[G][*2 beats]` |
-| `[C↓]`, `[x]`, `[Bm7.Am7]` … | As written |
-| `[]` (a bar line) | `[|]` |
-| `| C | G | % |` | `| [C] | [G] | % |` |
+| `[C↓]`, `[x]`, `[mute↓↓]` | `[C][*↓]`, `[*x]`, `[*mute↓↓]` |
+| `[Bm7.Am7]` (two chords sharing a bar) | `[Bm7][*+][Am7]` |
+| `[]` (a bar line) | `[*\|]` |
+| `\| C \| G D \| % \|` | A grid section, a cell a beat: `\| C . . . \| G . D . \| % \|` |
+| `**bold**`, `*italic*`, `__underline__`, when you tick "with bold, italic and underline" | `<b>bold</b>`, `<i>italic</i>`, `<u>underline</u>` |
 | `(x2)` at the end of a line | `(x2)` |
-| ` ```tab ` blocks | `{start_of_tab}` … `{end_of_tab}` |
-| ` ```tab 4/4 ` (timed by its bars) | `{x_ukemusic_tab_time: 4/4}`, then the tab section |
+| ` ```tab ` blocks \| `{start_of_tab}` … `{end_of_tab}` |
+| ` ```tab 4/4 ` (timed by its bars) \| `{x_ukemusic_tab_time: 4/4}`, then the tab section |
 | The tune (`{melody}` lines), when you tick "with the tune as notation" | Also `{start_of_abc}` … `{end_of_abc}`, one block per section |
 | `{pick: up and back}`, `{pick V: g C E A}`, `{pick V}` | `{x_ukemusic_pick: up and back}`, `{x_ukemusic_pick: V: g C E A}`, `{x_ukemusic_pick: V:}` |
 | `{melody: E E F G …}`, `{melody abc: …}` | `{x_ukemusic_melody: E E F G …}`, `{x_ukemusic_melody_abc: …}` |
 | The song's own chord shapes | `{define: …}` |
 | `{harmony}` … `{lead}` | `{x_voice: harmony}` … `{x_voice: lead}` |
 
-**What doesn't go out:** bold, italic and underline (ChordPro has no way to write them; the plain words go out), versions, notes and practice settings.
+**What doesn't go out:** versions, notes and practice settings. Bold, italic and underline go out only when you tick **with bold, italic and underline (ChordPro markup)** in Export (in the web player: the tick under ChordPro in Download); otherwise the plain words go out. See the last section for everything ukemusic converts.
 
 ---
 
@@ -150,7 +155,8 @@ Everything ukemusic writes is valid ChordPro, so other apps open the files. A fe
 | `[*×3]` after a chord | "×3" above the words | The chord lasts three bars |
 | `[*2 beats]` after a chord | "2 beats" above the words | The chord lasts two beats |
 | `[*stop]` before a chord | "stop" above the words | One strum, left to ring |
-| `[C↓]`, `[x]`, `[G…]`, `[Bm7.Am7]` | As written, as chord names | Songbook marks (see Chords) |
+| `[C][*↓]`, `[*x]`, `[Bm7][*+][Am7]`, `[*\|]` | The chord, with "↓", "x", "+" or "\|" above the words | Songbook marks: `[C↓]`, `[x]`, `[Bm7.Am7]`, `[]` |
+| `# ukemusic: bars` before a grid | Nothing | The grid is the song's bar lines (no "Instrumental" heading) |
 | `{x_voice: harmony}` / `{x_voice: lead}` | Nothing (`x_` directives are for apps that know them) | A harmony part |
 | `{define-baritone: …}`, `{define-guitar: …}` | Usually nothing | Shapes for those instruments |
 | `{x_ukemusic_pick: …}` | Nothing | The picking pattern from there on |
@@ -170,3 +176,65 @@ Everything ukemusic writes is valid ChordPro, so other apps open the files. A fe
 And it reads two things from other songbooks that standard ChordPro doesn't have: **strum boxes** (`{start_of_strum}` … `{end_of_strum}`) and **custom sections** (`{start_of_x_intro}` and the like).
 
 A song saved as ChordPro and brought back in comes back the same, apart from bold, italic and underline.
+
+---
+
+## ukemusic's own notation in a ChordPro file: what converts, and what can't
+
+ChordPro and ukemusic write chords in the words the same way, `[C]Hello`. The rest of ukemusic's notation is turned into the nearest thing ChordPro has, so other apps show something sensible, and ukemusic can read it back exactly. Some of it can't be expressed in ChordPro at all.
+
+### Converted exactly (other ChordPro apps understand it)
+
+| ukemusic | ChordPro |
+|---|---|
+| Song details: title, artist, key, time, tempo, capo, album, year, writers | `{title}`, `{artist}`, `{key}`, `{time}`, `{tempo}`, `{capo}`, `{album}`, `{year}`, `{composer}` |
+| `[[Verse 1]]`, `[[Chorus]]`, `[[Bridge]]` | `{start_of_verse: Verse 1}`, `{start_of_chorus}`, `{start_of_bridge}` |
+| A key change in the song | `{key: A}` where it happens |
+| Bar lines `\| C \| G D \| % \|`, with chord lengths `\| D:3 A:1 \|` | A grid section, a cell a beat: `\| C . . . \| G . D . \| % \|`, `\| D . . A \|` |
+| Tab blocks | `{start_of_tab}` … `{end_of_tab}` |
+| The song's own chord shapes | `{define: …}` (and `{define-baritone}`, `{define-guitar}`, for apps that support per-instrument directives) |
+| Bold, italic, underline (when ticked) | `<b>`, `<i>`, `<u>` |
+| The tune (`{melody}` lines), when ticked | Music notation: `{start_of_abc}` … `{end_of_abc}` |
+
+### Converted as text other apps show (ukemusic reads them back exactly)
+
+ChordPro has no way to say these, so they go out as an annotation above the words (`[*…]`) or a comment line. Other apps show the instruction; they don't play it or lay it out by length.
+
+| ukemusic | ChordPro | Other apps show |
+|---|---|---|
+| `[C x3]` (three bars) | `[C][*×3]` | C, with "×3" above |
+| `[G:2]` (two beats) | `[G][*2 beats]` | G, with "2 beats" above |
+| `[C↓]` (one strum, let it ring), `[C↓↑]` | `[C][*↓]`, `[C][*↓↑]` | C, with the arrows above |
+| `[x]`, `[mute↓↓]` (muted strums) | `[*x]`, `[*mute↓↓]` | "x" above the words |
+| `[Bm7.Am7]` (two chords sharing a bar) | `[Bm7][*+][Am7]` | Bm7 + Am7 |
+| `[]` (a bar line in the words) | `[*\|]` | "\|" above the words |
+| `{stop}` before a chord | `[*stop]` | "stop" above the words |
+| `{D-DU-UDU}`, `{Verse: D-DU-UDU}`, `{Verse}` | `{comment: Strum D-DU-UDU}` … | The comment |
+| `{stop}` on its own line | `{comment: Stop: one strum, let it ring}` | The comment |
+| `{swing}`, `{shuffle}`, `{straight}` | `{comment: Feel: swing}` … | The comment |
+| `[[Intro]]` and other headings | `{comment: Intro}` | The comment |
+| `[[Riff 1]]` at the start of a line | `[*Riff 1]` (in a grid: the line's label) | The label |
+| `(x2)` at the end of a line | `(x2)` | The text |
+
+ChordPro's own documentation has a draft section for strum patterns, but its syntax isn't decided yet. When it is, ukemusic can write strums that way.
+
+### Can't be converted (other apps ignore them; ukemusic reads them back)
+
+These go out as ChordPro's custom directives (`x_…`), which other apps skip, so the song still opens everywhere:
+
+| ukemusic | ChordPro |
+|---|---|
+| A harmony part (`{harmony}` … `{lead}`) | `{x_voice: harmony}` … `{x_voice: lead}` (with markup ticked, its words are also in italics) |
+| Picking patterns (`{pick: …}`) | `{x_ukemusic_pick: …}` |
+| The tune as note names (`{melody}` lines) | `{x_ukemusic_melody: …}` (as music notation too, if ticked) |
+| A tab block timed by its bars (` ```tab 4/4 `) \| `{x_ukemusic_tab_time: 4/4}` before the tab |
+
+### Not written at all
+
+- **The song's versions, notes and practice settings** stay in ukemusic.
+- **Bold, italic and underline**, unless you tick the option (some older apps print the tags as text).
+- **Italics inside a harmony part** (the whole part is in italics already).
+- **Chord lengths that aren't whole beats in a grid**: three chords sharing a 4/4 bar are written as 1 + 1 + 2 beats. A bar in a grid has one cell per beat.
+- **Songbook marks in a bar line** (`| C↓ |`): the grid has the chord, without the mark.
+- **Coming in: chords sharing one beat in a grid** (`F~G`): ukemusic counts in whole beats, so that bar's chords share it evenly.
+

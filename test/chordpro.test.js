@@ -97,9 +97,9 @@ test('labelled sections and label="" attributes', () => {
   assert.ok(text.includes('[[Intro]]') && text.includes('[[Big finish]]'), text);
 });
 
-test('grids become chords-only lines', () => {
+test('grids become bar lines (4.63; they were chords-only lines)', () => {
   const { text } = chordProToUkemusic('{start_of_grid}\n| C . . . | G . . . | Am . F . |\n{end_of_grid}');
-  assert.ok(text.includes('[[Instrumental]]\n[C] [G] [Am] [F]'), text);
+  assert.ok(text.includes('[[Instrumental]]\n| C | G | Am F |'), text); // 4.63: bar lines, a cell a beat
 });
 
 test('exports ukemusic to ChordPro', () => {
@@ -113,7 +113,7 @@ test('exports ukemusic to ChordPro', () => {
     '',
     '{start_of_verse: Verse 1}',
     '{comment: Strum D-DU-UDU}',
-    '[C]Some[G]where [|]over',
+    '[C]Some[G]where [*|]over', // 4.63: a bar line as an annotation
     '{end_of_verse}',
     '',
     '{start_of_chorus: Chorus}',

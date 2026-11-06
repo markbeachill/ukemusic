@@ -1,5 +1,20 @@
 # Changelog
 
+## v4.63.0
+
+### ChordPro export: closer to what other apps understand
+- **Bar lines** (`| C | G D | % |`) go out as a ChordPro chord grid, a cell for each beat: `| C . . . | G . D . | % |`. Chord lengths come across exactly (`| D:3 A:1 |` is `| D . . A |`), with the line's label and `(x2)`. Before, they went out as a line of text.
+- **Songbook marks** go out as a chord with a note above it, so other apps show a real chord name instead of "C↓" or "x": `[C↓]` is `[C][*↓]`, `[x]` is `[*x]`, `[Bm7.Am7]` is `[Bm7][*+][Am7]`, and a bar marker is `[*|]`.
+- **Bold, italic and underline** can go out as ChordPro markup (`<b>`, `<i>`, `<u>`), with a harmony part in italics: tick **with bold, italic and underline (ChordPro markup)** in Export, or the tick under ChordPro in the web player's Download. It's off to start with, because apps that don't know the markup show the tags.
+- **Everything comes back into ukemusic as it was written.**
+
+### ChordPro import
+- **Grids from other apps come in as bar lines with their beats** (`| G . D . |` is `| G D |`, `| D . . A |` is `| D:3 A:1 |`), with `%` and `%%` repeats, the line's label and `x2`. Before, they came in as a list of chords.
+- **Markup** (`<b>`, `<i>`, `<u>`, `<strong>`, `<em>`) comes in as bold, italic and underline; other tags are taken out.
+
+### The ChordPro page
+- **A new last section**: everything in ukemusic's own notation, what it becomes in ChordPro, what other apps show, and what can't be converted. Tables on the page with a `|` in them now show properly.
+
 ## v4.62.0
 
 ### Your instrument in the web player

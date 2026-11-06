@@ -51,10 +51,11 @@ test('playing them: strokes spread over the bar and ringing; muted strums are ch
 test('changing key keeps the marks', () => {
   assert.strictEqual(rewriteText('[C↓] [A↓↓]la [Gs4]a [Dma7:2]b [Bm7.Am7]c [x] [G…]', 2), '[D↓] [B↓↓]la [Asus4]a [Emaj7:2]b [C#m7.Bm7]c [x] [A…]');
 });
-test('ChordPro: the marks come in as written and go out as written', () => {
+test('ChordPro: the marks come in as written, go out as annotations and come back as written', () => {
   assert.strictEqual(body('{title: T}\n[C↓] la [A↓↓] la [x] [mute↓] [.] [G…]la [Gs4]a [Bm7.Am7]c [x2]'), '[C↓] la [A↓↓] la [x] [mute↓] [.] [G…]la [Gs4]a [Bm7.Am7]c [x2]');
   const cho = ukemusicToChordPro(parse('[C↓]la [x] [Bm7.Am7]c', { useDelimiters: false }), { title: 'T' });
-  assert.ok(cho.includes('[C↓]la [x] [Bm7.Am7]c'), cho);
+  assert.ok(cho.includes('[C][*↓]la [*x] [Bm7][*+][Am7]c'), cho); // 4.63: as annotations, so other apps see real chord names
+  assert.ok(require('../src/chordpro').chordProToUkemusic(cho).text.includes('[C↓]la [x] [Bm7.Am7]c'), 'and back as written');
 });
 test('a word in brackets is a label; brackets as text', () => {
   assert.strictEqual(body('{title: T}\n[Riff 1] [C] [G]'), '[[Riff 1]] [C] [G]');
