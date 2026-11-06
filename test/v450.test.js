@@ -99,7 +99,7 @@ function practiceUI() {
     logClean:(d,id,o)=>({data:d,next:progress.logClean(d,id,o)}), defaults:()=>progress.emptyProgress().routines };
   const context = { console, document:{ getElementById:element, querySelector:()=>null, body:{children:[]} },
     window:{ukemusic:{ training:{}, fingers:{}, notesLib:{}, practiceLib:catalog, practiceProgress:pp,practiceHelp:help }, addEventListener(){}},
-    player:null, songsFolder:()=>'/songs', setInterval(){}, setTimeout(){}, clearTimeout(){}, cancelAnimationFrame(){}, performance:{now:()=>1000} };
+    player:null, songsFolder:()=>'/songs', songInstrument:()=>({id:'soprano'}), effectiveConfig:()=>({}), setInterval(){}, setTimeout(){}, clearTimeout(){}, cancelAnimationFrame(){}, performance:{now:()=>1000} };
   vm.createContext(context);
   vm.runInContext(fs.readFileSync(path.join(root,'web/pr_js.js'),'utf8') + '\nthis.api={pr,prOpen,prShowHome,prMarkClean,prSaveEnteredScore};', context);
   vm.runInContext("prSetup=()=>{}; prShowMode=(mode)=>{pr.mode=mode;}; prPreview=()=>{}; prKindRows=()=>{}; prRenderHome=()=>{}; prUpdateMobile=()=>{}; pr.progress=PP.read();",context);

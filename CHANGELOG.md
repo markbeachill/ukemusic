@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.60.0
+
+### Free Practice for your instrument
+- **Free Practice now uses your instrument**: the one in Settings → All songs, or the open song's if you come from a song. Before, it kept the instrument it was first opened with, so most people only ever had standard ukulele. All 39 exercises work on ukulele, ukulele with low G, baritone ukulele and guitar: chord shapes, the fretboard, scales, tunes and the backing all follow the instrument.
+- **Instrument / tuning** in an exercise tries another instrument until you close Free Practice; the exercise starts again for it.
+- **On baritone and guitar the exercises start where those players start**: G, Em, C and D instead of C, Am, F and G (F is a barre there), the first barre is F, and the 12-bar blues is in E.
+- **Picking patterns are named with your strings** (on a baritone or a guitar: Up: D G B E).
+- **Your own changes to an exercise, and your one-minute-change scores, are kept for each instrument**, so a guitar score isn't compared with a ukulele one.
+- **Fixed:** an exercise opened straight from a song (right-click a chord → Practise changing, or Learn's practise buttons) wouldn't start.
+
 ## v4.59.0
 
 ### Your instrument

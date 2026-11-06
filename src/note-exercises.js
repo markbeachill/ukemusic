@@ -104,6 +104,24 @@ const PICK_PATTERNS = [
   { id: 'down', name: 'Down: A E C G (a m i p)', strings: [3, 2, 1, 0] },
   { id: 'pinch', name: 'Pinch then roll: G+A, C, E (p+a, i, m)', strings: [[0, 3], 1, 2, 1] }
 ];
+// 4.60: the names with the strings you have: {0}..{3} are the four strings picked (on a guitar,
+// the top four: D G B E), so a guitar shows "Up: D G B E", not G C E A
+const PICK_TEMPLATES = {
+  up: 'Up: {0} {1} {2} {3} (p i m a)',
+  updown: 'Up and back: {0} {1} {2} {3} {2} {1} (p i m a m i)',
+  gecea: '{0} {2} {1} {3} (p m i a)',
+  thumb: 'Alternating thumb: {0} {2} {1} {3} (p m p a… thumb on {0} and {1})',
+  down: 'Down: {3} {2} {1} {0} (a m i p)',
+  pinch: 'Pinch then roll: {0}+{3}, {1}, {2} (p+a, i, m)'
+};
+const NOTE_LETTERS = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
+/** A picking pattern's name on an instrument (tuning: MIDI of each string, diagram order) */
+function pickPatternName(id, tuning = [67, 60, 64, 69]) {
+  const pat = PICK_PATTERNS.find((p) => p.id === id);
+  if (!pat) return '';
+  const top = tuning.slice(Math.max(0, tuning.length - 4)).map((m) => NOTE_LETTERS[((m % 12) + 12) % 12]);
+  return (PICK_TEMPLATES[id] || pat.name).replace(/\{(\d)\}/g, (_m, i) => top[Number(i)] || '?');
+}
 const FINGER_WORDS = { p: 'thumb (p)', i: 'index finger (i)', m: 'middle finger (m)', a: 'ring finger (a)' };
 
 /** The picking finger for a string on an instrument with n strings (thumb on the lowest ones) */
@@ -212,5 +230,5 @@ function noteName(pc) {
 module.exports = {
   SCALES, PICK_PATTERNS, FINGER_WORDS, MELODIES, ROOTS,
   placeNotes, scalePitches, sequence, scaleNotes, pickingNotes, pickFinger, singleStringNotes,
-  alternatingNotes, melodyNotes, callResponseNotes, noteName
+  alternatingNotes, melodyNotes, callResponseNotes, noteName, pickPatternName
 };

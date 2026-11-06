@@ -291,6 +291,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
   notesLib: {
     SCALES: noteExercises.SCALES,
     PICK_PATTERNS: noteExercises.PICK_PATTERNS,
+    pickPatternName: (id, tuning) => noteExercises.pickPatternName(id, tuning),
     FINGER_WORDS: noteExercises.FINGER_WORDS,
     MELODIES: noteExercises.MELODIES,
     scaleNotes: (o) => noteExercises.scaleNotes(o),
@@ -310,6 +311,8 @@ contextBridge.exposeInMainWorld('ukemusic', {
     NOODLE_SETS: practiceCatalog.NOODLE_SETS,
     RHYTHM_IDEAS: practiceCatalog.RHYTHM_IDEAS,
     progressionChords: (id, key) => practiceCatalog.progressionChords(id, key),
+    instrumentFamily: (id) => practiceCatalog.instrumentFamily(id),
+    exerciseFor: (ex, instrumentId) => practiceCatalog.exerciseFor(ex, instrumentId),
     planText: (bars) => practiceCatalog.planText(bars),
     applyDynamics: (schedule, levels) => practiceCatalog.applyDynamics(schedule, levels),
     metronomeSchedule: (o) => practiceCatalog.metronomeSchedule(o),

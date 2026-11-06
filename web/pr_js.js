@@ -42,6 +42,25 @@
         }
         const prChordOf = (rootSel, typeSel) => `${rootSel.value}${typeSel.value}`;
         function prInstrument() { return $p('prInstrument')?.value || songInstrument(effectiveConfig()).id; }
+        // 4.60: Free Practice is for your instrument: the open song's, else the default (Settings →
+        // All songs). The menu in an exercise changes it until you close Free Practice; it isn't
+        // kept with the exercise (it used to be, so Free Practice stayed on the first instrument).
+        function prSyncInstrument() {
+          const id = pr.sessionInstrument || songInstrument(effectiveConfig()).id;
+          if ($p('prInstrument') && $p('prInstrument').value !== id) $p('prInstrument').value = id;
+          prPickNames();
+        }
+        function prPickNames() {
+          const options = [...($p('prPickPattern')?.options || [])];
+          if (!options.length) return;
+          const tuning = prTuning();
+          for (const o of options) o.textContent = NL.pickPatternName(o.value, tuning) || o.textContent;
+        }
+        const prFamily = () => PL.instrumentFamily(prInstrument());
+        // Your own changes to an exercise, kept for each instrument family (ukulele as before); saved
+        // under the instrument the exercise was opened for (pr.prefFamily), even if it's since changed
+        const prPrefKey = (id, family = pr.prefFamily || prFamily()) => (family === 'uke' ? id : `${id}@${family}`);
+        const prExerciseFor = (e) => PL.exerciseFor(e, prInstrument());
         function prLibrary() { return chordLibraryFor(prInstrument()); }
         function prTuning() { return window.ukemusic.instrument(prInstrument()).strings; }
         function prDiagram(name, frets = null, fingers = null) {
@@ -116,15 +135,15 @@
           prRoutineTick();
         }, 500);
 
-        function prCaptureSettings() {
+        function prCaptureSettings({ withInstrument = false } = {}) {
           return Object.fromEntries([...practiceEl.querySelectorAll('.practice-controls select, .practice-controls input')]
-            .filter((el) => el.id && el.id !== 'prVolume')
+            .filter((el) => el.id && el.id !== 'prVolume' && (withInstrument || el.id !== 'prInstrument'))
             .map((el) => [el.id, el.type === 'checkbox' ? el.checked : el.value]));
         }
         function prApplySettings(settings) {
           for (const [id, value] of Object.entries(settings || {})) {
             const el = $p(id);
-            if (!el || !el.closest('.practice-controls') || !['INPUT', 'SELECT'].includes(el.tagName)) continue;
+            if (!el || id === 'prInstrument' || !el.closest('.practice-controls') || !['INPUT', 'SELECT'].includes(el.tagName)) continue;
             if (el.type === 'checkbox') el.checked = Boolean(value);
             else if (el.tagName !== 'SELECT' || [...el.options].some((o) => o.value === String(value))) el.value = String(value);
           }
@@ -132,11 +151,11 @@
         function prSaveSettings() {
           if (!pr.exId || !pr.progress || pr.restoring || pr.routine) return;
           pr.progress.preferences = pr.progress.preferences || {};
-          pr.progress.preferences[pr.exId] = prCaptureSettings();
+          pr.progress.preferences[prPrefKey(pr.exId)] = prCaptureSettings();
           prSaveProgress();
         }
         function prContext() {
-          const settings = prCaptureSettings();
+          const settings = prCaptureSettings({ withInstrument: true }); // best tempos: for each instrument, as before
           for (const id of Object.keys(settings)) {
             const el = $p(id);
             let parent = el;
@@ -207,7 +226,7 @@
             prRenderRoutines();
             return;
           }
-          $p('prCards').replaceChildren(...PL.EXERCISES.filter((e) => e.cat === cat.id).map((e) => {
+          $p('prCards').replaceChildren(...PL.EXERCISES.filter((x) => x.cat === cat.id).map((x) => prExerciseFor(x)).map((e) => {
             const card = document.createElement('button');
             card.type = 'button';
             card.className = 'pr-card';
@@ -251,12 +270,13 @@
 
         // Open an exercise: its trainer, with its preset (and your last tempo)
         function prOpen(exId, { keepGoing = false, settings = null, reset = false } = {}) {
-          const e = PL.EXERCISES.find((x) => x.id === exId);
-          if (!e) return;
+          if (!PL.EXERCISES.some((x) => x.id === exId)) return;
           if (!reset) prSaveSettings();
           prCancelAttempt();
           prSessionEnd();
           prSetup();
+          prSyncInstrument();
+          const e = prExerciseFor(PL.EXERCISES.find((x) => x.id === exId)); // its chords and keys for your instrument (4.60)
           pr.restoring = true;
           prApplySettings(pr.defaults);
           pr.view = 'player';
@@ -289,7 +309,8 @@
             } else el.value = String(value);
           }
           if (e.set && e.set.prProgression !== undefined) prApplyProgression();
-          const saved = pr.progress?.preferences?.[e.id];
+          pr.prefFamily = prFamily();
+          const saved = pr.progress?.preferences?.[prPrefKey(e.id)];
           if (!reset) prApplySettings(settings || saved);
           if (!reset && !saved && !settings) {
             const last = pr.progress?.exercises?.[e.id]?.last_tempo;
@@ -320,7 +341,7 @@
           const e = PL.EXERCISES.find((item) => item.id === id);
           if (!e || !settings || !Object.keys(settings).length) return 'Exercise defaults';
           const values = { ...e.set, ...settings };
-          const parts = [window.ukemusic.instrument(values.prInstrument || 'soprano').label];
+          const parts = []; // (the instrument is yours, not the routine's: 4.60)
           if (['change','oneminute'].includes(e.mode)) parts.push((values.prFromRoot || 'C') + (values.prFromType || '') + ' → ' + (values.prToRoot || 'F') + (values.prToType || ''));
           if (e.mode === 'strum') parts.push(values.prChords || 'C', values.prStrum === 'own' ? values.prStrumOwn : values.prStrum);
           if (e.mode === 'spider') parts.push('start at fret ' + (values.prStartFret || 1));
@@ -515,6 +536,8 @@
           chips($p('prDrillSets'), 'prDrillSet', ['C Am F G', 'G D Em C', 'C F G7', 'A D E7', 'Dm Bb C F', 'G7 C7 D7 A7']);
           $p('prInstrument').replaceChildren(...window.ukemusic.instruments.map((i) => new Option(i.label, i.id)));
           $p('prInstrument').value = songInstrument(effectiveConfig()).id;
+          // another instrument for this session: the exercise starts again for it (its chords, your changes for it)
+          $p('prInstrument').addEventListener('change', () => { pr.sessionInstrument = $p('prInstrument').value; prPickNames(); if (pr.exId && pr.view === 'player') prOpen(pr.exId); });
           $p('prLeftHanded').checked = Boolean(effectiveConfig()?.diagrams?.left_handed);
           $p('prSettingsToggle').addEventListener('click', () => {
             const open = practiceEl.classList.toggle('pr-settings-open');
@@ -1495,7 +1518,7 @@
           }
           pr.ex = ex;
           prSaveSettings(); pr.progress = PP.markStarted(pr.progress, pr.exId); prSaveProgress();
-          pr.oneMinute = { exId: pr.exId, from: ex.from, to: ex.to, routine: pr.routine, step: pr.routine?.step, running: true, count: 0, ends: performance.now() + (pr.minuteMs || 60000), label: `${ex.from}>${ex.to}` };
+          pr.oneMinute = { exId: pr.exId, from: ex.from, to: ex.to, routine: pr.routine, step: pr.routine?.step, running: true, count: 0, ends: performance.now() + (pr.minuteMs || 60000), label: `${ex.from}>${ex.to}${prFamily() === 'uke' ? '' : ` (${prFamily()})`}` };
           prSessionStart();
           $p('prStart').disabled = true;
           $p('prStop').disabled = false;
@@ -1578,6 +1601,8 @@
         function openPractice(exId = null) {
           if (player && player.playing) stopPlayback();
           prSetup();
+          if (!pr.progress) prLoadProgress(); // opened straight into an exercise (from a song): Start needs it (4.60)
+          prSyncInstrument();
           const tempo = Number(effectiveConfig()?.song?.tempo);
           if (!pr.opened && tempo) $p('prTempo').value = String(Math.max(50, Math.min(120, tempo)));
           pr.opened = true;
@@ -1591,6 +1616,7 @@
         }
         function closePractice() {
           prSaveSettings();
+          pr.sessionInstrument = null; // next time: your instrument again
           prCancelAttempt();
           if (player && player.playing) prStop();
           prSessionEnd();

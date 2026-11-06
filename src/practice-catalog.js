@@ -317,7 +317,37 @@ function planText(bars) {
   return lines.join('\n');
 }
 
+// ── 4.60: the exercises on each instrument ──
+// Ukulele (and low G) use the exercises as written. On a baritone ukulele and a guitar, F is a
+// barre, so the beginner chords are the G family (G C D Em), the first barre is F, and the blues
+// is in E. Your own changes to an exercise are kept for each of these separately.
+const FAMILIES = { soprano: 'uke', lowg: 'uke', baritone: 'baritone', guitar: 'guitar' };
+function instrumentFamily(instrumentId) { return FAMILIES[instrumentId] || 'uke'; }
+const G_FAMILY_SETS = { 'C Am F G': 'G Em C D', 'C G Am F': 'G D Em C', C: 'G' };
+const G_FAMILY = {
+  'chord-change': { set: { prFromRoot: 'G', prToRoot: 'C' } },
+  'one-minute': { set: { prFromRoot: 'G', prToRoot: 'C' } },
+  progressions: { set: { prProgKey: 'G' } },
+  blues: { set: { prBluesKey: 'E' } }
+};
+const OVERRIDES = {
+  baritone: { ...G_FAMILY, barre: { set: { prFromRoot: 'C', prToRoot: 'F' }, title: 'First barre: F', aim: 'Into F from C: the first finger lies across the top two strings at the first fret.' } },
+  guitar: { ...G_FAMILY, barre: { set: { prFromRoot: 'C', prToRoot: 'F' }, title: 'First barre: F', aim: 'Into F from C: the first full barre. Roll the first finger a little onto its side.' } }
+};
+/** An exercise as it starts on an instrument (its chords, keys and words) */
+function exerciseFor(ex, instrumentId) {
+  const family = instrumentFamily(instrumentId);
+  if (!ex || family === 'uke') return ex;
+  const o = OVERRIDES[family][ex.id] || {};
+  const set = {};
+  for (const [k, v] of Object.entries(ex.set || {})) {
+    set[k] = /^pr(Chords|DrillSet|PickChords)$/.test(k) && G_FAMILY_SETS[v] ? G_FAMILY_SETS[v] : v;
+  }
+  return { ...ex, ...o, set: { ...set, ...(o.set || {}) } };
+}
+
 module.exports = {
+  instrumentFamily, exerciseFor,
   planText,
   CATEGORIES, EXERCISES, DEFAULT_ROUTINES, exercise, PROGRESSIONS, KEY_NOTES, progressionChords,
   LADDER, strumPlan, applyDynamics, metronomeSchedule, tapTempo, drillChords,
