@@ -4,6 +4,28 @@ How to run every job that keeps ukemusic working and its website up to date: the
 
 All commands are run in the project folder (`C:\Users\markb\Desktop\cowork\ukemusic` on Mark's computer). In PowerShell, type **one command per line**: PowerShell doesn't understand `&&`.
 
+## Commands at a glance
+
+| Command | What it does | Time | Result |
+|---|---|---|---|
+| `npm start` | Runs the desktop app from the code, with your own songs and settings | seconds | the app opens |
+| `npm test` | Runs every test | ~20 s | `✓` per test; a `✗` names any that fail |
+| `npm run build:web` | Builds the web player and the website's generated pages | 1–2 min | `web/out/`, pages and sitemap in `site/` |
+| `npx serve web/out` | Serves the built web player so you can try it in a browser | until Ctrl+C | http://localhost:3000 |
+| `npm run site-check` | Checks every website page as search engines do (titles, descriptions, addresses, headings, alt text, links, sitemap) | seconds | `all 19 pages pass`, or a list of problems |
+| `npm run site-pictures` | Retakes every website picture and the gallery from the app as it is now | ~10 min | `site/img/`, `site/gallery/` |
+| `npm run site-pictures -- img editor` | Retakes just those pictures (names without `.webp`) | 1–2 min | those files in `site/img/` |
+| `npm run ui-review` | Pictures of every screen (desktop, iPad, iPhone) in one review page | 20–30 min | `UI review/index.html` |
+| `npm run ui-review -- desktop R` | Just one app and section of the UI review | a few min | the same page, those screens retaken |
+| `node tools/sync-practice.js` | Checks Free Practice is the same in the desktop app and the web player | a second | `Desktop/web practice parity checked.` |
+| `node tools/sync-practice.js --from-web` | Copies Free Practice changes made in the web files into `index.html` | a second | `index.html` updated |
+| `npm run build:chords` | Rebuilds the chord libraries from chords-db and the hand-checked shapes | seconds | `src/chords*.json` |
+| `npm run build` | Makes the desktop app, unpacked, to try | a few min | `dist/` |
+| `npm run package:win` | Makes a Windows installer here (`package:mac`, `package:linux` likewise) | a few min | `dist/*.exe` |
+| `node tools/release-notes.js v4.63.0` | Prints that version's CHANGELOG section (GitHub uses it for release notes) | a second | the notes, on screen |
+| `git push` | Sends your commits to GitHub: the tests run, and the website is rebuilt and published | ~5 min on GitHub | Actions → Tests, Website |
+| GitHub: Releases → Draft a new release | Builds the installers and adds them and the notes to the release | ~15 min on GitHub | the release page |
+
 ## Which task, when
 
 | You've… | Run | Section |
