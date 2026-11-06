@@ -26,7 +26,7 @@ The order (ukulele, low-G ukulele, baritone, guitar) is the order of every menu.
 ### Choosing the instrument
 
 - **For one song**: the **Instrument** menu on the **This song** tab. It's saved with the song.
-- **For new songs**: Settings → All songs → Instrument and chord diagrams.
+- **For new songs**: Settings → All songs → **Your instrument** (the first setting; ukemusic asks the first time it starts). A new song is made for it and keeps that instrument even if you change the default later. A song saved as a new song, or written out with a picking pattern, keeps the instrument of the song it came from.
 - A song can also follow the default: Settings → This song → Instrument → *Use default*.
 
 Existing songs carry on as ukulele songs.
@@ -58,7 +58,7 @@ They still go in the song's `exports` folder, in a subfolder for each key (`Orig
 
 ### Left-handed
 
-Settings → All songs → Instrument and chord diagrams → **Left-handed (mirror the diagrams)**. The strings run the other way across every diagram, matching a left-handed instrument: on screen, in exports and PDFs. One setting covers all songs and instruments.
+Settings → All songs → Chord diagrams → **Left-handed (mirror the diagrams)**. The strings run the other way across every diagram, matching a left-handed instrument: on screen, in exports and PDFs. One setting covers all songs and instruments.
 
 ---
 

@@ -349,7 +349,7 @@ async function launch() {
     await page.click('#settingsTabSong').catch(() => {}); await page.waitForTimeout(500);
     await shot('G1', 'Settings: this song');
     await page.click('#settingsTabAll'); await page.waitForTimeout(500);
-    const heads = ['Songs folder', 'Instrument and chord diagrams', 'How the chord sheet looks', 'Fonts, colours and printing', 'Stage copies', 'Playback and karaoke', 'App appearance'];
+    const heads = ['Songs folder', 'Chord diagrams', 'How the chord sheet looks', 'Fonts, colours and printing', 'Stage copies', 'Playback and karaoke', 'App appearance'];
     let n = 2;
     for (const h of heads) {
       const ok = await page.evaluate((h) => {

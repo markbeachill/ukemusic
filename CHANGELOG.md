@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.59.0
+
+### Your instrument
+- **The first time ukemusic starts, it asks what you play**: ukulele (soprano, concert or tenor), ukulele with low G, baritone ukulele or guitar. Then it asks where to keep your songs, as before.
+- **Settings → All songs starts with Your instrument.** It's the default for every song that hasn't been given an instrument of its own.
+- **A new song is made for your instrument, and keeps it.** If you change the default later, songs you've already made stay as they are. A song saved as a new song, or written out with a picking pattern, keeps the instrument of the song it came from. A folder of ChordPro files is imported for your instrument.
+
 ## v4.58.0
 
 ### Right-click menus

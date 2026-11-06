@@ -2776,6 +2776,21 @@
                 <div id="allSettingsPane" class="settings-content" hidden>
                   <p class="settings-intro">Defaults for every song. Some of these can be changed for one song on the <strong>This song</strong> tab. Changing a default here changes every song that uses it.</p>
                   <div class="settings-groups">
+                    <!-- 4.59: the instrument you play comes first -->
+                    <section class="settings-group" id="set-instrument">
+                      <h3>Your instrument</h3>
+                      <div class="field">
+                        <label for="song-instrument">Instrument</label>
+                        <select id="song-instrument" class="instrument-select" data-config-path="song.instrument">
+                          <option value="soprano">Ukulele: soprano, concert, tenor (GCEA)</option>
+                          <option value="lowg">Ukulele with low G (concert, tenor)</option>
+                          <option value="baritone">Baritone ukulele (DGBE)</option>
+                          <option value="guitar">Guitar (EADGBE)</option>
+                        </select>
+                        <p class="help">New songs are made for this instrument, and so is every song that hasn't been given one of its own (This song → Instrument, or the ribbon). It decides the chord diagrams, how tab is shown (tab written for another instrument is converted), the notes played back, and the code in export names: _uke, _bar or _gtr.</p>
+                      </div>
+                    </section>
+
                     <section class="settings-group" id="set-library">
                       <h3>Songs folder</h3>
                       <div id="songsFolderLabel" class="folder-path">Not set</div>
@@ -2794,17 +2809,7 @@
                     </section>
 
                     <section class="settings-group" id="set-chords">
-                      <h3>Instrument and chord diagrams</h3>
-                      <div class="field">
-                        <label for="song-instrument">Instrument</label>
-                        <select id="song-instrument" class="instrument-select" data-config-path="song.instrument">
-                          <option value="soprano">Ukulele: soprano, concert, tenor (GCEA)</option>
-                          <option value="lowg">Ukulele with low G (concert, tenor)</option>
-                          <option value="baritone">Baritone ukulele (DGBE)</option>
-                          <option value="guitar">Guitar (EADGBE)</option>
-                        </select>
-                        <p class="help">Decides the chord diagrams, how tab is shown (tab written for another instrument is converted), the notes played back, and the code in export names: _uke, _bar or _gtr.</p>
-                      </div>
+                      <h3>Chord diagrams</h3>
                       <div class="toggle-row">
                         <label for="diagrams-enable">Show chord diagrams</label>
                         <input id="diagrams-enable" type="checkbox" data-config-path="diagrams.enable" />
@@ -3689,6 +3694,24 @@
         <button id="learnChangesDrill" type="button" title="Free Practice's shapes drill, with this song's chords">Drill all the shapes</button>
         <div class="right"><button id="learnChangesClose" class="primary" type="button">Close</button></div>
       </div>
+    </dialog>
+
+    <!-- 4.59: first run: the instrument you play, before choosing the songs folder -->
+    <dialog id="instrumentDialog">
+      <form id="instrumentForm" method="dialog">
+        <h2>Welcome to ukemusic</h2>
+        <p class="dialog-note" style="margin:0 0 10px">What do you play? Chord shapes, tab and playback are set for it. You can change it any time in Settings → All songs, or for one song.</p>
+        <div id="instrumentChoices" role="radiogroup" aria-label="Instrument" style="display:grid;gap:6px;margin:0 0 6px">
+          <label><input type="radio" name="firstInstrument" value="soprano" checked /> Ukulele: soprano, concert or tenor (GCEA)</label>
+          <label><input type="radio" name="firstInstrument" value="lowg" /> Ukulele with low G (concert, tenor)</label>
+          <label><input type="radio" name="firstInstrument" value="baritone" /> Baritone ukulele (DGBE)</label>
+          <label><input type="radio" name="firstInstrument" value="guitar" /> Guitar (EADGBE)</label>
+        </div>
+        <div class="dialog-actions">
+          <span></span>
+          <div class="right"><button id="instrumentOk" class="primary" type="submit">Next: where to keep your songs</button></div>
+        </div>
+      </form>
     </dialog>
 
     <dialog id="titleDialog">
@@ -4722,6 +4745,32 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         }
 
         // Returns the songs folder, asking the user to choose one if it isn't set or has gone missing.
+        // 4.59: the instrument a new song is made for: the default in Settings → All songs
+        function defaultInstrumentId() {
+          return window.ukemusic.instrument(state.config?.song?.instrument).id;
+        }
+
+        // 4.59: first run: which instrument do you play? It becomes the default (Settings → All songs)
+        function askFirstInstrument() {
+          const dialog = document.getElementById('instrumentDialog');
+          const current = defaultInstrumentId();
+          for (const input of dialog.querySelectorAll('input[name="firstInstrument"]')) input.checked = input.value === current;
+          return new Promise((resolve) => {
+            dialog.addEventListener('close', async () => {
+              const chosen = dialog.querySelector('input[name="firstInstrument"]:checked')?.value || current;
+              if (chosen !== state.config.song?.instrument) {
+                state.config.song = { ...(state.config.song || {}), instrument: chosen };
+                try { await persistConfig(); } catch (error) { window.ukemusicLogError('Could not save the instrument', error); }
+                populateSettingsForm();
+                renderPreviewNow();
+              }
+              resolve(chosen);
+            }, { once: true });
+            dialog.showModal();
+          });
+        }
+        window.ukemusicAskFirstInstrument = askFirstInstrument; // for the tests
+
         async function ensureSongsFolder() {
           const current = state.config?.library?.songs_folder || '';
           if (current && await window.ukemusic.songsFolderExists(current)) {
@@ -4908,6 +4957,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           // A new song starts in 4/4 with the Island strum (the template's {D-DU-UDU})
           settings.song.beats_per_bar = 4;
           settings.playback = { ...(settings.playback || {}), default_strum: 'island' };
+          settings.song.instrument = defaultInstrumentId(); // 4.59: made for your instrument, and stays so
           const song = await window.ukemusic.createSong({ songsFolder, title, content: NEW_SONG_TEMPLATE, settings });
           adoptSong(song);
           setDocumentContent(song.content);
@@ -5046,6 +5096,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const settings = window.ukemusic.pickSongSettings(
             mergeConfig(base, { song: { transpose: state.transpose, ...(pending?.settings || {}) }, ...(pending?.extra || {}) })
           );
+          // 4.59: the new song keeps an instrument of its own: the song it's copied from (Save as new),
+          // the one chosen for it before saving, or the default
+          settings.song = { ...(settings.song || {}), instrument: settings.song?.instrument || songInstrument().id };
           const previousTitle = state.song?.title;
           const keptBefore = state.chordPro || '';
           const importedFrom = state.importSource;
@@ -10871,7 +10924,7 @@ function showTab(tab) {
           const out = window.ukemusic.pickSong.writePickedSong(text, L.ir, schedule, { instrument: L.instrument.id, beats, compound: beats === 6, words, chordNames });
           // its settings: the song's own, in the new key, with no pattern (the tab is the picking)
           const settings = JSON.parse(JSON.stringify(state.songSettings || {}));
-          settings.song = { ...(settings.song || {}), transpose: 0 };
+          settings.song = { ...(settings.song || {}), transpose: 0, instrument: songInstrument().id }; // 4.59: the source song's instrument
           const setKey = window.ukemusic.keys.parse(settings.song.key);
           if (setKey) settings.song.key = window.ukemusic.keys.transpose(setKey, shift).name;
           if (settings.song.first_note) settings.song.first_note = window.ukemusic.picking.noteName(settings.song.first_note, transpose) || settings.song.first_note;
@@ -13597,8 +13650,9 @@ ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or del
           updateMenuState();
           focusEditor();
 
-          // First run: ask where songs should live
+          // First run: ask what you play (4.59), then where songs should live
           if (!state.config?.library?.songs_folder) {
+            await askFirstInstrument();
             await ensureSongsFolder();
           }
           // Start on the library (your songs), unless set to go straight back to the last song

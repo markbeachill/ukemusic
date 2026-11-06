@@ -104,6 +104,7 @@ function importFolder(source, songsFolder, options = {}) {
       }
       const settings = importSettings(converted.meta, instrumentId);
       settings.song.licence = 'personal';
+      settings.song.instrument = instrumentId; // 4.59: the instrument chosen for the import (your default)
       if (options.source) settings.song.source = options.source;
       try {
         const song = songs.createSong(songsFolder, check.title, converted.text, settings);
