@@ -32,6 +32,8 @@ jobs:
           cp -r site/. _site/
           cp -r web/out/. _site/app/
           rm -f _site/app/ukemusic-web.html
+      # Every page against the search engines' rules, links and the sitemap: a problem stops the update
+      - run: node tools/site-check.js _site
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

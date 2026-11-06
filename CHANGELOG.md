@@ -9,7 +9,8 @@
 
 ### The website, for search engines
 - **Every page has a title and description of the right length** for Bing and Google (titles under 70 characters, descriptions under 160), and the short ones (Perform, Practise, Teach…) say more about what's there.
-- **The guide pages and the gallery's song sheets** now have their own address and description for search engines, and the web player has one main heading.
+- **The guide pages and the gallery's song sheets** now have their own address and description for search engines, and the web player has one main heading. The gallery's song sheets are in the sitemap.
+- **The website is checked before it goes up.** Every page is checked as search engines check it (title and description lengths, its address, one main heading, picture descriptions, links that work, the sitemap); if any page fails, the website isn't updated and the problem is listed on GitHub. `npm run site-check` does the same check on your computer.
 
 ## v4.57.0
 

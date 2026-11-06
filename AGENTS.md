@@ -16,7 +16,7 @@ Most of the music logic lives in `src/` as plain functions, used by both. Change
 3. **Change the desktop app and the web player together** when a feature is in both. If you change one only, say why.
 4. **Free Practice is shared, word for word.** The practice markup, CSS and script are in `index.html` and in `web/pr_markup.html`, `web/pr_css.css` and `web/pr_js.js`. Edit the web fragments, then run `node tools/sync-practice.js --from-web` to copy them into `index.html`. That replaces everything between the practice markers in `index.html`, so **don't put anything else inside the practice block**: desktop-only CSS put there was lost in 4.50. Run `node tools/sync-practice.js` to check the two agree (the tests do too).
 5. **Every release:** raise `"version"` in `package.json` (and both places in `package-lock.json`), add a section to `CHANGELOG.md` (a test fails without one), add a row to the table in `HANDOVER.md`, add `test/vNNN.test.js` for what changed and list it in the `test` script in `package.json`.
-6. **Run `npm test` before finishing.** All tests must pass.
+6. **Run `npm test` before finishing.** All tests must pass. If you changed the website (`site/`, `web/pages.js`, `web/docs.js`, the web player's page), also run `node web/make.js` then `npm run site-check`: GitHub runs the same check before publishing and won't update the site if a page fails (titles 25–70 characters, descriptions 50–160, a canonical address, one h1, alt text, working links, every page in the sitemap).
 7. **Plain words for users.** Labels, help and changelog entries are written for ukulele players, not programmers: say what it does and where to find it.
 
 ## Where each kind of change goes

@@ -763,7 +763,10 @@ function galleryPageHead(html, title, slug) {
  *  Bing Webmaster Tools; the host's robots.txt isn't ours, so it can't point to it) */
 function sitemap() {
   const docs = ['guide.html', 'chordpro.html', 'changes.html', 'how-learn-works.html'];
-  const paths = ['', PRACTICE_PAGE.path, 'app/', ...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, ...docs];
+  // the gallery's song sheets are web pages too (4.58)
+  let sheets = [];
+  try { sheets = JSON.parse(fs.readFileSync(path.join(SITE, 'gallery', 'gallery.json'), 'utf8')).map((g) => `gallery/${g.slug}/sheet.html`).filter((f) => fs.existsSync(path.join(SITE, f))); } catch (_e) { sheets = []; }
+  const paths = ['', PRACTICE_PAGE.path, 'app/', ...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, ...docs, ...sheets];
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${paths.map((x) => `  <url><loc>${SITE_URL}${x}</loc></url>`).join('\n')}
