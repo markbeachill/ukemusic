@@ -24,6 +24,26 @@
       }
     };
   }
+  // 4.57: a song's settings as one string, to tell whether they changed since the last save.
+  // The order of keys, a number vs the same number as text, empty values and the settings
+  // format number are not differences.
+  function settingsKey(settings) {
+    const norm = (value) => {
+      if (value === undefined || value === null || value === '') return undefined;
+      if (Array.isArray(value)) return value.map(norm);
+      if (typeof value === 'object') {
+        const out = {};
+        for (const key of Object.keys(value).sort()) {
+          if (key === 'settings_format') continue;
+          const v = norm(value[key]);
+          if (v !== undefined) out[key] = v;
+        }
+        return Object.keys(out).length ? out : undefined;
+      }
+      return String(value);
+    };
+    return JSON.stringify(norm(settings) || {});
+  }
   function deletionInfo(song, linked) {
     const title = song?.title || 'this song';
     if (linked && song?.cloud?.folder) return {
@@ -85,7 +105,7 @@
       if (button) button.disabled = !player.playing;
     }
   }
-  const api = { createSaveQueue, deletionInfo, enterOverlay, updateTransport, memoryPlayLabel, setControlLabel };
+  const api = { createSaveQueue, settingsKey, deletionInfo, enterOverlay, updateTransport, memoryPlayLabel, setControlLabel };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.UkeSongUI = api;
 })(typeof window !== 'undefined' ? window : globalThis);

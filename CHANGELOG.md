@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.57.0
+
+### A song's settings are saved with the song
+- **Changing the instrument, tempo, time, key shift, the song's details or any of its settings now counts as an unsaved change**, the same as changing its words. The badge says **Unsaved changes**, **Save** keeps them, and closing the song or the app asks **Save, Discard or Cancel**. Before, these changes were written into the song straight away, so closing never asked and it looked as if they hadn't been kept.
+- **Save version** and **Remove version** still keep the version at once.
+- **A new song you haven't saved yet keeps its own settings.** Choosing an instrument (or tempo, or a ribbon setting) for it used to change the default for all songs; now it goes with the song when you save it. The defaults are in Settings → All songs, which still saves as you change them.
+
 ## v4.56.0
 
 ### Help from an AI chat, in more places

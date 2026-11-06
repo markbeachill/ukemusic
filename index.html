@@ -2732,7 +2732,7 @@
                 <button id="settingsTabAll" type="button" role="tab">All songs (defaults)</button>
               </div>
               <span class="settings-spacer"></span>
-              <span class="settings-saved">Changes are saved as you make them</span>
+              <span id="settingsSavedNote" class="settings-saved">Kept when you save the song</span>
               <button id="closeSettingsButton" type="button">Close</button>
             </div>
             <div class="settings-body">
@@ -4186,7 +4186,8 @@
           usingCodeMirror: false,
           transpose: 0,
           song: null,            // { title, folder, songFile, exportsFolder } when a song is open
-          songSettings: null,    // contents of the song's song.ini
+          songSettings: null,    // contents of the song's song.ini (4.57: also a new song's own settings before it's saved)
+          savedSongSettings: null, // song.ini as last saved: a difference is an unsaved change (4.57)
           suggestedTitle: '',    // from an imported file name
           chordLibraries: { soprano: null, baritone: null }
         };
@@ -4262,7 +4263,7 @@
 
         // General settings with the open song's settings on top
         function effectiveConfig() {
-          return state.song && state.songSettings
+          return state.songSettings // a new song not saved yet can have its own settings too (4.57)
             ? mergeConfig(state.config, state.songSettings)
             : state.config;
         }
@@ -4339,8 +4340,13 @@
           }
         }
 
+        // 4.57: the song's settings (instrument, tempo, key shift, details…) are part of Save, like its words
+        function songSettingsChanged() {
+          return UkeSongUI.settingsKey(state.songSettings) !== UkeSongUI.settingsKey(state.savedSongSettings);
+        }
+
         function updateDirtyState() {
-          state.dirty = getEditorValue() !== state.savedContent;
+          state.dirty = getEditorValue() !== state.savedContent || songSettingsChanged();
           dirtyLabel.textContent = state.dirty ? 'Unsaved changes' : (state.song ? 'Saved' : 'Not saved yet');
           dirtyLabel.classList.toggle('unsaved', state.dirty || !state.song);
           window.ukemusic.setDirtyState(state.dirty);
@@ -4622,6 +4628,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             exportsFolder: song.exportsFolder
           };
           state.songSettings = song.settings || window.ukemusic.pickSongSettings(newSongFacts());
+          state.savedSongSettings = clone(state.songSettings);
           state.transpose = Number(state.songSettings?.song?.transpose) || 0;
           state.suggestedTitle = '';
           state.config.library.last_song = song.folder;
@@ -4642,6 +4649,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           state.pendingImport = null;
           state.song = null;
           state.songSettings = null;
+          state.savedSongSettings = null;
           state.transpose = 0;
           state.suggestedTitle = suggestedTitle;
           loadNotes('');
@@ -4654,12 +4662,29 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           setDocumentContent(content, { markSaved });
         }
 
+        // 4.57: a change to the song's settings waits for Save, like a change to its words: the badge
+        // says "Unsaved changes" and closing the song or the app asks first. (Before, every change
+        // went straight into song.ini, so closing never asked and it looked as if nothing was kept.)
         async function persistSongSettings() {
+          updateDirtyState();
+        }
+
+        // Write song.ini (Save does this). With paths, only those settings go in, on top of what was
+        // last saved: Save version keeps the new version at once and leaves other changes unsaved.
+        async function writeSongSettingsNow(paths = null) {
           if (!state.song) return;
-          state.songSettings = await window.ukemusic.writeSongSettings({
-            folder: state.song.folder,
-            settings: state.songSettings
-          });
+          let settings = state.songSettings;
+          if (paths) {
+            settings = clone(state.savedSongSettings || {});
+            for (const p of paths) {
+              const value = getAt(state.songSettings, p);
+              if (value === undefined) deleteAt(settings, p); else setAt(settings, p, clone(value));
+            }
+          }
+          const written = await window.ukemusic.writeSongSettings({ folder: state.song.folder, settings });
+          if (!paths) state.songSettings = written;
+          state.savedSongSettings = clone(written);
+          updateDirtyState();
         }
 
         async function confirmLoseChanges() {
@@ -4977,6 +5002,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               if (ok !== 1) { setStatusMessage('Not saved: the song was left as it was.'); return false; }
               await window.ukemusic.saveSong({ songFile: state.song.songFile, content, allowEmpty: true });
             }
+            await writeSongSettingsNow(); // 4.57: the settings are saved with the words
             state.savedContent = getEditorValue();
             updateDirtyState();
             setStatusMessage(`Saved "${state.song.title}".`);
@@ -5016,7 +5042,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           state.pendingImport = null;
           // Save as new from a song: copy its facts and custom settings. From a scratch document:
           // just the facts (no defaults are copied — the new song follows the defaults).
-          const base = state.song ? clone(state.songSettings) : newSongFacts();
+          const base = state.song ? clone(state.songSettings) : mergeConfig(newSongFacts(), state.songSettings || {}); // 4.57: and a new song's own settings
           const settings = window.ukemusic.pickSongSettings(
             mergeConfig(base, { song: { transpose: state.transpose, ...(pending?.settings || {}) }, ...(pending?.extra || {}) })
           );
@@ -5881,7 +5907,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
 
           element.addEventListener('change', async () => {
             const path = dotted.split('.');
-            const saveToSong = songScoped && state.song;
+            const saveToSong = songScoped; // 4.57: a new song keeps its own settings too (it used to change the defaults)
+            if (saveToSong && !state.songSettings) state.songSettings = {};
             let target = saveToSong ? state.songSettings : state.config;
             for (let i = 0; i < path.length - 1; i += 1) {
               target[path[i]] = target[path[i]] || {};
@@ -6111,7 +6138,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         async function saveVersion(version, reason = '') {
           const list = window.ukemusic.versions.add(getVersions(), version);
           state.songSettings.versions = { list: window.ukemusic.versions.format(list) };
-          await setTranspose(version.semitones); // also writes song.ini
+          await setTranspose(version.semitones);
+          await writeSongSettingsNow(['versions', 'song.transpose']); // a saved version is kept at once (4.57)
           await addHistory(`Created version ${version.name}${reason ? ' ' + reason : ''}`);
           setStatusMessage(`Saved version "${version.name}". Exports for it go in exports\\${version.name}`);
         }
@@ -6244,6 +6272,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const list = window.ukemusic.versions.remove(getVersions(), version.semitones);
           state.songSettings.versions = { list: window.ukemusic.versions.format(list) };
           await setTranspose(0);
+          await writeSongSettingsNow(['versions', 'song.transpose']);
           await addHistory(`Removed version ${version.name}`);
           setStatusMessage(`Removed version "${version.name}".`);
         }
@@ -7109,6 +7138,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           document.getElementById('settingsTabSong').classList.toggle('active', tab === 'song');
           document.getElementById('settingsTabAll').classList.toggle('active', tab === 'all');
           document.getElementById('songSettingsPane').hidden = tab !== 'song';
+          // 4.57: this song's settings wait for Save, like its words; the defaults are saved at once
+          document.getElementById('settingsSavedNote').textContent = tab === 'song' ? 'Kept when you save the song' : 'Changes are saved as you make them';
           document.getElementById('allSettingsPane').hidden = tab !== 'all';
           settingsPanel.scrollTop = 0;
           buildSettingsNav();
@@ -9802,7 +9833,7 @@ function showTab(tab) {
                 input.setCustomValidity('');
                 state.songSettings = state.songSettings || {};
                 if (v === '' || v === 0) deleteAt(state.songSettings, path); else setAt(state.songSettings, path, v);
-                if (state.song) await persistSongSettings();
+                await persistSongSettings();
                 populateSettingsForm();
                 renderPreviewNow();
               } else if (!link) {
@@ -13282,30 +13313,15 @@ ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or del
 
         // ── View tab: how the song looks ──
         // 4.33: the ribbon always changes *this song* (Settings → All songs sets the defaults).
-        // It used to change every song unless the song already had its own value. With no song
-        // saved yet, it changes the defaults.
+        // It used to change every song unless the song already had its own value. 4.57: a new song
+        // not saved yet keeps the change too (it used to change the defaults), and Save keeps it.
         async function setLookSetting(changes) {
-          let songChanged = false;
-          let configChanged = false;
-          for (const [path, value] of changes) {
-            if (state.song) {
-              state.songSettings = state.songSettings || {};
-              setAt(state.songSettings, path, value);
-              songChanged = true;
-            } else {
-              setAt(state.config, path, value);
-              configChanged = true;
-            }
-          }
-          try {
-            if (songChanged) await persistSongSettings();
-            if (configChanged) await persistConfig();
-          } catch (error) {
-            setStatusMessage(`Could not save setting: ${error.message}`);
-          }
+          state.songSettings = state.songSettings || {};
+          for (const [path, value] of changes) setAt(state.songSettings, path, value);
+          await persistSongSettings();
           populateSettingsForm();
           renderPreviewNow();
-          if (songChanged) setNotice('Changed for this song. (The default for all songs is in Settings → All songs; "use default" in Settings → This song.)');
+          setNotice('Changed for this song. (The default for all songs is in Settings → All songs; "use default" in Settings → This song.)');
         }
         document.getElementById('viewDiagrams').addEventListener('change', (event) => {
           const value = event.target.value;
@@ -13332,7 +13348,7 @@ ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or del
           if (event.target.value === 'default') deleteAt(state.songSettings, 'export.stage_format');
           else setAt(state.songSettings, 'export.stage_format', event.target.value);
           try {
-            if (state.song) await persistSongSettings();
+            await persistSongSettings();
           } catch (error) {
             setStatusMessage(`Could not save setting: ${error.message}`);
           }
@@ -13345,7 +13361,7 @@ ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or del
           if (event.target.value === 'default') deleteAt(state.songSettings, 'export.section_names');
           else setAt(state.songSettings, 'export.section_names', event.target.value);
           try {
-            if (state.song) await persistSongSettings();
+            await persistSongSettings();
           } catch (error) {
             setStatusMessage(`Could not save setting: ${error.message}`);
           }
