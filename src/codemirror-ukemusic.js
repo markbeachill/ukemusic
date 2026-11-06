@@ -442,6 +442,16 @@ function createUkemusicEditor(options = {}) {
       view.dispatch({ changes: { from: sel.from, to: sel.to, insert }, selection: { anchor: sel.from + insert.length - Math.max(0, Number(back) || 0) }, userEvent: 'input.type', scrollIntoView: true });
       view.focus();
     },
+    // 4.58: a right-click at (x, y): the place in the text, with the cursor moved there unless the
+    // click is inside the selection (so Paste and Insert tab block go where you clicked)
+    contextPoint(x, y) {
+      const pos = view.posAtCoords({ x, y });
+      if (pos == null) return null;
+      const sel = view.state.selection.main;
+      if (pos < sel.from || pos > sel.to) view.dispatch({ selection: { anchor: pos } });
+      view.focus();
+      return pos;
+    },
     getCursor() {
       const head = view.state.selection.main.head;
       const line = view.state.doc.lineAt(head);

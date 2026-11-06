@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.58.0
+
+### Right-click menus
+- **Right-click wherever you can type** (the song, your notes, a song's details, Settings) for **Undo, Redo, Cut, Copy, Paste and Select all**. A misspelt word in your notes or details shows spelling suggestions and **Add to dictionary**. Right-click text you've selected in the preview to **Copy** it.
+- **In the song itself, right-click a chord** for **Chord shape for G…** (choose the shape you play) and **Practise changing G to Am** (Free Practice's chord switching, with that chord and the next one in the song). The names are the chords as the sheet shows them, in the key you're viewing and with your capo.
+- **Anywhere in the song**, the menu also has **Paste from website…**, **Tidy chords above words** and **Insert tab block**. Paste goes where you right-clicked, and a tab block goes on the line below it.
+
 ## v4.57.0
 
 ### A song's settings are saved with the song

@@ -106,6 +106,9 @@ function ensureEditorManager() {
     getCursor() {
       return editorInstance ? editorInstance.getCursor() : null;
     },
+    contextPoint(x, y) {
+      return editorInstance && editorInstance.contextPoint ? editorInstance.contextPoint(x, y) : null;
+    },
     execCommand(command) {
       return editorInstance ? editorInstance.execCommand(command) : false;
     },
@@ -409,6 +412,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
   editorLoadValue: (value) => ensureEditorManager().loadValue(value),
   editorFocus: () => ensureEditorManager().focus(),
   editorGetCursor: () => ensureEditorManager().getCursor(),
+  editorContextPoint: (x, y) => ensureEditorManager().contextPoint(x, y),
   editorExecCommand: (command) => ensureEditorManager().execCommand(command),
   editorGoToLine: (line) => ensureEditorManager().goToLine(line),
   editorInsert: (text, back) => ensureEditorManager().insertText(text, back),

@@ -5,6 +5,7 @@ const ini = require('ini');
 const { loadChordLibrary } = require('./src/chord-library');
 const songs = require('./src/song-library');
 const starters = require('./src/starters');
+const { attachContextMenu } = require('./src/context-menu');
 const setlists = require('./src/setlists');
 const libraries = require('./src/libraries');
 const { writeFileSafe } = require('./src/safe-write');
@@ -551,6 +552,7 @@ function createWindow() {
   });
 
   attachWindowLogging(mainWindow);
+  attachContextMenu(mainWindow, { Menu, sendAction: sendMenuAction }); // 4.58: right-click menu
   // Web links (Help → About) open in the browser, not in a new app window
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (/^https?:\/\//.test(url)) shell.openExternal(url);

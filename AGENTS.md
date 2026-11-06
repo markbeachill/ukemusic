@@ -4,7 +4,7 @@ This file is for AI coding assistants (Claude, Codex, Copilot and others) workin
 
 ukemusic is one program in two forms:
 
-- **The desktop app** (Electron): `main.js` (the main process: files, settings, menus, PDFs) and `index.html` (the whole window: markup, CSS and script in one large file).
+- **The desktop app** (Electron): `main.js` (the main process: files, settings, menus, PDFs; the right-click menu is `src/context-menu.js`) and `index.html` (the whole window: markup, CSS and script in one large file).
 - **The web player** (phones, tablets, any browser): `web/app.html`, built with the shared code in `src/` into `web/out/` by `node web/make.js`.
 
 Most of the music logic lives in `src/` as plain functions, used by both. Change it there once, not separately in each app.

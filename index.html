@@ -12858,6 +12858,67 @@ function showTab(tab) {
         document.getElementById('shapeReset').addEventListener('click', () => setSongShape(shapeChord.value, null));
         document.getElementById('shapeClose').addEventListener('click', () => shapeDialog.close());
         document.getElementById('shapesButton').addEventListener('click', () => openShapeDialog());
+
+        // ── 4.58: the song editor's right-click menu ──
+        // main.js (src/context-menu.js) asks for these on a right-click, then adds Undo, Cut, Copy,
+        // Paste… itself. null means the click wasn't in the song editor.
+        const contextRuns = new Map();
+        function isChordName(name) {
+          return window.ukemusic.parseSong(`[${name}]`).some((n) => n.type === 'chord' && !n.noChord);
+        }
+        // The [chord] under a place in the text, and the next different chord after it
+        function chordAtPosition(text, pos) {
+          const from = text.lastIndexOf('\n', pos - 1) + 1;
+          const end = text.indexOf('\n', pos);
+          const line = text.slice(from, end < 0 ? text.length : end);
+          const at = pos - from;
+          const bracket = /\[([^[\]\n]+)\]/g;
+          let hit = null;
+          for (let m; (m = bracket.exec(line));) {
+            if (line[m.index - 1] === '[' || line[m.index + m[0].length] === ']') continue; // [[Part]]
+            if (at >= m.index && at <= m.index + m[0].length && isChordName(m[1].trim())) { hit = { name: m[1].trim(), end: from + m.index + m[0].length }; break; }
+          }
+          if (!hit) return null;
+          const after = /\[([^[\]\n]+)\]/g;
+          after.lastIndex = hit.end;
+          for (let m; (m = after.exec(text));) {
+            const name = m[1].trim();
+            if (text[m.index - 1] === '[' || text[m.index + m[0].length] === ']') continue;
+            if (name !== hit.name && isChordName(name)) return { name: hit.name, next: name };
+          }
+          return { name: hit.name, next: null };
+        }
+        // A chord as the sheet shows it (in the key you're viewing, with the capo)
+        function shownChord(name) {
+          const shift = state.transpose - songCapo(effectiveConfig());
+          if (!shift) return name;
+          const ir = window.ukemusic.transposeIR(window.ukemusic.parseSong(`[${name}]`), shift, transposeOptions());
+          return ir.find((n) => n.type === 'chord')?.content || name;
+        }
+        window.ukemusicContextItems = (x, y) => {
+          const element = document.elementFromPoint(x, y);
+          if (!element || !element.closest('#editorHost')) return null;
+          contextRuns.clear();
+          const items = [];
+          const pos = window.ukemusic.editorContextPoint(x, y);
+          const hit = pos == null ? null : chordAtPosition(getEditorValue(), pos);
+          if (hit) {
+            const chord = shownChord(hit.name);
+            contextRuns.set('shape', () => openShapeDialog(chord));
+            items.push({ id: 'shape', label: `Chord shape for ${chord}…` });
+            if (hit.next) {
+              const to = shownChord(hit.next);
+              contextRuns.set('practise', () => practiseChange('chord-change', chord, to));
+              items.push({ id: 'practise', label: `Practise changing ${chord} to ${to}` });
+            }
+            items.push({ separator: true });
+          }
+          items.push({ action: 'paste-chord-sheet', label: 'Paste from website…' });
+          items.push({ action: 'convert-chord-lines', label: 'Tidy chords above words' });
+          items.push({ action: 'insert-tab', label: 'Insert tab block' });
+          return items;
+        };
+        window.ukemusicContextRun = (id) => { const run = contextRuns.get(id); if (run) run(); };
         preview.addEventListener('load', () => {
           const doc = preview.contentDocument;
           if (!doc) return;
