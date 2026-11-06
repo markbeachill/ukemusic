@@ -132,8 +132,8 @@ button { cursor: pointer; }
 .tool { flex: none; display: flex; align-items: center; gap: 4px; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
 .tool label, .tool .lab { font-size: 12px; font-weight: 700; color: var(--muted); padding: 0 4px 0 8px; text-transform: uppercase; letter-spacing: 0.05em; }
 .tool .val { min-width: 3.4em; text-align: center; font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
-#commonBtn { font-size: 14px; padding: 0 10px; }
-#commonBtn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+#commonBtn, #leftBtn { font-size: 14px; padding: 0 10px; }
+#commonBtn[aria-pressed="true"], #leftBtn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
 .tool button { min-width: 36px; min-height: 34px; border: 0; border-radius: 9px; background: var(--surface); font-weight: 700; font-size: 16px; }
 .tool select { min-height: 34px; border: 0; border-radius: 9px; background: var(--surface); padding: 0 6px; font-size: 14px; font-weight: 600; }
 .panel { max-width: 1100px; margin: 0 auto; padding-block: 14px 190px; }
@@ -427,6 +427,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div class="tool"><label for="diagrams">Shapes</label><select id="diagrams">
           <option value="song_start">At the top</option><option value="first_use">Where used</option><option value="none">None</option></select></div>
         <div class="tool"><button id="commonBtn" type="button" aria-pressed="false" title="No diagrams for the chords everyone knows: C, G, Am, F…">Common: shown</button></div>
+        <div class="tool"><button id="leftBtn" type="button" aria-pressed="false" title="Mirror every chord diagram for a left-handed instrument (Free Practice too)">Left-handed: off</button></div>
         <div class="tool"><label for="tuneSel">Tune</label><select id="tuneSel" title="Songs with their tune written in: the tune as notes on a staff"><option value="strip">At the top</option><option value="lines">Over every line</option><option value="off">Hidden</option></select></div>
         <div class="tool"><label for="lookSel">Look</label><select id="lookSel"><option value="standard">Song sheet</option><option value="stage">Stage copy</option></select></div>
         <div class="tool" id="stageFormatTool" hidden><label for="stageFormat">Stage</label><select id="stageFormat"><option value="compact">Compact</option><option value="clear">Clear</option><option value="brackets">Brackets [C]</option><option value="heavy">Heavy</option></select></div>
@@ -1379,6 +1380,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   // ── Song view ──
   const view = { song: null, panel: 'songPanel' };
   const look = local.get('look', { layout: 'lines', diagrams: 'song_start', size: 16 });
+  state.config.diagrams = { ...(state.config.diagrams || {}), left_handed: look.leftHanded === true }; // 4.64: Free Practice's starting point
   $('instrument').innerHTML = UMW.INSTRUMENTS.map((i) => `<option value="${i.id}">${esc(i.name)}</option>`).join('');
   // Key, capo, instrument and tempo: the song's own settings (from the desktop), changed here per device
   const devicePrefs = local.get('prefs', {});
@@ -1753,7 +1755,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
       strumStyle: 'compact',
       beatsPerBar: p.beats,
       tempo: p.tempo,
-      diagrams: { enable: look.diagrams !== 'none', placement: look.diagrams, show_fingers: true, skip_common: look.hideCommon === true },
+      diagrams: { enable: look.diagrams !== 'none', placement: look.diagrams, show_fingers: true, skip_common: look.hideCommon === true, left_handed: look.leftHanded === true },
       chordLibrary: library(),
       maxLineChars: look.layout === 'lines' ? charsAcross(sheet) : 0,
       tune: tuneOptions()
@@ -1809,6 +1811,8 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     $('lookSel').value = look.style || 'standard';
     $('commonBtn').setAttribute('aria-pressed', String(look.hideCommon === true));
     $('commonBtn').textContent = look.hideCommon ? 'Common: hidden' : 'Common: shown';
+    $('leftBtn').setAttribute('aria-pressed', String(look.leftHanded === true));
+    $('leftBtn').textContent = look.leftHanded ? 'Left-handed: on' : 'Left-handed: off';
     $('stageFormatTool').hidden = $('stageChorusTool').hidden = look.style !== 'stage';
     $('stageFormat').value = p.stageFormat;
     $('stageChorus').value = p.stageChorus;
@@ -1859,6 +1863,8 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   $('tuneSel').addEventListener('change', change(() => { look.tune = $('tuneSel').value; }, { song: false }));
   $('lookSel').addEventListener('change', change(() => { look.style = $('lookSel').value; }, { song: false }));
   $('commonBtn').addEventListener('click', change(() => { look.hideCommon = !look.hideCommon; }, { song: false }));
+  // 4.64: left-handed diagrams, on this device: the song sheets, prints and Free Practice
+  $('leftBtn').addEventListener('click', change(() => { look.leftHanded = !look.leftHanded; state.config.diagrams = { ...(state.config.diagrams || {}), left_handed: look.leftHanded }; }, { song: false }));
   $('stageFormat').addEventListener('change', change(() => { look.stageFormat = $('stageFormat').value; }, { song: false }));
   $('stageChorus').addEventListener('change', change(() => { look.stageChorus = $('stageChorus').value; }, { song: false }));
   $('textDown').addEventListener('click', change(() => { look.size = Math.max(11, look.size - 1); }, { song: false }));
@@ -1919,7 +1925,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   function sheetDocument(stage) {
     const p = prefs();
     const lib = library();
-    const base = { tune: tuneOptions(), layout: stage ? 'lines' : look.layout, strumStyle: 'compact', beatsPerBar: p.beats, tempo: p.tempo, diagrams: { enable: true, placement: 'song_start', show_fingers: true, skip_common: look.hideCommon === true }, chordLibrary: lib, maxLineChars: stage ? 48 : 0 };
+    const base = { tune: tuneOptions(), layout: stage ? 'lines' : look.layout, strumStyle: 'compact', beatsPerBar: p.beats, tempo: p.tempo, diagrams: { enable: true, placement: 'song_start', show_fingers: true, skip_common: look.hideCommon === true, left_handed: look.leftHanded === true }, chordLibrary: lib, maxLineChars: stage ? 48 : 0 };
     const ir = currentIr(stage ? stageText(played(view.song.text)) : played(view.song.text));
     const body = U.renderHTML(ir, stage ? stageOptions(base, 48, 680, 20) : base) + (U.shorthandKeyHtml ? U.shorthandKeyHtml(ir) : '');
     const k = keyText();

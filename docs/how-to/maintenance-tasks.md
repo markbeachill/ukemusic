@@ -261,5 +261,6 @@ After a release that changes the website, or now and then:
 | The tasks themselves | `package.json` (`scripts`) and `tools/` |
 | GitHub's automatic runs | `.github/workflows/` (`test.yml`, `web.yml`, `release.yml`) |
 | Which file to change for what | `AGENTS.md` |
+| The AI prompts (to change their wording) | `src/ai-prompts/` (plain text; see its README) |
 | Every version's changes, for people | `CHANGELOG.md` (also the website's What's new page) |
 | Every version's changes, for developers | `HANDOVER.md` |

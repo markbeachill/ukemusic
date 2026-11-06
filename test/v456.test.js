@@ -10,10 +10,9 @@ const ROOT = path.join(__dirname, '..');
 const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');
 const ai = require('../src/ai-prompt');
 
-test('the practice prompt is the one in docs/song-prep-prompt.md, and fills in what is known', () => {
-  const doc = read('docs/song-prep-prompt.md').replace(/\r\n/g, '\n');
-  const a = doc.indexOf('## The prompt\n\n```\n') + '## The prompt\n\n```\n'.length;
-  assert.strictEqual(ai.AI_PRACTICE_PROMPT, doc.slice(a, doc.indexOf('\n```\n', a)));
+test('the practice prompt (4.64: src/ai-prompts/ai-practice.txt, which the doc points to) fills in what is known', () => {
+  assert.strictEqual(ai.AI_PRACTICE_PROMPT, read('src/ai-prompts/ai-practice.txt').replace(/\r\n/g, '\n').replace(/\n+$/, ''));
+  assert.ok(read('docs/song-prep-prompt.md').includes('`src/ai-prompts/ai-practice.txt`'));
   const p = ai.practicePrompt({ title: 'Danny Boy', artist: 'Frederic Weatherly', instrument: 'guitar (EADGBE)', text: '[C]Words here' });
   assert.match(p, /- Song and artist: Danny Boy, Frederic Weatherly/);
   assert.match(p, /- Instrument: guitar \(EADGBE\)/);

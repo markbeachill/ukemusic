@@ -1,5 +1,16 @@
 # Changelog
 
+## v4.64.0
+
+### Ukulele, baritone or guitar, left- or right-handed
+- **The website's home page and the README now say it up front**: for ukulele, baritone ukulele and guitar, left- or right-handed. Both link to a new page, **Ukulele, baritone or guitar** (`instruments.html`). It explains the four instruments, choosing yours, songs with their own instrument, song sheets, playback and exports, Free Practice, and left-handed diagrams.
+- **The web player has Left-handed** under Display: every chord diagram mirrored on that device, on the song sheets, prints and Free Practice.
+
+### AI prompts
+- **The "ready to practise" prompt starts with a menu.** The AI asks which parts you want first: 1 Format, 2 Timing, 3 Parts, 4 Chords, 5 Strums, 6 Check by ear, 7 Practice notes, or A for all of them. Answer `1 2 5`, say, and come back for the rest later.
+- **The prompts are plain text files** in `src/ai-prompts/` (`ai-convert.txt`, `ai-practice.txt`). The desktop app, the web player and the website all use them, so one change reaches everything. The README there says how.
+- **The website's Bring your songs page** explains which prompt to use, the menu and what comes back. It links straight to them at `songs.html#ai-prompts`, as the README does.
+
 ## v4.63.0
 
 ### ChordPro export: closer to what other apps understand

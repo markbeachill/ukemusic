@@ -12,7 +12,7 @@ process.chdir(WEB);
 require('esbuild').buildSync({
   entryPoints: ['entry.js'], bundle: true, format: 'iife', globalName: 'UMW', platform: 'browser', minify: true,
   alias: { fs: './stubs/fs.js', path: './stubs/path.js', electron: './stubs/electron.js', zlib: './stubs/zlib.js' },
-  loader: { '.md': 'text' }, define: { __dirname: '"/app/src"' },
+  loader: { '.md': 'text', '.txt': 'text' }, define: { __dirname: '"/app/src"' },
   banner: { js: 'var process = { env: {}, resourcesPath: "", platform: "web", versions: {} };' },
   outfile: 'umw.js'
 });

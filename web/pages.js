@@ -34,7 +34,7 @@ function siteFooter() {
   return `<footer>
   <div class="wrap">
     <span>ukemusic by Mark Beachill · MIT licence · <a class="repo-link" href="https://github.com/markbeachill/ukemusic">ukemusic on GitHub</a></span>
-    <span class="ref">Reference: <a href="gallery.html">Gallery</a> · <a href="dropbox.html">Shared Dropbox folder</a> · <a href="phone.html">Phone and tablet</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a> · <a href="practice/">Free Practice: all exercises</a></span>
+    <span class="ref">Reference: <a href="gallery.html">Gallery</a> · <a href="dropbox.html">Shared Dropbox folder</a> · <a href="phone.html">Phone and tablet</a> · <a href="instruments.html">Ukulele, baritone or guitar</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a> · <a href="practice/">Free Practice: all exercises</a></span>
     <button class="theme" id="theme" type="button">Light / dark</button>
   </div>
 </footer>`;
@@ -254,11 +254,23 @@ const SONGS_PAGE = {
     <li><span><strong>Copy its answer into ukemusic</strong> with <b>File → Paste from website</b>, and save.</span></li>
     <li><span><strong>Press Play and check it</strong> against the original. The chords are usually right; the timing (how many bars each chord lasts) is the part to listen for.</span></li>
   </ol>
-  <h3 style="margin-top:32px">The prompt: tidy a sheet</h3>
-  <p>Puts a difficult sheet into ukemusic's format, and nothing more.</p>
+  <h3 id="ai-prompts" style="margin-top:32px">The prompts, to copy</h3>
+  <p><b>Which one?</b> To get a sheet into ukemusic quickly, use <b>tidy a sheet</b>. To get a song right for playing along and learning (the timing, the parts, strums, what to check), use <b>ready to practise</b>. Both keep to the words you give them.</p>
+  <h3 style="margin-top:24px">The prompt: tidy a sheet</h3>
+  <p>Puts a difficult sheet into ukemusic's format, and nothing more: the chords in their places, the parts named, a strum if the sheet gives one. At the end it lists anything it wasn't sure of. Copy it, paste your sheet where it says, and copy the answer into ukemusic.</p>
   <div class="prompt-box"><pre id="aiPrompt">${esc(AI_PROMPT)}</pre><button class="btn primary" type="button" data-copy="aiPrompt">Copy the prompt</button></div>
   <h3 style="margin-top:32px">The prompt: ready to practise</h3>
-  <p>For a song you want to practise, play along with and learn, from a website or already in ukemusic: it also gives each chord its length so playback follows the recording, names the parts the same way each time, suggests strums for your level, and lists what to check by ear and how to practise the hard bits. Fill in the first few lines about you and the song.</p>
+  <p>For a song you want to practise, play along with and learn, from a website or already in ukemusic. Fill in the first few lines about you and the song, and paste the sheet at the end. <b>The AI then shows a menu and waits</b>: answer with the numbers you want (for example <code>1 2 5</code>), or <code>A</code> for all of them, so you can do a little at a time.</p>
+  <ul class="facts" style="margin:14px 0 18px">
+    <li><strong>1. Format</strong>the song in ukemusic's format, your words kept exactly (always done)</li>
+    <li><strong>2. Timing</strong>every chord's length, so playback follows the recording</li>
+    <li><strong>3. Parts</strong>the same name for the same part, so repeats are recognised</li>
+    <li><strong>4. Chords</strong>checked against the song, with any change explained</li>
+    <li><strong>5. Strums</strong>patterns for your level</li>
+    <li><strong>6. Check by ear</strong>what it changed, guessed or wasn't sure of</li>
+    <li><strong>7. Practice notes</strong>the hard changes, easier shapes, a tempo to start at</li>
+  </ul>
+  <p>The answer: the song in a box to copy into ukemusic, the song's key, time, tempo and strums for its Info tab, then the checks and practice notes, which are worth keeping on the song's Notes tab.</p>
   <div class="prompt-box"><pre id="aiPracticePrompt">${esc(AI_PRACTICE_PROMPT)}</pre><button class="btn primary" type="button" data-copy="aiPracticePrompt">Copy the prompt</button></div>
   <div class="note-box" style="margin-top:28px"><p><b>Your sheet, your responsibility.</b> Use songs you have the right to use: your own copy, for your own practice or your club's. The prompt asks the AI to work only from the sheet you give it, and not to add or invent any words. ukemusic itself only ships songs that are out of copyright, and your songs stay on your computer.</p></div>
 </div></section>
@@ -526,6 +538,70 @@ ${bookHtml}
   }
 };
 
+// ── 4.64: Ukulele, baritone or guitar, left- or right-handed: how instruments work everywhere ──
+const INSTRUMENTS_PAGE = {
+  file: 'instruments.html', image: 'editor.webp',
+  title: 'Ukulele, baritone or guitar',
+  seoTitle: 'Ukulele, baritone or guitar, left- or right-handed · ukemusic',
+  blurb: 'ukemusic works for ukulele (high or low G), baritone ukulele and guitar, left- or right-handed: songs, chord sheets and Free Practice, all for what you play.',
+  body: () => `
+<div class="page-hero"><div class="wrap">
+  <p class="eyebrow">Your instrument</p>
+  <h1>Ukulele, baritone or guitar, left- or right-handed</h1>
+  <p class="lede">ukemusic is a ukulele app first, and works the same for a ukulele with a low G, a baritone ukulele and a guitar. Choose what you play once: your songs, chord sheets, playback and Free Practice all follow it, and left-handed players get every chord diagram mirrored.</p>
+  <div class="cta"><a class="btn primary" href="app/">Try it in your browser</a><a class="btn" href="./#get">Download the desktop app</a></div>
+</div></div>
+<section><div class="wrap">
+  <h2>The instruments</h2>
+  <p class="intro">A song is written once: a G is a G on every instrument. What you play decides the rest.</p>
+  <div class="grid two">
+    <div class="card"><h3>Ukulele (G C E A)</h3><p>Soprano, concert and tenor, with the high G. Ukulele chord shapes, tab on four strings, and real ukulele sounds.</p></div>
+    <div class="card"><h3>Ukulele with a low G</h3><p>The same shapes and tab as a high-G ukulele; playback sounds the G string an octave lower, as yours does.</p></div>
+    <div class="card"><h3>Baritone ukulele (D G B E)</h3><p>Baritone shapes (the top four strings of a guitar), tab for D G B E, and the baritone's own starting points in Free Practice.</p></div>
+    <div class="card"><h3>Guitar (E A D G B E)</h3><p>Guitar shapes with the muted strings marked, six-string tab, and steel or nylon sounds.</p></div>
+  </div>
+</div></section>
+<section><div class="wrap">
+  <h2>Your instrument: chosen once</h2>
+  <ul class="facts">
+    <li><strong>Asked at the start</strong>The desktop app asks what you play the first time it opens; the web player asks on your first visit.</li>
+    <li><strong>Change it any time</strong>Desktop: Settings → All songs → <b>Your instrument</b>, the first setting. Web player: <b>Your instrument</b>, under Your songs.</li>
+    <li><strong>New songs</strong>are made for your instrument, and keep it if you change the default later. A song copied from another keeps that one's.</li>
+    <li><strong>One song, another instrument</strong>Each song can have its own: its <b>Instrument</b> menu. Songs without one follow yours.</li>
+  </ul>
+</div></section>
+<section><div class="wrap">
+  <h2>Song sheets, playback and exports</h2>
+  <ul class="facts">
+    <li><strong>Chord diagrams</strong>for your instrument, on screen and in every PDF; click one to choose another shape for that song.</li>
+    <li><strong>Tab</strong>shown with your instrument's strings, and converted when it was written for another.</li>
+    <li><strong>Playback</strong>with your instrument's sound: ukulele, low G, baritone or guitar.</li>
+    <li><strong>A capo</strong>on any instrument: the sheet shows the shapes to finger, playback stays in the song's key.</li>
+    <li><strong>Exports</strong>say which instrument they're for (<code>_uke</code>, <code>_bar</code>, <code>_gtr</code>), so a club's ukulele and guitar copies never get mixed up.</li>
+    <li><strong>A club with mixed instruments</strong>shares one song file: each player sees it for their own instrument.</li>
+  </ul>
+</div></section>
+<section><div class="wrap">
+  <h2>Free Practice</h2>
+  <ul class="facts">
+    <li><strong>Follows your instrument</strong>(or the song's, when you come from a song): shapes, the fretboard, scales, tunes and the backing.</li>
+    <li><strong>Starts where you start</strong>On baritone and guitar the beginner chords are G, C, D and Em, the first barre is F and the blues is in E.</li>
+    <li><strong>Picking patterns</strong>are named with your strings: on a baritone or a guitar, "Up: D G B E".</li>
+    <li><strong>Chords by key, to print</strong>two pages for your instrument, with the keys that suit it.</li>
+    <li><strong>Scores for each instrument</strong>so a guitar score isn't compared with a ukulele one.</li>
+  </ul>
+</div></section>
+<section><div class="wrap">
+  <h2>Left-handed</h2>
+  <p class="intro">Turn on left-handed and every chord diagram is mirrored, with the strings running the other way, as on a left-handed instrument: on screen, in every export and PDF, the Chords by key sheet and Free Practice. One setting covers every song and instrument.</p>
+  <ul class="facts">
+    <li><strong>Desktop</strong>Settings → All songs → Chord diagrams → <b>Left-handed</b>.</li>
+    <li><strong>Web player</strong>Display → <b>Left-handed</b>, on that device.</li>
+  </ul>
+  <div class="next-pages" style="margin-top:20px"><a class="btn primary" href="app/">Try it in your browser</a><a class="btn" href="practice/">Free Practice</a><a class="btn" href="chord-sheets.html">Chord sheets</a><a class="btn" href="https://github.com/markbeachill/ukemusic/blob/main/INSTRUMENTS.md">The details, on GitHub</a></div>
+</div></section>`
+};
+
 // ── Free Practice, as a page of its own (practice/): every exercise written out from the practice
 // catalogue itself, so the page always matches the app; for people, search engines and AI assistants
 // who need to see what's there without running the app
@@ -649,7 +725,7 @@ ${catHtml}
   <h3>Is it really free?</h3><p>Yes. ukemusic is free and open source under the MIT licence. There's no paid version, no account and no adverts.</p>
   <h3>Where's the source code?</h3><p>On GitHub: <a href="https://github.com/markbeachill/ukemusic">github.com/markbeachill/ukemusic</a>, with the <a href="https://github.com/markbeachill/ukemusic/blob/main/LICENSE">licence</a> and the <a href="https://github.com/markbeachill/ukemusic/blob/main/THIRD_PARTY_NOTICES.md">third-party notices</a> (the ukulele sounds are CC0 recordings from FreePats).</p>
   <h3>Does it work on an iPhone, iPad or Android phone?</h3><p>Yes: the web player runs in Safari, Chrome, Edge and Firefox. Add it to your Home Screen and it opens like an app, and works without a connection.</p>
-  <h3>Is it only for ukulele?</h3><p>It's for ukulele first, and works the same for ukulele with a low G, baritone ukulele and guitar: choose yours and the chord shapes, tab, playback and Free Practice follow it. On baritone and guitar the exercises start with G, C, D and Em, where those players start.</p>
+  <h3>Is it only for ukulele?</h3><p>It's for ukulele first, and works the same for ukulele with a low G, baritone ukulele and guitar: choose yours and the chord shapes, tab, playback and Free Practice follow it. On baritone and guitar the exercises start with G, C, D and Em, where those players start. Left-handed players can mirror every chord diagram. <a href="instruments.html">How instruments work</a>.</p>
   <h3>Do I need to read music?</h3><p>No. Exercises show the notes and chords on a fretboard as they come, and songs are chord sheets with the strum written out.</p>
 </div></section>`;
   }
@@ -743,13 +819,14 @@ function build() {
   for (const p of PAGES) fs.writeFileSync(path.join(SITE, p.file), wrapPage(p, pageBody(p), siteCss));
   fs.writeFileSync(path.join(SITE, SONGS_PAGE.file), wrapPage(SONGS_PAGE, SONGS_PAGE.body(), siteCss));
   fs.writeFileSync(path.join(SITE, PHONE_PAGE.file), wrapPage(PHONE_PAGE, PHONE_PAGE.body(), siteCss));
+  fs.writeFileSync(path.join(SITE, INSTRUMENTS_PAGE.file), wrapPage(INSTRUMENTS_PAGE, INSTRUMENTS_PAGE.body(), siteCss));
   fs.writeFileSync(path.join(SITE, DROPBOX_PAGE.file), wrapPage(DROPBOX_PAGE, DROPBOX_PAGE.body(), siteCss));
   fs.writeFileSync(path.join(SITE, GALLERY_PAGE.file), wrapPage(GALLERY_PAGE, GALLERY_PAGE.body(), siteCss));
   const practiceBody = PRACTICE_PAGE.body();   // (sets its description and structured data)
   fs.mkdirSync(path.join(SITE, PRACTICE_PAGE.dir), { recursive: true });
   fs.writeFileSync(path.join(SITE, PRACTICE_PAGE.file), wrapPage(PRACTICE_PAGE, practiceBody, siteCss));
   fs.writeFileSync(path.join(SITE, 'sitemap.xml'), sitemap());
-  return [...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, PRACTICE_PAGE.file, 'sitemap.xml'];
+  return [...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, INSTRUMENTS_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, PRACTICE_PAGE.file, 'sitemap.xml'];
 }
 
 /** A gallery song's web page (sheet.html, as the app exports it) with a title, a description and
@@ -770,7 +847,7 @@ function sitemap() {
   // the gallery's song sheets are web pages too (4.58)
   let sheets = [];
   try { sheets = JSON.parse(fs.readFileSync(path.join(SITE, 'gallery', 'gallery.json'), 'utf8')).map((g) => `gallery/${g.slug}/sheet.html`).filter((f) => fs.existsSync(path.join(SITE, f))); } catch (_e) { sheets = []; }
-  const paths = ['', PRACTICE_PAGE.path, 'app/', ...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, ...docs, ...sheets];
+  const paths = ['', PRACTICE_PAGE.path, 'app/', ...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, INSTRUMENTS_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, ...docs, ...sheets];
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${paths.map((x) => `  <url><loc>${SITE_URL}${x}</loc></url>`).join('\n')}
@@ -778,5 +855,5 @@ ${paths.map((x) => `  <url><loc>${SITE_URL}${x}</loc></url>`).join('\n')}
 `;
 }
 
-module.exports = { build, wrapPage, galleryPageHead, PRACTICE_PAGE, sitemap, SITE_URL, PAGES, SONGS_PAGE, PHONE_PAGE, DROPBOX_PAGE, GALLERY_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
+module.exports = { build, wrapPage, galleryPageHead, PRACTICE_PAGE, sitemap, SITE_URL, PAGES, SONGS_PAGE, PHONE_PAGE, INSTRUMENTS_PAGE, DROPBOX_PAGE, GALLERY_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
 if (require.main === module) console.log('pages:', build().join(', '));
