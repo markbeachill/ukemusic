@@ -79,6 +79,9 @@
   @media print {
     .strum-box .sb-a.acc { color: #000; }
   }
+  .line-group.blank-extra { display: none; }
+  .line-group.blank-before-heading { display: none; }
+  [data-sections="hide"] .line-group.blank-before-heading { display: block; }
   .chord-grid .bar { color: var(--text-color, #333); font-weight: 400; }
   .chord-grid .bar-repeat { color: var(--text-color, #333); font-weight: 700; }
   .repeat-mark { font-family: var(--font-family, system-ui, sans-serif); font-weight: 800; color: var(--text-color, #333); border: 1.5px solid currentColor; border-radius: 0.3em; padding: 0 0.35em; margin-left: 0.4em; white-space: nowrap; }
@@ -169,12 +172,6 @@ body {
 }
 
 .lyrics:empty { min-height: var(--verse-spacing); }
-/* 4.56: a blank line that ends a part isn't shown when the next part's heading follows (the
-   heading leaves its own gap: both together looked like double spacing), and two or more blank
-   lines in a row show as one. With the part names hidden, the blank line is the gap, so it stays. */
-.song-section > .line-group:last-child:has(> .lyrics:empty:only-child) { display: none; }
-[data-sections="hide"] .song-section:not(.section-cue) > .line-group:last-child:has(> .lyrics:empty:only-child) { display: block; }
-.line-group:has(> .lyrics:empty:only-child) + .line-group:has(> .lyrics:empty:only-child) { display: none; }
 
 .chords {
   font-family: var(--monospace-font);
@@ -375,7 +372,7 @@ body {
 <div class="line-group" data-line="9"><div class="chords">&nbsp;&nbsp;&nbsp;<span class="chord">G</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">Am</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">D7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G</span></div><div class="lyrics">Or&nbsp;when&nbsp;the&nbsp;valley&#39;s&nbsp;hushed&nbsp;and&nbsp;white&nbsp;with&nbsp;snow,</div></div>
 <div class="line-group" data-line="10"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">Fm</span></div><div class="lyrics">It&#39;s&nbsp;I&#39;ll&nbsp;be&nbsp;here&nbsp;in&nbsp;sunshine&nbsp;or&nbsp;in&nbsp;shadow,</div></div>
 <div class="line-group" data-line="11"><div class="chords">&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">Am</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">Oh&nbsp;Danny&nbsp;boy,&nbsp;oh&nbsp;Danny&nbsp;boy,&nbsp;I&nbsp;love&nbsp;you&nbsp;so!</div></div>
-<div class="line-group"><div class="lyrics"></div></div>
+<div class="line-group blank-before-heading"><div class="lyrics"></div></div>
 </section>
 <section class="song-section">
 <h2 class="section">Verse 2</h2>

@@ -79,6 +79,9 @@
   @media print {
     .strum-box .sb-a.acc { color: #000; }
   }
+  .line-group.blank-extra { display: none; }
+  .line-group.blank-before-heading { display: none; }
+  [data-sections="hide"] .line-group.blank-before-heading { display: block; }
   .chord-grid .bar { color: var(--text-color, #333); font-weight: 400; }
   .chord-grid .bar-repeat { color: var(--text-color, #333); font-weight: 700; }
   .repeat-mark { font-family: var(--font-family, system-ui, sans-serif); font-weight: 800; color: var(--text-color, #333); border: 1.5px solid currentColor; border-radius: 0.3em; padding: 0 0.35em; margin-left: 0.4em; white-space: nowrap; }
@@ -169,12 +172,6 @@ body {
 }
 
 .lyrics:empty { min-height: var(--verse-spacing); }
-/* 4.56: a blank line that ends a part isn't shown when the next part's heading follows (the
-   heading leaves its own gap: both together looked like double spacing), and two or more blank
-   lines in a row show as one. With the part names hidden, the blank line is the gap, so it stays. */
-.song-section > .line-group:last-child:has(> .lyrics:empty:only-child) { display: none; }
-[data-sections="hide"] .song-section:not(.section-cue) > .line-group:last-child:has(> .lyrics:empty:only-child) { display: block; }
-.line-group:has(> .lyrics:empty:only-child) + .line-group:has(> .lyrics:empty:only-child) { display: none; }
 
 .chords {
   font-family: var(--monospace-font);
@@ -371,7 +368,7 @@ body {
 <div class="line-group" data-line="5"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">And&nbsp;I&#39;ve&nbsp;spent&nbsp;all&nbsp;me&nbsp;money&nbsp;on&nbsp;whiskey&nbsp;and&nbsp;beer,</div></div>
 <div class="line-group" data-line="6"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span></div><div class="lyrics">But&nbsp;now&nbsp;I&#39;m&nbsp;returning&nbsp;with&nbsp;gold&nbsp;in&nbsp;great&nbsp;store,</div></div>
 <div class="line-group" data-line="7"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">And&nbsp;I&nbsp;never&nbsp;will&nbsp;play&nbsp;the&nbsp;wild&nbsp;rover&nbsp;no&nbsp;more.</div></div>
-<div class="line-group"><div class="lyrics"></div></div>
+<div class="line-group blank-before-heading"><div class="lyrics"></div></div>
 </section>
 <section class="song-section">
 <h2 class="section">Chorus</h2>
@@ -379,7 +376,7 @@ body {
 <div class="line-group" data-line="11"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span></div><div class="lyrics">No,&nbsp;nay,&nbsp;never,&nbsp;no&nbsp;more,</div></div>
 <div class="line-group" data-line="12"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span></div><div class="lyrics">Will&nbsp;I&nbsp;play&nbsp;the&nbsp;wild&nbsp;rover,</div></div>
 <div class="line-group" data-line="13"><div class="chords">&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">No&nbsp;never,&nbsp;no&nbsp;more.</div></div>
-<div class="line-group"><div class="lyrics"></div></div>
+<div class="line-group blank-before-heading"><div class="lyrics"></div></div>
 </section>
 <section class="song-section">
 <h2 class="section">Verse 2</h2>
@@ -387,7 +384,7 @@ body {
 <div class="line-group" data-line="17"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">And&nbsp;I&nbsp;told&nbsp;the&nbsp;landlady&nbsp;me&nbsp;money&nbsp;was&nbsp;spent.</div></div>
 <div class="line-group" data-line="18"><div class="chords">&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span></div><div class="lyrics">I&nbsp;asked&nbsp;her&nbsp;for&nbsp;credit,&nbsp;she&nbsp;answered&nbsp;me&nbsp;&quot;Nay,</div></div>
 <div class="line-group" data-line="19"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">Such&nbsp;a&nbsp;custom&nbsp;as&nbsp;yours&nbsp;I&nbsp;could&nbsp;have&nbsp;any&nbsp;day.&quot;</div></div>
-<div class="line-group"><div class="lyrics"></div></div>
+<div class="line-group blank-before-heading"><div class="lyrics"></div></div>
 </section>
 <section class="song-section">
 <h2 class="section">Chorus</h2>
@@ -395,7 +392,7 @@ body {
 <div class="line-group" data-line="23"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span></div><div class="lyrics">No,&nbsp;nay,&nbsp;never,&nbsp;no&nbsp;more,</div></div>
 <div class="line-group" data-line="24"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span></div><div class="lyrics">Will&nbsp;I&nbsp;play&nbsp;the&nbsp;wild&nbsp;rover,</div></div>
 <div class="line-group" data-line="25"><div class="chords">&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">No&nbsp;never,&nbsp;no&nbsp;more.</div></div>
-<div class="line-group"><div class="lyrics"></div></div>
+<div class="line-group blank-before-heading"><div class="lyrics"></div></div>
 </section>
 <section class="song-section">
 <h2 class="section">Verse 3</h2>
@@ -403,7 +400,7 @@ body {
 <div class="line-group" data-line="29"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">And&nbsp;the&nbsp;landlady&#39;s&nbsp;eyes&nbsp;opened&nbsp;wide&nbsp;with&nbsp;delight.</div></div>
 <div class="line-group" data-line="30"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span></div><div class="lyrics">She&nbsp;said&nbsp;&quot;I&nbsp;have&nbsp;whiskeys&nbsp;and&nbsp;wines&nbsp;of&nbsp;the&nbsp;best,</div></div>
 <div class="line-group" data-line="31"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">And&nbsp;the&nbsp;words&nbsp;that&nbsp;I&nbsp;told&nbsp;you&nbsp;were&nbsp;only&nbsp;in&nbsp;jest.&quot;</div></div>
-<div class="line-group"><div class="lyrics"></div></div>
+<div class="line-group blank-before-heading"><div class="lyrics"></div></div>
 </section>
 <section class="song-section">
 <h2 class="section">Chorus</h2>
@@ -411,7 +408,7 @@ body {
 <div class="line-group" data-line="35"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span></div><div class="lyrics">No,&nbsp;nay,&nbsp;never,&nbsp;no&nbsp;more,</div></div>
 <div class="line-group" data-line="36"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span></div><div class="lyrics">Will&nbsp;I&nbsp;play&nbsp;the&nbsp;wild&nbsp;rover,</div></div>
 <div class="line-group" data-line="37"><div class="chords">&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">No&nbsp;never,&nbsp;no&nbsp;more.</div></div>
-<div class="line-group"><div class="lyrics"></div></div>
+<div class="line-group blank-before-heading"><div class="lyrics"></div></div>
 </section>
 <section class="song-section">
 <h2 class="section">Verse 4</h2>
@@ -419,7 +416,7 @@ body {
 <div class="line-group" data-line="41"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">And&nbsp;I&#39;ll&nbsp;ask&nbsp;them&nbsp;to&nbsp;pardon&nbsp;their&nbsp;prodigal&nbsp;son.</div></div>
 <div class="line-group" data-line="42"><div class="chords">&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">F</span></div><div class="lyrics">And&nbsp;when&nbsp;they&#39;ve&nbsp;caressed&nbsp;me&nbsp;as&nbsp;oft-times&nbsp;before,</div></div>
 <div class="line-group" data-line="43"><div class="chords">&nbsp;&nbsp;<span class="chord">C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">G7</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="chord">C</span></div><div class="lyrics">I&nbsp;never&nbsp;will&nbsp;play&nbsp;the&nbsp;wild&nbsp;rover&nbsp;no&nbsp;more.</div></div>
-<div class="line-group"><div class="lyrics"></div></div>
+<div class="line-group blank-before-heading"><div class="lyrics"></div></div>
 </section>
 <section class="song-section">
 <h2 class="section">Chorus</h2>
