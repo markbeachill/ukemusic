@@ -10,7 +10,7 @@ PowerShell, one line at a time. `curl.exe` is the real curl; plain `curl` in Pow
 
 ```
 curl.exe -s -o NUL -w "%{http_code}\n" https://markbeachill.github.io/ukemusic/practice/
-curl.exe -s https://markbeachill.github.io/ukemusic/practice/ | Select-String "All 39 exercises"
+curl.exe -s https://markbeachill.github.io/ukemusic/practice/ | Select-String "All 40 exercises"
 curl.exe -s https://markbeachill.github.io/ukemusic/sitemap.xml
 curl.exe -s -o NUL -w "%{http_code}\n" https://markbeachill.github.io/robots.txt
 curl.exe -s https://markbeachill.github.io/ukemusic/app/ | Select-String "noscript"
@@ -18,7 +18,7 @@ curl.exe -s https://markbeachill.github.io/ukemusic/app/ | Select-String "noscri
 
 What you should see:
 
-- **The practice page:** `200`, then a line containing "All 39 exercises".
+- **The practice page:** `200`, then a line containing "All 40 exercises".
 - **The sitemap:** the sitemap XML, with 16 addresses.
 - **robots.txt:** `404`, which is fine. There's no robots.txt at the host root, so everything may be crawled (see 4).
 - **The app:** a line containing `noscript`.
@@ -72,7 +72,7 @@ Bing's index also feeds several other search engines and AI assistants, so it's 
 
 On https://github.com/markbeachill/ukemusic, press the ⚙ beside **About**:
 
-- **Description:** `Free, open-source ukulele app: chord sheets, play-along and karaoke, learn songs by heart, and Free Practice with 39 exercises. Web player and Windows/Mac/Linux.`
+- **Description:** `Free, open-source ukulele app: chord sheets, play-along and karaoke, learn songs by heart, and Free Practice with 40 exercises. Web player and Windows/Mac/Linux.`
 - **Website:** `https://markbeachill.github.io/ukemusic/`
 - **Topics:** `ukulele`, `music-education`, `music-practice`, `chord-sheets`, `chordpro`, `guitar`, `baritone-ukulele`, `electron`, `pwa`, `open-source`
 - Tick **Releases** so the latest release shows.
@@ -95,7 +95,7 @@ Each of these has its own rules about promotion: read them before posting, say p
 
 A factual description to adapt:
 
-> ukemusic is free, open-source (MIT) software for learning and practising ukulele. Free Practice has 39 exercises in six categories (warm-ups, chord changes, strumming, fingerpicking, scales and melody, improvising), shown on a moving fretboard in time with a metronome, with routines and progress kept on your device. It comes with 10 public-domain songs to play along with, sing with karaoke and learn by heart. It runs in any current browser with nothing to install and no account, and as a desktop app for Windows, Mac and Linux. https://markbeachill.github.io/ukemusic/practice/
+> ukemusic is free, open-source (MIT) software for learning and practising ukulele. Free Practice has 40 exercises in six categories (warm-ups, chord changes, strumming, fingerpicking, scales and melody, improvising), shown on a moving fretboard in time with a metronome, with routines and progress kept on your device. It comes with 10 public-domain songs to play along with, sing with karaoke and learn by heart. It runs in any current browser with nothing to install and no account, and as a desktop app for Windows, Mac and Linux. https://markbeachill.github.io/ukemusic/practice/
 
 ## 7. Checks to repeat after each release
 

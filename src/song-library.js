@@ -232,7 +232,7 @@ function validateSongTitle(rawTitle, songsFolder) {
   if (ILLEGAL_CHARS.test(title)) return { ok: false, error: 'Titles can\'t contain any of these characters: < > : " / \\ | ? *' };
   if (WINDOWS_RESERVED.test(title)) return { ok: false, error: `"${title}" is a name Windows reserves — please choose another.` };
   if (title.length > MAX_TITLE_LENGTH) return { ok: false, error: `Titles can be at most ${MAX_TITLE_LENGTH} characters.` };
-  if ([EXPORTS_DIR, LEARN_DIR, 'setlists', 'archived songs', '.history'].includes(title.toLowerCase())) return { ok: false, error: 'Please choose another title.' };
+  if ([EXPORTS_DIR, LEARN_DIR, 'setlists', 'archived songs', 'practice sheets', '.history'].includes(title.toLowerCase())) return { ok: false, error: 'Please choose another title.' };
   if (songsFolder) {
     const clash = listFolderNames(songsFolder).find((name) => name.toLowerCase() === title.toLowerCase());
     if (clash) return { ok: false, error: `There's already a song folder called "${clash}".` };

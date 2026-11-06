@@ -130,6 +130,19 @@ function ensureEditorManager() {
 }
 
 contextBridge.exposeInMainWorld('ukemusic', {
+  // 4.61: the web player (the same code, built for the browser) or the desktop app
+  isWeb: typeof process !== 'undefined' && process.platform === 'web',
+  // 4.61: Chords by key (Free Practice): the page, and the desktop's PDF of it in "Practice sheets"
+  keyCharts: {
+    chartHtml: (options) => require('./key-charts').chartHtml(options),
+    chartKeys: (instrumentId) => require('./key-charts').chartKeys(instrumentId),
+    keyRow: (key) => require('./key-charts').keyRow(key),
+    PROGRESSIONS: require('./key-charts').PROGRESSIONS,
+    progressionIn: (id, key) => require('./key-charts').progressionIn(id, key),
+    keyName: (id, key) => require('./key-charts').keyName(id, key),
+    relativeMinor: (key) => require('./key-charts').relativeMinor(key)
+  },
+  practiceChartPdf: (payload) => ipcRenderer.invoke('practice:chartPdf', payload),
   logWrite: (entry) => ipcRenderer.send('log:write', entry),
   fileImport: () => ipcRenderer.invoke('file:import'),
   chooseSongsFolder: (currentFolder) => ipcRenderer.invoke('library:chooseFolder', currentFolder),

@@ -33,7 +33,7 @@
 
 **Free, open-source software for learning and practising ukulele**, with baritone ukulele and guitar too. It's MIT-licensed, with no account, no adverts and no paid version.
 
-- **Practise:** [Free Practice](https://markbeachill.github.io/ukemusic/practice/) has 39 exercises in six categories (warm-ups and finger work, chords and changes, strumming and rhythm, fingerpicking, scales and melody, improvising), shown on a moving fretboard in time with a metronome, plus timed routines and your progress (time practised, days in a row, best tempo, one-minute change scores). It's all in the free web player.
+- **Practise:** [Free Practice](https://markbeachill.github.io/ukemusic/practice/) has 40 exercises in six categories (warm-ups and finger work, chords and changes, strumming and rhythm, fingerpicking, scales and melody, improvising), shown on a moving fretboard in time with a metronome, plus timed routines and your progress (time practised, days in a row, best tempo, one-minute change scores). It's all in the free web player.
 - **Learn songs:** play along on real ukulele sounds, karaoke, learn a song by heart with the chords fading out, and drills for its hardest chord changes.
 - **Make chord sheets:** type the words with the chords in square brackets (or paste a sheet from a website), and get the chord sheet, the shapes, the strum, Stage copies for gigs, and songbooks.
 - **Music to start with:** 10 public-domain songs with their words, chords and strums (Amazing Grace, Danny Boy, Scarborough Fair, The Wild Rover and more), each with a note of where it comes from.
@@ -68,7 +68,7 @@ The chords go in square brackets where they're played; `{D-DU-UDU}` is the strum
 <td><img src="site/img/tune.webp" alt="Brahms' Lullaby with its tune drawn as notes"><br><b>Fingerpick it, with the tune.</b> Picking patterns, tab, and the tune drawn as notes on a staff.</td>
 </tr>
 <tr>
-<td><img src="site/img/practice.webp" alt="Free Practice: exercises by category"><br><b>Free Practice.</b> 39 exercises: warm-ups, chord changes, strumming, picking, scales and noodling, with routines and your progress.</td>
+<td><img src="site/img/practice.webp" alt="Free Practice: exercises by category"><br><b>Free Practice.</b> 40 exercises: warm-ups, chord changes, strumming, picking, scales and noodling, with routines and your progress.</td>
 <td><img src="site/img/session-setlist.webp" alt="The Session screen: a song on one screen for a group"><br><b>Play together.</b> Setlists, songbook PDFs, and the Session screen: the whole song on the TV for a club night.</td>
 </tr>
 <tr>
@@ -107,7 +107,7 @@ The guides and the changelog are pages of [the website](https://markbeachill.git
   - **Learn**: play from memory (the chords fading), a what-comes-next quiz, trouble spots to loop, the circle of fifths, the song's changes with what each finger does (and practice for each), numbers on the sheet, play it in another key, and a learn sheet (PDF and web page in the song's learn folder). How it works out a song, and how far to trust it: [How ukemusic helps you learn a song](docs/explanation/learning-a-song.md);
   - **Settings**: opens Settings.
 - The hint line under the tabs explains whatever the mouse is over.
-- **Free Practice**: 39 exercises for warm-ups, chords, rhythm, fingerpicking, scales and improvisation, plus timed routines. Exercises open directly with optional help just for that exercise. The last three started exercises, your settings, scores and routines are kept between visits. Phones have a compact playing view; one-minute changes lets you enter your count afterwards. Practice backups are separate from song backups.
+- **Free Practice**: 40 exercises for warm-ups, chords, rhythm, fingerpicking, scales and improvisation, plus timed routines. Exercises open directly with optional help just for that exercise. The last three started exercises, your settings, scores and routines are kept between visits. Phones have a compact playing view; one-minute changes lets you enter your count afterwards. Practice backups are separate from song backups.
 - The library's **Setlists** tab puts songs in order for a gig or club night and makes a **songbook PDF**. Songs can have an artist and tags to search by.
 - A song can be kept in several keys; each shows in the library as "Song (in F)", and **Make this the song's key** rewrites the song itself in a new key.
 - Each song has an **Info** tab (artist, year, written by, album, source, tags, difficulty, original key, time, tempo) beside Song and Notes. A song always opens on the Song tab.

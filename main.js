@@ -896,6 +896,19 @@ function registerIpc() {
     }
   }
 
+  // 4.61: Free Practice's Chords by key sheet, as a PDF in the songs folder's "Practice sheets", opened
+  handle('practice:chartPdf', async (_event, { songsFolder, fileName, html } = {}) => {
+    if (!songsFolder) throw new Error('Choose a songs folder first (Settings → All songs).');
+    const pdf = await renderPdf(html, 'A4', 'standard');
+    const dir = path.join(songsFolder, 'Practice sheets');
+    ensureDirectory(dir);
+    const target = path.join(dir, String(fileName || 'Chords by key.pdf').replace(/[<>:"/\\|?*]/g, ''));
+    await fsp.writeFile(target, pdf);
+    log.info('practice', `Chords by key written: ${target}`);
+    shell.openPath(target);
+    return target;
+  });
+
   // 4.54: how the last two-page Stage copy came out: { cols, once, spacing, px, pages, fits }
   handle('song:twoPagerResult', async () => lastTwoPager);
   handle('song:exportPdf', async (_event, { folder, subfolder, fileName, html, pageSize = 'A4', printStyle = 'standard' } = {}) => {

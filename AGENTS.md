@@ -34,7 +34,7 @@ Most of the music logic lives in `src/` as plain functions, used by both. Change
 | Karaoke | `src/karaoke.js` (timing) | Desktop karaoke is in `index.html`; the web's is in `web/k_markup.html` and `web/k_js.js` |
 | Learn (from memory, quiz, changes, learn sheet) | `src/learn.js`, `src/progressions.js` (chord patterns, keys, key changes) | Desktop Learn tab and dialogs in `index.html`; the web's Learn dialog in `web/app.html`; how it works: `docs/explanation/` |
 | Picking and the pick sheet | `src/picking.js`, `src/pick-sheet.js`, `src/pick-song.js` | |
-| Free Practice | `src/practice-catalog.js` (exercises), `src/training.js`, `src/finger-exercises.js`, `src/note-exercises.js`, `src/practice-progress.js`, `src/practice-help.js` | The screens: `web/pr_*` then `tools/sync-practice.js --from-web` (rule 4) |
+| Free Practice | `src/practice-catalog.js` (exercises), `src/training.js`, `src/finger-exercises.js`, `src/note-exercises.js`, `src/practice-progress.js`, `src/practice-help.js`, `src/key-charts.js` (Chords by key sheet and the keys per instrument); per-instrument starting chords: `exerciseFor()` in practice-catalog.js | The screens: `web/pr_*` then `tools/sync-practice.js --from-web` (rule 4) |
 | ChordPro import and export | `src/chordpro.js`, `src/chordpro-import.js`, `src/chordpro-fields.js` | `CHORDPRO.md` |
 | Pasting chord sheets from websites | `src/chord-sheet.js` | |
 | The songs folder, libraries, setlists | `src/song-library.js`, `src/libraries.js`, `src/setlists.js`, `src/zip.js` | File access is in `main.js` |

@@ -44,6 +44,12 @@
           <label class="pr-check" data-not="oneminute metronome noodle"><input id="prAutoFaster" type="checkbox"> Add 5 bpm after a clean round</label>
           <section class="pr-section" data-for="strum">
             <h3>Strum</h3>
+            <!-- 4.61: Progressions from memory -->
+            <label class="pr-check pr-memory-row" hidden title="Each Start picks a progression and a key for your instrument"><input id="prMemoryNew" type="checkbox" checked /> A new progression and key each time</label>
+            <label class="pr-check pr-memory-row" hidden><input id="prMemoryMinor" type="checkbox" checked /> Minor ones too</label>
+            <label class="pr-field pr-memory-row" hidden>Show the chords
+              <select id="prMemoryReveal"><option value="1">the second time round</option><option value="2">the third time round</option><option value="0">never (just the numbers)</option></select>
+            </label>
             <label class="pr-field">Pattern
               <select id="prStrum"></select>
             </label>

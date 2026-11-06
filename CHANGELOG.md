@@ -1,5 +1,21 @@
 # Changelog
 
+## v4.61.0
+
+### Chords by key, to print
+- **Free Practice → Chords & changes → Chords by key, to print**: two pages made for your instrument (and left-handed, if you've set that).
+  - Page 1 has a row for each key: the chords that belong together (I, ii, iii, IV, V, vi and V7) with their shapes. The four that play most songs (I, IV, V and vi) are shaded, and each key's relative minor is named, since it shares the row.
+  - Page 2 has the common progressions written out in every key: four major and four minor, plus a few lines on how to practise them.
+- **The keys suit the instrument**: C, G, F, D, A and B♭ on ukulele; G, C, D, A, E and F on baritone and guitar.
+- **Where it goes**: on the desktop it's a PDF in your songs folder, in Practice sheets, and it opens straight away. In the web player it opens the browser's Print, where you can save a PDF.
+
+### Progressions from memory
+- **A new exercise in Chords & changes.** It gives you only the key and the numbers ("In D major: I – V – vi – IV") and plays a backing. You find the chords; they appear, with their shapes, the second time round (or the third, or never).
+- **Each Start picks a new progression and key** for your instrument, major or minor (you can switch either off).
+
+### Minor progressions
+- **Common progressions has four minor ones**: i–iv–v, i–iv–V7–i, i–VI–III–VII and i–VII–VI–V (the Andalusian). Each is played in the key's relative minor (in C: A minor).
+
 ## v4.60.0
 
 ### Free Practice for your instrument

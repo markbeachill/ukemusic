@@ -40,7 +40,7 @@ test('best clean tempos are separate for different exercise setups', () => {
 });
 
 test('every exercise has its own named help and a concrete practice goal', () => {
-  assert.strictEqual(catalog.EXERCISES.length, 39);
+  assert.strictEqual(catalog.EXERCISES.length, 40);
   for (const exercise of catalog.EXERCISES) {
     const instructions = help.forExercise(exercise.id);
     assert.strictEqual(instructions.title, exercise.title);

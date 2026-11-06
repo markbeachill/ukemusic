@@ -250,6 +250,41 @@
             card.addEventListener('click', () => prOpen(e.id));
             return card;
           }));
+          if (cat.id === 'chords') $p('prCards').appendChild(prChartCard());
+        }
+        // ── 4.61: Chords by key, to print: two pages for your instrument (src/key-charts.js) ──
+        function prChartCard() {
+          const card = document.createElement('button');
+          card.type = 'button';
+          card.className = 'pr-card pr-card-print';
+          card.id = 'prChartPrint';
+          const name = window.ukemusic.instrument(prInstrument()).name;
+          card.innerHTML = `<span class="pr-card-top"><strong>🖨 Chords by key, to print</strong><span class="pr-badge beginner">Sheet</span></span>
+              <span class="pr-card-aim">Two pages for ${escapeHtmlText(name)}: the chords that belong together in each key, and the common progressions written out in every key, major and minor.</span>
+              <span class="pr-card-meta">${window.ukemusic.isWeb ? 'Opens your browser\'s Print (save as PDF there)' : 'A PDF in your songs folder, in Practice sheets'}</span>`;
+          card.addEventListener('click', prPrintChart);
+          return card;
+        }
+        async function prPrintChart() {
+          const inst = window.ukemusic.instrument(prInstrument());
+          const html = window.ukemusic.keyCharts.chartHtml({ instrumentId: inst.id, instrumentName: inst.name, diagram: (name) => prDiagram(name) });
+          if (window.ukemusic.isWeb) {
+            const frame = document.createElement('iframe');
+            frame.title = 'Print chords by key';
+            frame.style.cssText = 'position:fixed;width:1px;height:1px;left:-10000px';
+            frame.onload = () => { frame.contentWindow.addEventListener('afterprint', () => frame.remove(), { once: true }); frame.contentWindow.focus(); frame.contentWindow.print(); };
+            frame.srcdoc = html;
+            document.body.append(frame);
+            return;
+          }
+          const meta = $p('prChartPrint')?.querySelector('.pr-card-meta');
+          if (meta) meta.textContent = 'Making the PDF…';
+          try {
+            const file = await window.ukemusic.practiceChartPdf({ songsFolder: songsFolder(), fileName: `Chords by key (${inst.name}).pdf`, html });
+            if (meta) meta.textContent = file ? `Saved: ${file}` : 'Not saved';
+          } catch (error) {
+            if (meta) meta.textContent = `Couldn't make the PDF: ${String(error.message || error).replace(/^Error invoking remote method '[^']+': (Error: )?/, '')}`;
+          }
         }
         function prShowHome() {
           prSaveSettings();
@@ -294,6 +329,7 @@
           pr.finishedSeconds = 0;
           $p('prClean').hidden = ['oneminute', 'metronome', 'noodle'].includes(e.mode);
           prShowMode(e.mode, { quiet: true });
+          for (const row of practiceEl.querySelectorAll('.pr-memory-row')) row.hidden = !e.memory; // 4.61
           for (const [id, value] of Object.entries(e.set || {})) {
             const el = $p(id);
             if (!el) continue;
@@ -829,6 +865,8 @@
           const ex = prExercise();
           pr.ex = ex;
           pr.shown = {};
+          pr.memo = pr.exDef?.memory ? prMemoryInfo() : null; // 4.61: before Start, just the numbers
+          pr.memoryHide = true;
           if (ex.kind === 'notes') {
             pr.lastNote = null;
             pr.tabRound = null;
@@ -910,7 +948,56 @@
         }
 
         // ── Chord display ──
+        // ── 4.61: Progressions from memory: the key and the numbers; the chords show later ──
+        function prMemoryInfo() {
+          const id = $p('prProgression').value;
+          const prog = PL.PROGRESSIONS.find((p) => p.id === id);
+          if (!prog) return null;
+          const key = $p('prProgKey').value;
+          const chords = PL.progressionChords(id, key);
+          const numerals = prog.name.split(' ')[0].split('–');
+          const names = {};
+          chords.forEach((c, i) => { names[c] = numerals[i] || '?'; });
+          const reveal = Number($p('prMemoryReveal').value);
+          const keyLabel = prog.minor ? `${window.ukemusic.keyCharts.relativeMinor(key).replace(/m$/, '')} minor` : `${key} major`;
+          return { names, numerals, keyLabel, hideBars: reveal ? reveal * chords.length : Infinity };
+        }
+        // Each Start: a progression and a key you haven't just had, for your instrument
+        function prMemoryPick() {
+          if (!$p('prMemoryNew').checked) return;
+          const progs = PL.PROGRESSIONS.filter((p) => $p('prMemoryMinor').checked || !p.minor);
+          const keys = window.ukemusic.keyCharts.chartKeys(prInstrument());
+          const last = `${$p('prProgression').value}|${$p('prProgKey').value}`;
+          let pick;
+          for (let tries = 0; tries < 20; tries += 1) {
+            pick = [progs[Math.floor(Math.random() * progs.length)].id, keys[Math.floor(Math.random() * keys.length)]];
+            if (pick.join('|') !== last) break;
+          }
+          $p('prProgression').value = pick[0];
+          if (![...$p('prProgKey').options].some((o) => o.value === pick[1])) $p('prProgKey').appendChild(new Option(pick[1], pick[1]));
+          $p('prProgKey').value = pick[1];
+          $p('prChords').value = PL.progressionChords(pick[0], pick[1]).join(' ');
+        }
         function prShowChords(ex, nowName, nextName, { caption = null } = {}) {
+          const memo = pr.exDef?.memory && pr.memoryHide !== false ? pr.memo : null;
+          if (memo) {
+            const numeral = (name) => (name ? memo.names[name] || '?' : '');
+            const cap = `In ${memo.keyLabel}: ${memo.numerals.join(' – ')}`;
+            if (pr.shown.now !== `?${nowName}`) {
+              pr.shown.now = `?${nowName}`;
+              $p('prNowCaption').textContent = cap;
+              $p('prNowName').textContent = numeral(nowName) || '–';
+              $p('prNowDiagram').innerHTML = nowName ? '<div class="pr-memory-q" aria-label="Find this chord">?</div>' : '';
+              $p('prNowNote').textContent = '';
+            }
+            if (pr.shown.next !== `?${nextName}`) {
+              pr.shown.next = `?${nextName}`;
+              $p('prNextName').textContent = numeral(nextName) || '–';
+              $p('prNextDiagram').innerHTML = '';
+            }
+            return;
+          }
+          if (pr.exDef?.memory && pr.shown.now?.startsWith('?')) $p('prNowCaption').textContent = 'Now';
           const now = nowName || '';
           const next = nextName || '';
           if (caption !== null) $p('prNowCaption').textContent = caption;
@@ -1242,6 +1329,9 @@
             player.stop();
           }
           state.userStopped = true;
+          if (pr.exDef?.memory && fromBar === 0 && !demo) { prMemoryPick(); prSaveSettings(); }
+          pr.memo = pr.exDef?.memory ? prMemoryInfo() : null;
+          pr.memoryHide = Boolean(pr.memo && !demo);
           let ex = prExercise();
           if (demo && ex.kind === 'notes') {
             const firstRound = ex.notes[0] ? ex.notes[0].round : 0;
@@ -1481,6 +1571,7 @@
                 const forming = planBar.label === 'form';
                 prShowChords(ex, planBar.target, forming ? '' : (ex.barList[pr.from + barNo + 1]?.target || ''), { caption: forming ? 'Form it now' : 'Strum it' });
               } else {
+                if (pr.memo) pr.memoryHide = pr.from + barNo < pr.memo.hideBars;
                 prShowChords(ex, slot.chord, next ? next.chord : '');
               }
               const stepLen = barLen / stripSteps(slot.pattern, ex.beats).length;

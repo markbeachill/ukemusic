@@ -31,6 +31,7 @@ const EXERCISES = [
   { id: 'chord-change', cat: 'chords', level: 'Beginner', title: 'Chord switching', aim: 'Back and forth between two chords, in time.', mode: 'change', set: { prFromRoot: 'C', prFromType: '', prToRoot: 'F', prToType: '', prTempo: 70 } },
   { id: 'one-minute', cat: 'chords', level: 'Improver', title: 'One-minute changes', aim: 'How many clean changes in 60 seconds? Your scores are kept.', mode: 'oneminute', set: { prFromRoot: 'C', prFromType: '', prToRoot: 'F', prToType: '' } },
   { id: 'progressions', cat: 'chords', level: 'Improver', title: 'Common progressions', aim: 'I–V–vi–IV, the 50s, ii–V–I and more, in any key.', mode: 'strum', set: { prProgression: 'pop', prProgKey: 'C', prTempo: 80 } },
+  { id: 'progression-memory', cat: 'chords', level: 'Improver', title: 'Progressions from memory', aim: 'Just the key and the numbers (I–V–vi–IV in D) with a backing: find the chords yourself. They show on the next time round.', mode: 'strum', memory: true, set: { prProgression: 'pop', prProgKey: 'C', prStrum: 'D>DDD', prTempo: 70, prBars: '8', prMemoryNew: true, prMemoryMinor: true, prMemoryReveal: '1' } },
   { id: 'barre', cat: 'chords', level: 'Intermediate', title: 'Barre chords', aim: 'Into Bb from G: flatten one finger, keep the others relaxed.', mode: 'change', set: { prToRoot: 'Bb', prToType: '', prFromRoot: 'G', prFromType: '', prTempo: 60 } },
   { id: 'blues', cat: 'chords', level: 'Intermediate', title: '12-bar blues', aim: 'The blues in a key, with the shuffle.', mode: 'blues', set: { prTempo: 90 } },
   { id: 'arpeggios', cat: 'chords', level: 'Improver', title: 'Chord arpeggios', aim: 'The notes of each chord one at a time, instead of strummed.', mode: 'notes', set: { prNotesKind: 'picking', prPickPattern: 'updown', prPickChords: 'C Am F G', prPerBeat: '2', prTempo: 60 } },
@@ -102,7 +103,13 @@ const PROGRESSIONS = [
   { id: 'sad', name: 'vi–IV–I–V', degrees: ['6', '4', '1', '5'] },
   { id: 'twofive', name: 'ii–V–I (jazz)', degrees: ['2', '5:7', '1', '1'] },
   { id: 'circle', name: 'vi–ii–V–I (round the circle)', degrees: ['6', '2', '5:7', '1'] },
-  { id: 'country', name: 'I–IV–I–V', degrees: ['1', '4', '1', '5:7'] }
+  { id: 'country', name: 'I–IV–I–V', degrees: ['1', '4', '1', '5:7'] },
+  // 4.61: minor ones, in the key's relative minor (in C: A minor); :M is a major chord where the
+  // key's own would be minor (the minor key's V)
+  { id: 'minor-three', name: 'i–iv–v (minor: in C, A minor)', degrees: ['6', '2', '3'], minor: true },
+  { id: 'minor-v7', name: 'i–iv–V7–i (minor, with a 7th)', degrees: ['6', '2', '3:7', '6'], minor: true },
+  { id: 'epic', name: 'i–VI–III–VII (epic minor)', degrees: ['6', '4', '1', '5'], minor: true },
+  { id: 'andalusian', name: 'i–VII–VI–V (Andalusian, flamenco)', degrees: ['6', '5', '4', '3:M'], minor: true }
 ];
 
 /** The chords of a progression in a major key: ('pop', 'G') -> ['G', 'D', 'Em', 'C'] */
@@ -113,7 +120,7 @@ function progressionChords(id, key = 'C') {
   return prog.degrees.map((d) => {
     const [deg, extra] = String(d).split(':');
     const i = Number(deg) - 1;
-    return notes[i] + (extra === '7' ? '7' : DEGREE_QUALITY[i]);
+    return notes[i] + (extra === '7' ? '7' : extra === 'M' ? '' : DEGREE_QUALITY[i]);
   });
 }
 

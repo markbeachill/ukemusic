@@ -50,7 +50,7 @@ test('structured data parses and agrees with the page', () => {
   assert.strictEqual(home.length, 1);
   const types = home[0]['@graph'].map((x) => x['@type']);
   for (const t of ['WebSite', 'SoftwareApplication', 'WebApplication', 'SoftwareSourceCode']) assert.ok(types.includes(t), t);
-  assert.match(read('site/index.html'), /Free Practice with 39 exercises/);
+  assert.match(read('site/index.html'), /Free Practice with 40 exercises/);
   assert.match(read('LICENSE'), /^MIT License/);
 });
 
