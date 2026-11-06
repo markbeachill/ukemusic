@@ -127,10 +127,12 @@ The guides and the changelog are pages of [the website](https://markbeachill.git
 
 Both the website and the web player are rebuilt on every push to `main` (`.github/workflows/web.yml`).
 
+**Every task in one place** (tests, building the web player, the website check and pictures, the UI review, the chord library, releases): [docs/how-to/maintenance-tasks.md](docs/how-to/maintenance-tasks.md).
+
 ### Making a release
 
 1. Change `"version"` in `package.json` (and add a section to CHANGELOG.md), commit and push.
-2. On GitHub: **Releases → Draft a new release**, tag `v` + the version (e.g. `v4.33.1`), paste the changelog section, **Publish release**.
+2. On GitHub: **Releases → Draft a new release**, tag `v` + the version (e.g. `v4.33.1`), **Publish release** (that version's CHANGELOG section is added to the notes by itself).
 3. The installers appear on the release after about 15 minutes, and the website's download buttons point at them. Songs come from the desktop app's **Songs for the web…** file, loaded with **Update songs**. 
 
 ## Songs and copyright

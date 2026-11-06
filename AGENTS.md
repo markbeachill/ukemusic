@@ -64,6 +64,10 @@ The **UI review** (`tools/ui-review/`) takes a picture of every screen of the de
 
 `tools/ui-review/README.md` says how.
 
+## Running the tasks
+
+`docs/how-to/maintenance-tasks.md` says how to run each task (tests, the web build, the website check and pictures, the UI review, the chord library, releases) and when. Keep it up to date when you add or change one.
+
 ## Finishing
 
 Say what changed in plain words, what you tested, and anything the owner has to do (commit, tag a release). The owner commits and tags releases himself, unless he asks you to.
