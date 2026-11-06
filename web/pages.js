@@ -572,6 +572,8 @@ const PRACTICE_PAGE = {
             `${n} practice exercises in ${cats.length} categories: ${cats.map((c) => c.name).join(', ')}`,
             'Metronome with tap tempo; tempo set per exercise',
             'Ready-made and your own practice routines',
+            'For ukulele (high or low G), baritone ukulele and guitar',
+            'Chords by key: a two-page sheet to print, for your instrument',
             'Progress kept on your device: time practised, days in a row, best tempo, one-minute change scores',
             `${songs.length} public-domain songs to play along with`,
             'Works offline once opened; no account'
@@ -601,6 +603,8 @@ const PRACTICE_PAGE = {
     <li><strong>Free and open source</strong>MIT licence; no account, no adverts, no tracking</li>
     <li><strong>Anywhere</strong>in any current browser on a phone, tablet or computer; works offline once opened</li>
     <li><strong>${songs.length} public-domain songs</strong>to play along with when you've warmed up</li>
+    <li><strong>Your instrument</strong>ukulele (high or low G), baritone ukulele or guitar: the shapes, the fretboard and the starting chords follow it</li>
+    <li><strong>Chords by key, to print</strong>two pages for your instrument: the chords in each key, and the common progressions in every key, major and minor</li>
   </ul>
 </div></section>
 <section><div class="wrap">
@@ -645,7 +649,7 @@ ${catHtml}
   <h3>Is it really free?</h3><p>Yes. ukemusic is free and open source under the MIT licence. There's no paid version, no account and no adverts.</p>
   <h3>Where's the source code?</h3><p>On GitHub: <a href="https://github.com/markbeachill/ukemusic">github.com/markbeachill/ukemusic</a>, with the <a href="https://github.com/markbeachill/ukemusic/blob/main/LICENSE">licence</a> and the <a href="https://github.com/markbeachill/ukemusic/blob/main/THIRD_PARTY_NOTICES.md">third-party notices</a> (the ukulele sounds are CC0 recordings from FreePats).</p>
   <h3>Does it work on an iPhone, iPad or Android phone?</h3><p>Yes: the web player runs in Safari, Chrome, Edge and Firefox. Add it to your Home Screen and it opens like an app, and works without a connection.</p>
-  <h3>Is it only for ukulele?</h3><p>It's for ukulele (GCEA) first. Songs can also be shown and played for baritone ukulele and guitar.</p>
+  <h3>Is it only for ukulele?</h3><p>It's for ukulele first, and works the same for ukulele with a low G, baritone ukulele and guitar: choose yours and the chord shapes, tab, playback and Free Practice follow it. On baritone and guitar the exercises start with G, C, D and Em, where those players start.</p>
   <h3>Do I need to read music?</h3><p>No. Exercises show the notes and chords on a fretboard as they come, and songs are chord sheets with the strum written out.</p>
 </div></section>`;
   }

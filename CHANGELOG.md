@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.62.0
+
+### Your instrument in the web player
+- **Under Your songs there's now Your instrument**, and on your first visit the web player asks what you play. Songs that don't have an instrument of their own use it, new songs are made for it, and Free Practice opened from Your songs is for it.
+
+### The website
+- **The Free Practice page** says it follows your instrument (ukulele with high or low G, baritone ukulele or guitar) and mentions the Chords by key sheet. "Is it only for ukulele?" has a fuller answer, and the README says the same.
+
 ## v4.61.0
 
 ### Chords by key, to print

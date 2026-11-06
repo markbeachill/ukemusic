@@ -72,6 +72,8 @@ button { cursor: pointer; }
 .btn:disabled { opacity: 0.4; cursor: default; }
 .sync { font-size: 12px; color: var(--muted); white-space: nowrap; }
 .sync.warn { color: var(--warn); }
+.my-instrument { display: inline-flex; gap: 8px; align-items: center; margin-top: 6px; font-size: 14px; color: var(--muted, #555); }
+.my-instrument select { font: inherit; padding: 4px 6px; border-radius: 8px; border: 1px solid var(--line); background: var(--card, #fff); color: var(--ink); }
 .banner { background: var(--accent-soft); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; font-size: 14px; line-height: 1.45; }
 
 /* ── Library ── */
@@ -368,8 +370,11 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div>
         <h2 id="libTitle">Your songs</h2>
         <p id="libSub" class="sub">Play along, practise, and write your own. Your songs are kept on this device: add them from files, and back them up.</p>
+        <label class="my-instrument" title="Songs without an instrument of their own, new songs and Free Practice use it">Your instrument <select id="myInstrument"></select></label>
         </div>
       </div>
+      <div id="instrumentAsk" class="banner" hidden><strong>What do you play?</strong> Chord shapes, tab, playback and Free Practice are set for it. You can change it any time, just above.
+        <div id="instrumentAskButtons" class="add-row" style="margin-top:8px"></div></div>
       <div id="storeBanner" class="banner" hidden></div>
       <input id="search" class="search" type="search" placeholder="Find a song, artist, tag or key…" autocomplete="off" aria-label="Find a song">
       <div id="songList" class="songs"><div class="empty">Loading your songs…</div></div>
@@ -875,7 +880,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     return t;
   }
   const NEW_SONG_TEXT = '--START MUSIC--\n{D-DU-UDU}\n[[Verse 1]]\n[C]Type your words here, with [Am]chords in square brackets\n[F]just before the word where they [G]change.\n\n[[Chorus]]\nThe [F]curly brackets at the top set the [C]strum: D down, U up.\n[G]Delete these lines when you\'re [C]ready.\n--END MUSIC--\n';
-  async function createSong(title, text = NEW_SONG_TEXT, settings = { song: { tempo: 100, beats_per_bar: 4 } }) {
+  async function createSong(title, text = NEW_SONG_TEXT, settings = { song: { tempo: 100, beats_per_bar: 4, instrument: myInstrument() } }) { // 4.62: made for your instrument
     await adoptStarters();
     const song = { id: uniqueId(title), title: freeTitle(title), text, settings, notes: '' };
     await store.save(song, { edited: true });
@@ -1376,13 +1381,34 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   $('instrument').innerHTML = UMW.INSTRUMENTS.map((i) => `<option value="${i.id}">${esc(i.name)}</option>`).join('');
   // Key, capo, instrument and tempo: the song's own settings (from the desktop), changed here per device
   const devicePrefs = local.get('prefs', {});
+  // 4.62: your instrument (as the desktop's Settings → All songs → Your instrument): for songs without
+  // one of their own, new songs, and Free Practice from here. Asked on the first visit.
+  const myInstrument = () => { const id = local.get('instrument', null); return UMW.INSTRUMENTS.some((i) => i.id === id) ? id : 'soprano'; };
+  state.config.song.instrument = myInstrument();
+  function setMyInstrument(id) {
+    local.set('instrument', id);
+    $('myInstrument').value = id;
+    $('instrumentAsk').hidden = true;
+    if (!view.song) state.config.song.instrument = id;
+    renderLibrary();
+  }
+  $('myInstrument').innerHTML = UMW.INSTRUMENTS.map((i) => `<option value="${i.id}">${esc(i.name)}</option>`).join('');
+  $('myInstrument').value = myInstrument();
+  $('myInstrument').addEventListener('change', () => setMyInstrument($('myInstrument').value));
+  $('instrumentAskButtons').replaceChildren(...UMW.INSTRUMENTS.map((i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn'; b.textContent = i.name;
+    b.addEventListener('click', () => setMyInstrument(i.id));
+    return b;
+  }));
+  $('instrumentAsk').hidden = local.get('instrument', null) !== null;
   const S = () => (devicePrefs[view.song.id] = devicePrefs[view.song.id] || {});
   const prefs = () => {
     const s = { ...(view.song.settings?.song || {}), ...S() };
     return {
       transpose: Number(s.transpose) || 0,
       capo: Math.max(0, Math.min(11, Number(s.capo) || 0)),
-      instrument: UMW.INSTRUMENTS.some((i) => i.id === s.instrument) ? s.instrument : 'soprano',
+      instrument: UMW.INSTRUMENTS.some((i) => i.id === s.instrument) ? s.instrument : myInstrument(), // 4.62: else yours
       tempo: Number(s.tempo) || 100,
       beats: Number(s.beats_per_bar) || 4,
       strum: S().strum || '',
@@ -2283,7 +2309,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
   $('karaokeButton').addEventListener('click', () => { if (play.schedule) stop(); }, true);
 
   // Practice stops the song first
-  $('libPractice').addEventListener('click', () => stop(), true);
+  $('libPractice').addEventListener('click', () => { stop(); state.config.song.instrument = myInstrument(); }, true); // 4.62: from here, Free Practice is for your instrument
 
   // ── Learn (as the desktop app's Learn tab, src/learn.js) ──
   /** The song as it's played now (in the key shown, as shapes under a capo), its key and analysis */
