@@ -57,7 +57,7 @@ test('4.68.1: the tests also run on Windows (\\r\\n line endings), on Node 24 ac
   assert.match(pkg.devDependencies['electron-builder'], /^\^26\./);
 });
 
-test('4.68.1: the beginner songs play in the shape of their tunes (whole bars), Drunken Sailor at a lively pace', () => {
+test('4.68.2: the beginner songs play in the shape of their tunes (whole bars), Drunken Sailor at a lively pace', () => {
   const lib = require('../src/song-library');
   const { parse } = require('../src/parser');
   const { buildSchedule } = require('../src/playback-schedule');
