@@ -95,7 +95,7 @@ Each of these has its own rules about promotion: read them before posting, say p
 
 A factual description to adapt:
 
-> ukemusic is free, open-source (MIT) software for learning and practising ukulele. Free Practice has 40 exercises in six categories (warm-ups, chord changes, strumming, fingerpicking, scales and melody, improvising), shown on a moving fretboard in time with a metronome, with routines and progress kept on your device. It comes with 10 public-domain songs to play along with, sing with karaoke and learn by heart. It runs in any current browser with nothing to install and no account, and as a desktop app for Windows, Mac and Linux. https://markbeachill.github.io/ukemusic/practice/
+> ukemusic is free, open-source (MIT) software for learning and practising ukulele. Free Practice has 40 exercises in six categories (warm-ups, chord changes, strumming, fingerpicking, scales and melody, improvising), shown on a moving fretboard in time with a metronome, with routines and progress kept on your device. It comes with 16 public-domain songs to play along with, sing with karaoke and learn by heart. It runs in any current browser with nothing to install and no account, and as a desktop app for Windows, Mac and Linux. https://markbeachill.github.io/ukemusic/practice/
 
 ## 7. Checks to repeat after each release
 

@@ -109,6 +109,7 @@ function importFolder(source, songsFolder, options = {}) {
       try {
         const song = songs.createSong(songsFolder, check.title, converted.text, settings);
         if (converted.kept) songs.writeChordPro(song.folder, converted.kept);
+        if (converted.notes) songs.addImportNotes(song.folder, converted.notes); // 4.67: the file's comments
         if ((converted.meta.links || []).length) links.writeLinks(song.folder, converted.meta.links);
         report.added.push(check.title);
         // 4.44: ABC tunes in the file: made {melody} lines, or kept on the ChordPro tab

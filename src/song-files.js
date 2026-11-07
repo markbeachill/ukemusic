@@ -45,7 +45,7 @@ function songFromText(name, raw) {
   if (CHORDPRO_EXT.test(name) || looksLikeChordPro(text)) {
     const r = chordProToUkemusic(text);
     const settings = importSettings(r.meta || {});
-    return { title: (r.meta && r.meta.title) || title, text: r.text, settings: settings.song && Object.keys(settings.song).length ? { song: settings.song } : {}, notes: '', from: 'chordpro' };
+    return { title: (r.meta && r.meta.title) || title, text: r.text, settings: settings.song && Object.keys(settings.song).length ? { song: settings.song } : {}, notes: r.notes || '', from: 'chordpro' };
   }
   const wrap = (body) => `--START MUSIC--\n${body.replace(/\n+$/, '')}\n--END MUSIC--\n`;
   if (findChordLines(text, { useDelimiters: false }).length) return { title, text: wrap(convertChordSheet(text).text), settings: {}, notes: '', from: 'chord sheet' };

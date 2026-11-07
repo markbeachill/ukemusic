@@ -1,0 +1,43 @@
+{title: Down by the Riverside}
+{subtitle: Beginner arrangement - keeping the pulse through three chords}
+{artist: Traditional African American spiritual}
+{key: C}
+{time: 4/4}
+{tempo: 80}
+{tag: beginner, spiritual, three chords}
+# Traditional public-domain text; selected sword-and-shield and burden verses.
+# Fresh simplified accompaniment; see README.md for text and history sources.
+{comment: Strum DDDD}
+{comment: Keep the same pulse in verse and chorus. Practise F to C separately first.}
+
+{start_of_verse: Verse 1}
+Gonna [C]lay down my sword and shield, down by the riverside,
+[G7]Down by the riverside, [C]down by the riverside;
+Gonna [C]lay down my sword and shield, down by the riverside,
+I ain't gonna [G7]study war no [C]more.
+{end_of_verse}
+
+{start_of_chorus}
+I ain't gonna [F]study war no more,
+I ain't gonna [C]study war no more,
+I ain't gonna [G7]study war no [C]more.
+I ain't gonna [F]study war no more,
+I ain't gonna [C]study war no more,
+I ain't gonna [G7]study war no [C]more.
+{end_of_chorus}
+
+{start_of_verse: Verse 2}
+Gonna [C]lay down my burden, down by the riverside,
+[G7]Down by the riverside, [C]down by the riverside;
+Gonna [C]lay down my burden, down by the riverside,
+I ain't gonna [G7]study war no [C]more.
+{end_of_verse}
+
+{start_of_chorus}
+I ain't gonna [F]study war no more,
+I ain't gonna [C]study war no more,
+I ain't gonna [G7]study war no [C]more.
+I ain't gonna [F]study war no more,
+I ain't gonna [C]study war no more,
+I ain't gonna [G7]study war no [C]more.
+{end_of_chorus}

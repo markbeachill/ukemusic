@@ -1161,6 +1161,7 @@ function registerIpc() {
   handle('song:writeNotes', async (_event, { folder, text } = {}) => songs.writeNotes(folder, text));
 
   handle('song:appendNote', async (_event, { folder, line } = {}) => songs.appendNoteLine(folder, line));
+  handle('song:addImportNotes', async (_event, { folder, text } = {}) => songs.addImportNotes(folder, text)); // 4.67
 
   handle('song:openExports', async (_event, folder) => {
     const exportsFolder = path.join(folder, songs.EXPORTS_DIR);

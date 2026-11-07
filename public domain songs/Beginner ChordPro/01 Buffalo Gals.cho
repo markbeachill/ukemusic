@@ -1,0 +1,32 @@
+{title: Buffalo Gals}
+{subtitle: Beginner arrangement - two chords}
+{artist: Traditional American}
+{key: C}
+{time: 4/4}
+{tempo: 80}
+{tag: beginner, folk, two chords}
+# Public-domain song; fresh simplified chord accompaniment.
+# Selected old words, with spelling modernised. See README.md for sources.
+{comment: Strum DDDD}
+{comment: Practise C to G7 and back. Begin with one down-strum on each chord change.}
+
+{start_of_verse: Verse}
+[C]As I was walking down the street,
+[G7]Down the street, [C]down the street,
+[C]A handsome gal I chanced to meet,
+Oh, [G7]she was fair to [C]view.
+{end_of_verse}
+
+{start_of_chorus}
+[C]Buffalo gals, can't you come out tonight,
+[G7]Can't you come out tonight, [C]can't you come out tonight?
+[C]Buffalo gals, can't you come out tonight,
+And [G7]dance by the light of the [C]moon?
+{end_of_chorus}
+
+{start_of_chorus: Chorus again}
+[C]Buffalo gals, can't you come out tonight,
+[G7]Can't you come out tonight, [C]can't you come out tonight?
+[C]Buffalo gals, can't you come out tonight,
+And [G7]dance by the light of the [C]moon?
+{end_of_chorus}

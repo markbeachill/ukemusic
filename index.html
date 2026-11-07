@@ -5042,7 +5042,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const title = (converted?.chordPro && converted.meta?.title) || result.suggestedTitle;
           useScratchDocument(content, { suggestedTitle: title, markSaved: false });
           state.importSource = (result.sourcePath || '').split(/[\\/]/).pop();
-          if (converted?.chordPro) await applyImportedMeta(converted.meta, converted.kept);
+          if (converted?.chordPro) await applyImportedMeta(converted.meta, converted.kept, converted.notes);
           setStatusMessage('Imported — click Save to store it as a new song.');
         }
 
@@ -5132,6 +5132,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           state.importSource = '';
           if (saveAsNew && previousTitle) await addHistory(`Copied from "${previousTitle}"`);
           else if (importedFrom) await addHistory(`Imported from ${importedFrom}`);
+          if (pending?.notes) await addImportNotes(pending.notes);
           if (pending?.noteBits?.length) await addHistory(pending.noteBits.join(' · ').replace('— ·', '—'));
           // ChordPro fields: from an import, or carried over by Save as New
           const keptChordPro = pending?.kept || (saveAsNew ? keptBefore : '');
@@ -6392,6 +6393,18 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         }
 
         // Add a dated line to the song's notes (history of versions, copies, imports)
+        // 4.67: a ChordPro file's # comments (where it's from, what to check) go into the song's notes
+        async function addImportNotes(text) {
+          if (!state.song || !text) return;
+          await flushNotes();
+          try {
+            state.notes = await window.ukemusic.addImportNotes({ folder: state.song.folder, text });
+            notesEditor.value = state.notes;
+          } catch (error) {
+            window.ukemusicLogError('Could not add to notes.txt', error);
+          }
+        }
+
         async function addHistory(line) {
           if (!state.song) return;
           await flushNotes();
@@ -6525,8 +6538,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         // Key and time from a ChordPro file become song settings. Tempo is only noted as text
         // (you set the song's tempo yourself); artist, capo etc. go in the notes too.
         // With no song open yet, they're kept until the song is saved.
-        async function applyImportedMeta(meta, kept = '') {
-          if ((!meta || !Object.keys(meta).length) && !kept) return;
+        async function applyImportedMeta(meta, kept = '', notes = '') {
+          if ((!meta || !Object.keys(meta).length) && !kept && !notes) return;
           meta = meta || {};
           // 4.34: the same rules as Import ChordPro files (src/chordpro-import.js): key, time,
           // artist, tempo, writers, album, year, tags, and {define} shapes for each instrument
@@ -6537,7 +6550,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           // Everything else in the file is kept on the song's ChordPro tab (4.27)
           const noteBits = [];
           if (!state.song) {
-            state.pendingImport = { settings, noteBits, extra, kept, links: newLinks };
+            state.pendingImport = { settings, noteBits, extra, kept, links: newLinks, notes };
             state.chordPro = kept || '';
             return;
           }
@@ -6554,6 +6567,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             await saveLinks();
           }
           populateSettingsForm();
+          if (notes) await addImportNotes(notes);
           if (noteBits.length) await addHistory(noteBits.join(' · ').replace('— ·', '—'));
           renderPreviewNow();
         }
@@ -6587,7 +6601,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             const wrapped = wrapInDelimiters(result.text);
             setEditorProgrammatically(wrapped.text);
             setNotice(result.chordPro ? 'ChordPro song converted.' : `Chord sheet converted.${reportEstimated(result.report.estimated, wrapped.offset)}`);
-            if (result.chordPro) await applyImportedMeta(result.meta, result.kept);
+            if (result.chordPro) await applyImportedMeta(result.meta, result.kept, result.notes);
           } else {
             const value = getEditorValue();
             const cursor = getEditorCursor();
@@ -12718,7 +12732,7 @@ function showTab(tab) {
           if (!result) return;
           const wrapped = wrapInDelimiters(result.text);
           useScratchDocument(wrapped.text, { suggestedTitle: (result.chordPro && result.meta?.title) || '', markSaved: false });
-          if (result.chordPro) await applyImportedMeta(result.meta, result.kept);
+          if (result.chordPro) await applyImportedMeta(result.meta, result.kept, result.notes);
           setNotice(result.chordPro
             ? 'ChordPro song converted. Click Save to keep it as a new song.'
             : `Chord sheet converted.${reportEstimated(result.report.estimated, wrapped.offset)} Click Save to keep it as a new song.`);

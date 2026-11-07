@@ -372,6 +372,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
   ukemusicToChordPro: (irNodes, info) => chordpro.ukemusicToChordPro(irNodes, info),
   findChordLines: (text, options) => chordSheet.findChordLines(text, options),
   appendNote: (payload) => ipcRenderer.invoke('song:appendNote', payload),
+  addImportNotes: (payload) => ipcRenderer.invoke('song:addImportNotes', payload), // 4.67
   versions: {
     parse: (value) => versions.parseVersions(value),
     format: (list) => versions.formatVersions(list),

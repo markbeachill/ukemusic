@@ -662,6 +662,21 @@ function writeNotes(folder, text) {
   return text;
 }
 
+/**
+ * 4.67: notes that came with an imported file (a ChordPro file's # comments: where it's from,
+ * why it's free to use, what to check) go under the song's title, above its history.
+ */
+function addImportNotes(folder, text) {
+  const add = String(text || '').trim();
+  if (!add) return readNotes(folder);
+  const current = readNotes(folder);
+  if (current.includes(add)) return current;
+  const at = current.search(/\n+History\n/);
+  const next = at < 0 ? `${current.replace(/\n+$/, '')}\n\n${add}\n` : `${current.slice(0, at).replace(/\n+$/, '')}\n\n${add}\n\n${current.slice(at).replace(/^\n+/, '\n')}`;
+  writeNotes(folder, next);
+  return next;
+}
+
 /** Add a dated line to the end of the notes, e.g. "2026-10-07  Created version C to F (+5)". */
 function appendNoteLine(folder, line) {
   const current = readNotes(folder);
@@ -735,6 +750,7 @@ module.exports = {
   readNotes,
   writeNotes,
   appendNoteLine,
+  addImportNotes,
   today,
   suggestTitleFromFile
 };

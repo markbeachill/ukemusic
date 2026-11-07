@@ -903,9 +903,9 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     return t;
   }
   const NEW_SONG_TEXT = '--START MUSIC--\n{D-DU-UDU}\n[[Verse 1]]\n[C]Type your words here, with [Am]chords in square brackets\n[F]just before the word where they [G]change.\n\n[[Chorus]]\nThe [F]curly brackets at the top set the [C]strum: D down, U up.\n[G]Delete these lines when you\'re [C]ready.\n--END MUSIC--\n';
-  async function createSong(title, text = NEW_SONG_TEXT, settings = { song: { tempo: 100, beats_per_bar: 4, instrument: myInstrument() } }) { // 4.62: made for your instrument
+  async function createSong(title, text = NEW_SONG_TEXT, settings = { song: { tempo: 100, beats_per_bar: 4, instrument: myInstrument() } }, notes = '') { // 4.62: made for your instrument
     await adoptStarters();
-    const song = { id: uniqueId(title), title: freeTitle(title), text, settings, notes: '' };
+    const song = { id: uniqueId(title), title: freeTitle(title), text, settings, notes }; // 4.67: notes from a ChordPro file's comments
     await store.save(song, { edited: true });
     renderLibrary();
     openSong(song.id);
@@ -950,7 +950,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     const song = { ...(read.settings && read.settings.song) };
     $('pasteSongDialog').close();
     delete $('pasteTitle').dataset.typed;
-    await createSong(title, read.text, { ...(read.settings || {}), song: { tempo: 100, beats_per_bar: 4, ...song, instrument: myInstrument() } });
+    await createSong(title, read.text, { ...(read.settings || {}), song: { tempo: 100, beats_per_bar: 4, ...song, instrument: myInstrument() } }, read.notes || '');
   });
   $('newSongForm').addEventListener('submit', async (event) => {
     event.preventDefault();

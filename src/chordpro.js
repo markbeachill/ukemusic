@@ -249,7 +249,7 @@ function markupToMarkers(line, harmony = false) {
 }
 
 /**
- * ChordPro text -> { text, meta, report }
+ * ChordPro text -> { text, meta, report, kept, notes }
  *   meta:   { title, artist, key, capo, tempo, time, … }
  *   report: { sections, strums, ignored: [directive names] }
  */
@@ -261,6 +261,7 @@ function chordProToUkemusic(input) {
   // 4.27: everything else in the file is kept for the song's ChordPro tab (chordpro.txt)
   const keptFields = [];
   const keptOther = [];
+  const noteLines = [];          // 4.67: the file's # comments, for the song's notes (where it's from, what to check)
   let tabTimeNext = '';   // 4.44: {x_ukemusic_tab_time: 4/4} before {start_of_tab}
   let inTab = false;
   let inGrid = false;
@@ -309,7 +310,12 @@ function chordProToUkemusic(input) {
     }
     if (/^\s*#\s*ukemusic:\s*bars\s*$/.test(line)) { ownGridNext = true; continue; }   // 4.63: our bar lines' grid follows
     if (/^\s*#\s*ukemusic:/.test(line)) continue;   // 4.44: ukemusic's own note on its directives (written again on export)
-    if (/^\s*#/.test(line)) { keptOther.push(line.trim()); continue; } // ChordPro comment line: kept
+    if (/^\s*#/.test(line)) { // ChordPro comment line: kept, and (4.67) it goes into the song's notes too
+      keptOther.push(line.trim());
+      const said = line.replace(/^\s*#+\s?/, '').trim();
+      if (said) noteLines.push(said);
+      continue;
+    }
 
     const d = parseDirective(line);
     if (inStrum && !(d && d.name === 'end_of_strum')) { inStrum.lines.push(line); continue; }
@@ -458,7 +464,10 @@ function chordProToUkemusic(input) {
   while (out.length && out[out.length - 1] === '') out.pop();
   const collapsed = out.filter((l, i) => !(l === '' && out[i - 1] === ''));
   const kept = chordProFields.formatFields({ fields: keptFields, other: keptOther });
-  return { text: `--START MUSIC--\n${collapsed.join('\n')}\n--END MUSIC--\n`, meta, report, kept };
+  // 4.67: the notes: the subtitle (unless it stands in for a missing {artist}), then the comments
+  const subtitle = meta.subtitle && meta.artist ? String(meta.subtitle).trim() : '';
+  const notes = [subtitle, ...noteLines].filter(Boolean).join('\n');
+  return { text: `--START MUSIC--\n${collapsed.join('\n')}\n--END MUSIC--\n`, meta, report, kept, notes };
 }
 
 /**

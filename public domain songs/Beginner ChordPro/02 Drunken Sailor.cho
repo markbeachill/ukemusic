@@ -1,0 +1,53 @@
+{title: Drunken Sailor}
+{subtitle: Beginner arrangement - two chords in a minor key}
+{artist: Traditional sea shanty}
+{key: Am}
+{time: 4/4}
+{tempo: 88}
+{tag: beginner, shanty, two chords, minor}
+# Traditional words selected from The Shanty Book, Part I (1921), no. 14.
+# Fresh two-chord accompaniment, not Terry's piano arrangement.
+{comment: Strum DDDD}
+{comment: Keep a steady pulse through Am and G. Start slowly; speed is optional.}
+
+{start_of_verse: Verse 1}
+[Am]What shall we do with the drunken sailor?
+[G]What shall we do with the drunken sailor?
+[Am]What shall we do with the drunken sailor,
+[G]Early in the [Am]morning?
+{end_of_verse}
+
+{start_of_chorus}
+[Am]Hooray and up she rises,
+[G]Hooray and up she rises,
+[Am]Hooray and up she rises,
+[G]Early in the [Am]morning.
+{end_of_chorus}
+
+{start_of_verse: Verse 2}
+[Am]Put him in the long-boat until he's sober,
+[G]Put him in the long-boat until he's sober,
+[Am]Put him in the long-boat until he's sober,
+[G]Early in the [Am]morning.
+{end_of_verse}
+
+{start_of_chorus}
+[Am]Hooray and up she rises,
+[G]Hooray and up she rises,
+[Am]Hooray and up she rises,
+[G]Early in the [Am]morning.
+{end_of_chorus}
+
+{start_of_verse: Verse 3}
+[Am]Pull out the plug and wet him all over,
+[G]Pull out the plug and wet him all over,
+[Am]Pull out the plug and wet him all over,
+[G]Early in the [Am]morning.
+{end_of_verse}
+
+{start_of_chorus}
+[Am]Hooray and up she rises,
+[G]Hooray and up she rises,
+[Am]Hooray and up she rises,
+[G]Early in the [Am]morning.
+{end_of_chorus}

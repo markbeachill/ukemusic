@@ -66,6 +66,12 @@ const PAGE_CSS = `
 .page-hero h1 { font-size: clamp(34px, 5vw, 52px); line-height: 1.12; letter-spacing: -0.03em; margin: 0 0 16px; max-width: 20ch; }
 .page-hero .lede { font-size: clamp(18px, 2.2vw, 21px); color: var(--muted); max-width: 52ch; margin: 0 0 26px; }
 .who { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.course-wrap { overflow-x: auto; margin: 10px 0 26px; }
+table.course { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 560px; }
+table.course th, table.course td { padding: 9px 10px; border-bottom: 1px solid var(--line, #e3ddd2); text-align: left; vertical-align: top; }
+table.course thead th { font-size: 14px; }
+table.course tbody th { font-weight: 700; }
+table.course td { color: var(--muted); }
 @media (max-width: 760px) { .who { grid-template-columns: 1fr; } }
 .who .card h3 { font-size: 19px; display: flex; gap: 8px; align-items: center; }
 .who .card ul { margin: 6px 0 0; padding-left: 20px; color: var(--muted); }
@@ -205,6 +211,7 @@ const PAGES = [
     best: 'desktop',
     web: ['For your players: practise at home, play along, learn by heart', 'They bring in the songs you send with "Add songs from files…"'],
     desk: ['Write and import songs; ChordPro songbooks in one go', 'Handouts, learn sheets and songbooks', '"Phone and tablet…" saves your songs in one file to share with the group'],
+    course: true, // 4.67: six beginner songs in teaching order (BEGINNER_COURSE)
     more: '<div class="note-box"><p><b>What it doesn\'t do yet:</b> there are no student accounts and no sharing server. You share songs as a file (or printouts), and players load them into the web player. Ideas for teaching features are welcome on <a class="repo-link" href="https://github.com/markbeachill/ukemusic">GitHub</a>.</p></div>'
   },
   {
@@ -224,6 +231,41 @@ const PAGES = [
     more: '<p>Everything you can type: <a href="guide.html">the song guide</a>.</p>'
   }
 ];
+
+// 4.67: the six beginner songs in the Public Domain Songs library, in teaching order (the Teach page).
+// From public domain songs/Beginner ChordPro (its "Teaching through a small song collection.md").
+const BEGINNER_COURSE = [
+  { song: 'Buffalo Gals', chords: 'C, G7', step: 'One change, and back home', sign: 'The chorus twice without stopping at the change' },
+  { song: 'Drunken Sailor', chords: 'Am, G', step: 'A steady pattern, and a minor sound', sign: 'Keeping the beat through the quick return to Am' },
+  { song: 'Oh! Susanna', chords: 'C, F, G7', step: 'F, at a chorus everyone knows', sign: 'From verse to chorus without losing the beat' },
+  { song: 'Down by the Riverside', chords: 'C, F, G7', step: 'The same shapes in a new pattern', sign: 'The chorus with even down-strums' },
+  { song: 'When the Saints Go Marching In', chords: 'C, F, G7', step: 'Coming in after the pickup; G7 leading home', sign: 'Starting with the group and ending together on C' },
+  { song: 'Auld Lang Syne', chords: 'C, F, G7', step: 'A slower beat and longer phrases', sign: 'A verse and chorus with fewer looks at the sheet' }
+];
+const COURSE_LINK = 'https://github.com/markbeachill/ukemusic/tree/main/public%20domain%20songs/Beginner%20ChordPro';
+function courseSection() {
+  const rows = BEGINNER_COURSE.map((c) => `<tr><th scope="row">${esc(c.song)}</th><td>${esc(c.chords)}</td><td>${esc(c.step)}</td><td>${esc(c.sign)}</td></tr>`).join('');
+  return `
+<section id="beginner-songs"><div class="wrap">
+  <p class="eyebrow">A course in six songs</p>
+  <h2>Six beginner songs, in teaching order</h2>
+  <p class="intro">The public-domain songs that come with ukemusic include six with new, simple chords for beginners. Each is a small step on from the one before: finish a song you know while learning one thing at a time. They work for ukulele, baritone and guitar.</p>
+  <div class="course-wrap"><table class="course">
+    <thead><tr><th scope="col">Song</th><th scope="col">Chords</th><th scope="col">What it teaches</th><th scope="col">You're getting there when…</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>
+  <h3>A lesson that works</h3>
+  <ol class="steps">
+    <li><span><b>Hear it and sing it first.</b> Sing a line while everyone taps the beat, so the tune, the pickup and the ending are in their heads before their fingers are busy.</span></li>
+    <li><span><b>Practise the one change that holds people up,</b> slowly, first without strumming, then with one strum per chord. Each song's <b>Learn</b> shows its hardest changes, and Free Practice has <b>Chord switching</b> for any pair.</span></li>
+    <li><span><b>Keep the strum simple.</b> One down-strum on each new chord, then four even down-strums a bar. Add an up-strum or a swing when the changes are comfortable; slow the tempo down as much as you need.</span></li>
+    <li><span><b>Back to the song quickly.</b> Loop the tricky line a few times, then play the whole verse or chorus.</span></li>
+    <li><span><b>Take a little help away.</b> Look away for a line, say the next chord before you play it, or use <b>Play from memory</b>, which shows fewer chords each time.</span></li>
+  </ol>
+  <p class="intro" style="margin-top:22px"><b>Twenty minutes with a group:</b> 3 minutes singing and tapping a chorus everyone knows, 4 on one change, 5 on a new verse and chorus with plain down-strums, 4 on an awkward line, and 4 on a song everyone can already play. Agree a count-in and a clear ending; anyone who loses their place keeps tapping and comes back in at the next chorus.</p>
+  <p class="intro">Judge progress by steadier rhythm, easier changes and getting back in, not speed. The songs are in the app's Public Domain Songs library, each with notes on where its words come from and a tip, and as <a href="${COURSE_LINK}">ChordPro files with the full teaching notes</a> for other apps.</p>
+</div></section>`;
+}
 
 // "Add songs from the web": every way in, and the AI prompts
 const SONGS_PAGE = {
@@ -811,12 +853,13 @@ function pageBody(p) {
 <section><div class="wrap">
 ${rows}
 </div></section>
+${p.course ? courseSection() : ''}
 <section><div class="wrap">
   <p class="eyebrow">Which version?</p>
   <h2>In your browser, or on your computer</h2>
   ${versionsBlock(p.best, p.web, p.desk)}
   ${p.more ? `<div style="margin-top:28px">${p.more}</div>` : ''}
-  <p style="margin-top:28px;color:var(--muted)">Your songs come in from websites, songbooks, ChordPro files or an AI chat: <a href="songs.html">bring your songs</a>.</p>
+  <p style="margin-top:28px;color:var(--muted)">Your songs come in from websites, songbooks, ChordPro files or an AI chat: <a href="songs.html">add songs from the web</a>.</p>
 </div></section>`;
 }
 
@@ -908,5 +951,5 @@ ${paths.map((x) => `  <url><loc>${SITE_URL}${x}</loc></url>`).join('\n')}
 `;
 }
 
-module.exports = { build, wrapPage, withFeatures, galleryPageHead, PRACTICE_PAGE, sitemap, SITE_URL, PAGES, SONGS_PAGE, PHONE_PAGE, INSTRUMENTS_PAGE, FEATURES_PAGE, DROPBOX_PAGE, GALLERY_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
+module.exports = { BEGINNER_COURSE, build, wrapPage, withFeatures, galleryPageHead, PRACTICE_PAGE, sitemap, SITE_URL, PAGES, SONGS_PAGE, PHONE_PAGE, INSTRUMENTS_PAGE, FEATURES_PAGE, DROPBOX_PAGE, GALLERY_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
 if (require.main === module) console.log('pages:', build().join(', '));

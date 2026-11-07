@@ -40,7 +40,7 @@
 - **Add songs from the web:** paste a chord sheet from any website (or import your club's ChordPro songbook) and get the chord sheet, the shapes, the strum, Stage copies for gigs, and songbooks. Writing your own is just typing the words with the chords in square brackets.
 - **Free, offline, no account:** no adverts, nothing to pay, and your songs stay on your device.
 - **AI prompts to copy:** two prompts for an AI chat (Claude, ChatGPT, Gemini…): one tidies a difficult chord sheet into ukemusic's format, the other gets a song ready to practise and starts with a menu, so you choose what it does. They're on the website's [Add songs from the web](https://markbeachill.github.io/ukemusic/songs.html#ai-prompts) page and in the apps, and kept in [`src/ai-prompts/`](src/ai-prompts/) so they're easy to change.
-- **Music to start with:** 10 public-domain songs with their words, chords and strums (Amazing Grace, Danny Boy, Scarborough Fair, The Wild Rover and more), each with a note of where it comes from.
+- **Music to start with:** 16 public-domain songs with their words, chords and strums (Amazing Grace, Danny Boy, Scarborough Fair, The Wild Rover and more), each with a note of where it comes from. Six are beginner songs in teaching order, from two chords to three ([a course in six songs](https://markbeachill.github.io/ukemusic/teach.html#beginner-songs)).
 - **Try it now:** the [web player](https://markbeachill.github.io/ukemusic/app/) runs in any current browser on a phone, tablet or computer, and works offline once opened. The desktop app is for Windows, Mac and Linux ([download](https://github.com/markbeachill/ukemusic/releases/latest)).
 
 ## What it does

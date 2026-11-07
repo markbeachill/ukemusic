@@ -1,5 +1,21 @@
 # Changelog
 
+## v4.67.0
+
+### Six beginner songs
+- **The Public Domain Songs library has six new beginner songs, in teaching order:**
+  - Buffalo Gals (C, G7)
+  - Drunken Sailor (Am, G)
+  - Oh! Susanna, Down by the Riverside, When the Saints Go Marching In and Auld Lang Syne (C, F, G7)
+
+  Each has simple new chords, a strum of four down-strums and a tip in its notes. The notes also say where its words come from and why they're free to use. That makes 16 songs with words, in the app and the web player.
+- **They're also a folder of ChordPro files,** `public domain songs/Beginner ChordPro`, with a README of sources and notes on teaching with them. The zip copy has gone.
+- **Two chord changes moved** to where the tune changes: Oh! Susanna's G7 on "true love" and "Su-sanna", and the Saints' F on "be in that number".
+- **The website's Teach page has "A course in six songs".** It shows what each song teaches and when you're getting there, a lesson in five steps and a twenty-minute group session.
+
+### ChordPro import keeps the notes
+- **A ChordPro file's `#` comments and its subtitle now go into the song's notes,** under the title and above the history. Many files say there where a song is from or what to check. This applies to Import ChordPro files, Import text file and Paste from a website on the desktop, and to adding songs in the web player. Before, they were only on the song's ChordPro tab. They're still there, so an export writes them back.
+
 ## v4.66.0
 
 ### Any chord sheet from the web
