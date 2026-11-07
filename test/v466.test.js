@@ -7,7 +7,8 @@ function test(name, fn) {
   try { fn(); console.log(`✓ ${name}`); } catch (error) { console.error(`✗ ${name}`); throw error; }
 }
 const ROOT = path.join(__dirname, '..');
-const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');
+// Windows checks files out with \r\n line endings (core.autocrlf): read them as \n, as the build writes them
+const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8').replace(/\r\n/g, '\n');
 const FEATURES = require('../web/features');
 const pages = require('../web/pages');
 const home = read('site/index.html');

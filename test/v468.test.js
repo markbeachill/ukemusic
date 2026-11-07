@@ -9,7 +9,8 @@ function test(name, fn) {
 const ROOT = path.join(__dirname, '..');
 const FEATURES = require('../web/features');
 const pages = require('../web/pages');
-const home = fs.readFileSync(path.join(ROOT, 'site/index.html'), 'utf8');
+// Windows checks files out with \r\n line endings (core.autocrlf): read them as \n, as the build writes them
+const home = fs.readFileSync(path.join(ROOT, 'site/index.html'), 'utf8').replace(/\r\n/g, '\n');
 
 test('every section has a card: a heading, one line, a colour and an icon', () => {
   for (const s of FEATURES.SECTIONS) {
@@ -43,6 +44,14 @@ test('rows say what you get', () => {
   const rows = FEATURES.SECTIONS.flatMap((s) => s.rows.map((r) => r.f));
   assert.ok(rows.includes('It plays along with you: the chords and the strum, or picking'));
   assert.ok(!rows.some((f) => /^Playback with/.test(f)));
+});
+
+test('4.68.1: the tests also run on Windows (\\r\\n line endings), on Node 24 actions', () => {
+  const wf = (f) => fs.readFileSync(path.join(ROOT, '.github/workflows', f), 'utf8');
+  assert.match(wf('test.yml'), /os: \[ubuntu-latest, windows-latest\]/);
+  for (const f of ['test.yml', 'release.yml', 'web.yml']) assert.ok(!/actions\/(checkout|setup-node|upload-artifact)@v4\b/.test(wf(f)), f);
+  const pkg = require('../package.json');
+  assert.strictEqual(pkg.devDependencies.electron, '^45.2.3');
 });
 
 console.log('v4.68 tests passed');

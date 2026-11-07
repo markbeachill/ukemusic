@@ -4,10 +4,16 @@ on:
   pull_request:
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # Windows too (4.68.1): it checks files out with \r\n line endings, which once broke the
+    # installers' tests at release time; this way it shows on every push instead
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm

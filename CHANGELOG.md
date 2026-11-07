@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.68.1
+
+### The installers build again
+- **The v4.67.0 installers didn't build:** the Windows build stopped at its tests. Windows checks the files out with Windows line endings (`\r\n`), and three of the newest tests (4.66–4.68) compared file contents as if they had Unix ones (`\n`). The tests now read files the same way on any system. The Mac and Linux builds were fine.
+- **The tests now run on Windows as well as Linux on every push,** so a problem like this shows up straight away, not when a release is made.
+- **Updates:** Electron 45.1.0 → 45.2.3, which brings Chromium's latest fixes. electron-builder 26.15.3 → 26.18.0.
+- **GitHub Actions:** checkout, setup-node and upload-artifact move to their current versions, which run on Node 24. GitHub has deprecated Node 20, and the builds were showing warnings.
+
 ## v4.68.0
 
 ### Features, with more colour

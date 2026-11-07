@@ -9,7 +9,8 @@ function test(name, fn) {
   try { fn(); console.log(`✓ ${name}`); } catch (error) { console.error(`✗ ${name}`); throw error; }
 }
 const ROOT = path.join(__dirname, '..');
-const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');
+// Windows checks files out with \r\n line endings (core.autocrlf): read them as \n, as the build writes them
+const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8').replace(/\r\n/g, '\n');
 const { chordProToUkemusic } = require('../src/chordpro');
 const songFiles = require('../src/song-files');
 const lib = require('../src/song-library');
@@ -65,6 +66,7 @@ test('the library has the six beginner songs: public domain, following your inst
     const s = songs.find((x) => x.title === title);
     assert.ok(s, title);
     const r = lib.readSong(s.folder);
+    r.notes = r.notes.replace(/\r\n/g, '\n');
     const song = r.settings.song;
     assert.strictEqual(song.licence, 'public-domain', title);
     assert.ok(!song.instrument, `${title} follows your instrument`);
