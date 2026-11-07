@@ -87,7 +87,7 @@ test('the chords match the course, and the fixes are in', () => {
   }
   const susanna = lib.readSong(path.join(PD, 'Oh! Susanna')).content;
   assert.ok(susanna.includes('my [G7]true love for to [C]see'));
-  assert.ok(read('public domain songs/Beginner ChordPro/05 When the Saints Go Marching In.cho').includes('Lord, I [C]want to [F]be in that [C]number,'));
+  assert.ok(read('public domain songs/Beginner ChordPro/05 When the Saints Go Marching In.cho').includes('Lord, I [C]want to be [F]in that number,'));
 });
 
 test('the ChordPro folder is in the repo; the zip copy isn\'t', () => {

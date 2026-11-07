@@ -4,7 +4,7 @@ Six separate `.cho` files, numbered in the suggested teaching order. Each has a 
 
 In ukemusic, use **File → Import text file** for a single file, or **Import ChordPro files…** for this folder. The folder importer marks imported songs as personal use by default; it does not infer public-domain status from these notes. Review the song's sharing setting before exporting a library pack. The six songs are also in the Public Domain Songs library, with these notes in each song's notes.
 
-`DDDD` means four even down-strums in a full bar of 4/4. First learn the changes with one strum on each new chord. Repeated chord names help show the shape of each line; they do not necessarily mean a new chord. ChordPro positions chords against words, but these files do not encode exact bar lengths, melody or karaoke timing. Use the familiar sung tune to place the changes, or have a leader demonstrate it. The tempos are practice suggestions, not historical claims.
+`DDDD` means four even down-strums in a full bar of 4/4. First learn the changes with one strum on each new chord. Repeated chord names help show the shape of each line; they do not necessarily mean a new chord. ChordPro positions chords against words, but these files do not encode exact bar lengths, melody or karaoke timing. The copies in ukemusic's Public Domain Songs library do give each chord its length (`[Cx2]` for two bars, `[G:2]` for two beats), so playback follows the tune. Use the familiar sung tune to place the changes, or have a leader demonstrate it. The tempos are practice suggestions, not historical claims.
 
 Read [Teaching through a small song collection](Teaching%20through%20a%20small%20song%20collection.md) for the lesson structure, instrument adjustments and a sample session.
 

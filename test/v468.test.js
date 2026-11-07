@@ -57,4 +57,26 @@ test('4.68.1: the tests also run on Windows (\\r\\n line endings), on Node 24 ac
   assert.match(pkg.devDependencies['electron-builder'], /^\^26\./);
 });
 
+test('4.68.1: the beginner songs play in the shape of their tunes (whole bars), Drunken Sailor at a lively pace', () => {
+  const lib = require('../src/song-library');
+  const { parse } = require('../src/parser');
+  const { buildSchedule } = require('../src/playback-schedule');
+  const lc = require('../src/chord-library');
+  const bars = (title) => {
+    const r = lib.readSong(path.join(ROOT, 'public domain songs', 'Public Domain Songs', title));
+    const st = r.settings.song;
+    const s = buildSchedule(parse(r.content), { library: lc.getBuiltInLibrary('soprano'), tempo: Number(st.tempo), beatsPerBar: 4, countIn: false });
+    assert.deepStrictEqual(s.warnings, [], title);
+    return { st, list: s.bars.map((b) => `${b.chord}${Math.round(b.duration / (60 / st.tempo)) === 4 ? '' : `:${Math.round(b.duration / (60 / st.tempo))}`}`) };
+  };
+  const sailor = bars('Drunken Sailor');
+  assert.ok(Number(sailor.st.tempo) >= 112);
+  assert.deepStrictEqual(sailor.list.slice(0, 5), ['Am', 'G', 'Am', 'G:2', 'Am:2'], 'Early in the morning: G and Am share the bar');
+  assert.deepStrictEqual(bars('When the Saints Go Marching In').list.slice(0, 16), ['C', 'C', 'C', 'C', 'C', 'C', 'G7', 'G7', 'C', 'C', 'F', 'F', 'C', 'G7', 'C', 'C']);
+  assert.deepStrictEqual(bars('Oh! Susanna').list.slice(0, 8), ['C', 'C', 'C', 'G7', 'C', 'C', 'G7', 'C']);
+  assert.deepStrictEqual(bars('Buffalo Gals').list.slice(0, 8), ['C', 'C', 'G7', 'C', 'C', 'C', 'G7', 'C']);
+  assert.deepStrictEqual(bars('Auld Lang Syne').list.slice(0, 9), ['C', 'G7', 'C', 'F', 'C', 'G7', 'F:2', 'G7:2', 'C']);
+  assert.deepStrictEqual(bars('Down by the Riverside').list.slice(0, 16), ['C', 'C', 'C', 'C', 'G7', 'G7', 'C', 'C', 'C', 'C', 'C', 'C', 'G7', 'G7', 'C', 'C']);
+});
+
 console.log('v4.68 tests passed');
