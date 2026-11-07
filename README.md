@@ -5,9 +5,10 @@
 <h1 align="center">ukemusic</h1>
 
 <p align="center">
-  <b>Bring your songs. Learn them, practise them, play them together.</b><br>
-  Type the words with the chords in square brackets: ukemusic draws the chord sheet, the shapes and the strum,<br>
+  <b>Any chord sheet from the web, ready to play along, learn and practise.</b><br>
+  Paste a chord sheet from any website: ukemusic sorts out the chords, shapes and strum,<br>
   plays it with you, helps you learn it by heart, and prints it for the gig.<br>
+  Free and open source · works offline · no account, no adverts.<br>
   <b>For ukulele (high or low G), baritone ukulele and guitar, left- or right-handed</b>: <a href="https://markbeachill.github.io/ukemusic/instruments.html">how instruments work</a>.
 </p>
 
@@ -36,10 +37,66 @@
 
 - **Practise:** [Free Practice](https://markbeachill.github.io/ukemusic/practice/) has 40 exercises in six categories (warm-ups and finger work, chords and changes, strumming and rhythm, fingerpicking, scales and melody, improvising), shown on a moving fretboard in time with a metronome, plus timed routines and your progress (time practised, days in a row, best tempo, one-minute change scores). It follows your instrument (ukulele, low G, baritone or guitar), and prints a two-page **Chords by key** sheet for it. It's all in the free web player.
 - **Learn songs:** play along on real ukulele sounds, karaoke, learn a song by heart with the chords fading out, and drills for its hardest chord changes.
-- **Make chord sheets:** type the words with the chords in square brackets (or paste a sheet from a website), and get the chord sheet, the shapes, the strum, Stage copies for gigs, and songbooks.
-- **AI prompts to copy:** two prompts for an AI chat (Claude, ChatGPT, Gemini…): one tidies a difficult chord sheet into ukemusic's format, the other gets a song ready to practise and starts with a menu, so you choose what it does. They're on the website's [Bring your songs](https://markbeachill.github.io/ukemusic/songs.html#ai-prompts) page and in the apps, and kept in [`src/ai-prompts/`](src/ai-prompts/) so they're easy to change.
+- **Add songs from the web:** paste a chord sheet from any website (or import your club's ChordPro songbook) and get the chord sheet, the shapes, the strum, Stage copies for gigs, and songbooks. Writing your own is just typing the words with the chords in square brackets.
+- **Free, offline, no account:** no adverts, nothing to pay, and your songs stay on your device.
+- **AI prompts to copy:** two prompts for an AI chat (Claude, ChatGPT, Gemini…): one tidies a difficult chord sheet into ukemusic's format, the other gets a song ready to practise and starts with a menu, so you choose what it does. They're on the website's [Add songs from the web](https://markbeachill.github.io/ukemusic/songs.html#ai-prompts) page and in the apps, and kept in [`src/ai-prompts/`](src/ai-prompts/) so they're easy to change.
 - **Music to start with:** 10 public-domain songs with their words, chords and strums (Amazing Grace, Danny Boy, Scarborough Fair, The Wild Rover and more), each with a note of where it comes from.
 - **Try it now:** the [web player](https://markbeachill.github.io/ukemusic/app/) runs in any current browser on a phone, tablet or computer, and works offline once opened. The desktop app is for Windows, Mac and Linux ([download](https://github.com/markbeachill/ukemusic/releases/latest)).
+
+## What it does
+
+<!-- features:start (made by web/pages.js from web/features.js: change it there) -->
+| Feature | Web player (phones, tablets, any browser) | Desktop app (Windows, Mac, Linux) |
+|---|:---:|:---:|
+| **[Get songs in](https://markbeachill.github.io/ukemusic/songs.html)** | | |
+| Paste a chord sheet from any website | ✓ | ✓ |
+| Import ChordPro files, or a whole songbook folder | ✓ Files, or a zipped folder | ✓ |
+| AI prompts for difficult sheets and PDFs | ✓ | ✓ |
+| Public-domain songs to start with, ready to play | ✓ | ✓ |
+| Change a song, or write your own | ✓ | ✓ |
+| Find songs by title, artist, tag or key | ✓ | ✓ Several libraries too |
+| **[Play along](https://markbeachill.github.io/ukemusic/practise.html)** | | |
+| Playback with the chords and the strum (or picking) | ✓ | ✓ |
+| Karaoke: the words light up as it plays | ✓ | ✓ |
+| Any key, with a capo; slower or faster | ✓ | ✓ |
+| The tune, as notes and played | ✓ | ✓ |
+| Loop a part | — | ✓ |
+| Keep a song in several keys | — | ✓ |
+| **[Learn a song by heart](https://markbeachill.github.io/ukemusic/learn.html)** | | |
+| Play from memory, with fewer chords each time | ✓ | ✓ |
+| Quizzes on the changes and the chord numbers | ✓ | ✓ |
+| A learn sheet to print | ✓ Print | ✓ PDF |
+| **[Free Practice](https://markbeachill.github.io/ukemusic/practice/)** | | |
+| 40 exercises: warm-ups, chords, strumming, picking, scales, improvising | ✓ | ✓ |
+| Routines, and your progress (days, best tempos, scores) | ✓ | ✓ |
+| Progressions from memory, major and minor | ✓ | ✓ |
+| Chords by key, a sheet to print | ✓ Print | ✓ PDF |
+| **[Print and share](https://markbeachill.github.io/ukemusic/chord-sheets.html)** | | |
+| Chord sheets with chord diagrams | ✓ Print or save a PDF | ✓ PDF |
+| Stage copies: big and easy to read at a gig | ✓ | ✓ One or two pages |
+| Pick sheets: tab for fingerpicking | ✓ | ✓ |
+| ChordPro, web page and lyrics files | ✓ | ✓ And Markdown |
+| Songbook PDFs of a setlist | — | ✓ |
+| Export every song at once | — | ✓ |
+| **[Play together](https://markbeachill.github.io/ukemusic/perform.html)** | | |
+| Setlists | — | ✓ |
+| The Session screen: big words and chords for a group | ✓ On this device | ✓ On a second screen or TV |
+| Songs from the desktop to a phone or tablet, in one file | ✓ Takes it in | ✓ |
+| **[Your instrument](https://markbeachill.github.io/ukemusic/instruments.html)** | | |
+| Ukulele (high or low G), baritone ukulele and guitar | ✓ | ✓ |
+| Left-handed chord diagrams | ✓ | ✓ |
+| Your own chord shape for a song | — | ✓ |
+| **[Free, offline and private](https://markbeachill.github.io/ukemusic/phone.html)** | | |
+| Free and open source | ✓ | ✓ |
+| Works offline | ✓ Once opened, or added to your home screen | ✓ |
+| No account needed, no adverts | ✓ | ✓ |
+| Your songs stay on your device | ✓ | ✓ |
+| Share a songs folder between devices with Dropbox | ✓ | ✓ |
+| Phones and tablets | ✓ | — |
+| Windows, Mac and Linux | ✓ In any browser | ✓ |
+
+What it isn't: a song catalogue. You bring the songs (it comes with some that are out of copyright), and they stay yours. Nothing to pay, no account, no adverts.
+<!-- features:end -->
 
 ## Write it like this
 

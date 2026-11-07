@@ -13,12 +13,13 @@ const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 
 /** The menu at the top of every page: what you want to do, then getting it */
 const NAV = [
+  { href: 'features.html', label: 'Features' },   // 4.66
   { href: 'learn.html', label: 'Learn' },
   { href: 'practise.html', label: 'Practise' },
   { href: 'perform.html', label: 'Perform' },
   { href: 'teach.html', label: 'Teach' },
   { href: 'chord-sheets.html', label: 'Chord sheets' },
-  { href: 'songs.html', label: 'Your songs' }
+  { href: 'songs.html', label: 'Add songs' }   // 4.66: getting songs in from the web, mostly (was "Your songs")
 ];
 function siteHeader(current = '') {
   const links = NAV.map((n) => `<a class="opt" href="${n.href}"${n.href === current ? ' aria-current="page"' : ''}>${esc(n.label)}</a>`).join('');
@@ -34,7 +35,7 @@ function siteFooter() {
   return `<footer>
   <div class="wrap">
     <span>ukemusic by Mark Beachill · MIT licence · <a class="repo-link" href="https://github.com/markbeachill/ukemusic">ukemusic on GitHub</a></span>
-    <span class="ref">Reference: <a href="gallery.html">Gallery</a> · <a href="dropbox.html">Shared Dropbox folder</a> · <a href="phone.html">Phone and tablet</a> · <a href="instruments.html">Ukulele, baritone or guitar</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a> · <a href="practice/">Free Practice: all exercises</a></span>
+    <span class="ref">Reference: <a href="features.html">Features</a> · <a href="gallery.html">Gallery</a> · <a href="dropbox.html">Shared Dropbox folder</a> · <a href="phone.html">Phone and tablet</a> · <a href="instruments.html">Ukulele, baritone or guitar</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a> · <a href="practice/">Free Practice: all exercises</a></span>
     <button class="theme" id="theme" type="button">Light / dark</button>
   </div>
 </footer>`;
@@ -224,25 +225,35 @@ const PAGES = [
   }
 ];
 
-// "Your songs": every way in, and the AI prompt
+// "Add songs from the web": every way in, and the AI prompts
 const SONGS_PAGE = {
-  file: 'songs.html', seoTitle: 'Bring your songs: paste, import or type chord sheets · ukemusic', title: 'Bring your songs', blurb: 'Paste chord sheets from websites, import ChordPro songbooks, type songs, or use an AI chat to tidy a difficult one or get a song ready to practise.',
+  // 4.66: "Add songs from the web" (it was "Bring your songs"): pasting from a website first, writing your own last
+  file: 'songs.html', seoTitle: 'Add songs from the web: paste any chord sheet · ukemusic', title: 'Add songs from the web', blurb: 'Paste a chord sheet from any website and ukemusic sorts out the chords and strum. Or import ChordPro songbooks, or use an AI chat for a difficult one.',
   body: () => `
 <div class="page-hero"><div class="wrap">
-  <p class="eyebrow">Your songs</p>
-  <h1>Bring the songs you already have</h1>
-  <p class="lede">Chord sheets from websites, your club's songbook, ChordPro files, PDFs, or just typing. ukemusic takes them in and turns each one into everything else: sheets, playback, karaoke, practice and a learn sheet.</p>
+  <p class="eyebrow">Add songs</p>
+  <h1>Any chord sheet from the web, into ukemusic in a minute</h1>
+  <p class="lede">Found a song on a chord website? Copy it and paste it in: ukemusic moves the chords into the words, finds the parts and the strum, and turns it into everything else: the chord sheet and shapes, playback, karaoke, practice and a learn sheet.</p>
 </div></div>
 <section><div class="wrap">
-  <h2>Four ways in</h2>
-  <p class="intro">Sharing songs with a club or band? <a href="dropbox.html">Use a shared Dropbox folder</a> to keep one collection of song files.</p>
+  <h2>Paste from a website</h2>
+  <p class="intro">The usual way in. Chord sheets with the chords on their own line above the words, or in the words, or in ChordPro, all work.</p>
+  <ol class="steps">
+    <li><span><strong>Copy the song</strong> from the website: select from the title to the last chord, and copy (Ctrl+C, or Copy on a phone).</span></li>
+    <li><span><strong>Paste it into ukemusic.</strong> Web player: <b>Paste from a website</b>, under Your songs. Desktop: <b>Paste from a website</b> in Your songs (or File → Paste from website).</span></li>
+    <li><span><strong>Give it a title</strong> and look it over: the chords sit in the words, and the parts have headings.</span></li>
+    <li><span><strong>Press Play</strong> and listen alongside the recording. If the timing needs work, the <a href="#ai">ready-to-practise AI prompt</a> sorts it out.</span></li>
+  </ol>
+</div></section>
+<section><div class="wrap">
+  <h2>More ways in</h2>
   <div class="grid two">
-    <div class="card"><h3>Paste from a website</h3><p>Copy a chord sheet from a website and use <b>File → Paste from website</b>. Chords on their own line above the words are moved into the words for you.</p></div>
-    <div class="card"><h3>Your club's songbook</h3><p>A whole folder of ChordPro songs comes in at once, one song each, with tags and links; each subfolder becomes a setlist. Strum marks clubs write in the brackets come in as written.</p></div>
-    <div class="card"><h3>Type it</h3><p>Words and chords in square brackets: <code>[C]Oh my [G7]darling</code>. The <a href="guide.html">song guide</a> has everything else: strums, timings, tab.</p></div>
-    <div class="card"><h3>A difficult sheet? Ask an AI</h3><p>PDFs, scans and sheets where the spacing is lost: an AI chat can tidy them into ukemusic's format, or get a song ready to practise. <a href="#ai">How, with prompts to copy</a>.</p></div>
+    <div class="card"><h3>Your club's songbook</h3><p>A whole folder of ChordPro songs comes in at once, one song each, with tags and links; on the desktop each subfolder becomes a setlist. The web player takes the files, or the folder zipped. Sharing songs with a club or band? <a href="dropbox.html">Use a shared Dropbox folder</a>.</p></div>
+    <div class="card"><h3>Difficult sheets and PDFs</h3><p>PDFs, scans and sheets where the spacing is lost: an AI chat can tidy them into ukemusic's format, or get a song ready to practise. <a href="#ai">How, with prompts to copy</a>.</p></div>
+    <div class="card"><h3>Songs to start with</h3><p>Public-domain songs come with ukemusic, words, chords and strums, ready to play: Amazing Grace, Danny Boy, The Wild Rover and more.</p></div>
+    <div class="card"><h3>Change one, or write your own</h3><p>Every song is words with the chords in square brackets, <code>[C]Oh my [G7]darling</code>, so changing a chord or writing a song of your own is just typing. The <a href="guide.html">song guide</a> has the rest: strums, timings, tab.</p></div>
   </div>
-  <div class="note-box" style="margin-top:20px"><p><b>On a phone or tablet?</b> The web player takes song files, ChordPro, a zipped songs folder or the desktop app's file, and you can write songs there too. <a href="phone.html">How to put it on your Home Screen and keep your songs safe</a>.</p></div>
+  <div class="note-box" style="margin-top:20px"><p><b>On a phone or tablet?</b> The web player pastes from websites too, and takes song files, ChordPro, a zipped songs folder or the desktop app's file. <a href="phone.html">How to put it on your Home Screen and keep your songs safe</a>.</p></div>
 </div></section>
 <section id="ai"><div class="wrap">
   <p class="eyebrow">Using AI</p>
@@ -398,7 +409,7 @@ const PHONE_PAGE = {
     <li>It works in Safari, Chrome, Edge and Firefox; installing works in Safari, Chrome and Edge, and Firefox on Android</li>
     <li>For big jobs (a whole club songbook, printing, PDFs, setlist songbooks) the <a href="./#get">desktop app</a> does more</li>
   </ul></div></div>
-  <div class="next-pages" style="margin-top:20px"><a class="btn primary" href="app/">Open the web player</a><a class="btn" href="songs.html">Bring your songs</a><a class="btn" href="guide.html">The song guide</a></div>
+  <div class="next-pages" style="margin-top:20px"><a class="btn primary" href="app/">Open the web player</a><a class="btn" href="songs.html">Add songs from the web</a><a class="btn" href="guide.html">The song guide</a></div>
 </div></section>`
 };
 
@@ -474,7 +485,7 @@ const DROPBOX_PAGE = {
   <details><summary>A change has not arrived</summary><p>Save on the device where you made the change, check its connection and sync status, then sync the receiving device. Reopen a song already open in the desktop app. Check that both devices chose the same shared collection.</p></details>
   <details><summary>I cannot save or sync changes</summary><p>Check your permission with the folder owner: <strong>Can view</strong> does not allow uploads or edits. Check Dropbox for storage or sync errors too. Keep a local backup of unsynced work before disconnecting or changing folders.</p></details>
   <details><summary>There are two versions of a song</summary><p>If the web player finds changes on both sides since the last sync, it keeps the Dropbox version and a copy labelled <strong>… (changed on this device)</strong>. Dropbox's desktop app can separately create a <strong>conflicted copy</strong> when people edit the same file. Keep both, compare the changes, and ask the librarian to combine them before removing either. See <a href="https://help.dropbox.com/organize/conflicted-copy">Dropbox's conflicted-copy guidance</a>.</p></details>
-  <div class="next-pages" style="margin-top:28px"><a class="btn" href="songs.html">Bring your songs</a><a class="btn" href="phone.html#dropbox">Connect a phone or tablet</a><a class="btn" href="./#get">Get ukemusic</a></div>
+  <div class="next-pages" style="margin-top:28px"><a class="btn" href="songs.html">Add songs from the web</a><a class="btn" href="phone.html#dropbox">Connect a phone or tablet</a><a class="btn" href="./#get">Get ukemusic</a></div>
 </div></section>`
 };
 
@@ -601,6 +612,44 @@ const INSTRUMENTS_PAGE = {
   <div class="next-pages" style="margin-top:20px"><a class="btn primary" href="app/">Try it in your browser</a><a class="btn" href="practice/">Free Practice</a><a class="btn" href="chord-sheets.html">Chord sheets</a><a class="btn" href="https://github.com/markbeachill/ukemusic/blob/main/INSTRUMENTS.md">The details, on GitHub</a></div>
 </div></section>`
 };
+
+// ── 4.66: Features: what each app does, from web/features.js (also the home page's short table,
+// the README's table and the structured data's featureList, all kept in step by build()) ──
+const FEATURES = require('./features');
+const FEATURES_PAGE = {
+  file: 'features.html', image: 'editor.webp',
+  title: 'Features',
+  seoTitle: 'Features: the web player and the desktop app compared · ukemusic',
+  blurb: 'Everything ukemusic does, and which app does it: getting songs in from the web, playing along, learning, Free Practice, printing, groups and instruments.',
+  body: () => `
+<div class="page-hero"><div class="wrap">
+  <p class="eyebrow">Features</p>
+  <h1>What ukemusic does, in the browser and on your computer</h1>
+  <p class="lede">The web player runs on phones, tablets and any computer; the desktop app adds setlists, songbooks and every kind of printing. Both are free, work offline and need no account. Each heading links to more about it.</p>
+  <div class="cta"><a class="btn primary" href="app/">Try it in your browser</a><a class="btn" href="./#get">Download the desktop app</a></div>
+</div></div>
+<section><div class="wrap">
+  ${FEATURES.tableHtml()}
+  <p class="intro">${esc(FEATURES.WHAT_IT_ISNT)}</p>
+</div></section>`
+};
+
+/** 4.66: the home page and the README carry the features table between their features:start and
+ *  features:end markers, and the home page's structured data its featureList: made here, from
+ *  web/features.js. Returns the text with them filled in (unchanged if already up to date). */
+function withFeatures(text, kind) {
+  const table = kind === 'readme' ? FEATURES.tableMarkdown(SITE_URL) : `      ${FEATURES.tableHtml({ home: true })}`;
+  let out = text.replace(/(<!-- features:start[^>]*-->)[\s\S]*?(\n[ \t]*<!-- features:end -->)/, (_m, a, b) => `${a}\n${table}${b}`);
+  if (kind === 'home') {
+    const list = (app) => JSON.stringify(FEATURES.featureList(app));
+    out = out.replace(/("@id": "https:\/\/markbeachill\.github\.io\/ukemusic\/#desktop",[\s\S]*?"featureList": )\[[^\]]*\]/, (_m, a) => `${a}${list('desktop')}`)
+      .replace(/("@id": "https:\/\/markbeachill\.github\.io\/ukemusic\/app\/#webapp",\s*"featureList": )\[[^\]]*\]/, (_m, a) => `${a}${list('web')}`);
+  }
+  return out;
+}
+function writeIfChanged(file, text) {
+  if (fs.readFileSync(file, 'utf8') !== text) fs.writeFileSync(file, text);
+}
 
 // ── Free Practice, as a page of its own (practice/): every exercise written out from the practice
 // catalogue itself, so the page always matches the app; for people, search engines and AI assistants
@@ -814,19 +863,23 @@ ${THEME_SCRIPT}
 }
 
 function build() {
+  // 4.66: the features table into the home page and the README first (both are in git: commit them)
+  writeIfChanged(path.join(SITE, 'index.html'), withFeatures(fs.readFileSync(path.join(SITE, 'index.html'), 'utf8'), 'home'));
+  writeIfChanged(path.join(APP, 'README.md'), withFeatures(fs.readFileSync(path.join(APP, 'README.md'), 'utf8'), 'readme'));
   const index = fs.readFileSync(path.join(SITE, 'index.html'), 'utf8');
   const siteCss = index.slice(index.indexOf('<style>') + 7, index.indexOf('</style>'));
   for (const p of PAGES) fs.writeFileSync(path.join(SITE, p.file), wrapPage(p, pageBody(p), siteCss));
   fs.writeFileSync(path.join(SITE, SONGS_PAGE.file), wrapPage(SONGS_PAGE, SONGS_PAGE.body(), siteCss));
   fs.writeFileSync(path.join(SITE, PHONE_PAGE.file), wrapPage(PHONE_PAGE, PHONE_PAGE.body(), siteCss));
   fs.writeFileSync(path.join(SITE, INSTRUMENTS_PAGE.file), wrapPage(INSTRUMENTS_PAGE, INSTRUMENTS_PAGE.body(), siteCss));
+  fs.writeFileSync(path.join(SITE, FEATURES_PAGE.file), wrapPage(FEATURES_PAGE, FEATURES_PAGE.body(), siteCss));
   fs.writeFileSync(path.join(SITE, DROPBOX_PAGE.file), wrapPage(DROPBOX_PAGE, DROPBOX_PAGE.body(), siteCss));
   fs.writeFileSync(path.join(SITE, GALLERY_PAGE.file), wrapPage(GALLERY_PAGE, GALLERY_PAGE.body(), siteCss));
   const practiceBody = PRACTICE_PAGE.body();   // (sets its description and structured data)
   fs.mkdirSync(path.join(SITE, PRACTICE_PAGE.dir), { recursive: true });
   fs.writeFileSync(path.join(SITE, PRACTICE_PAGE.file), wrapPage(PRACTICE_PAGE, practiceBody, siteCss));
   fs.writeFileSync(path.join(SITE, 'sitemap.xml'), sitemap());
-  return [...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, INSTRUMENTS_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, PRACTICE_PAGE.file, 'sitemap.xml'];
+  return [...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, INSTRUMENTS_PAGE.file, FEATURES_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, PRACTICE_PAGE.file, 'sitemap.xml'];
 }
 
 /** A gallery song's web page (sheet.html, as the app exports it) with a title, a description and
@@ -847,7 +900,7 @@ function sitemap() {
   // the gallery's song sheets are web pages too (4.58)
   let sheets = [];
   try { sheets = JSON.parse(fs.readFileSync(path.join(SITE, 'gallery', 'gallery.json'), 'utf8')).map((g) => `gallery/${g.slug}/sheet.html`).filter((f) => fs.existsSync(path.join(SITE, f))); } catch (_e) { sheets = []; }
-  const paths = ['', PRACTICE_PAGE.path, 'app/', ...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, INSTRUMENTS_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, ...docs, ...sheets];
+  const paths = ['', PRACTICE_PAGE.path, 'app/', ...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, INSTRUMENTS_PAGE.file, FEATURES_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, ...docs, ...sheets];
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${paths.map((x) => `  <url><loc>${SITE_URL}${x}</loc></url>`).join('\n')}
@@ -855,5 +908,5 @@ ${paths.map((x) => `  <url><loc>${SITE_URL}${x}</loc></url>`).join('\n')}
 `;
 }
 
-module.exports = { build, wrapPage, galleryPageHead, PRACTICE_PAGE, sitemap, SITE_URL, PAGES, SONGS_PAGE, PHONE_PAGE, INSTRUMENTS_PAGE, DROPBOX_PAGE, GALLERY_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
+module.exports = { build, wrapPage, withFeatures, galleryPageHead, PRACTICE_PAGE, sitemap, SITE_URL, PAGES, SONGS_PAGE, PHONE_PAGE, INSTRUMENTS_PAGE, FEATURES_PAGE, DROPBOX_PAGE, GALLERY_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
 if (require.main === module) console.log('pages:', build().join(', '));

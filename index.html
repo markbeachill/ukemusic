@@ -375,9 +375,11 @@
       .practice-cta:hover { background: #9a3412; }
       .practice-cta:focus-visible { outline: 3px solid #fdba74; outline-offset: 2px; }
       .practice-cta [data-icon] svg, .practice-cta svg { stroke: currentColor; }
-      .library-new { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 0; border-radius: 12px; background: var(--accent); color: #fff; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; }
+      .library-new { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 0; border-radius: 12px; background: var(--accent); color: #fff; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
       .library-new:hover { background: var(--accent-dark); }
       .library-new svg { width: 20px; height: 20px; }
+      .library-new.secondary { background: transparent; color: var(--accent); box-shadow: inset 0 0 0 2px var(--accent); }
+      .library-new.secondary:hover { background: var(--accent-soft); }
       .patterns-dialog { width: min(860px, 94vw); }
       #patternsBody { max-height: 62vh; overflow-y: auto; display: grid; gap: 16px; }
       .pt-chords { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -3143,7 +3145,9 @@
         <div class="library-heading">
           <button id="libPractice" class="practice-cta" type="button" title="Warm-ups, chords, strumming, picking, scales and routines: no song needed"><span data-icon="metronome" aria-hidden="true"></span>Free Practice</button>
           <div class="library-title"><h1 id="libHeading">Your songs</h1><p id="libAbout" class="library-about" hidden></p></div>
-          <button id="libNew" class="library-new" type="button"><span data-icon="plus" aria-hidden="true"></span>New song</button>
+          <!-- 4.66: the usual way in first -->
+          <button id="libPaste" class="library-new" type="button" title="Copy a chord sheet from a website, then paste it here: the chords go into the words for you"><span data-icon="paste" aria-hidden="true"></span>Paste from a website</button>
+          <button id="libNew" class="library-new secondary" type="button" title="Write a song of your own: words with the chords in square brackets"><span data-icon="plus" aria-hidden="true"></span>New song</button>
         </div>
         <div class="library-tabs" role="tablist">
           <button id="libTabSongs" class="library-tab active" type="button" role="tab">Songs</button>

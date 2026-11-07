@@ -4,7 +4,7 @@ The text that ukemusic gives you to paste into an AI chat (Claude, ChatGPT, Gemi
 
 | File | What it's for | Where it's used |
 |---|---|---|
-| `ai-convert.txt` | Turns a chord sheet into ukemusic's song format, nothing more | Desktop: File → Paste from website → **Copy AI prompt**. Web player: Edit → Help from an AI chat. Website: Bring your songs |
+| `ai-convert.txt` | Turns a chord sheet into ukemusic's song format, nothing more | Desktop: File → Paste from website → **Copy AI prompt**. Web player: Edit → Help from an AI chat. Website: Add songs from the web |
 | `ai-practice.txt` | Gets a song ready to practise, play along with and learn. It starts with a **menu**: the AI asks which parts you want (format, timing, parts, chords, strums, what to check by ear, practice notes), or all of them, before it does anything | Desktop: **Copy AI prompt: ready to practise**. Web player and website: the same places |
 
 Plain text, so any editor will do (Notepad is fine). Keep these lines in `ai-practice.txt` as they are, because the app fills them in with the song that's open:

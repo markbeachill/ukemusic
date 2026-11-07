@@ -380,7 +380,8 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
       <input id="search" class="search" type="search" placeholder="Find a song, artist, tag or key…" autocomplete="off" aria-label="Find a song">
       <div id="songList" class="songs"><div class="empty">Loading your songs…</div></div>
       <div class="add-row">
-        <button id="newSongBtn" class="btn primary" type="button" title="Write a new song: words with the chords in square brackets">+ New song</button>
+        <button id="pasteSongBtn" class="btn primary" type="button" title="Copy a chord sheet from a website, then paste it here: the chords go into the words for you">Paste from a website</button>
+        <button id="newSongBtn" class="btn" type="button" title="Write a new song: words with the chords in square brackets">+ New song</button>
         <label class="btn" for="updateInput" title="Song files (ukemusic, ChordPro, or chords above the words), a zipped songs folder, or a backup">Add songs from files…</label>
         <input id="updateInput" type="file" multiple hidden>
         <button id="cloudBtn" class="btn" type="button" hidden title="Keep your songs in Dropbox, in the desktop app's songs folder: changes here go there, and changes there come here">Dropbox…</button>
@@ -530,6 +531,18 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
     <p class="note">It syncs when ukemusic opens, a few seconds after you change a song, and when the connection comes back. A song changed both here and on the computer between syncs is kept twice: the computer's, and this device's as “… (changed on this device)”. A song deleted here goes to Archived songs in the folder.</p>
   </div>
   <div class="dialog-actions"><button id="cloudClose" class="btn" type="button">Close</button></div>
+</dialog>
+
+<!-- 4.66: paste a chord sheet from a website (chords above the words, in the words, or ChordPro) -->
+<dialog id="pasteSongDialog">
+  <h2>Paste from a website</h2>
+  <form id="pasteSongForm" method="dialog" class="fields">
+    <p class="note">Copy the song on the website (from the title to the last chord), then paste it below. Chords on their own line above the words are moved into the words.</p>
+    <div class="row"><label for="pasteText">The chord sheet</label><textarea id="pasteText" rows="10" spellcheck="false" placeholder="Paste here"></textarea></div>
+    <div class="row"><label for="pasteTitle">Title</label><input id="pasteTitle" autocomplete="off"></div>
+    <p id="pasteSongError" class="form-error"></p>
+    <div class="dialog-actions"><button id="pasteSongCancel" class="btn" type="button">Cancel</button><button class="btn primary" type="submit">Add the song</button></div>
+  </form>
 </dialog>
 
 <dialog id="newSongDialog">
@@ -843,7 +856,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     const list = [...songs.values()].sort((a, b) => a.title.localeCompare(b.title));
     const shown = list.filter((s) => !q || `${s.title} ${s.settings?.song?.artist || ''} ${s.settings?.song?.tags || ''} ${songKey(s)?.name || ''}`.toLowerCase().includes(q));
     if (!list.length) {
-      $('songList').innerHTML = `<div class="empty">No songs yet. Write one with <strong>New song</strong>, or bring yours in with <strong>Add songs from files…</strong></div>`;
+      $('songList').innerHTML = `<div class="empty">No songs yet. Copy a chord sheet on a website and use <strong>Paste from a website</strong>, bring files in with <strong>Add songs from files…</strong>, or write one with <strong>New song</strong></div>`;
     } else {
       $('songList').innerHTML = shown.length ? shown.map((s) => {
         const key = songKey(s);
@@ -908,6 +921,37 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     setTimeout(() => $('newTitle').focus(), 50);
   });
   $('newSongCancel').addEventListener('click', () => $('newSongDialog').close());
+  // 4.66: Paste from a website: the same conversion as files (src/song-files.js: chords above the
+  // words moved into them; ChordPro converted), then the song opens to look over
+  $('pasteSongBtn').addEventListener('click', () => {
+    $('pasteText').value = ''; $('pasteTitle').value = ''; $('pasteSongError').textContent = '';
+    $('pasteSongDialog').showModal();
+    setTimeout(() => $('pasteText').focus(), 50);
+  });
+  $('pasteSongCancel').addEventListener('click', () => $('pasteSongDialog').close());
+  $('pasteText').addEventListener('input', () => {
+    // a ChordPro {title: …}, or else the first line, as the title (if none typed yet)
+    if ($('pasteTitle').dataset.typed) return;
+    const text = $('pasteText').value;
+    const cho = text.match(/\{\s*(?:title|t)\s*:\s*([^}]+)\}/i);
+    const first = text.split('\n').map((l) => l.trim()).find((l) => l && !/[\[\]{}|]/.test(l));
+    $('pasteTitle').value = (cho ? cho[1] : first || '').trim().slice(0, 80);
+  });
+  $('pasteTitle').addEventListener('input', () => { $('pasteTitle').dataset.typed = '1'; });
+  $('pasteSongForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const raw = $('pasteText').value;
+    const title = $('pasteTitle').value.trim().replace(/\s+/g, ' ');
+    if (!raw.trim()) { $('pasteSongError').textContent = 'Paste the chord sheet first.'; return; }
+    if (!title) { $('pasteSongError').textContent = 'Give the song a title.'; return; }
+    if (/[\\/:*?"<>|]/.test(title)) { $('pasteSongError').textContent = 'A title can’t have any of these: \\ / : * ? " < > |'; return; }
+    if (titleTaken(title)) { $('pasteSongError').textContent = 'There’s already a song called that here.'; return; }
+    const read = U.songFiles.songFromText(`${title}.txt`, raw);
+    const song = { ...(read.settings && read.settings.song) };
+    $('pasteSongDialog').close();
+    delete $('pasteTitle').dataset.typed;
+    await createSong(title, read.text, { ...(read.settings || {}), song: { tempo: 100, beats_per_bar: 4, ...song, instrument: myInstrument() } });
+  });
   $('newSongForm').addEventListener('submit', async (event) => {
     event.preventDefault();
     const title = $('newTitle').value.trim().replace(/\s+/g, ' ');

@@ -1,5 +1,18 @@
 # Changelog
 
+## v4.66.0
+
+### Any chord sheet from the web
+- **The website and README lead with what most people do: paste a chord sheet from a website.** New headline: "Any chord sheet from the web, ready to play along, learn and practise." Under the buttons: free and open source, works offline, no account, no adverts.
+- **"Your songs" is now "Add songs"** in the website's menu. Its page, **Add songs from the web**, starts with pasting from a website in four steps. Then come the other ways in: your club's songbook, difficult sheets and PDFs (with the AI prompts), the songs to start with, and writing your own.
+- **The web player has Paste from a website**, first in the songs list. Paste a chord sheet (chords above the words, chords in the words, or ChordPro), check the title it guessed, and it becomes a song in your instrument. New song is still beside it.
+- **The desktop library has a Paste from a website button**, before New song. It opens the same paste window as File → Paste from website.
+
+### A features table
+- **A new Features page** (`features.html`, first in the menu) compares the web player and the desktop app feature by feature: getting songs in, play along, learning by heart, Free Practice, printing and sharing, playing together, your instrument, and free, offline and private. Each heading links to its page. What the web player can't do yet (setlists, songbook PDFs, looping a part) is shown with a dash.
+- **The home page has the short version**, and the README has the whole table.
+- **All of them come from one list, `web/features.js`.** Building the website updates the home page, the README and the features that search engines read. A test checks they match.
+
 ## v4.65.0
 
 ### Default, or the song's own instrument

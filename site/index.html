@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ukemusic: free ukulele app for chord sheets, practice and songs</title>
-<meta name="description" content="Free, open-source ukulele app: chord sheets from your songs, play-along, learning songs by heart and 40 practice exercises. In a browser or on your computer.">
+<title>ukemusic: free ukulele app for chord sheets from the web</title>
+<meta name="description" content="Paste a chord sheet from any website and ukemusic plays it with you, helps you learn it and prints it. Free ukulele app: works offline, no account.">
 <link rel="canonical" href="https://markbeachill.github.io/ukemusic/">
 <meta name="google-site-verification" content="paZbd2J5Z9wIIl70C9H2t2_ucxYog1PBxstF1Z0BeBI" />
 <meta property="og:type" content="website">
@@ -40,11 +40,13 @@
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
       "license": "https://github.com/markbeachill/ukemusic/blob/main/LICENSE",
       "screenshot": "https://markbeachill.github.io/ukemusic/img/editor.webp",
+      "featureList": ["Paste a chord sheet from any website","Import ChordPro files, or a whole songbook folder","AI prompts for difficult sheets and PDFs","Public-domain songs to start with, ready to play","Change a song, or write your own","Find songs by title, artist, tag or key","Playback with the chords and the strum (or picking)","Karaoke: the words light up as it plays","Any key, with a capo; slower or faster","The tune, as notes and played","Loop a part","Keep a song in several keys","Play from memory, with fewer chords each time","Quizzes on the changes and the chord numbers","A learn sheet to print","40 exercises: warm-ups, chords, strumming, picking, scales, improvising","Routines, and your progress (days, best tempos, scores)","Progressions from memory, major and minor","Chords by key, a sheet to print","Chord sheets with chord diagrams","Stage copies: big and easy to read at a gig","Pick sheets: tab for fingerpicking","ChordPro, web page and lyrics files","Songbook PDFs of a setlist","Export every song at once","Setlists","The Session screen: big words and chords for a group","Songs from the desktop to a phone or tablet, in one file","Ukulele (high or low G), baritone ukulele and guitar","Left-handed chord diagrams","Your own chord shape for a song","Free and open source","Works offline","No account needed, no adverts","Your songs stay on your device","Share a songs folder between devices with Dropbox","Windows, Mac and Linux"],
       "author": { "@type": "Person", "name": "Mark Beachill" }
     },
     {
       "@type": "WebApplication",
       "@id": "https://markbeachill.github.io/ukemusic/app/#webapp",
+      "featureList": ["Paste a chord sheet from any website","Import ChordPro files, or a whole songbook folder","AI prompts for difficult sheets and PDFs","Public-domain songs to start with, ready to play","Change a song, or write your own","Find songs by title, artist, tag or key","Playback with the chords and the strum (or picking)","Karaoke: the words light up as it plays","Any key, with a capo; slower or faster","The tune, as notes and played","Play from memory, with fewer chords each time","Quizzes on the changes and the chord numbers","A learn sheet to print","40 exercises: warm-ups, chords, strumming, picking, scales, improvising","Routines, and your progress (days, best tempos, scores)","Progressions from memory, major and minor","Chords by key, a sheet to print","Chord sheets with chord diagrams","Stage copies: big and easy to read at a gig","Pick sheets: tab for fingerpicking","ChordPro, web page and lyrics files","The Session screen: big words and chords for a group","Songs from the desktop to a phone or tablet, in one file","Ukulele (high or low G), baritone ukulele and guitar","Left-handed chord diagrams","Free and open source","Works offline","No account needed, no adverts","Your songs stay on your device","Share a songs folder between devices with Dropbox","Phones and tablets","Windows, Mac and Linux"],
       "name": "ukemusic web player",
       "url": "https://markbeachill.github.io/ukemusic/app/",
       "applicationCategory": "EducationalApplication",
@@ -240,6 +242,20 @@ footer { border-top: 1px solid var(--line); padding: 36px 0 48px; color: var(--m
 footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; }
 footer a { color: var(--muted); }
 .theme { background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 999px; padding: 4px 12px; font: inherit; font-size: 14px; cursor: pointer; }
+/* the features table (web/features.js) */
+table.features { width: 100%; border-collapse: collapse; margin: 8px 0 18px; font-size: 15px; }
+table.features th, table.features td { padding: 9px 10px; border-bottom: 1px solid var(--line, #e3ddd2); text-align: left; vertical-align: top; }
+table.features thead th { font-size: 14px; position: sticky; top: 0; background: var(--bg, #f6f2ec); }
+table.features thead th small { display: block; font-weight: 400; color: var(--muted, #6b6b6b); font-size: 12px; }
+table.features td { text-align: center; width: 24%; }
+table.features td.yes span { color: var(--teal-ink, #0e5a54); font-weight: 700; }
+table.features td.no span { color: var(--muted, #8a8a8a); }
+table.features td small { display: block; color: var(--muted, #6b6b6b); font-size: 12px; line-height: 1.3; }
+table.features tbody th { font-weight: 500; }
+table.features tr.section th { padding-top: 22px; font-size: 17px; font-weight: 700; border-bottom: 2px solid var(--ink, #222); }
+table.features tr.section a { color: inherit; text-decoration: none; }
+table.features tr.section a:hover { text-decoration: underline; }
+@media (max-width: 600px) { table.features { font-size: 14px; } table.features th, table.features td { padding: 7px 5px; } table.features td { width: 26%; } }
 </style>
 </head>
 <body>
@@ -248,12 +264,13 @@ footer a { color: var(--muted); }
   <div class="wrap">
     <a class="brand" href="#"><img src="img/icon-64.png" alt="">ukemusic</a>
     <nav class="links">
+      <a class="opt" href="features.html">Features</a>
       <a class="opt" href="learn.html">Learn</a>
       <a class="opt" href="practise.html">Practise</a>
       <a class="opt" href="perform.html">Perform</a>
       <a class="opt" href="teach.html">Teach</a>
       <a class="opt" href="chord-sheets.html">Chord sheets</a>
-      <a class="opt" href="songs.html">Your songs</a>
+      <a class="opt" href="songs.html">Add songs</a>
       <a href="#get">Get it</a>
     </nav>
   </div>
@@ -262,13 +279,13 @@ footer a { color: var(--muted); }
 <main>
   <div class="hero">
     <div class="wrap">
-      <h1>Bring your songs. Learn them, practise them, play them together.</h1>
+      <h1>Any chord sheet from the web, ready to play along, learn and practise.</h1>
       <p class="for-who"><a href="instruments.html">For ukulele, baritone ukulele and guitar, left- or right-handed</a></p>
-      <p class="lede">Paste a chord sheet from a website, import your club's songbook, or type the words with the chords in square brackets. ukemusic turns it into everything else: the chord sheet and shapes, playback and karaoke, a way to learn it by heart, and a clear copy for the gig.</p>
+      <p class="lede">Paste a chord sheet from any website (or import your club's songbook) and ukemusic sorts out the chords, shapes and strum, plays it with you, helps you learn it by heart and prints it for the gig.</p>
       <div class="cta">
         <a class="btn primary" href="app/">Try it in your browser</a>
         <a id="heroDownload" class="btn" href="#get">Download for free</a>
-        <span class="note">Free and open source · Windows, Mac, Linux, phones and tablets</span>
+        <span class="note"><b>Free and open source · Works offline · No account, no adverts</b><br>Windows, Mac, Linux, phones and tablets</span>
       </div>
       <div class="shot"><img src="img/editor.webp" width="1360" height="860" alt="ukemusic: the song typed on the left, the finished chord sheet with chord shapes and the strum pattern on the right"></div>
     </div>
@@ -285,8 +302,28 @@ footer a { color: var(--muted); }
         <a class="door" href="perform.html"><img src="img/session-setlist.webp" loading="lazy" width="1360" height="765" alt=""><span><strong>Perform</strong>Stage copies, setlists, and the Session screen on the TV for a club night.</span></a>
         <a class="door" href="teach.html"><img src="img/changes.webp" loading="lazy" width="1360" height="860" alt=""><span><strong>Teach</strong>Run a club or a class: the screen at the front, handouts and learn sheets from one song file.</span></a>
         <a class="door" href="chord-sheets.html"><img src="img/editor.webp" loading="lazy" width="1360" height="860" alt=""><span><strong>Chord sheets</strong>Clear sheets with shapes and the strum, in any key, capo or instrument.</span></a>
-        <a class="door door-songs" href="songs.html"><span><strong>Bring your songs</strong>From websites, songbooks, ChordPro files and PDFs, with AI prompts for the difficult ones.</span><span class="go">How to get them in →</span></a>
+        <a class="door door-songs" href="songs.html"><span><strong>Add songs from the web</strong>Paste a chord sheet from any website, or import your club's songbook. AI prompts for the difficult ones.</span><span class="go">How to add them →</span></a>
       </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="wrap">
+      <p class="eyebrow">What it does</p>
+      <h2>The main features</h2>
+      <!-- features:start (made by web/pages.js from web/features.js: change it there) -->
+      <table class="features short"><thead><tr><th scope="col">Feature</th><th scope="col">Web player<small>phones, tablets, any browser</small></th><th scope="col">Desktop app<small>Windows, Mac, Linux</small></th></tr></thead><tbody>
+<tr><th scope="row">Paste a chord sheet from any website</th><td class="yes"><span aria-label="Yes">✓</span></td><td class="yes"><span aria-label="Yes">✓</span></td></tr><tr><th scope="row">Import ChordPro files, or a whole songbook folder</th><td class="yes"><span aria-label="Yes">✓</span> <small>Files, or a zipped folder</small></td><td class="yes"><span aria-label="Yes">✓</span></td></tr>
+<tr><th scope="row">Playback with the chords and the strum (or picking)</th><td class="yes"><span aria-label="Yes">✓</span></td><td class="yes"><span aria-label="Yes">✓</span></td></tr>
+<tr><th scope="row">Play from memory, with fewer chords each time</th><td class="yes"><span aria-label="Yes">✓</span></td><td class="yes"><span aria-label="Yes">✓</span></td></tr>
+<tr><th scope="row">40 exercises: warm-ups, chords, strumming, picking, scales, improvising</th><td class="yes"><span aria-label="Yes">✓</span></td><td class="yes"><span aria-label="Yes">✓</span></td></tr>
+<tr><th scope="row">Chord sheets with chord diagrams</th><td class="yes"><span aria-label="Yes">✓</span> <small>Print or save a PDF</small></td><td class="yes"><span aria-label="Yes">✓</span> <small>PDF</small></td></tr>
+
+<tr><th scope="row">Ukulele (high or low G), baritone ukulele and guitar</th><td class="yes"><span aria-label="Yes">✓</span></td><td class="yes"><span aria-label="Yes">✓</span></td></tr><tr><th scope="row">Left-handed chord diagrams</th><td class="yes"><span aria-label="Yes">✓</span></td><td class="yes"><span aria-label="Yes">✓</span></td></tr>
+<tr><th scope="row">Free and open source</th><td class="yes"><span aria-label="Yes">✓</span></td><td class="yes"><span aria-label="Yes">✓</span></td></tr><tr><th scope="row">Works offline</th><td class="yes"><span aria-label="Yes">✓</span> <small>Once opened, or added to your home screen</small></td><td class="yes"><span aria-label="Yes">✓</span></td></tr><tr><th scope="row">No account needed, no adverts</th><td class="yes"><span aria-label="Yes">✓</span></td><td class="yes"><span aria-label="Yes">✓</span></td></tr>
+</tbody></table>
+      <!-- features:end -->
+      <p><a class="btn" href="features.html">All the features, and what each app has →</a></p>
     </div>
   </section>
 
@@ -294,10 +331,10 @@ footer a { color: var(--muted); }
     <div class="wrap">
       <p class="eyebrow">Two ways to use it</p>
       <h2>In your browser, or on your computer</h2>
-      <p class="intro">Start in the browser: nothing to install, songs ready to play. Move to the desktop app when you want your own songs, setlists and printing. Both are free.</p>
+      <p class="intro">Start in the browser: nothing to install, songs ready to play. Move to the desktop app for setlists, songbooks and every kind of printing. Both are free. <a href="features.html">Compare them, feature by feature</a>.</p>
       <div class="choose">
-        <div class="card"><h3>The web player</h3><ul><li>Runs in any browser, on a phone, tablet or computer</li><li>Comes with public-domain songs to try straight away</li><li>Play along, karaoke, learn by heart, the Session screen, Free Practice</li><li>Takes your songs from the desktop app with one file</li></ul><a class="btn primary" href="app/">Try it in your browser</a></div>
-        <div class="card"><h3>The desktop app</h3><ul><li>Windows, Mac and Linux; works offline</li><li>Write, paste and import your own songs, kept as files you own</li><li>Setlists, songbooks, Stage copies, learn sheets, every export</li><li>Everything the web player does, and more</li></ul><a class="btn" href="#get">Download for free</a></div>
+        <div class="card"><h3>The web player</h3><ul><li>Runs in any browser, on a phone, tablet or computer</li><li>Paste a chord sheet from any website, or try the public-domain songs</li><li>Play along, karaoke, learn by heart, the Session screen, Free Practice</li><li>Works offline once opened; no account</li></ul><a class="btn primary" href="app/">Try it in your browser</a></div>
+        <div class="card"><h3>The desktop app</h3><ul><li>Windows, Mac and Linux; works offline</li><li>Paste and import songs, kept as files you own</li><li>Setlists, songbooks, Stage copies, learn sheets, every export</li><li>Everything the web player does, and more</li></ul><a class="btn" href="#get">Download for free</a></div>
       </div>
     </div>
   </section>
@@ -306,7 +343,7 @@ footer a { color: var(--muted); }
     <div class="wrap">
       <p class="eyebrow">How it works</p>
       <h2>Bring it in once. ukemusic does the rest.</h2>
-      <p class="intro">Paste a chord sheet from a website, import ChordPro files, or type it. However it comes in, a song is a plain text file you can read and change anywhere, with each chord in square brackets just before the word where it changes. Everything else follows from that: the sheet, the shapes, the playback, the learning and the printing. <a href="songs.html">All the ways to bring your songs, and an AI prompt for difficult sheets</a>.</p>
+      <p class="intro">Paste a chord sheet from a website, import ChordPro files, or type it. However it comes in, a song is a plain text file you can read and change anywhere, with each chord in square brackets just before the word where it changes. Everything else follows from that: the sheet, the shapes, the playback, the learning and the printing. <a href="songs.html">All the ways to add songs, and an AI prompt for difficult sheets</a>.</p>
       <div class="write">
         <div class="pane">
           <span class="label">What you type</span>
