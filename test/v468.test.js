@@ -52,6 +52,9 @@ test('4.68.1: the tests also run on Windows (\\r\\n line endings), on Node 24 ac
   for (const f of ['test.yml', 'release.yml', 'web.yml']) assert.ok(!/actions\/(checkout|setup-node|upload-artifact)@v4\b/.test(wf(f)), f);
   const pkg = require('../package.json');
   assert.strictEqual(pkg.devDependencies.electron, '^45.2.3');
+  // npm audit: the build tool's minimatch (GHSA-g3hv-75wg-m249), fixed in 11.0.1, without going back to electron-builder 24
+  assert.strictEqual(pkg.overrides['minimatch@>=7.0.0 <11.0.1'], '^11.0.5');
+  assert.match(pkg.devDependencies['electron-builder'], /^\^26\./);
 });
 
 console.log('v4.68 tests passed');
