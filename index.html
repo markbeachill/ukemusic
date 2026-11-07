@@ -502,6 +502,7 @@
       .library-row .title { display: flex; align-items: center; gap: 10px; min-width: 0; font-weight: 700; }
       .library-row .title span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .library-row .when { color: var(--muted); }
+      .library-row .follows { color: var(--muted); }
       .starter-chip {
         flex: none;
         font-size: 11.5px;
@@ -2088,7 +2089,8 @@
               <div class="rib-items">
                 <div class="rib-col">
                   <div class="rib-field" title="The instrument for this song: chord diagrams, tab, playback and export names. Saved with the song.">
-                    <select id="instrumentSelect" class="instrument-select" aria-label="Instrument" data-config-path="song.instrument" data-scope="song" title="The instrument for this song: chord diagrams, tab, playback and export names. Saved with the song.">
+                    <select id="instrumentSelect" class="instrument-select" aria-label="Instrument" data-config-path="song.instrument" data-scope="song" data-follow-default="1" title="Default: the song follows your instrument (Settings → All songs → Your instrument). Any other choice is this song's own, saved with it: chord diagrams, tab, playback and export names.">
+                      <option value="">Default (Uke)</option>
                       <option value="soprano">Ukulele</option>
                       <option value="lowg">Ukulele (low G)</option>
                       <option value="baritone">Baritone uke</option>
@@ -4138,6 +4140,10 @@
         }
 
         // The instrument profile for the song (src/instruments.js): ukulele, baritone uke or guitar
+        // 4.65: short names for "Default (…)" in the Instrument menu (kept short so the menu doesn't widen)
+        const INSTRUMENT_SHORT = { soprano: 'Uke', lowg: 'Low G', baritone: 'Baritone', guitar: 'Guitar' };
+        const defaultInstrumentLabel = () => `Default (${INSTRUMENT_SHORT[window.ukemusic.instrument(state.config?.song?.instrument).id] || 'Uke'})`;
+
         function songInstrument(config = effectiveConfig()) {
           return window.ukemusic.instrument(config?.song?.instrument);
         }
@@ -4500,6 +4506,12 @@
             let value = element.dataset.scope === 'song' ? config : state.config;
             for (const key of path) {
               value = value?.[key];
+            }
+            if (element.dataset.followDefault) {
+              // 4.65: "Default (Guitar)" when the song follows your instrument, else the song's own
+              element.options[0].textContent = defaultInstrumentLabel();
+              element.value = getAt(state.songSettings || {}, path.join('.')) || '';
+              return;
             }
             if (element.type === 'checkbox') {
               element.checked = Boolean(value);
@@ -5987,7 +5999,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               nextValue = element.value;
             }
 
-            target[key] = nextValue;
+            if (element.dataset.followDefault && nextValue === '') delete target[key]; // 4.65: Default: follow yours
+            else target[key] = nextValue;
             // the same setting can be in more than one place (4.54: the two-page Stage choices are in
             // Settings and on the ribbon): keep the others showing it
             if (!saveToSong) {
@@ -12547,7 +12560,9 @@ function showTab(tab) {
             const key = document.createElement('span');
             key.textContent = keyText(song) || '—';
             const instrument = document.createElement('span');
-            instrument.textContent = instrumentText(song);
+            // 4.65: a song of its own instrument shows it; one that follows yours says so, in grey
+            if (song.instrument) instrument.textContent = instrumentText(song);
+            else { instrument.textContent = defaultInstrumentLabel(); instrument.className = 'follows'; instrument.title = 'Follows your instrument (Settings → All songs → Your instrument)'; }
             const tags = document.createElement('span');
             for (const tag of songTags(song)) {
               const chip = document.createElement('span');

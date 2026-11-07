@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.65.0
+
+### Default, or the song's own instrument
+- **The Instrument menu now starts with Default (Uke), Default (Low G), Default (Baritone) or Default (Guitar)**, naming your instrument. It means the song follows yours. The other choices are the song's own instrument, saved with it. Before, the menu showed your instrument in both cases, so you couldn't tell them apart. You couldn't choose your own instrument for a song either, or switch a song back to following yours from the ribbon.
+- **The public-domain songs show Default (…)**: they're for whatever you play. Amazing Grace had been saved as baritone by mistake; it follows yours again.
+- **The library's Instrument column** shows "Default (…)" in grey for songs that follow yours, and the instrument for songs with their own. In the web player, a song with its own instrument that isn't yours says which beside its artist.
+- The labels are short so the menu doesn't get wider: "Default (Low G)" rather than "Default (Low G Uke)".
+
 ## v4.64.0
 
 ### Ukulele, baritone or guitar, left- or right-handed

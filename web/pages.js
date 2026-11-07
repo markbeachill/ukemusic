@@ -567,7 +567,7 @@ const INSTRUMENTS_PAGE = {
     <li><strong>Asked at the start</strong>The desktop app asks what you play the first time it opens; the web player asks on your first visit.</li>
     <li><strong>Change it any time</strong>Desktop: Settings → All songs → <b>Your instrument</b>, the first setting. Web player: <b>Your instrument</b>, under Your songs.</li>
     <li><strong>New songs</strong>are made for your instrument, and keep it if you change the default later. A song copied from another keeps that one's.</li>
-    <li><strong>One song, another instrument</strong>Each song can have its own: its <b>Instrument</b> menu. Songs without one follow yours.</li>
+    <li><strong>One song, another instrument</strong>Each song can have its own: its <b>Instrument</b> menu. <b>Default (Guitar)</b>, at the top, means it follows yours (the public-domain songs do); the library shows which songs have their own.</li>
   </ul>
 </div></section>
 <section><div class="wrap">

@@ -27,7 +27,7 @@ The order (ukulele, low-G ukulele, baritone, guitar) is the order of every menu.
 
 - **For one song**: the **Instrument** menu on the **This song** tab. It's saved with the song.
 - **For new songs**: Settings → All songs → **Your instrument** (the first setting; ukemusic asks the first time it starts). A new song is made for it and keeps that instrument even if you change the default later. A song saved as a new song, or written out with a picking pattern, keeps the instrument of the song it came from.
-- A song can also follow the default: Settings → This song → Instrument → *Use default*.
+- A song can also follow the default: choose **Default (Guitar)** (it names your instrument) at the top of its **Instrument** menu, or Settings → This song → Instrument → *Use default*. The public-domain songs follow the default, so they're for whatever you play. In the library, a song that follows yours shows "Default (…)" in grey; one with its own instrument shows it.
 - **In the web player**: **Your instrument**, under Your songs (it asks on your first visit). Each song's own instrument is chosen with its Instrument menu.
 - **Free Practice** follows your instrument too: on baritone and guitar the exercises start with G, C, D and Em, and **Chords by key** prints a sheet for it.
 

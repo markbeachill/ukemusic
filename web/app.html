@@ -162,6 +162,7 @@ button { cursor: pointer; }
 .check-row { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; line-height: 1.4; }
 .check-row input { margin-top: 3px; }
 .song-row .changed { color: var(--accent); font-weight: 600; }
+.song-row .inst { color: var(--muted); }
 .cloud-folders { border: 1px solid var(--line); border-radius: 10px; padding: 4px; max-height: 45vh; }
 .folder-row { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 9px 10px; border-radius: 8px; font-weight: 600; }
 .folder-row:hover { background: var(--accent-soft); }
@@ -848,9 +849,16 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
         const key = songKey(s);
         const tr = Number(s.settings?.song?.transpose) || 0;
         const k = key ? U.keys.transpose(key, tr) : null;
+        // 4.65: a song with an instrument of its own that isn't yours says which
+        let ownName = '';
+        try {
+          let own = s.settings?.song?.instrument;
+          if (devicePrefs[s.id] && devicePrefs[s.id].instrument !== undefined) own = devicePrefs[s.id].instrument;
+          if (own && own !== myInstrument()) ownName = (UMW.INSTRUMENTS.find((i) => i.id === own) || {}).name || '';
+        } catch (_e) { /* the first draw, before your instrument is read: no label */ }
         return `<button class="song-row" type="button" data-id="${esc(s.id)}">
           <span class="t">${esc(s.title)}</span>
-          <span class="a">${esc([s.settings?.song?.artist, s.settings?.song?.year].filter(Boolean).join(', ') || ' ')}${s.edited ? '<span class="changed" title="Changed on this device since it last came from the desktop app (Back up all songs takes it there)"> · changed here</span>' : ''}</span>
+          <span class="a">${esc([s.settings?.song?.artist, s.settings?.song?.year].filter(Boolean).join(', ') || ' ')}${s.edited ? '<span class="changed" title="Changed on this device since it last came from the desktop app (Back up all songs takes it there)"> · changed here</span>' : ''}${ownName ? `<span class="inst" title="This song has an instrument of its own"> · ${esc(ownName)}</span>` : ''}</span>
           <span class="k">${k ? esc(U.keys.describe(k)) : ''}</span>
         </button>`;
       }).join('') : '<div class="empty">No songs match.</div>';
@@ -1381,7 +1389,9 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   const view = { song: null, panel: 'songPanel' };
   const look = local.get('look', { layout: 'lines', diagrams: 'song_start', size: 16 });
   state.config.diagrams = { ...(state.config.diagrams || {}), left_handed: look.leftHanded === true }; // 4.64: Free Practice's starting point
-  $('instrument').innerHTML = UMW.INSTRUMENTS.map((i) => `<option value="${i.id}">${esc(i.name)}</option>`).join('');
+  // 4.65: first, "Default (Guitar)": the song follows your instrument; the others are the song's own on this device
+  const INSTRUMENT_SHORT = { soprano: 'Uke', lowg: 'Low G', baritone: 'Baritone', guitar: 'Guitar' };
+  $('instrument').innerHTML = '<option value="">Default (Uke)</option>' + UMW.INSTRUMENTS.map((i) => `<option value="${i.id}">${esc(i.name)}</option>`).join('');
   // Key, capo, instrument and tempo: the song's own settings (from the desktop), changed here per device
   const devicePrefs = local.get('prefs', {});
   // 4.62: your instrument (as the desktop's Settings → All songs → Your instrument): for songs without
@@ -1804,7 +1814,8 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     const k = keyText();
     $('keyVal').textContent = k.name;
     $('capoVal').textContent = p.capo ? String(p.capo) : 'None';
-    $('instrument').value = p.instrument;
+    $('instrument').options[0].textContent = `Default (${INSTRUMENT_SHORT[myInstrument()] || 'Uke'})`;
+    { const own = S().instrument !== undefined ? S().instrument : view.song.settings?.song?.instrument; $('instrument').value = UMW.INSTRUMENTS.some((i) => i.id === own) ? own : ''; }
     $('layout').value = look.layout;
     $('tuneSel').value = ['strip', 'lines', 'off'].includes(look.tune) ? look.tune : 'strip';
     $('diagrams').value = look.diagrams;
