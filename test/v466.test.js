@@ -44,7 +44,7 @@ test('features: what the web player lacks is marked, not hidden', () => {
 test('home page and README tables are up to date with web/features.js', () => {
   assert.strictEqual(pages.withFeatures(home, 'home'), home, 'run node web/make.js');
   assert.strictEqual(pages.withFeatures(readme, 'readme'), readme, 'run node web/make.js');
-  assert.match(home, /<table class="features short">/);
+  assert.match(home, /<div class="f-cards">/); // 4.68: cards on the home page
   assert.match(readme, /\| Paste a chord sheet from any website \| ✓ \| ✓ \|/);
 });
 

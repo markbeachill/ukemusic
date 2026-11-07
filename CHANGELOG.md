@@ -1,5 +1,24 @@
 # Changelog
 
+## v4.68.0
+
+### Features, with more colour
+- **The home page shows the features as eight cards,** with headings that say what you get:
+  - Any chord sheet from the web
+  - Play along, with karaoke
+  - Learn it by heart
+  - Free Practice
+  - Chord sheets to print
+  - Play together
+  - Ukulele, baritone or guitar
+  - Free, offline, no account
+
+  Each card has a line, an icon and a colour, and links to its page. On a phone they're compact rows. A line under them says what the desktop app adds and links to the full comparison. Before, this was a short table.
+- **The Features page's table is in colour:** each section has a coloured band with its icon, and ticks are round badges in the section's colour. The colours have their own versions in dark mode.
+- **Plainer wording:** "Playback with the chords and the strum (or picking)" is now "It plays along with you: the chords and the strum, or picking".
+- The cards, the table and their styles all come from `web/features.js`. The build puts the styles into the home page, which every page shares.
+- The home page had two sections with the id `features`. The new one is now `what-it-does`.
+
 ## v4.67.0
 
 ### Six beginner songs

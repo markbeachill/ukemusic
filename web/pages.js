@@ -680,9 +680,11 @@ const FEATURES_PAGE = {
  *  features:end markers, and the home page's structured data its featureList: made here, from
  *  web/features.js. Returns the text with them filled in (unchanged if already up to date). */
 function withFeatures(text, kind) {
-  const table = kind === 'readme' ? FEATURES.tableMarkdown(SITE_URL) : `      ${FEATURES.tableHtml({ home: true })}`;
+  // 4.67: the home page has a card for each section (the README keeps the whole table)
+  const table = kind === 'readme' ? FEATURES.tableMarkdown(SITE_URL) : `      ${FEATURES.cardsHtml()}`;
   let out = text.replace(/(<!-- features:start[^>]*-->)[\s\S]*?(\n[ \t]*<!-- features:end -->)/, (_m, a, b) => `${a}\n${table}${b}`);
   if (kind === 'home') {
+    out = out.replace(/(\/\* features-css:start[^*]*\*\/)[\s\S]*?(\/\* features-css:end \*\/)/, (_m, a, b) => `${a}${FEATURES.CSS}${b}`);
     const list = (app) => JSON.stringify(FEATURES.featureList(app));
     out = out.replace(/("@id": "https:\/\/markbeachill\.github\.io\/ukemusic\/#desktop",[\s\S]*?"featureList": )\[[^\]]*\]/, (_m, a) => `${a}${list('desktop')}`)
       .replace(/("@id": "https:\/\/markbeachill\.github\.io\/ukemusic\/app\/#webapp",\s*"featureList": )\[[^\]]*\]/, (_m, a) => `${a}${list('web')}`);

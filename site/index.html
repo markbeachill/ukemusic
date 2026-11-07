@@ -40,13 +40,13 @@
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
       "license": "https://github.com/markbeachill/ukemusic/blob/main/LICENSE",
       "screenshot": "https://markbeachill.github.io/ukemusic/img/editor.webp",
-      "featureList": ["Paste a chord sheet from any website","Import ChordPro files, or a whole songbook folder","AI prompts for difficult sheets and PDFs","Public-domain songs to start with, ready to play","Change a song, or write your own","Find songs by title, artist, tag or key","Playback with the chords and the strum (or picking)","Karaoke: the words light up as it plays","Any key, with a capo; slower or faster","The tune, as notes and played","Loop a part","Keep a song in several keys","Play from memory, with fewer chords each time","Quizzes on the changes and the chord numbers","A learn sheet to print","40 exercises: warm-ups, chords, strumming, picking, scales, improvising","Routines, and your progress (days, best tempos, scores)","Progressions from memory, major and minor","Chords by key, a sheet to print","Chord sheets with chord diagrams","Stage copies: big and easy to read at a gig","Pick sheets: tab for fingerpicking","ChordPro, web page and lyrics files","Songbook PDFs of a setlist","Export every song at once","Setlists","The Session screen: big words and chords for a group","Songs from the desktop to a phone or tablet, in one file","Ukulele (high or low G), baritone ukulele and guitar","Left-handed chord diagrams","Your own chord shape for a song","Free and open source","Works offline","No account needed, no adverts","Your songs stay on your device","Share a songs folder between devices with Dropbox","Windows, Mac and Linux"],
+      "featureList": ["Paste a chord sheet from any website","Import ChordPro files, or a whole songbook folder","AI prompts for difficult sheets and PDFs","Public-domain songs to start with, ready to play","Change a song, or write your own","Find songs by title, artist, tag or key","It plays along with you: the chords and the strum, or picking","Karaoke: the words light up as it plays","Any key, with a capo; slower or faster","The tune, shown as notes and played","Loop a part","Keep a song in several keys","Play from memory, with fewer chords each time","Quizzes on the changes and the chord numbers","A learn sheet to print","40 exercises: warm-ups, chords, strumming, picking, scales, improvising","Routines, and your progress (days, best tempos, scores)","Progressions from memory, major and minor","Chords by key, a sheet to print","Chord sheets with chord diagrams","Stage copies: big and easy to read at a gig","Pick sheets: tab for fingerpicking","ChordPro, web page and lyrics files","Songbook PDFs of a setlist","Export every song at once","Setlists","The Session screen: big words and chords for a group","Songs from the desktop to a phone or tablet, in one file","Ukulele (high or low G), baritone ukulele and guitar","Left-handed chord diagrams","Your own chord shape for a song","Free and open source","Works offline","No account needed, no adverts","Your songs stay on your device","Share a songs folder between devices with Dropbox","Windows, Mac and Linux"],
       "author": { "@type": "Person", "name": "Mark Beachill" }
     },
     {
       "@type": "WebApplication",
       "@id": "https://markbeachill.github.io/ukemusic/app/#webapp",
-      "featureList": ["Paste a chord sheet from any website","Import ChordPro files, or a whole songbook folder","AI prompts for difficult sheets and PDFs","Public-domain songs to start with, ready to play","Change a song, or write your own","Find songs by title, artist, tag or key","Playback with the chords and the strum (or picking)","Karaoke: the words light up as it plays","Any key, with a capo; slower or faster","The tune, as notes and played","Play from memory, with fewer chords each time","Quizzes on the changes and the chord numbers","A learn sheet to print","40 exercises: warm-ups, chords, strumming, picking, scales, improvising","Routines, and your progress (days, best tempos, scores)","Progressions from memory, major and minor","Chords by key, a sheet to print","Chord sheets with chord diagrams","Stage copies: big and easy to read at a gig","Pick sheets: tab for fingerpicking","ChordPro, web page and lyrics files","The Session screen: big words and chords for a group","Songs from the desktop to a phone or tablet, in one file","Ukulele (high or low G), baritone ukulele and guitar","Left-handed chord diagrams","Free and open source","Works offline","No account needed, no adverts","Your songs stay on your device","Share a songs folder between devices with Dropbox","Phones and tablets","Windows, Mac and Linux"],
+      "featureList": ["Paste a chord sheet from any website","Import ChordPro files, or a whole songbook folder","AI prompts for difficult sheets and PDFs","Public-domain songs to start with, ready to play","Change a song, or write your own","Find songs by title, artist, tag or key","It plays along with you: the chords and the strum, or picking","Karaoke: the words light up as it plays","Any key, with a capo; slower or faster","The tune, shown as notes and played","Play from memory, with fewer chords each time","Quizzes on the changes and the chord numbers","A learn sheet to print","40 exercises: warm-ups, chords, strumming, picking, scales, improvising","Routines, and your progress (days, best tempos, scores)","Progressions from memory, major and minor","Chords by key, a sheet to print","Chord sheets with chord diagrams","Stage copies: big and easy to read at a gig","Pick sheets: tab for fingerpicking","ChordPro, web page and lyrics files","The Session screen: big words and chords for a group","Songs from the desktop to a phone or tablet, in one file","Ukulele (high or low G), baritone ukulele and guitar","Left-handed chord diagrams","Free and open source","Works offline","No account needed, no adverts","Your songs stay on your device","Share a songs folder between devices with Dropbox","Phones and tablets","Windows, Mac and Linux"],
       "name": "ukemusic web player",
       "url": "https://markbeachill.github.io/ukemusic/app/",
       "applicationCategory": "EducationalApplication",
@@ -242,20 +242,52 @@ footer { border-top: 1px solid var(--line); padding: 36px 0 48px; color: var(--m
 footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; }
 footer a { color: var(--muted); }
 .theme { background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 999px; padding: 4px 12px; font: inherit; font-size: 14px; cursor: pointer; }
-/* the features table (web/features.js) */
-table.features { width: 100%; border-collapse: collapse; margin: 8px 0 18px; font-size: 15px; }
-table.features th, table.features td { padding: 9px 10px; border-bottom: 1px solid var(--line, #e3ddd2); text-align: left; vertical-align: top; }
-table.features thead th { font-size: 14px; position: sticky; top: 0; background: var(--bg, #f6f2ec); }
-table.features thead th small { display: block; font-weight: 400; color: var(--muted, #6b6b6b); font-size: 12px; }
+/* features-css:start (made by web/pages.js from web/features.js: change it there) */
+.tone-teal { --tone: var(--teal); --tone-ink: var(--teal-ink); --tone-soft: var(--teal-soft); }
+.tone-coral { --tone: #c2452d; --tone-ink: #9c3420; --tone-soft: #fbe5de; }
+.tone-amber { --tone: #b7790f; --tone-ink: #8a5a06; --tone-soft: #f8ebcf; }
+.tone-blue { --tone: #2f64a8; --tone-ink: #234d84; --tone-soft: #e1eaf6; }
+:root[data-theme="dark"] .tone-coral { --tone: #ff8a70; --tone-ink: #ffb19f; --tone-soft: #3a211b; }
+:root[data-theme="dark"] .tone-amber { --tone: #e8b04a; --tone-ink: #f2cd85; --tone-soft: #33291a; }
+:root[data-theme="dark"] .tone-blue { --tone: #7fa9e6; --tone-ink: #a9c6f0; --tone-soft: #1c2738; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .tone-coral { --tone: #ff8a70; --tone-ink: #ffb19f; --tone-soft: #3a211b; }
+  :root:not([data-theme="light"]) .tone-amber { --tone: #e8b04a; --tone-ink: #f2cd85; --tone-soft: #33291a; }
+  :root:not([data-theme="light"]) .tone-blue { --tone: #7fa9e6; --tone-ink: #a9c6f0; --tone-soft: #1c2738; }
+}
+.f-icon { width: 24px; height: 24px; flex: none; }
+.f-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 8px 0 22px; }
+@media (max-width: 980px) { .f-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.f-card { display: block; padding: 20px 20px 18px; border-radius: var(--radius, 14px); background: var(--paper); border: 1px solid var(--line); border-top: 4px solid var(--tone); color: var(--ink); text-decoration: none; box-shadow: var(--shadow); transition: transform .15s ease, box-shadow .15s ease; }
+.f-card:hover { transform: translateY(-2px); }
+.f-card .f-icon { width: 44px; height: 44px; padding: 10px; border-radius: 12px; background: var(--tone-soft); color: var(--tone-ink); box-sizing: border-box; }
+.f-card h3 { margin: 14px 0 6px; font-size: 18px; line-height: 1.25; }
+.f-card p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.45; }
+@media (max-width: 520px) {
+  .f-cards { grid-template-columns: 1fr; gap: 12px; }
+  .f-card { display: grid; grid-template-columns: 44px 1fr; gap: 2px 14px; padding: 16px; }
+  .f-card .f-icon { grid-row: span 2; }
+  .f-card h3 { margin: 2px 0 2px; }
+}
+.f-both { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; margin: 0 0 20px; color: var(--muted); font-size: 15px; }
+.f-both b { color: var(--ink); }
+table.features { width: 100%; border-collapse: separate; border-spacing: 0; margin: 8px 0 18px; font-size: 15px; }
+table.features th, table.features td { padding: 9px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+table.features thead th { font-size: 14px; position: sticky; top: 0; z-index: 1; background: var(--bg); border-bottom: 2px solid var(--ink); }
+table.features thead th small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
 table.features td { text-align: center; width: 24%; }
-table.features td.yes span { color: var(--teal-ink, #0e5a54); font-weight: 700; }
-table.features td.no span { color: var(--muted, #8a8a8a); }
-table.features td small { display: block; color: var(--muted, #6b6b6b); font-size: 12px; line-height: 1.3; }
+table.features .mark { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; font-size: 14px; font-weight: 800; line-height: 1; }
+table.features td.yes .mark { background: var(--tone, var(--teal)); color: #fff; }
+:root[data-theme="dark"] table.features td.yes .mark { color: #10201d; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) table.features td.yes .mark { color: #10201d; } }
+table.features td.no .mark { background: var(--line); color: var(--muted); }
+table.features td small { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.3; }
 table.features tbody th { font-weight: 500; }
-table.features tr.section th { padding-top: 22px; font-size: 17px; font-weight: 700; border-bottom: 2px solid var(--ink, #222); }
-table.features tr.section a { color: inherit; text-decoration: none; }
+table.features tr.section th { padding: 22px 12px 10px; border-bottom: 0; }
+table.features tr.section a { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 10px; background: var(--tone-soft); color: var(--tone-ink); font-size: 17px; font-weight: 800; text-decoration: none; }
 table.features tr.section a:hover { text-decoration: underline; }
-@media (max-width: 600px) { table.features { font-size: 14px; } table.features th, table.features td { padding: 7px 5px; } table.features td { width: 26%; } }
+@media (max-width: 600px) { table.features { font-size: 14px; } table.features th, table.features td { padding: 8px 5px; } table.features td { width: 25%; } table.features tr.section th { padding: 16px 0 8px; } }
+/* features-css:end */
 </style>
 </head>
 <body>
@@ -307,23 +339,23 @@ table.features tr.section a:hover { text-decoration: underline; }
     </div>
   </section>
 
-  <section id="features">
+  <section id="what-it-does">
     <div class="wrap">
       <p class="eyebrow">What it does</p>
-      <h2>The main features</h2>
+      <h2>Everything around a song</h2>
       <!-- features:start (made by web/pages.js from web/features.js: change it there) -->
-      <table class="features short"><thead><tr><th scope="col">Feature</th><th scope="col">Web player<small>phones, tablets, any browser</small></th><th scope="col">Desktop app<small>Windows, Mac, Linux</small></th></tr></thead><tbody>
-<tr><th scope="row">Paste a chord sheet from any website</th><td class="yes"><span aria-label="Yes">✓</span></td><td class="yes"><span aria-label="Yes">✓</span></td></tr><tr><th scope="row">Import ChordPro files, or a whole songbook folder</th><td class="yes"><span aria-label="Yes">✓</span> <small>Files, or a zipped folder</small></td><td class="yes"><span aria-label="Yes">✓</span></td></tr>
-<tr><th scope="row">Playback with the chords and the strum (or picking)</th><td class="yes"><span aria-label="Yes">✓</span></td><td class="yes"><span aria-label="Yes">✓</span></td></tr>
-<tr><th scope="row">Play from memory, with fewer chords each time</th><td class="yes"><span aria-label="Yes">✓</span></td><td class="yes"><span aria-label="Yes">✓</span></td></tr>
-<tr><th scope="row">40 exercises: warm-ups, chords, strumming, picking, scales, improvising</th><td class="yes"><span aria-label="Yes">✓</span></td><td class="yes"><span aria-label="Yes">✓</span></td></tr>
-<tr><th scope="row">Chord sheets with chord diagrams</th><td class="yes"><span aria-label="Yes">✓</span> <small>Print or save a PDF</small></td><td class="yes"><span aria-label="Yes">✓</span> <small>PDF</small></td></tr>
-
-<tr><th scope="row">Ukulele (high or low G), baritone ukulele and guitar</th><td class="yes"><span aria-label="Yes">✓</span></td><td class="yes"><span aria-label="Yes">✓</span></td></tr><tr><th scope="row">Left-handed chord diagrams</th><td class="yes"><span aria-label="Yes">✓</span></td><td class="yes"><span aria-label="Yes">✓</span></td></tr>
-<tr><th scope="row">Free and open source</th><td class="yes"><span aria-label="Yes">✓</span></td><td class="yes"><span aria-label="Yes">✓</span></td></tr><tr><th scope="row">Works offline</th><td class="yes"><span aria-label="Yes">✓</span> <small>Once opened, or added to your home screen</small></td><td class="yes"><span aria-label="Yes">✓</span></td></tr><tr><th scope="row">No account needed, no adverts</th><td class="yes"><span aria-label="Yes">✓</span></td><td class="yes"><span aria-label="Yes">✓</span></td></tr>
-</tbody></table>
+      <div class="f-cards">
+<a class="f-card tone-teal" href="songs.html"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4.5V3h6v1.5M9 10h6M9 14h6M9 18h3"/></svg><h3>Any chord sheet from the web</h3><p>Paste it from any website, or bring in your club's songbook. The chords go into the words for you.</p></a>
+<a class="f-card tone-coral" href="practise.html"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></svg><h3>Play along, with karaoke</h3><p>It plays the chords and the strum while the words light up. Any key, slower or faster.</p></a>
+<a class="f-card tone-amber" href="learn.html"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><h3>Learn it by heart</h3><p>Fewer chords on the sheet each time you play, quizzes on the changes, and a learn sheet.</p></a>
+<a class="f-card tone-blue" href="practice/"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l4 18H5zM12 17l5-10M8 17h8"/></svg><h3>Free Practice</h3><p>40 exercises: warm-ups, chord switching, strumming, picking, scales and improvising, with routines.</p></a>
+<a class="f-card tone-teal" href="chord-sheets.html"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9V3h10v6M7 17H4v-7h16v7h-3"/><rect x="7" y="14" width="10" height="7"/></svg><h3>Chord sheets to print</h3><p>The chord shapes beside the words, in any key. Stage copies big enough to read at a gig.</p></a>
+<a class="f-card tone-coral" href="perform.html"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c3 0 6 2 6 5.5"/></svg><h3>Play together</h3><p>The Session screen puts the song on the TV for the whole room, and goes through the night's setlist.</p></a>
+<a class="f-card tone-amber" href="instruments.html"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg><h3>Ukulele, baritone or guitar</h3><p>High or low G, baritone or guitar, each with its own chord shapes. Left-handed too.</p></a>
+<a class="f-card tone-blue" href="phone.html"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><h3>Free, offline, no account</h3><p>Open source, no adverts, works without the internet, and your songs stay on your device.</p></a>
+</div>
       <!-- features:end -->
-      <p><a class="btn" href="features.html">All the features, and what each app has →</a></p>
+      <p class="f-both"><span><b>In your browser and on your computer.</b> The desktop app adds setlists, songbooks, looping a part and every kind of print.</span><a class="btn" href="features.html">Compare them, feature by feature →</a></p>
     </div>
   </section>
 

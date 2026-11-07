@@ -56,10 +56,10 @@
 | Change a song, or write your own | ✓ | ✓ |
 | Find songs by title, artist, tag or key | ✓ | ✓ Several libraries too |
 | **[Play along](https://markbeachill.github.io/ukemusic/practise.html)** | | |
-| Playback with the chords and the strum (or picking) | ✓ | ✓ |
+| It plays along with you: the chords and the strum, or picking | ✓ | ✓ |
 | Karaoke: the words light up as it plays | ✓ | ✓ |
 | Any key, with a capo; slower or faster | ✓ | ✓ |
-| The tune, as notes and played | ✓ | ✓ |
+| The tune, shown as notes and played | ✓ | ✓ |
 | Loop a part | — | ✓ |
 | Keep a song in several keys | — | ✓ |
 | **[Learn a song by heart](https://markbeachill.github.io/ukemusic/learn.html)** | | |
