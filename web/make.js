@@ -25,17 +25,21 @@ console.log('pages:', require('./docs.js').build().join(', '));
 // 2c. The pages for each purpose (Learn, Practise, Perform, Teach, Chord sheets) and Your songs
 console.log('pages:', require('./pages.js').build().join(', '));
 
-// 3. The samples as WAV (Safari can't decode FLAC)
-const sounds = path.join(WEB, 'out', 'sounds');
-fs.mkdirSync(sounds, { recursive: true });
-const src = path.join(APP, 'src', 'sounds', 'ukulele');
-for (const f of fs.readdirSync(src)) {
-  const from = path.join(src, f);
-  if (f.endsWith('.flac')) {
-    const to = path.join(sounds, f.replace(/\.flac$/, '.wav'));
-    if (fs.existsSync(to)) continue;
-    try { execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', from, to]); } catch (_e) { console.warn('ffmpeg not found: skipped', f); }
-  } else fs.copyFileSync(from, path.join(sounds, f));
+// 3. The samples as WAV (Safari can't decode FLAC): the ukulele's in sounds/, and (4.72) the
+// nylon guitar's in sounds/guitar/ at 22.05 kHz (playback filters above 10 kHz, so nothing is lost,
+// and the offline copy is half the size)
+for (const [set, dir, rate] of [['ukulele', '', null], ['guitar', 'guitar', '22050']]) {
+  const sounds = path.join(WEB, 'out', 'sounds', dir);
+  fs.mkdirSync(sounds, { recursive: true });
+  const src = path.join(APP, 'src', 'sounds', set);
+  for (const f of fs.readdirSync(src)) {
+    const from = path.join(src, f);
+    if (f.endsWith('.flac')) {
+      const to = path.join(sounds, f.replace(/\.flac$/, '.wav'));
+      if (fs.existsSync(to)) continue;
+      try { execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', from, ...(rate ? ['-ar', rate] : []), to]); } catch (_e) { console.warn('ffmpeg not found: skipped', f); }
+    } else fs.copyFileSync(from, path.join(sounds, f));
+  }
 }
 
 // 4. The public-domain starter songs as a "Songs for the web" file (load it with Update songs)
@@ -59,7 +63,7 @@ if (fs.existsSync(root)) {
   const crypto = require('crypto');
   const out = path.join(WEB, 'out');
   const files = ['./', 'index.html', 'manifest.webmanifest'];
-  for (const dir of ['icons', 'sounds']) for (const f of fs.readdirSync(path.join(out, dir)).sort()) files.push(`${dir}/${f}`);
+  for (const dir of ['icons', 'sounds', 'sounds/guitar']) for (const f of fs.readdirSync(path.join(out, dir)).sort()) if (fs.statSync(path.join(out, dir, f)).isFile()) files.push(`${dir}/${f}`);
   if (fs.existsSync(path.join(out, 'public-domain-songs.json'))) files.push('public-domain-songs.json');
   const hash = crypto.createHash('sha1');
   for (const f of files.slice(1)) hash.update(fs.readFileSync(path.join(out, f)));

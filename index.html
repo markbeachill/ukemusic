@@ -2426,6 +2426,7 @@
                   <div class="rib-field" id="playGuitarSoundField" title="How playback sounds on a guitar (all songs)" hidden>
                     <label for="playGuitarSoundSelect">Sound</label>
                     <select id="playGuitarSoundSelect" data-config-path="playback.guitar_sound" title="Guitar sound for all songs">
+                      <option value="real">Real guitar (nylon)</option>
                       <option value="steel">Steel strings</option>
                       <option value="nylon">Nylon strings</option>
                     </select>
@@ -3068,7 +3069,7 @@
                       <div class="field">
                         <label for="playback-sound">Ukulele sound</label>
                         <select id="playback-sound" data-config-path="playback.sound">
-                          <option value="sampled">Real ukulele (recordings of a tenor uke)</option>
+                          <option value="sampled">Real ukulele (recordings of a tenor uke; a baritone plays the nylon guitar recordings)</option>
                           <option value="standard">Plucked string (made by the app)</option>
                           <option value="hollow">Hollow body (plucked string in a wooden body)</option>
                         </select>
@@ -3076,8 +3077,9 @@
                       <div class="field">
                         <label for="playback-guitar_sound">Guitar sound</label>
                         <select id="playback-guitar_sound" data-config-path="playback.guitar_sound">
-                          <option value="steel">Steel strings (acoustic)</option>
-                          <option value="nylon">Nylon strings (classical)</option>
+                          <option value="real">Real guitar (recordings of a nylon-string classical guitar)</option>
+                          <option value="steel">Steel strings (acoustic, made by the app)</option>
+                          <option value="nylon">Nylon strings (classical, made by the app)</option>
                         </select>
                       </div>
                       <div class="toggle-row">
@@ -4281,7 +4283,7 @@
             common_chords: 'A A7 Am B7 Bb Bm C C7 D D7 Dm E E7 Em F F7 F#m G G7 Gm Gm7'
           },
           tablature: { enable: true, frets: 'chord', size: 'same', box: false, faint: false, in_print: true },
-          playback: { count_in: true, follow: true, from_cursor: false, default_strum: 'simple', custom_strum: 'D>-DU-UDU', swing: 'auto', voice_count: false, voice_sections: false, voice_chords: false, sound: 'sampled', guitar_sound: 'steel', karaoke_size: 26 }
+          playback: { count_in: true, follow: true, from_cursor: false, default_strum: 'simple', custom_strum: 'D>-DU-UDU', swing: 'auto', voice_count: false, voice_sections: false, voice_chords: false, sound: 'sampled', guitar_sound: 'real', guitar_real: true, karaoke_size: 26 }
         };
 
         function clone(value) {
@@ -5262,6 +5264,17 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
 
         // The stylesheet for a document: the Stage style for Stage copies (never the song's own
         // font: Stage keeps its big bold one), otherwise the style set in use plus the song's font
+        // 4.72: the playback sound for an instrument. Guitar: the real nylon-string guitar (the
+        // default), or made steel or nylon strings. Baritone with Real ukulele: the nylon guitar
+        // recordings (nylon strings, tuned like a guitar's top four; a tenor uke pitched down an
+        // octave doesn't sound like one). Ukulele: as chosen.
+        function soundFor(instrument) {
+          const pb = state.config?.playback || {};
+          if (instrument === 'guitar') return ['steel', 'nylon'].includes(pb.guitar_sound) ? pb.guitar_sound : 'guitar';
+          const sound = ['hollow', 'sampled', 'standard'].includes(pb.sound) ? pb.sound : 'sampled';
+          if (instrument === 'baritone' && sound === 'sampled') return 'guitar';
+          return sound;
+        }
         // 4.71: Easy to read text: song sheets and Stage copies in Atkinson Hyperlegible (View → Style)
         const easyRead = () => state.config?.general?.easy_read === true || state.config?.general?.easy_read === 'true';
         function docCss(stage, extra = '', { songFont = true } = {}) {
@@ -6728,9 +6741,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             tempo: config?.song?.tempo || 100, beatsPerBar: strum.beats, countIn: false,
             swing: config?.playback?.swing || 'auto'
           });
-          player.setSound(instrument === 'guitar'
-            ? (state.config?.playback?.guitar_sound === 'nylon' ? 'nylon' : 'steel')
-            : (['hollow', 'sampled'].includes(state.config?.playback?.sound) ? state.config.playback.sound : 'standard'));
+          player.setSound(soundFor(instrument));
           await player.play(schedule, {});
         }
 
@@ -7548,9 +7559,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               : `Playing ${schedule.bars.length} bars at ${schedule.tempo} bpm${speed < 100 ? ` (${speed}% speed)` : ''} in ${keyLabel(state.transpose).toLowerCase()}.`,
             ...(schedule.warnings || [])
           ].join(' | '));
-          player.setSound(instrument === 'guitar'
-            ? (state.config?.playback?.guitar_sound === 'nylon' ? 'nylon' : 'steel')
-            : (['hollow', 'sampled'].includes(state.config?.playback?.sound) ? state.config.playback.sound : 'standard'));
+          player.setSound(soundFor(instrument));
           if (karaoke) {
             karaokeStart(ir, schedule, startLine, endLine, learn);
             karaokeView.textTransform = textTransform;
@@ -9487,9 +9496,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         // ── Playing ──
         function prSound() {
           const instrument = prInstrument();
-          player.setSound(instrument === 'guitar'
-            ? (state.config?.playback?.guitar_sound === 'nylon' ? 'nylon' : 'steel')
-            : (['hollow', 'sampled'].includes(state.config?.playback?.sound) ? state.config.playback.sound : 'standard'));
+          player.setSound(soundFor(instrument));
           player.setVolume(Number($p('prVolume').value) / 100);
         }
         async function prStart({ fromBar = 0, fromNote = 0, demo = false, countIn = $p('prCountIn').checked } = {}) {
@@ -10787,9 +10794,7 @@ function showTab(tab) {
             library: quiz.library, instrument: quiz.instrument, tempo: 100, beatsPerBar: 2, countIn: false, defaultStrum: 'custom', customStrum: 'D>D'
           });
           if (player.playing) { state.userStopped = true; player.stop(); }
-          player.setSound(quiz.instrument === 'guitar'
-            ? (state.config?.playback?.guitar_sound === 'nylon' ? 'nylon' : 'steel')
-            : (['hollow', 'sampled'].includes(state.config?.playback?.sound) ? state.config.playback.sound : 'standard'));
+          player.setSound(soundFor(quiz.instrument));
           await player.play(schedule, {});
         }
         function quizShow() {
@@ -12960,9 +12965,7 @@ function showTab(tab) {
             library, instrument, tempo: 100, beatsPerBar: 4, countIn: false, defaultStrum: 'custom', customStrum: 'D>---'
           });
           state.userStopped = true;
-          player.setSound(instrument === 'guitar'
-            ? (state.config?.playback?.guitar_sound === 'nylon' ? 'nylon' : 'steel')
-            : (['hollow', 'sampled'].includes(state.config?.playback?.sound) ? state.config.playback.sound : 'standard'));
+          player.setSound(soundFor(instrument));
           await player.play(schedule, {});
         }
 

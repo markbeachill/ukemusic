@@ -36,6 +36,12 @@ SOFTWARE.
 - Source: https://freepats.zenvoid.org/GuitarFamily/ukulele.html (version 2026-08-11), recorded by Mateusz Dąbrowski
 - License: Creative Commons CC0 1.0 (public domain dedication); see `src/sounds/ukulele/LICENSE.txt`
 
+## FreePats "Spanish classical guitar" samples
+
+- Files: `src/sounds/guitar/*` (18 note recordings, E2 to C6, FLAC; trimmed and retuned as `src/sounds/guitar/README.txt` describes)
+- Source: https://freepats.zenvoid.org/Guitar/acoustic-guitar.html (version 2019-06-18; https://github.com/freepats/spanish-classical-guitar), recorded by roberto@zenvoid.org for the FreePats project
+- License: Creative Commons CC0 1.0 (public domain dedication); see `src/sounds/guitar/LICENSE.txt`
+
 ## CodeMirror 6, Lezer, crelt, style-mod, w3c-keyname
 
 The song editor uses @codemirror/state, @codemirror/view, @codemirror/commands and @codemirror/language (https://codemirror.net/), with @lezer/common, @lezer/highlight, crelt, style-mod and w3c-keyname, all by Marijn Haverbeke and others, under the MIT licence:

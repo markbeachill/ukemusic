@@ -36,7 +36,7 @@
 **Free, open-source software for learning and practising ukulele**, with baritone ukulele and guitar too, left- or right-handed ([how instruments work](https://markbeachill.github.io/ukemusic/instruments.html)). It's MIT-licensed, with no account, no adverts and no paid version.
 
 - **Practise:** [Free Practice](https://markbeachill.github.io/ukemusic/practice/) has 40 exercises in six categories (warm-ups and finger work, chords and changes, strumming and rhythm, fingerpicking, scales and melody, improvising), shown on a moving fretboard in time with a metronome, plus timed routines and your progress (time practised, days in a row, best tempo, one-minute change scores). It follows your instrument (ukulele, low G, baritone or guitar), and prints a two-page **Chords by key** sheet for it. It's all in the free web player.
-- **Learn songs:** play along on real ukulele sounds, karaoke, learn a song by heart with the chords fading out, and drills for its hardest chord changes.
+- **Learn songs:** play along on real ukulele (or nylon guitar) sounds, karaoke, learn a song by heart with the chords fading out, and drills for its hardest chord changes.
 - **Add songs from the web:** paste a chord sheet from any website (or import your club's ChordPro songbook) and get the chord sheet, the shapes, the strum, Stage copies for gigs, and songbooks. Writing your own is just typing the words with the chords in square brackets.
 - **Free, offline, no account:** no adverts, nothing to pay, and your songs stay on your device.
 - **AI prompts to copy:** two prompts for an AI chat (Claude, ChatGPT, Gemini…): one tidies a difficult chord sheet into ukemusic's format, the other gets a song ready to practise and starts with a menu, so you choose what it does. They're on the website's [Add songs from the web](https://markbeachill.github.io/ukemusic/songs.html#ai-prompts) page and in the apps, and kept in [`src/ai-prompts/`](src/ai-prompts/) so they're easy to change.
@@ -60,6 +60,7 @@
 | Karaoke: the words light up as it plays | ✓ | ✓ |
 | Any key, with a capo; slower or faster | ✓ | ✓ |
 | The tune, shown as notes and played | ✓ | ✓ |
+| Real recordings: a ukulele, and a nylon-string guitar for baritone and guitar | ✓ | ✓ |
 | Loop a part | — | ✓ |
 | Keep a song in several keys | — | ✓ |
 | **[Learn a song by heart](https://markbeachill.github.io/ukemusic/learn.html)** | | |

@@ -7,10 +7,12 @@ css = css.slice(css.indexOf('.line-group'));
 const strumBox = require(APP + 'src/strum-box.js');
 const renderHtml = require(APP + 'src/renderer-html.js');
 css += '\n' + strumBox.strumCss() + renderHtml.sheetCss();
+// the recordings: WAV beside the page (sounds/, sounds/guitar/), made by make.js
 let player = fs.readFileSync(APP + 'src/playback-audio.js', 'utf8')
-  .replace("const SAMPLE_DIR = 'src/sounds/ukulele/';", "const SAMPLE_DIR = 'sounds/';")
-  .replace('decode(`${name}.flac`)', 'decode(`${name}.wav`)');
-if (!player.includes("'sounds/'") || !player.includes('${name}.wav')) throw new Error('player paths not replaced');
+  .replace("dir: 'src/sounds/ukulele/'", "dir: 'sounds/'")
+  .replace("dir: 'src/sounds/guitar/'", "dir: 'sounds/guitar/'")
+  .replace('decode(`${file}.flac`)', 'decode(`${file}.wav`)');
+if (!player.includes("dir: 'sounds/'") || !player.includes("dir: 'sounds/guitar/'") || !player.includes('${file}.wav')) throw new Error('player paths not replaced');
 let html = fs.readFileSync('app.html', 'utf8');
 const safe = (t) => t.replace(/<\/(script|style)/gi, '<\\/$1');
 const put = (marker, value) => { if (!html.includes(marker)) throw new Error(marker); html = html.split(marker).join(value); };

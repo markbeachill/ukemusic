@@ -20,7 +20,7 @@ const schedule = (title) => {
 
 test('the sampled sound borrows A4 for G4 and C#5 for B4 (they die away too soon)', () => {
   const src = fs.readFileSync(path.join(ROOT, 'src', 'playback-audio.js'), 'utf8');
-  assert.ok(/const BORROW = \{ 67: 69, 71: 73 \}/.test(src));
+  assert.ok(/borrow: \{ 67: 69, 71: 73 \}, \/\/ G4 -> A4, B4 -> C#5/.test(src)); // 4.72: in SAMPLE_SETS.ukulele
   // the same choice as sampleFor, on the real list of recordings
   const notes = [60, 62, 64, 66, 67, 69, 71, 73, 75, 77, 79, 81, 84];
   const pick = (midi) => {

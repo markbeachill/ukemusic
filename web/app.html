@@ -688,6 +688,9 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 // ── The desktop helpers the practice window uses, for the web ─────────────────
 /*SONG_UI_JS*/
 const state = { config: { playback: { sound: 'sampled' }, song: {}, library: { songs_folder: '/songs' } }, userStopped: false };
+// 4.72: real recordings for each instrument: the tenor ukulele; the nylon-string guitar for the
+// guitar and the baritone (nylon strings, tuned like a guitar's top four). Free Practice uses it too.
+const soundFor = (instrument) => (instrument === 'guitar' || instrument === 'baritone' ? 'guitar' : 'sampled');
 const player = window.UkePlayer ? new window.UkePlayer() : null;
 const songsFolder = () => '/songs';
 function effectiveConfig() { return state.config; }
@@ -2212,7 +2215,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     play.userStopped = false;
     play.line = null;
     play.barKey = null;
-    player.setSound(prefs().instrument === 'guitar' ? 'steel' : 'sampled');
+    player.setSound(soundFor(prefs().instrument));
     $('playBtn').textContent = 'Pause';
     $('player').classList.add('active'); $('stopBtn').hidden = false;
     $('status').textContent = schedule.countInDuration ? 'Count-in…' : '';
@@ -2429,7 +2432,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     else if (p.pick && U.picking.pattern(p.pick)) $('karaokeInfo').textContent += ` · Picked: ${U.picking.pattern(p.pick).name}`;
     const first = U.picking.noteName(view.song.settings?.song?.first_note, p.transpose);
     if (first) $('karaokeInfo').textContent += ` · First note ${first}`;
-    player.setSound(p.instrument === 'guitar' ? 'steel' : 'sampled');
+    player.setSound(soundFor(p.instrument));
     karaoke.schedule = schedule;
     karaoke.wake = null;
     try { navigator.wakeLock?.request('screen').then((w) => { karaoke.wake = w; }, () => {}); } catch (_e) { /* the screen may sleep */ }
@@ -2579,7 +2582,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     const ir = U.parseSong(chords.map((c) => `[${c}]`).join(' '), { useDelimiters: false });
     const schedule = U.buildSchedule(ir, { library: quiz.lib, instrument: quiz.instrument, tempo: 100, beatsPerBar: 2, countIn: false, defaultStrum: 'custom', customStrum: 'D>D' });
     if (player.playing) player.stop();
-    player.setSound(quiz.instrument === 'guitar' ? 'steel' : 'sampled');
+    player.setSound(soundFor(quiz.instrument));
     try { await player.play(schedule, {}); } catch (_e) { /* no sound */ }
   }
   function quizShow() {

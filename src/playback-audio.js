@@ -12,7 +12,10 @@
 //   sampled   a real tenor ukulele: recorded notes (FreePats "Ukulele", CC0, in
 //             src/sounds/ukulele), one every two semitones from C4 to C6, each played back a
 //             little faster or slower for the notes in between; the recorded "chuck" for X.
-//             Notes outside the range (baritone) are pitched from the nearest recording.
+//             Notes outside the range are pitched from the nearest recording.
+//   guitar    a real nylon-string guitar (4.72): recorded notes (FreePats "Spanish classical
+//             guitar", CC0, in src/sounds/guitar), E2 to C6 every two or three semitones. For the
+//             guitar, and for the baritone ukulele (nylon strings, tuned like the guitar's top four).
 // Timing: a look-ahead scheduler queues only the next ~0.2 s of strums at a time.
 (function () {
   'use strict';
@@ -37,18 +40,39 @@
       smooth: 0.7, sustain: 0.0004, lowpass: 4500, level: 0.75, spread: { down: 0.02, up: 0.015 },
       body: [[100, 6, 1.3], [210, 4, 1.6], [900, 2, 2]], modes: [[100, 0.15], [210, 0.08], [900, 0.03]]
     },
-    sampled: { sampled: true, smooth: 0.6, sustain: 0, body: null, modes: null, lowpass: 10000, level: 0.9, spread: { down: 0.016, up: 0.012 } }
+    sampled: { sampled: 'ukulele', smooth: 0.6, sustain: 0, body: null, modes: null, lowpass: 10000, level: 0.9, spread: { down: 0.016, up: 0.012 } },
+    guitar: { sampled: 'guitar', smooth: 0.6, sustain: 0, body: null, modes: null, lowpass: 10000, level: 0.9, spread: { down: 0.018, up: 0.013 } }
   };
-  // The recordings: [MIDI note, file, tuning correction in cents] (from the set's SFZ file)
-  const SAMPLE_DIR = 'src/sounds/ukulele/';
-  const SAMPLES = [
-    [60, 'C4', -5], [62, 'D4', -8], [64, 'E4', -2], [66, 'Fs4', -11], [67, 'G4', -1], [69, 'A4', 0],
-    [71, 'B4', 0], [73, 'Cs5', 0], [75, 'Ds5', 3], [77, 'F5', 4], [79, 'G5', 6], [81, 'A5', 8], [84, 'C6', 4]
-  ];
-  const BORROW = { 67: 69, 71: 73 }; // G4 -> A4, B4 -> C#5: G4 and B4 are ~12 dB down a second in
-  let sampleLoad = null;   // one shared load: { notes: [{ midi, tune, buffer }], chuck }
+  // The recordings: [MIDI note, file, tuning correction in cents]. borrow: notes whose recording
+  // dies away too soon, and the one they use instead; chuck: a recorded muted strum, or null
+  // (then the made one); level: matches the plucked sound's loudness
+  const SAMPLE_SETS = {
+    ukulele: {
+      dir: 'src/sounds/ukulele/',
+      // tuning corrections from the set's SFZ file
+      notes: [
+        [60, 'C4', -5], [62, 'D4', -8], [64, 'E4', -2], [66, 'Fs4', -11], [67, 'G4', -1], [69, 'A4', 0],
+        [71, 'B4', 0], [73, 'Cs5', 0], [75, 'Ds5', 3], [77, 'F5', 4], [79, 'G5', 6], [81, 'A5', 8], [84, 'C6', 4]
+      ],
+      borrow: { 67: 69, 71: 73 }, // G4 -> A4, B4 -> C#5: G4 and B4 are ~12 dB down a second in
+      chuck: 'chuck.wav',
+      level: 0.25
+    },
+    guitar: {
+      dir: 'src/sounds/guitar/',
+      // tuning corrections measured from the recordings (src/sounds/guitar/README.txt)
+      notes: [
+        [40, 'E2', -1], [43, 'G2', -10], [45, 'A2', -2], [48, 'C3', -2], [50, 'D3', -5], [52, 'E3', -5],
+        [55, 'G3', -2], [57, 'A3', -10], [60, 'C4', -9], [62, 'D4', -8], [64, 'E4', 0], [67, 'G4', -3],
+        [69, 'A4', -4], [72, 'C5', -11], [76, 'E5', -6], [79, 'G5', 1], [81, 'A5', -9], [84, 'C6', -7]
+      ],
+      borrow: { 57: 55, 60: 62 }, // A3 -> G3, C4 -> D4: A3 and C4 are ~20 dB down at two seconds
+      chuck: null,
+      level: 0.11 // the recordings are fuller than the ukulele's: -6 dB matches a strum's loudness
+    }
+  };
+  const sampleLoads = {};  // one shared load per set: { notes: [{ midi, tune, buffer }], chuck, set }
   const soundOf = (name) => SOUNDS[name] || SOUNDS.standard;
-  const SAMPLE_LEVEL = 0.25; // the recordings peak near full scale; this matches the plucked sound's loudness
 
   function midiToFreq(midi) {
     return 440 * Math.pow(2, (midi - 69) / 12);
@@ -74,10 +98,10 @@
       }
     }
 
-    /** 'standard', 'hollow', 'steel', 'nylon' or 'sampled'. Takes effect from the next strum. */
+    /** 'standard', 'hollow', 'steel', 'nylon', 'sampled' (ukulele) or 'guitar'. Takes effect from the next strum. */
     setSound(sound) {
       const next = SOUNDS[sound] ? sound : 'standard';
-      if (next === 'sampled') this.loadSamples();
+      if (SOUNDS[next].sampled) this.loadSamples(SOUNDS[next].sampled);
       if (next === this.sound) return;
       this.sound = next;
       this.cache = new Map();
@@ -142,28 +166,32 @@
     }
 
     /**
-     * Load and decode the ukulele recordings (once). Resolves with the set, or null if they
-     * couldn't be loaded, in which case the plucked-string sound is used instead.
+     * Load and decode a set of recordings ('ukulele' or 'guitar'), once each. Resolves with the
+     * set, or null if it couldn't be loaded, in which case the plucked-string sound is used.
      */
-    loadSamples() {
-      if (sampleLoad) return sampleLoad;
-      const ctx = this.ensureContext();
-      const decode = async (file) => {
-        const response = await fetch(SAMPLE_DIR + file);
-        if (!response.ok) throw new Error(`${file}: ${response.status}`);
-        return ctx.decodeAudioData(await response.arrayBuffer());
-      };
-      sampleLoad = Promise.all([
-        ...SAMPLES.map(([midi, name, tune]) => decode(`${name}.flac`).then((buffer) => ({ midi, tune, buffer }))),
-        decode('chuck.wav')
-      ]).then((loaded) => ({ notes: loaded.slice(0, -1), chuck: loaded[loaded.length - 1] }))
-        .catch((error) => {
-          console.warn('Ukulele samples could not be loaded; using the plucked-string sound', error);
-          return null;
-        });
-      this.samples = null;
-      sampleLoad.then((set) => { this.samples = set; });
-      return sampleLoad;
+    loadSamples(name = 'ukulele') {
+      const def = SAMPLE_SETS[name] || SAMPLE_SETS.ukulele;
+      this.sampleSet = name;
+      if (!sampleLoads[name]) {
+        const ctx = this.ensureContext();
+        const decode = async (file) => {
+          const response = await fetch(def.dir + file);
+          if (!response.ok) throw new Error(`${file}: ${response.status}`);
+          return ctx.decodeAudioData(await response.arrayBuffer());
+        };
+        sampleLoads[name] = Promise.all([
+          ...def.notes.map(([midi, file, tune]) => decode(`${file}.flac`).then((buffer) => ({ midi, tune, buffer }))),
+          def.chuck ? decode(def.chuck) : Promise.resolve(null)
+        ]).then((loaded) => ({ notes: loaded.slice(0, -1), chuck: loaded[loaded.length - 1], set: name }))
+          .catch((error) => {
+            console.warn(`The ${name} recordings could not be loaded; using the plucked-string sound`, error);
+            return null;
+          });
+      }
+      // the set in use: the one asked for last (a slower earlier load doesn't replace it)
+      if (!this.samples || this.samples.set !== name) this.samples = null;
+      sampleLoads[name].then((set) => { if (this.sampleSet === name) this.samples = set; });
+      return sampleLoads[name];
     }
 
     // The recording nearest to a note, and how fast to play it to get that note
@@ -174,7 +202,8 @@
       for (const n of notes) if (Math.abs(n.midi - midi) < Math.abs(best.midi - midi)) best = n;
       // G4 and B4 die away much sooner than the rest (C and G sounded thin and short), so their
       // notes borrow the A4 and C#5 recordings, retuned by two semitones
-      const borrow = BORROW[best.midi] && notes.find((n) => n.midi === BORROW[best.midi]);
+      const borrows = (SAMPLE_SETS[this.samples.set] || SAMPLE_SETS.ukulele).borrow;
+      const borrow = borrows[best.midi] && notes.find((n) => n.midi === borrows[best.midi]);
       if (borrow) best = borrow;
       const cents = (midi - best.midi) * 100 + best.tune;
       return { buffer: best.buffer, rate: Math.pow(2, cents / 1200) };
@@ -191,7 +220,7 @@
 
     /** Render a whole schedule silently to an AudioBuffer (for checks, or saving audio later). */
     async renderOffline(schedule, sampleRate = 44100) {
-      if (soundOf(this.sound).sampled) this.samples = await this.loadSamples();
+      if (soundOf(this.sound).sampled) this.samples = await this.loadSamples(soundOf(this.sound).sampled);
       const saved = { ctx: this.ctx, master: this.master, voices: this.voices, cache: this.cache };
       const ctx = new OfflineAudioContext(1, Math.ceil((schedule.duration + NOTE_SECONDS) * sampleRate), sampleRate);
       this.ctx = ctx;
@@ -291,7 +320,7 @@
         }
         const gain = ctx.createGain();
         // Up-strums catch the strings more lightly
-        const level = (sample ? SAMPLE_LEVEL : 0.22) * event.velocity * (event.direction === 'up' ? 0.8 : 1);
+        const level = (sample ? (SAMPLE_SETS[this.samples.set] || SAMPLE_SETS.ukulele).level : 0.22) * event.velocity * (event.direction === 'up' ? 0.8 : 1);
         gain.gain.setValueAtTime(level, time);
         source.connect(gain).connect(this.master);
         source.start(time);
@@ -366,7 +395,7 @@
           throw error;
         }
       }
-      if (soundOf(this.sound).sampled) this.samples = await this.loadSamples();
+      if (soundOf(this.sound).sampled) this.samples = await this.loadSamples(soundOf(this.sound).sampled);
       this.schedule = schedule;
       this.callbacks = callbacks;
       this.startTime = ctx.currentTime + 0.12;

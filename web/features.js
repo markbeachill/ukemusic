@@ -28,6 +28,7 @@ const SECTIONS = [
       { f: 'Karaoke: the words light up as it plays', web: true, desktop: true },
       { f: 'Any key, with a capo; slower or faster', web: true, desktop: true },
       { f: 'The tune, shown as notes and played', web: true, desktop: true },
+      { f: 'Real recordings: a ukulele, and a nylon-string guitar for baritone and guitar', web: true, desktop: true },
       { f: 'Loop a part', web: false, desktop: true },
       { f: 'Keep a song in several keys', web: false, desktop: true }
     ]

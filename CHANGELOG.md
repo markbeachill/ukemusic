@@ -1,5 +1,19 @@
 # Changelog
 
+## v4.72.0
+
+### A real guitar to play along with
+- **The guitar plays real recordings now:** 18 notes, from the low E up to C6, of a Spanish classical (nylon-string) guitar from FreePats. Before, it had only the app's own steel or nylon sound. Real guitar is the new default. Anyone on Steel strings, the old default, moves to it once; anything chosen since is kept. Steel and nylon strings are still there: Play → Sound, or Settings → Playback → Guitar sound.
+- **The baritone ukulele plays the guitar recordings too.** A baritone has nylon strings and is tuned like a guitar's top four, so this is much closer than the tenor ukulele recordings pitched down. To use the app's own sound instead, choose Plucked string or Hollow body.
+- **The web player uses the recordings for guitar and baritone,** in songs and in Free Practice. They're in its offline copy: 2.3 MB, at a sample rate that loses nothing you'd hear.
+- **Prepared to play evenly:**
+  - each note trimmed to start straight away, so a strum's strings come in turn
+  - each retuned by its own few cents
+  - two notes that die away too soon (A3 and C4) borrow their neighbours
+  - the level matched to the ukulele's
+- **The ukulele recordings are unchanged.**
+- **The recordings are public domain** (CC0), like the ukulele's: `src/sounds/guitar/README.txt` and the third-party notices say where they come from and what was changed.
+
 ## v4.71.0
 
 ### Easy to read text

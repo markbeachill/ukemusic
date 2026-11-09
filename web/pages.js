@@ -611,7 +611,7 @@ const INSTRUMENTS_PAGE = {
     <div class="card"><h3>Ukulele (G C E A)</h3><p>Soprano, concert and tenor, with the high G. Ukulele chord shapes, tab on four strings, and real ukulele sounds.</p></div>
     <div class="card"><h3>Ukulele with a low G</h3><p>The same shapes and tab as a high-G ukulele; playback sounds the G string an octave lower, as yours does.</p></div>
     <div class="card"><h3>Baritone ukulele (D G B E)</h3><p>Baritone shapes (the top four strings of a guitar), tab for D G B E, and the baritone's own starting points in Free Practice.</p></div>
-    <div class="card"><h3>Guitar (E A D G B E)</h3><p>Guitar shapes with the muted strings marked, six-string tab, and steel or nylon sounds.</p></div>
+    <div class="card"><h3>Guitar (E A D G B E)</h3><p>Guitar shapes with the muted strings marked, six-string tab, and a real nylon-string guitar to play along with (or made steel or nylon strings).</p></div>
   </div>
 </div></section>
 <section><div class="wrap">
@@ -628,7 +628,7 @@ const INSTRUMENTS_PAGE = {
   <ul class="facts">
     <li><strong>Chord diagrams</strong>for your instrument, on screen and in every PDF; click one to choose another shape for that song.</li>
     <li><strong>Tab</strong>shown with your instrument's strings, and converted when it was written for another.</li>
-    <li><strong>Playback</strong>with your instrument's sound: ukulele, low G, baritone or guitar.</li>
+    <li><strong>Playback</strong>with your instrument's sound: real recordings of a ukulele, and of a nylon-string guitar for the baritone and guitar.</li>
     <li><strong>A capo</strong>on any instrument: the sheet shows the shapes to finger, playback stays in the song's key.</li>
     <li><strong>Exports</strong>say which instrument they're for (<code>_uke</code>, <code>_bar</code>, <code>_gtr</code>), so a club's ukulele and guitar copies never get mixed up.</li>
     <li><strong>A club with mixed instruments</strong>shares one song file: each player sees it for their own instrument.</li>
@@ -816,7 +816,7 @@ ${catHtml}
 <section class="faq"><div class="wrap">
   <h2>Questions</h2>
   <h3>Is it really free?</h3><p>Yes. ukemusic is free and open source under the MIT licence. There's no paid version, no account and no adverts.</p>
-  <h3>Where's the source code?</h3><p>On GitHub: <a href="https://github.com/markbeachill/ukemusic">github.com/markbeachill/ukemusic</a>, with the <a href="https://github.com/markbeachill/ukemusic/blob/main/LICENSE">licence</a> and the <a href="https://github.com/markbeachill/ukemusic/blob/main/THIRD_PARTY_NOTICES.md">third-party notices</a> (the ukulele sounds are CC0 recordings from FreePats).</p>
+  <h3>Where's the source code?</h3><p>On GitHub: <a href="https://github.com/markbeachill/ukemusic">github.com/markbeachill/ukemusic</a>, with the <a href="https://github.com/markbeachill/ukemusic/blob/main/LICENSE">licence</a> and the <a href="https://github.com/markbeachill/ukemusic/blob/main/THIRD_PARTY_NOTICES.md">third-party notices</a> (the ukulele and guitar sounds are CC0 recordings from FreePats).</p>
   <h3>Does it work on an iPhone, iPad or Android phone?</h3><p>Yes: the web player runs in Safari, Chrome, Edge and Firefox. Add it to your Home Screen and it opens like an app, and works without a connection.</p>
   <h3>Is it only for ukulele?</h3><p>It's for ukulele first, and works the same for ukulele with a low G, baritone ukulele and guitar: choose yours and the chord shapes, tab, playback and Free Practice follow it. On baritone and guitar the exercises start with G, C, D and Em, where those players start. Left-handed players can mirror every chord diagram. <a href="instruments.html">How instruments work</a>.</p>
   <h3>Do I need to read music?</h3><p>No. Exercises show the notes and chords on a fretboard as they come, and songs are chord sheets with the strum written out.</p>

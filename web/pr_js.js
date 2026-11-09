@@ -1314,9 +1314,7 @@
         // ── Playing ──
         function prSound() {
           const instrument = prInstrument();
-          player.setSound(instrument === 'guitar'
-            ? (state.config?.playback?.guitar_sound === 'nylon' ? 'nylon' : 'steel')
-            : (['hollow', 'sampled'].includes(state.config?.playback?.sound) ? state.config.playback.sound : 'standard'));
+          player.setSound(soundFor(instrument));
           player.setVolume(Number($p('prVolume').value) / 100);
         }
         async function prStart({ fromBar = 0, fromNote = 0, demo = false, countIn = $p('prCountIn').checked } = {}) {

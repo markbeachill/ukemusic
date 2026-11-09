@@ -76,7 +76,7 @@ const DEFAULT_CONFIG = {
     common_chords: 'A A7 Am B7 Bb Bm C C7 D D7 Dm E E7 Em F F7 F#m G G7 Gm Gm7'
   },
   tablature: { enable: true, frets: 'chord', size: 'same', box: false, faint: false, in_print: true },
-  playback: { count_in: true, follow: true, from_cursor: false, default_strum: 'simple', custom_strum: 'D>-DU-UDU', swing: 'auto', voice_count: false, voice_sections: false, voice_chords: false, sound: 'sampled', guitar_sound: 'steel', karaoke_size: 26 }
+  playback: { count_in: true, follow: true, from_cursor: false, default_strum: 'simple', custom_strum: 'D>-DU-UDU', swing: 'auto', voice_count: false, voice_sections: false, voice_chords: false, sound: 'sampled', guitar_sound: 'real', guitar_real: true, karaoke_size: 26 } // 4.72: real guitar recordings
 };
 
 let mainWindow = null;
@@ -174,6 +174,13 @@ async function readConfigObject() {
   if (parsed.export && parsed.export.stage_compact !== true) {
     if (!parsed.export.stage_format || parsed.export.stage_format === 'clear') parsed.export.stage_format = 'compact';
     parsed.export.stage_compact = true;
+  }
+  // 4.72: the real (recorded) nylon guitar became the guitar's sound. Steel strings was the only
+  // choice besides the made nylon one, and the default, so it moves to the recordings once; a
+  // sound chosen after this is kept
+  if (parsed.playback && parsed.playback.guitar_real !== true) {
+    if (!parsed.playback.guitar_sound || parsed.playback.guitar_sound === 'steel') parsed.playback.guitar_sound = 'real';
+    parsed.playback.guitar_real = true;
   }
   // 4.70: Auto became the default (chords above on screen, in the words when printed). Compact
   // was the default since 4.52, and every setting from before then was moved to it, so it moves
