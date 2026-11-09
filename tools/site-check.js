@@ -4,7 +4,8 @@
 // building the site (.github/workflows/web.yml): if a page fails, the website isn't updated and
 // the problem is listed in the run.
 //
-//   npm run site-check            the site as built here (node web/make.js first)
+//   npm run site-check            builds the site here (node web/make.js), then checks it
+//   node tools/site-check.js      checks it as last built (pages the build makes must be there)
 //   node tools/site-check.js _site   a folder put together as GitHub publishes it
 //
 // What it checks, on each page:
@@ -156,7 +157,15 @@ if (require.main === module) {
   let root = process.argv[2];
   let temp = null;
   try {
-    if (!root) root = temp = assembleLocal(path.join(__dirname, '..'));
+    if (!root) {
+      // 4.78: some pages are made by the build and not kept in git (.gitignore): without a build they
+      // aren't there, and every link to them looks broken
+      const repo = path.join(__dirname, '..');
+      const built = fs.readFileSync(path.join(repo, '.gitignore'), 'utf8').split(/\r?\n/).map((l) => l.trim()).filter((l) => /^site\/[\w-]+\.html$/.test(l));
+      const missing = built.filter((f) => !fs.existsSync(path.join(repo, f)));
+      if (missing.length) throw new Error(`${missing.map((f) => path.basename(f)).join(', ')} ${missing.length === 1 ? 'is' : 'are'} made by the build, which hasn't been run here: run npm run site-check (it builds first), or node web/make.js and then this`);
+      root = temp = assembleLocal(repo);
+    }
     const problems = checkSite(path.resolve(root));
     const count = listPages(path.resolve(root)).length;
     if (problems.length) {

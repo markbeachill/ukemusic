@@ -55,5 +55,6 @@ test('GitHub checks the site before publishing it, and npm run site-check checks
   const flow = fs.readFileSync(path.join(__dirname, '..', '.github', 'workflows', 'web.yml'), 'utf8');
   const check = flow.indexOf('node tools/site-check.js _site');
   assert.ok(check > flow.indexOf('cp -r web/out/. _site/app/') && check < flow.indexOf('upload-pages-artifact'), 'between putting the site together and uploading it');
-  assert.match(JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8')).scripts['site-check'], /tools\/site-check\.js/);
+  assert.match(JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8')).scripts['site-check'], /^node web\/make\.js && node tools\/site-check\.js$/, '4.78.1: it builds first');
+  assert.match(fs.readFileSync(path.join(__dirname, '..', 'tools', 'site-check.js'), 'utf8'), /is' : 'are'\} made by the build, which hasn't been run here/, 'and says so when run without a build');
 });

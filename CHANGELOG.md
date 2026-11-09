@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.78.1
+
+- **`npm run site-check` builds the site first.** Some pages (Features, Instruments) are made by the build and not kept in git, so on a computer where the build hadn't been run, the check reported links to them as broken. Run on its own (`node tools/site-check.js`), it now says that the build is needed instead.
+
 ## v4.78.0
 
 ### A simple view for beginners
