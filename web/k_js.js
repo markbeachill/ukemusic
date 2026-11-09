@@ -180,9 +180,55 @@
           }, { once: true });
         }
 
-        function karaokeSize() {
-          return Math.max(16, Math.min(48, Number(state.config?.playback?.karaoke_size) || 26));
+        // 4.73: the words are sized to the screen, not in pixels: the same look on a phone, a laptop
+        // or a TV, and bigger in full screen. A−/A+ make them relatively smaller or bigger (the
+        // scale, saved); a size chosen in pixels before (karaoke_size; 26 was the usual) becomes a scale.
+        function karaokeScale() {
+          const pb = state.config?.playback || {};
+          const scale = Number(pb.karaoke_scale) || (Number(pb.karaoke_size) ? Number(pb.karaoke_size) / 26 : 1);
+          return Math.max(0.5, Math.min(2.5, scale));
         }
+        function karaokeSize() {
+          const box = karaokeLines.getBoundingClientRect();
+          const W = box.width || window.innerWidth;
+          const H = box.height || window.innerHeight;
+          // about 30 letters' worth of width, or 10 lines of height, whichever is smaller
+          return Math.round(Math.max(16, Math.min(160, Math.min(W / 30, H / 10) * karaokeScale())));
+        }
+        function applyKaraokeSize() {
+          karaokeLines.style.setProperty('--k-size', `${karaokeSize()}px`);
+          karaokeView.current = -1; // re-centre the current line
+        }
+        // the screen changes size (a window resized, full screen): the words follow
+        new ResizeObserver(() => { if (!karaokeEl.hidden) applyKaraokeSize(); }).observe(karaokeLines);
+        // 4.73: full screen (F, or the button): the browser bar and window frame go; the bar slides
+        // away after a few seconds without the mouse moving. Not on an iPhone (no full screen there).
+        const karaokeFullButton = document.getElementById('karaokeFull');
+        const fullscreenOn = () => document.fullscreenElement || document.webkitFullscreenElement || null;
+        if (!(document.fullscreenEnabled || document.webkitFullscreenEnabled)) karaokeFullButton.hidden = true;
+        function toggleKaraokeFull() {
+          if (fullscreenOn()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
+          const go = karaokeEl.requestFullscreen || karaokeEl.webkitRequestFullscreen;
+          if (go) Promise.resolve(go.call(karaokeEl)).catch(() => {});
+        }
+        let karaokeIdleTimer = null;
+        function karaokeAwake() {
+          karaokeEl.classList.remove('k-idle');
+          clearTimeout(karaokeIdleTimer);
+          if (karaokeEl.classList.contains('k-full')) karaokeIdleTimer = setTimeout(() => karaokeEl.classList.add('k-idle'), 3000);
+        }
+        const onFullChange = () => {
+          const full = fullscreenOn() === karaokeEl;
+          karaokeEl.classList.toggle('k-full', full);
+          karaokeFullButton.setAttribute('aria-label', full ? 'Leave full screen' : 'Full screen');
+          karaokeFullButton.title = full ? 'Leave full screen (F or Esc)' : 'Full screen (F): the words as big as the screen allows; Esc to leave';
+          karaokeFullButton.setAttribute('aria-pressed', String(full));
+          karaokeAwake();
+        };
+        document.addEventListener('fullscreenchange', onFullChange);
+        document.addEventListener('webkitfullscreenchange', onFullChange);
+        karaokeFullButton.addEventListener('click', toggleKaraokeFull);
+        for (const type of ['mousemove', 'pointerdown', 'keydown']) karaokeEl.addEventListener(type, karaokeAwake);
 
         function karaokeRender(ir, schedule, startLine, endLine = 0) {
           const built = window.ukemusic.buildKaraoke(ir, schedule, { startLine, endLine });
@@ -417,6 +463,7 @@
         function karaokeClose() {
           state.userStopped = true;
           if (player && player.playing) player.stop();
+          if (fullscreenOn() === karaokeEl) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
           karaokeEl.hidden = true;
           // how playing from memory went
           if (karaokeView.learn) {
@@ -431,9 +478,8 @@
 
         async function karaokeResize(step) {
           state.config.playback = state.config.playback || {};
-          state.config.playback.karaoke_size = Math.max(16, Math.min(48, karaokeSize() + step));
-          karaokeLines.style.setProperty('--k-size', `${karaokeSize()}px`);
-          karaokeView.current = -1; // re-centre the current line
+          state.config.playback.karaoke_scale = Math.round(Math.max(0.5, Math.min(2.5, karaokeScale() * (step > 0 ? 1.1 : 1 / 1.1))) * 100) / 100;
+          applyKaraokeSize();
           try {
             await persistConfig();
           } catch (error) {
@@ -468,7 +514,12 @@
           if (karaokeEl.hidden) return;
           if (event.key === 'Escape') {
             event.preventDefault();
-            karaokeClose();
+            // 4.73: Esc leaves full screen first; again closes karaoke
+            if (fullscreenOn() === karaokeEl) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+            else karaokeClose();
+          } else if ((event.key === 'f' || event.key === 'F') && !event.ctrlKey && !event.metaKey && !event.altKey && !event.target.closest('input, select, textarea')) {
+            event.preventDefault();
+            if (!karaokeFullButton.hidden) toggleKaraokeFull();
           } else if ((event.key === ' ' || event.code === 'Space') && !event.target.closest('button, input, select')) {
             event.preventDefault();
             toggleKaraokePlayback();

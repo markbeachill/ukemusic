@@ -9,12 +9,17 @@
         color: var(--text);
       }
       .karaoke[hidden] { display: none; }
+      /* 4.73: full screen: the bar floats over the words and slides away when the mouse is still */
+      .karaoke.k-full { grid-template-rows: minmax(0, 1fr); }
+      .karaoke.k-full .karaoke-bar { position: absolute; top: 0; left: 0; right: 0; z-index: 3; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18); transition: opacity 0.35s ease, transform 0.35s ease; }
+      .karaoke.k-full.k-idle .karaoke-bar { opacity: 0; transform: translateY(-100%); pointer-events: none; }
+      .karaoke.k-full.k-idle { cursor: none; }
       .karaoke-bar {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: 14px;
-        padding: 14px 24px;
+        gap: 10px;
+        padding: 12px 20px;
         min-height: 92px;
         background: var(--toolbar-bg);
         border-bottom: 1px solid var(--border);

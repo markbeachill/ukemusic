@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.73.0
+
+### Big screens for a club
+- **Karaoke has a full screen button** (⛶, or press F). The words fill the whole screen, and the bar slides away when the mouse is still; move the mouse to bring it back. Esc leaves full screen first, then closes karaoke.
+- **Karaoke words are sized to the screen.** They're bigger on a TV, smaller on a phone, and resize when the window does. A− and A+ now make them relatively smaller or bigger, and that's kept. A size you'd set before is carried over.
+- **The Session screen can show every song at the same size.** Fitting each song makes the most of the screen, but a short song comes up huge and a long one small. Choose **Same size** to keep the words one size from song to song, as a club playing along may prefer. A long song then takes more pages.
+  - **Desktop:** on the laptop's bar while the Session screen is on the TV: **Fit each song / Same size**, with A− and A+. On the TV window, press S, + and −.
+  - **Web player:** the Group screen's **Fit each song / Same size** button, or S; + and − change the size.
+  - Your choice is kept for next time.
+
 ## v4.72.0
 
 ### A real guitar to play along with

@@ -61,6 +61,8 @@ const DEFAULT_CONFIG = {
     stage_two_chords: 'format', // 4.54: the two-page Stage copy: chords as the Stage format, 'above' or 'in' the words
     stage_two_min: 12,          // 4.54: its smallest text, in points
     stage_format: 'auto',   // 4.70: Auto (chords above on screen, in the words in print); 4.52–4.69 Compact
+    session_size: 'fit',   // 4.73: Session screen text: 'fit' each song, or the 'same' size for every song
+    session_same: 4.5,      // 4.73: that same size, in % of the screen's height
     stage_compact: true,       // 4.52: settings from before then have been moved to Compact once
     stage_auto: true,          // 4.70: and to Auto once
     stage_chorus: 'full',

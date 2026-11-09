@@ -6,9 +6,13 @@
 //   const screen = UkeSessionScreen.create(root, { css, onState, onClose })
 //     root     an empty element that fills the screen
 //     css      the song styles (SESSION_CSS from src/session-view.js)
-//     onState  (state) => …  after every change: { index, count, page, pages, title, next, px, cols, mode }
+//     onState  (state) => …  after every change: { index, count, page, pages, title, next, px, cols, mode, size, same }
 //     onClose  () => …       Esc
-//   screen.show({ songs, start, minPx, hideCommon, dark })   songs from sessionSong()
+//   screen.show({ songs, start, minPx, hideCommon, dark, size, same })   songs from sessionSong()
+//     size  'fit' (each song as big as fits; the size changes from song to song) or 'same'
+//           (4.73: every song the same size, a share of the screen's height, for a club that
+//           wants it steady: a long song takes columns or a page turn instead of smaller text)
+//     same  that share, in % of the screen's height (4.5: about 48px on a 1080p TV)
 //   screen.key(k)       a key name (KeyboardEvent.key): the remote control
 //   screen.layout()     lay out again (after a resize, done for you)
 //   screen.check()      lay out every song: [{ title, folder, px, cols, mode, pages }]
@@ -26,6 +30,7 @@
 .ss-screen .ss-sub { color: var(--ss-muted); overflow: hidden; text-overflow: ellipsis; flex: 0 100 auto; min-width: 0; }
 .ss-screen .ss-where { flex: 0 0 auto; }
 .ss-screen .ss-where { margin-left: auto; color: var(--ss-muted); font-variant-numeric: tabular-nums; }
+.ss-screen .ss-size { border: 1px solid var(--ss-faint); border-radius: 999px; background: none; color: var(--ss-muted); font: inherit; font-size: 0.8em; padding: 0.1em 0.7em; cursor: pointer; flex: 0 0 auto; }
 .ss-screen .ss-x { border: 0; background: none; color: var(--ss-muted); font: inherit; font-size: 1.1em; line-height: 1; padding: 0 0.1em; cursor: pointer; }
 .ss-screen .ss-stage { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2vw; padding: 1.6vh 2vw 1.4vh; min-height: 0; }
 .ss-screen .ss-stage.ss-tall { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); }
@@ -50,7 +55,8 @@
 .ss-screen .ss-dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--ss-faint); opacity: 0.35; }
 .ss-screen .ss-dots i.on { opacity: 1; background: var(--ss-label); }
 `;
-  const HINT = '→ / Space next · ← back · + − text size · M chords above / in the words · D dark · C common chords · Esc end';
+  const HINT = '→ / Space next · ← back · + − text size · S fit each song / same size · M chords above / in the words · D dark · C common chords · Esc end';
+  const SAME = { min: 2.5, max: 9, step: 0.25, usual: 4.5 }; // 'same' size: % of the screen's height
   const esc = (t) => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   let styled = false;
@@ -67,12 +73,12 @@
     const doc = rootEl.ownerDocument;
     addStyles(doc, css);
     rootEl.classList.add('ss-screen');
-    rootEl.innerHTML = `<header class="ss-bar"><span class="ss-title"></span><span class="ss-sub"></span><span class="ss-where"></span>${closeButton ? '<button class="ss-x" type="button" title="End (Esc)" aria-label="End the Session screen">×</button>' : ''}</header>
+    rootEl.innerHTML = `<header class="ss-bar"><span class="ss-title"></span><span class="ss-sub"></span><span class="ss-where"></span>${closeButton ? '<button class="ss-size" type="button" title="Text: each song as big as fits, or every song the same size (S)"></button><button class="ss-x" type="button" title="End (Esc)" aria-label="End the Session screen">×</button>' : ''}</header>
 <main class="ss-stage"><div class="ss-box"><div class="ss-lyrics"></div></div><aside class="ss-strip" aria-label="Chord shapes"></aside></main>
 <div class="ss-dots" aria-hidden="true"></div><div class="ss-hint">${HINT}</div>`;
     const q = (c) => rootEl.querySelector(c);
     const els = { title: q('.ss-title'), sub: q('.ss-sub'), where: q('.ss-where'), box: q('.ss-box'), lyrics: q('.ss-lyrics'), strip: q('.ss-strip'), dots: q('.ss-dots') };
-    const s = { songs: [], i: 0, page: 0, pages: 1, minPx: 18, mode: 'auto', hideCommon: false, result: null };
+    const s = { songs: [], i: 0, page: 0, pages: 1, minPx: 18, mode: 'auto', hideCommon: false, result: null, size: 'fit', same: SAME.usual };
     const modes = () => (s.mode === 'auto' ? ['over', 'inline'] : [s.mode]);
 
     function layout() {
@@ -83,7 +89,10 @@
       const chords = (song.diagrams || []).filter((d) => d.svg && !(s.hideCommon && d.common));
       // the diagram's own name is hidden (the caption is bigger) and its space below cropped off
       els.strip.innerHTML = chords.map((d) => `<figure><figcaption>${esc(d.name)}</figcaption>${String(d.svg).replace('viewBox="0 0 100 145"', 'viewBox="0 4 100 108"')}</figure>`).join('');
-      s.result = Fit.fit({ box: els.box, lyrics: els.lyrics, strip: els.strip, html: (mode) => song.html[mode], minPx: s.minPx, maxPx: Math.round(s.minPx * 2.6), modes: modes() });
+      // 4.73: 'same': one size for every song, from the screen's height (columns or pages if a song is long)
+      const samePx = Math.max(12, Math.round(rootEl.getBoundingClientRect().height * s.same / 100));
+      const [minPx, maxPx] = s.size === 'same' ? [samePx, samePx] : [s.minPx, Math.round(s.minPx * 2.6)];
+      s.result = Fit.fit({ box: els.box, lyrics: els.lyrics, strip: els.strip, html: (mode) => song.html[mode], minPx, maxPx, modes: modes(), diagramPx: s.size === 'same' ? Math.round(samePx * 0.4) : null });
       s.pages = s.result.pages;
       if (s.page >= s.pages) s.page = s.pages - 1;
       Fit.page(els.lyrics, s.page);
@@ -97,7 +106,9 @@
       els.where.textContent = parts.join(' · ');
       els.dots.innerHTML = s.pages > 1 ? Array.from({ length: s.pages }, (_, k) => `<i class="${k === s.page ? 'on' : ''}"></i>`).join('') : '';
       const next = s.songs[s.i + 1];
-      onState({ index: s.i, count: s.songs.length, page: s.page, pages: s.pages, title: s.songs[s.i]?.title || '', next: next ? next.title : '', px: s.result?.px, cols: s.result?.cols, mode: s.result?.mode });
+      const sizeButton = rootEl.querySelector('.ss-size');
+      if (sizeButton) sizeButton.textContent = s.size === 'same' ? 'Same size' : 'Fit each song';
+      onState({ index: s.i, count: s.songs.length, page: s.page, pages: s.pages, title: s.songs[s.i]?.title || '', next: next ? next.title : '', px: s.result?.px, cols: s.result?.cols, mode: s.result?.mode, size: s.size, same: s.same });
     }
     function go(dir) {
       if (dir > 0) {
@@ -113,8 +124,9 @@
       else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace', 'p', 'P'].includes(k)) go(-1);
       else if (k === 'Home') { s.i = 0; s.page = 0; layout(); }
       else if (k === 'End') { s.i = Math.max(0, s.songs.length - 1); s.page = 0; layout(); }
-      else if (k === '+' || k === '=') { s.minPx = Math.min(40, s.minPx + 1); layout(); }
-      else if (k === '-' || k === '_') { s.minPx = Math.max(12, s.minPx - 1); layout(); }
+      else if (k === '+' || k === '=') { if (s.size === 'same') s.same = Math.min(SAME.max, s.same + SAME.step); else s.minPx = Math.min(40, s.minPx + 1); layout(); }
+      else if (k === '-' || k === '_') { if (s.size === 'same') s.same = Math.max(SAME.min, s.same - SAME.step); else s.minPx = Math.max(12, s.minPx - 1); layout(); }
+      else if (k === 's' || k === 'S') { s.size = s.size === 'same' ? 'fit' : 'same'; s.page = 0; layout(); }
       else if (k === 'm' || k === 'M') { s.mode = s.result && s.result.mode === 'inline' ? 'over' : 'inline'; s.page = 0; layout(); } // flips what's shown
       else if (k === 'd' || k === 'D') rootEl.classList.toggle('dark');
       else if (k === 'c' || k === 'C') { s.hideCommon = !s.hideCommon; layout(); }
@@ -125,6 +137,7 @@
     // click or tap: the right two-thirds go on, the left third goes back
     const onClick = (e) => {
       if (e.target.closest && e.target.closest('.ss-x')) { onClose(); return; }
+      if (e.target.closest && e.target.closest('.ss-size')) { key('S'); return; }
       const r = rootEl.getBoundingClientRect();
       go(e.clientX - r.left > r.width / 3 ? 1 : -1);
     };
@@ -143,6 +156,8 @@
       s.page = 0;
       if (data.minPx) s.minPx = data.minPx;
       if (data.hideCommon !== undefined) s.hideCommon = Boolean(data.hideCommon);
+      if (data.size) s.size = data.size === 'same' ? 'same' : 'fit';
+      if (Number(data.same)) s.same = Math.max(SAME.min, Math.min(SAME.max, Number(data.same)));
       rootEl.classList.toggle('dark', Boolean(data.dark));
       layout();
       hint(4000);
@@ -160,7 +175,7 @@
     return { show, key, layout, check, destroy, state: s, get minPx() { return s.minPx; } };
   }
 
-  const api = { create, CSS };
+  const api = { create, CSS, SAME };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.UkeSessionScreen = api;
 }(typeof window !== 'undefined' ? window : globalThis));

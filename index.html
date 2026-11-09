@@ -1734,12 +1734,17 @@
         color: var(--text);
       }
       .karaoke[hidden] { display: none; }
+      /* 4.73: full screen: the bar floats over the words and slides away when the mouse is still */
+      .karaoke.k-full { grid-template-rows: minmax(0, 1fr); }
+      .karaoke.k-full .karaoke-bar { position: absolute; top: 0; left: 0; right: 0; z-index: 3; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18); transition: opacity 0.35s ease, transform 0.35s ease; }
+      .karaoke.k-full.k-idle .karaoke-bar { opacity: 0; transform: translateY(-100%); pointer-events: none; }
+      .karaoke.k-full.k-idle { cursor: none; }
       .karaoke-bar {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: 14px;
-        padding: 14px 24px;
+        gap: 10px;
+        padding: 12px 20px;
         min-height: 92px;
         background: var(--toolbar-bg);
         border-bottom: 1px solid var(--border);
@@ -3135,6 +3140,9 @@
       <span id="sessionNow"></span>
       <span id="sessionNext" class="muted"></span>
       <span class="appbar-spacer"></span>
+      <button id="sessionSize" type="button" title="Text: each song as big as fits, or every song the same size (S)">Fit each song</button>
+      <button id="sessionSmaller" type="button" title="Smaller text (−)">A−</button>
+      <button id="sessionBigger" type="button" title="Bigger text (+)">A+</button>
       <button id="sessionPrev" type="button" title="Back (← or Page Up)">◀</button>
       <button id="sessionFwd" type="button" title="On: the next page or song (→, Space or a clicker)">▶</button>
       <button id="sessionEnd" type="button" title="End the session screen (Esc)">End</button>
@@ -4061,6 +4069,7 @@
         <button id="karaokeShapesToggle" type="button" title="Show or hide the chord shapes: the chord now and the next two" aria-pressed="true">Shapes</button>
         <button id="karaokeSmaller" type="button" title="Smaller text">A−</button>
         <button id="karaokeBigger" type="button" title="Bigger text">A+</button>
+        <button id="karaokeFull" type="button" title="Full screen (F): the words as big as the screen allows; Esc to leave" aria-label="Full screen">⛶</button>
         <button id="karaokePlay" type="button" title="Play, pause or resume (Space)">▶ Play</button>
         <button id="karaokeRestart" type="button" title="Back to the start (also while it's playing). Or click a line to play from there">⏮ From the start</button>
         <button id="karaokeStop" type="button" title="Stop playback">■ Stop</button>
@@ -4270,6 +4279,8 @@
             stage_two_chords: 'format',
             stage_two_min: 12,
             stage_format: 'auto',
+            session_size: 'fit',   // 4.73: Session screen text: 'fit' each song, or the 'same' size for every song
+            session_same: 4.5,      // 4.73: that same size, in % of the screen's height
             stage_chorus: 'full',
             stage_diagrams: 'song'
           },
@@ -7810,9 +7821,55 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           karaokeSteps.textContent = '';
         }
 
-        function karaokeSize() {
-          return Math.max(16, Math.min(48, Number(state.config?.playback?.karaoke_size) || 26));
+        // 4.73: the words are sized to the screen, not in pixels: the same look on a phone, a laptop
+        // or a TV, and bigger in full screen. A−/A+ make them relatively smaller or bigger (the
+        // scale, saved); a size chosen in pixels before (karaoke_size; 26 was the usual) becomes a scale.
+        function karaokeScale() {
+          const pb = state.config?.playback || {};
+          const scale = Number(pb.karaoke_scale) || (Number(pb.karaoke_size) ? Number(pb.karaoke_size) / 26 : 1);
+          return Math.max(0.5, Math.min(2.5, scale));
         }
+        function karaokeSize() {
+          const box = karaokeLines.getBoundingClientRect();
+          const W = box.width || window.innerWidth;
+          const H = box.height || window.innerHeight;
+          // about 30 letters' worth of width, or 10 lines of height, whichever is smaller
+          return Math.round(Math.max(16, Math.min(160, Math.min(W / 30, H / 10) * karaokeScale())));
+        }
+        function applyKaraokeSize() {
+          karaokeLines.style.setProperty('--k-size', `${karaokeSize()}px`);
+          karaokeView.current = -1; // re-centre the current line
+        }
+        // the screen changes size (a window resized, full screen): the words follow
+        new ResizeObserver(() => { if (!karaokeEl.hidden) applyKaraokeSize(); }).observe(karaokeLines);
+        // 4.73: full screen (F, or the button): the browser bar and window frame go; the bar slides
+        // away after a few seconds without the mouse moving. Not on an iPhone (no full screen there).
+        const karaokeFullButton = document.getElementById('karaokeFull');
+        const fullscreenOn = () => document.fullscreenElement || document.webkitFullscreenElement || null;
+        if (!(document.fullscreenEnabled || document.webkitFullscreenEnabled)) karaokeFullButton.hidden = true;
+        function toggleKaraokeFull() {
+          if (fullscreenOn()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
+          const go = karaokeEl.requestFullscreen || karaokeEl.webkitRequestFullscreen;
+          if (go) Promise.resolve(go.call(karaokeEl)).catch(() => {});
+        }
+        let karaokeIdleTimer = null;
+        function karaokeAwake() {
+          karaokeEl.classList.remove('k-idle');
+          clearTimeout(karaokeIdleTimer);
+          if (karaokeEl.classList.contains('k-full')) karaokeIdleTimer = setTimeout(() => karaokeEl.classList.add('k-idle'), 3000);
+        }
+        const onFullChange = () => {
+          const full = fullscreenOn() === karaokeEl;
+          karaokeEl.classList.toggle('k-full', full);
+          karaokeFullButton.setAttribute('aria-label', full ? 'Leave full screen' : 'Full screen');
+          karaokeFullButton.title = full ? 'Leave full screen (F or Esc)' : 'Full screen (F): the words as big as the screen allows; Esc to leave';
+          karaokeFullButton.setAttribute('aria-pressed', String(full));
+          karaokeAwake();
+        };
+        document.addEventListener('fullscreenchange', onFullChange);
+        document.addEventListener('webkitfullscreenchange', onFullChange);
+        karaokeFullButton.addEventListener('click', toggleKaraokeFull);
+        for (const type of ['mousemove', 'pointerdown', 'keydown']) karaokeEl.addEventListener(type, karaokeAwake);
 
         // 4.39: what a chord shows when playing from memory: itself, its number, or "?"
         function learnMode(line) {
@@ -8090,6 +8147,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         function karaokeClose() {
           state.userStopped = true;
           if (player && player.playing) player.stop();
+          if (fullscreenOn() === karaokeEl) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
           karaokeEl.hidden = true;
           // 4.39: how playing from memory went (4.40: the chords you needed are trouble spots)
           if (karaokeView.learn) {
@@ -8107,9 +8165,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
 
         async function karaokeResize(step) {
           state.config.playback = state.config.playback || {};
-          state.config.playback.karaoke_size = Math.max(16, Math.min(48, karaokeSize() + step));
-          karaokeLines.style.setProperty('--k-size', `${karaokeSize()}px`);
-          karaokeView.current = -1; // re-centre the current line
+          state.config.playback.karaoke_scale = Math.round(Math.max(0.5, Math.min(2.5, karaokeScale() * (step > 0 ? 1.1 : 1 / 1.1))) * 100) / 100;
+          applyKaraokeSize();
           try {
             await persistConfig();
           } catch (error) {
@@ -8144,7 +8201,12 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           if (karaokeEl.hidden) return;
           if (event.key === 'Escape') {
             event.preventDefault();
-            karaokeClose();
+            // 4.73: Esc leaves full screen first; again closes karaoke
+            if (fullscreenOn() === karaokeEl) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+            else karaokeClose();
+          } else if ((event.key === 'f' || event.key === 'F') && !event.ctrlKey && !event.metaKey && !event.altKey && !event.target.closest('input, select, textarea')) {
+            event.preventDefault();
+            if (!karaokeFullButton.hidden) toggleKaraokeFull();
           } else if ((event.key === ' ' || event.code === 'Space') && !event.target.closest('button, input, select')) {
             event.preventDefault();
             toggleKaraokePlayback();
@@ -12126,7 +12188,9 @@ function showTab(tab) {
           const config = mergeConfig(clone(state.config), song.settings || {});
           return sessionSong({ title: entryLabel(line), content: song.content, config, semitones: entryOf(line).shift, folder });
         }
-        const sessionOptions = () => ({ hideCommon: state.config?.diagrams?.skip_common === true || state.config?.diagrams?.skip_common === 'true', minPx: Number(state.config?.export?.session_min_px) || 18, easyRead: easyRead() });
+        // 4.73: size: 'fit' (each song as big as fits) or 'same' (every song the same size: a share
+        // of the screen's height, export.session_same %), chosen with S or the bar's button, saved
+        const sessionOptions = () => ({ hideCommon: state.config?.diagrams?.skip_common === true || state.config?.diagrams?.skip_common === 'true', minPx: Number(state.config?.export?.session_min_px) || 18, easyRead: easyRead(), size: state.config?.export?.session_size === 'same' ? 'same' : 'fit', same: Number(state.config?.export?.session_same) || 4.5 });
         let sessionExternal = false;
         async function openSession(songs, start = 0) {
           if (!songs.length) return;
@@ -12155,9 +12219,22 @@ function showTab(tab) {
         document.getElementById('sessionPrev').addEventListener('click', () => window.ukemusic.session.key('ArrowLeft'));
         document.getElementById('sessionFwd').addEventListener('click', () => window.ukemusic.session.key('ArrowRight'));
         document.getElementById('sessionEnd').addEventListener('click', () => window.ukemusic.session.close());
+        document.getElementById('sessionSize').addEventListener('click', () => window.ukemusic.session.key('S'));
+        document.getElementById('sessionSmaller').addEventListener('click', () => window.ukemusic.session.key('-'));
+        document.getElementById('sessionBigger').addEventListener('click', () => window.ukemusic.session.key('+'));
         window.ukemusic.session.onState((s) => {
           const bar = document.getElementById('sessionBar');
           if (s.closed) { bar.hidden = true; sessionExternal = false; return; }
+          // 4.73: fit each song / same size, and the same size, are kept for next time
+          if (s.size) {
+            document.getElementById('sessionSize').textContent = s.size === 'same' ? 'Same size' : 'Fit each song';
+            const ex = state.config.export = state.config.export || {};
+            if (ex.session_size !== s.size || Number(ex.session_same) !== s.same) {
+              ex.session_size = s.size;
+              ex.session_same = s.same;
+              persistConfig().catch((error) => window.ukemusicLogError('Could not save the Session screen size', error));
+            }
+          }
           document.getElementById('sessionNow').textContent = `${s.count > 1 ? `${s.index + 1}/${s.count}: ` : ''}${s.title}${s.pages > 1 ? ` · page ${s.page + 1} of ${s.pages}` : ''}`;
           document.getElementById('sessionNext').textContent = s.next ? `Next: ${s.next}` : '';
         });
@@ -12165,7 +12242,7 @@ function showTab(tab) {
         document.addEventListener('keydown', (e) => {
           if (!sessionExternal || document.getElementById('sessionBar').hidden) return;
           if (e.target.closest?.('input, textarea, select, [contenteditable], .cm-editor')) return;
-          if (['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ' ', 'Home', 'End', 'Escape', '+', '-', '=', 'm', 'M', 'd', 'D', 'c', 'C'].includes(e.key)) {
+          if (['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ' ', 'Home', 'End', 'Escape', '+', '-', '=', 'm', 'M', 'd', 'D', 'c', 'C', 's', 'S'].includes(e.key)) {
             e.preventDefault();
             e.stopPropagation();
             window.ukemusic.session.key(e.key);

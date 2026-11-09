@@ -730,11 +730,13 @@ window.ukemusicLogError = (message, error) => console.warn(message, error);
 async function confirmLoseChanges() { return true; }
 // Karaoke: the song being played, its key and capo, and the text size (kept on this device)
 try { state.config.playback.karaoke_size = Number(localStorage.getItem('ukeweb.karaokeSize')) || 26; } catch (_e) { /* default */ }
+// 4.73: karaoke words are sized to the screen; A−/A+ set a scale (an old pixel size becomes one)
+try { const k = Number(localStorage.getItem('ukeweb.karaokeScale')); if (k) state.config.playback.karaoke_scale = k; } catch (_e) { /* default */ }
 state.transpose = 0;
 function keyLabel(t) { return window.__keyLabel ? window.__keyLabel(t) : ''; }
 function songCapo() { return window.__songCapo ? window.__songCapo() : 0; }
 function focusEditor() {}
-async function persistConfig() { try { localStorage.setItem('ukeweb.karaokeSize', String(state.config.playback.karaoke_size)); } catch (_e) { /* not kept */ } }
+async function persistConfig() { try { if (state.config.playback.karaoke_scale) localStorage.setItem('ukeweb.karaokeScale', String(state.config.playback.karaoke_scale)); } catch (_e) { /* not kept */ } }
 function playSong(options) { return window.__playSong ? window.__playSong(options || {}) : null; }
 function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewSong && window.ukemusicNewSong(suggestedTitle || 'My melody', text); }
 </script>
@@ -2146,13 +2148,16 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     const box = $('sessionView');
     box.hidden = false;
     try { if (box.requestFullscreen) box.requestFullscreen().catch(() => {}); } catch (_e) { /* not here (iPhone) */ }
-    session = UkeSessionScreen.create(box, { css: U.sessionCss(), onClose: closeSession, closeButton: true });
+    // 4.73: fit each song, or the same size for every song (S, or the button in the bar): kept on this device
+    session = UkeSessionScreen.create(box, { css: U.sessionCss(), onClose: closeSession, closeButton: true, onState: (st) => {
+      if (st.size && (look.sessionSize !== st.size || look.sessionSame !== st.same)) { look.sessionSize = st.size; look.sessionSame = st.same; local.set('look', look); }
+    } });
     const lazy = songsList.map((song) => {
       let made = null;
       const get = () => (made = made || sessionSong(song));
       return { title: song.title, get sub() { return get().sub; }, get diagrams() { return get().diagrams; }, get html() { return get().html; } };
     });
-    session.show({ songs: lazy, start: Math.max(0, ids.indexOf(view.song.id)), hideCommon: look.hideCommon === true, dark: isDark(), minPx: Math.round(Math.max(13, Math.min(18, Math.min(innerWidth, innerHeight) / 45))) });
+    session.show({ songs: lazy, start: Math.max(0, ids.indexOf(view.song.id)), hideCommon: look.hideCommon === true, dark: isDark(), minPx: Math.round(Math.max(13, Math.min(18, Math.min(innerWidth, innerHeight) / 45))), size: look.sessionSize || 'fit', same: look.sessionSame || 4.5 });
     box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', 'Group screen');
     releaseSessionFocus = UkeSongUI.enterOverlay(box);
     document.addEventListener('keydown', sessionKeys, true);
