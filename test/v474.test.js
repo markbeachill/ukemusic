@@ -83,7 +83,8 @@ test('web player: Play on the Group screen, its colours kept, nothing lit for a 
   assert.match(WEB, /look\.sessionTheme = st\.theme;/);
   assert.match(WEB, /theme: look\.sessionTheme \|\| \(isDark\(\) \? 'dark' : 'light'\)/);
   assert.match(WEB, /#sessionView \{ position: fixed; inset: 0; z-index: 200; \}/, 'the screen paints its own background (dark showed white before)');
-  for (const src of [WEB, DESKTOP]) assert.ok(src.includes('.replace(/ data-line="\\d+"/g, \'\')'), 'stage choruses once: no line numbers');
+  // (4.75: both apps make the song with src/session-view.js sessionSongFromText, tested in v475)
+  assert.ok(read('src/session-view.js').includes('.replace(/ data-line="\\d+"/g, \'\')'), 'stage choruses once: no line numbers');
 });
 
 console.log('v4.74 tests passed');

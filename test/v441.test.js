@@ -29,7 +29,8 @@ test('#13 the key guess: a riff song is at home on the chord its parts start on'
   // the public domain songs keep their keys
   for (const [t, k] of [['Amazing Grace', 'C'], ['Danny Boy', 'C'], ['House of the Rising Sun', 'Am'], ["It's a Long Way to Tipperary", 'C'], ["Nobody's Fault but Mine", 'Am'], ['Scarborough Fair', 'Am'], ['The Wild Rover', 'C']]) assert.strictEqual(pr.songKeyGuess(pd(t)).name, k, t);
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-  assert.strictEqual((html.match(/progressions\.songKeyGuess\(/g) || []).length, 4, 'the app guesses one way everywhere');
+  assert.strictEqual((html.match(/progressions\.songKeyGuess\(/g) || []).length, 3, 'the app guesses one way everywhere'); // (4.75: the Session screen's guess is in src/session-view.js)
+  assert.match(fs.readFileSync(path.join(ROOT, 'src', 'session-view.js'), 'utf8'), /progressions\.songKeyGuess\(full\)/);
   assert.ok(fs.readFileSync(path.join(ROOT, 'src', 'song-library.js'), 'utf8').includes("songKeyGuess(require('./parser')"), 'and the library list');
   assert.ok(fs.readFileSync(path.join(ROOT, 'web', 'app.html'), 'utf8').includes('U.progressions.songKeyGuess('), 'and the web player');
 });

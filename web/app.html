@@ -683,6 +683,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 <script>/*UMW_BUNDLE*/</script>
 <script>/*PLAYER*/</script>
 <script>/*SESSION_JS*/</script>
+<script>/*SHARED_UI_JS*/</script>
 <script type="text/plain" id="sheetCssText">/*SHEET_CSS_RAW*/</script>
 <script>
 // ── The desktop helpers the practice window uses, for the web ─────────────────
@@ -1534,15 +1535,9 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     } catch (_e) { return text; }
   }
   /** Render options for a Stage copy: the format's layout, and how much fits across */
+  // 4.75: the rules are src/stage-formats.js stageRenderOptions (one copy, with the desktop app)
   function stageOptions(options, monospaceChars, pageWidthPx, sizePx, screen = true) {
-    const f = U.stageFormats.formatOf(prefs().stageFormat, { screen });
-    const out = { ...options };
-    if (f.layout) out.layout = f.layout;
-    if (view.song.settings?.export?.stage_diagrams === 'none') out.diagrams = { ...(out.diagrams || {}), enable: false };
-    out.maxLineChars = out.layout === 'lines' ? monospaceChars : U.stageFormats.charsAcross(f.id, { pageWidthPx, sizePx, monospaceChars });
-    if (out.layout === 'inline') delete out.maxLineChars;
-    out.tune = { notation: 'off' };
-    return out;
+    return U.stageFormats.renderOptions(options, { format: prefs().stageFormat, screen, diagrams: view.song.settings?.export?.stage_diagrams === 'none' ? 'none' : 'song', monospaceChars, pageWidthPx, sizePx });
   }
   let saveTimer = null;
   function saveSoon() { local.set('prefs', devicePrefs); }
@@ -2114,18 +2109,17 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
   $('aboutClose').addEventListener('click', () => $('aboutDialog').close());
 
   // ── Session screen (4.35): the whole song on one screen for a group (src/session-screen.js) ──
+  // 4.75: made by src/session-view.js sessionSongFromText (one copy, with the desktop app)
   function sessionSong(song) {
     const saved = view.song;
-    view.song = song;
+    view.song = song;   // prefs() and played() go by the song shown
     try {
       const p = prefs();
-      const shown = currentIr(stageText(played(song.text)));
-      const key = songKey(song);
-      const sub = [[song.settings?.song?.artist, song.settings?.song?.year].filter(Boolean).join(', '), key ? U.keys.describe(U.keys.transpose(key, p.transpose)) : '', p.capo ? `Capo ${p.capo}` : '', p.instrument !== 'soprano' ? U.instrument(p.instrument).name : ''].filter(Boolean).join(' · ');
-      const made = U.sessionSong(shown, { title: song.title, sub, library: library(), common: song.settings?.diagrams?.common_chords });
-      // 4.74: with repeated choruses shown once, its lines aren't the song's own: nothing to light
-      if (prefs().stageChorus === 'once') for (const mode of Object.keys(made.html || {})) made.html[mode] = String(made.html[mode]).replace(/ data-line="\d+"/g, '');
-      return made;
+      return U.sessionSongFromText(played(song.text), {
+        parserOptions, chorusOnce: p.stageChorus === 'once', key: songKey(song), semitones: p.transpose, capo: p.capo, instrument: p.instrument,
+        title: song.title, credit: [song.settings?.song?.artist, song.settings?.song?.year].filter(Boolean).join(', '), folder: song.id,
+        library: library(), common: song.settings?.diagrams?.common_chords, leftHanded: look.leftHanded === true
+      });
     } catch (error) {
       return { title: song.title, sub: '', diagrams: [], html: { over: `<p>This song couldn’t be shown: ${esc(error.message)}</p>`, inline: '' } };
     } finally { view.song = saved; }
@@ -2246,59 +2240,11 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     catch (error) { $('status').textContent = `Couldn’t play: ${error.message}`; ended(); }
   }
 
-  // 4.45: the words being sung, coloured one by one (a word as soon as it's begun), so a line
-  // that wraps onto two rows fills along the first row and then the second, as you read it.
-  // The words of a line are put in spans the first time it plays (again after the sheet redraws).
-  const SUNG_SKIP = '.ichord, .inline-label, .repeat-mark, .bar, .chord';
-  function sungWordsOf(root, lineNo) {
-    const doc = root.ownerDocument || root;
-    const words = [];
-    for (const group of root.querySelectorAll(`.line-group[data-line="${lineNo}"]`)) {
-      for (const box of group.querySelectorAll('.lyrics, .inline-line')) {
-        if (!box.dataset.words) {
-          const walker = doc.createTreeWalker(box, 4 /* text */, { acceptNode: (n) => (n.parentElement && n.parentElement.closest(SUNG_SKIP) ? 2 : 1) });
-          const texts = [];
-          while (walker.nextNode()) texts.push(walker.currentNode);
-          for (const t of texts) {
-            const parts = t.textContent.split(/([\s ]+)/).filter(Boolean);
-            if (!parts.some((x) => x.trim())) continue;
-            const frag = doc.createDocumentFragment();
-            for (const part of parts) {
-              if (!part.replace(/[\s ]+/g, '')) { frag.appendChild(doc.createTextNode(part)); continue; }
-              const span = doc.createElement('span');
-              span.className = 'w';
-              span.textContent = part;
-              frag.appendChild(span);
-            }
-            t.replaceWith(frag);
-          }
-          box.dataset.words = '1';
-        }
-        words.push(...box.querySelectorAll('.w'));
-      }
-    }
-    return words;
-  }
-  const sung = { key: '', words: [], letters: 0 };
-  function sungWords(root, lineNo, fraction) {
-    if (!root) return;
-    if (sung.key !== String(lineNo) || !sung.words.length || !sung.words[0].isConnected) {
-      sung.key = String(lineNo);
-      sung.words = sungWordsOf(root, lineNo);
-      sung.letters = sung.words.reduce((a, w) => a + w.textContent.length, 0);
-    }
-    const reach = Math.max(0, Math.min(1, fraction)) * sung.letters;
-    let at = 0;
-    for (const w of sung.words) {
-      w.classList.toggle('sung', at < reach - 1e-6);
-      at += w.textContent.length;
-    }
-  }
-  function clearSung(root) {
-    if (root) for (const w of root.querySelectorAll('.w.sung')) w.classList.remove('sung');
-    sung.key = '';
-    sung.words = [];
-  }
+  // 4.45: the words being sung, coloured one by one: src/sung-words.js (4.75: one copy, for the
+  // desktop app and the web player)
+  const sungWordsTool = UkeSungWords.create();
+  const sungWords = (root, lineNo, fraction) => sungWordsTool.show(root, lineNo, fraction);
+  const clearSung = (root) => sungWordsTool.clear(root);
   function ended() {
     cancelAnimationFrame(play.raf);
     if (session) session.playing(null);
@@ -2597,81 +2543,33 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
   });
 
   // Next chord?: the changes one at a time; hear each answer
-  const quiz = { list: [], i: 0, score: 0, answered: false, chords: [], key: null, lib: null, instrument: 'soprano' };
+  // "Next chord?": the screen is src/learn-quiz.js (4.75: one copy, for the desktop app and the web player)
+  const quizSound = { lib: null, instrument: 'soprano' };
   async function quizPlay(chords) {
     if (!player) return;
     const ir = U.parseSong(chords.map((c) => `[${c}]`).join(' '), { useDelimiters: false });
-    const schedule = U.buildSchedule(ir, { library: quiz.lib, instrument: quiz.instrument, tempo: 100, beatsPerBar: 2, countIn: false, defaultStrum: 'custom', customStrum: 'D>D' });
+    const schedule = U.buildSchedule(ir, { library: quizSound.lib, instrument: quizSound.instrument, tempo: 100, beatsPerBar: 2, countIn: false, defaultStrum: 'custom', customStrum: 'D>D' });
     if (player.playing) player.stop();
-    player.setSound(soundFor(quiz.instrument));
+    player.setSound(soundFor(quizSound.instrument));
     try { await player.play(schedule, {}); } catch (_e) { /* no sound */ }
   }
-  function quizShow() {
-    const q = quiz.list[quiz.i];
-    const next = $('quizNext');
-    if (!q) {
-      $('quizBody').hidden = true;
-      $('quizHear').hidden = true;
-      const missed = quiz.list.length - quiz.score;
-      $('quizProgress').textContent = `${quiz.score} out of ${quiz.list.length}.${missed ? ` Practise the ${missed === 1 ? 'one' : 'ones'} you missed, then try again.` : ' You know where it goes.'}`;
-      next.textContent = 'Again';
-      next.disabled = false;
-      return;
-    }
-    $('quizBody').hidden = false;
-    $('quizHear').hidden = false;
-    $('quizProgress').textContent = `Change ${quiz.i + 1} of ${quiz.list.length} · ${quiz.score} right so far`;
-    $('quizBefore').textContent = q.before ? `${q.before.length > 34 ? '…' : ''}${q.before.slice(-34)}` : '';
-    $('quizAfter').textContent = q.after ? `${q.after.slice(0, 34)}${q.after.length > 34 ? '…' : ''}` : '';
-    $('quizFrom').textContent = q.from;
-    $('quizResult').textContent = '';
-    next.textContent = quiz.i + 1 < quiz.list.length ? 'Next' : 'Finish';
-    next.disabled = true;
-    quiz.answered = false;
-    const box = $('quizOptions');
-    box.replaceChildren();
-    for (const chord of U.learn.quizOptions(q, quiz.chords, quiz.key, quiz.i + 1)) {
-      const cell = document.createElement('div');
-      cell.className = 'lq-opt';
-      const pick = Object.assign(document.createElement('button'), { type: 'button', textContent: chord, className: 'lq-pick' });
-      pick.dataset.chord = chord;
-      pick.addEventListener('click', () => quizAnswer(chord));
-      const hear = Object.assign(document.createElement('button'), { type: 'button', textContent: `▶ ${q.from} → ${chord}`, className: 'lq-hear' });
-      hear.addEventListener('click', () => quizPlay([q.from, chord]));
-      cell.append(pick, hear);
-      box.appendChild(cell);
-    }
-  }
-  function quizAnswer(chord) {
-    if (quiz.answered) return;
-    quiz.answered = true;
-    const q = quiz.list[quiz.i];
-    const right = chord === q.to;
-    if (right) quiz.score += 1;
-    for (const b of $('quizOptions').querySelectorAll('.lq-pick')) {
-      if (b.dataset.chord === q.to) b.classList.add('right');
-      else if (b.dataset.chord === chord) b.classList.add('wrong');
-    }
-    $('quizResult').textContent = right ? `Yes: ${q.from} → ${q.to}.` : `It's ${q.to}: ${q.from} → ${q.to}.`;
-    $('quizNext').disabled = false;
-    quizPlay([q.from, q.to]);
-  }
+  const learnQuiz = UkeLearnQuiz.create({
+    els: Object.fromEntries(['progress', 'body', 'before', 'after', 'from', 'options', 'result', 'next', 'hear'].map((k) => [k, $(`quiz${k[0].toUpperCase()}${k.slice(1)}`)])),
+    learn: U.learn,
+    play: quizPlay,
+    onAgain: () => openQuiz(),
+    context: 34 // a phone's width
+  });
   function openQuiz() {
     const L = learnSong();
     const list = U.learn.quizQuestions(L.ir);
     if (!list.length) { toast('No chord changes in this song yet.'); return; }
-    Object.assign(quiz, { list, i: 0, score: 0, answered: false, chords: songChordList(L.ir), key: L.key, lib: L.lib, instrument: L.p.instrument });
+    Object.assign(quizSound, { lib: L.lib, instrument: L.p.instrument });
     $('learnDialog').close();
-    quizShow();
+    learnQuiz.start({ list, chords: songChordList(L.ir), key: L.key });
     $('quizDialog').showModal();
   }
   $('learnQuizBtn').addEventListener('click', openQuiz);
-  $('quizNext').addEventListener('click', () => {
-    if (quiz.i >= quiz.list.length) { openQuiz(); return; }
-    quiz.i += 1;
-    quizShow();
-  });
-  $('quizHear').addEventListener('click', () => { const q = quiz.list[quiz.i]; if (q) quizPlay(quiz.answered ? [q.from, q.to] : [q.from]); });
   $('quizClose').addEventListener('click', () => { if (player && player.playing) player.stop(); $('quizDialog').close(); });
 
   // The learn sheet, shown here: print it (or Save as PDF) or download the page

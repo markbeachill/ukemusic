@@ -1,5 +1,19 @@
 # Changelog
 
+## v4.75.0
+
+### Desktop and web player: one copy of the shared parts
+- **Fixed: left-handed chord shapes on the web player's Group screen.** With Left-handed on, the song sheet's shapes were flipped but the Group screen's weren't. Now they are.
+- **Four parts that each app had its own copy of are now one copy, shared by both,** so they can't drift apart:
+  - the words colouring in as they're sung
+  - the **Next chord?** quiz
+  - how a Stage copy is laid out
+  - how a song is prepared for the Session screen
+- **Nothing else changes.** Song sheets, Stage copies and the Session screen were compared before and after, on desktop and web, and are the same.
+- **What still differs, on purpose:**
+  - The desktop's quiz shows the line number and keeps a missed answer as a trouble spot (the web player doesn't keep trouble spots).
+  - The web player's downloaded and printed sheets stay plainer than the desktop's.
+
 ## v4.74.0
 
 ### The Session screen follows the music

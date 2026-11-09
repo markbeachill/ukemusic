@@ -4094,6 +4094,8 @@
     </div>
     <script src="src/song-ui.js"></script>
     <script src="src/session-screen.js"></script>
+    <script src="src/sung-words.js"></script>
+    <script src="src/learn-quiz.js"></script>
     <script src="src/playback-audio.js"></script>
     <script>
       // Error logging: send uncaught errors (with stack traces) to logs/ukemusic.log
@@ -7093,7 +7095,6 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         // ── Stage formats (4.29): Clear, Brackets, Compact or Heavy (src/stage-formats.js) ──
         // 4.70: Auto (the default) is chords above on screen (the preview), chords in the words in print
         const stageFormatId = (config = effectiveConfig(), { screen = false } = {}) => window.ukemusic.stageFormats.formatOf(config?.export?.stage_format, { screen }).id;
-        const stageFormatLayout = (config = effectiveConfig(), { screen = false } = {}) => window.ukemusic.stageFormats.formatOf(config?.export?.stage_format, { screen }).layout;
         // 4.30: every chorus in full unless "Don't repeat" is chosen (Settings → Stage copies)
         const stageOnce = (config = effectiveConfig()) => config?.export?.stage_chorus === 'once';
         // A part that comes back exactly the same printed once, then as a cue (Stage copies)
@@ -7108,16 +7109,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         }
         // The layout a Stage copy uses, and how many characters fit across the page in it
         function stageRenderOptions(options, config = effectiveConfig(), { screen = false } = {}) {
-          const layout = stageFormatLayout(config, { screen });
-          const out = { ...options };
-          if (layout) out.layout = layout;
-          // 4.32: chord diagrams on Stage copies: as the song has them, or none (saves room)
-          if (config?.export?.stage_diagrams === 'none') out.diagrams = { ...(out.diagrams || {}), enable: false };
+          // 4.75: the rules are src/stage-formats.js stageRenderOptions (one copy, with the web player)
           const width = ((state.config?.export?.pdf_page_size === 'Letter' ? 8.5 : 8.27) - 1.2) * 96;
-          out.maxLineChars = out.layout === 'lines' ? maxLineChars('stage') : window.ukemusic.stageFormats.charsAcross(stageFormatId(config, { screen }), { pageWidthPx: width, sizePx: stageSettings().size, monospaceChars: maxLineChars('stage') });
-          if (out.layout === 'inline') delete out.maxLineChars; // words in a line wrap by themselves
-          out.tune = { ...(out.tune || {}), notation: 'off' };   // 4.44: Stage copies are words and chords
-          return out;
+          return window.ukemusic.stageFormats.renderOptions(options, { format: config?.export?.stage_format, screen, diagrams: config?.export?.stage_diagrams === 'none' ? 'none' : 'song', monospaceChars: maxLineChars('stage'), pageWidthPx: width, sizePx: stageSettings().size });
         }
         function docAttrs(config = effectiveConfig(), { stage = false, screen = false } = {}) {
           const t = config?.tablature || {};
@@ -7402,59 +7396,11 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           if (found) found.classList.add('now');
         }
 
-        // 4.45: the words being sung, coloured one by one (a word as soon as it's begun), so a line
-        // that wraps onto two rows fills along the first row and then the second, as you read it.
-        // The words of a line are put in spans the first time it plays (again after the sheet redraws).
-        const SUNG_SKIP = '.ichord, .inline-label, .repeat-mark, .bar, .chord';
-        function sungWordsOf(root, lineNo) {
-          const doc = root.ownerDocument || root;
-          const words = [];
-          for (const group of root.querySelectorAll(`.line-group[data-line="${lineNo}"]`)) {
-            for (const box of group.querySelectorAll('.lyrics, .inline-line')) {
-              if (!box.dataset.words) {
-                const walker = doc.createTreeWalker(box, 4 /* text */, { acceptNode: (n) => (n.parentElement && n.parentElement.closest(SUNG_SKIP) ? 2 : 1) });
-                const texts = [];
-                while (walker.nextNode()) texts.push(walker.currentNode);
-                for (const t of texts) {
-                  const parts = t.textContent.split(/([\s ]+)/).filter(Boolean);
-                  if (!parts.some((x) => x.trim())) continue;
-                  const frag = doc.createDocumentFragment();
-                  for (const part of parts) {
-                    if (!part.replace(/[\s ]+/g, '')) { frag.appendChild(doc.createTextNode(part)); continue; }
-                    const span = doc.createElement('span');
-                    span.className = 'w';
-                    span.textContent = part;
-                    frag.appendChild(span);
-                  }
-                  t.replaceWith(frag);
-                }
-                box.dataset.words = '1';
-              }
-              words.push(...box.querySelectorAll('.w'));
-            }
-          }
-          return words;
-        }
-        const sung = { key: '', words: [], letters: 0 };
-        function sungWords(root, lineNo, fraction) {
-          if (!root) return;
-          if (sung.key !== String(lineNo) || !sung.words.length || !sung.words[0].isConnected) {
-            sung.key = String(lineNo);
-            sung.words = sungWordsOf(root, lineNo);
-            sung.letters = sung.words.reduce((a, w) => a + w.textContent.length, 0);
-          }
-          const reach = Math.max(0, Math.min(1, fraction)) * sung.letters;
-          let at = 0;
-          for (const w of sung.words) {
-            w.classList.toggle('sung', at < reach - 1e-6);
-            at += w.textContent.length;
-          }
-        }
-        function clearSung(root) {
-          if (root) for (const w of root.querySelectorAll('.w.sung')) w.classList.remove('sung');
-          sung.key = '';
-          sung.words = [];
-        }
+        // 4.45: the words being sung, coloured one by one: src/sung-words.js (4.75: one copy, for the
+        // desktop app and the web player)
+        const sungWordsTool = UkeSungWords.create();
+        const sungWords = (root, lineNo, fraction) => sungWordsTool.show(root, lineNo, fraction);
+        const clearSung = (root) => sungWordsTool.clear(root);
         function playBandTick() {
           const schedule = playBand.schedule;
           if (!schedule || !player) return;
@@ -10868,90 +10814,38 @@ function showTab(tab) {
         document.getElementById('karaokeTrouble').addEventListener('click', karaokeMarkTrouble);
 
         // What comes next? The song's changes one at a time; misses become trouble spots
-        const quiz = { list: [], i: 0, score: 0, answered: false, songChords: [], key: null, library: null, instrument: 'soprano' };
+        // "Next chord?": the screen is src/learn-quiz.js (4.75: one copy, for the desktop app and the
+        // web player); here, its sound and, for a wrong answer, a trouble spot
+        const quizSound = { library: null, instrument: 'soprano' };
         async function quizPlay(chords) {
           if (!player) return;
           const ir = window.ukemusic.parseSong(chords.map((c) => `[${c}]`).join(' '), { useDelimiters: false });
           const schedule = window.ukemusic.buildSchedule(ir, {
-            library: quiz.library, instrument: quiz.instrument, tempo: 100, beatsPerBar: 2, countIn: false, defaultStrum: 'custom', customStrum: 'D>D'
+            library: quizSound.library, instrument: quizSound.instrument, tempo: 100, beatsPerBar: 2, countIn: false, defaultStrum: 'custom', customStrum: 'D>D'
           });
           if (player.playing) { state.userStopped = true; player.stop(); }
-          player.setSound(soundFor(quiz.instrument));
+          player.setSound(soundFor(quizSound.instrument));
           await player.play(schedule, {});
         }
-        function quizShow() {
-          const q = quiz.list[quiz.i];
-          const body = document.getElementById('learnQuizBody');
-          const next = document.getElementById('learnQuizNext');
-          const result = document.getElementById('learnQuizResult');
-          if (!q) {
-            body.hidden = true;
-            document.getElementById('learnQuizHear').hidden = true;
-            const missed = quiz.list.length - quiz.score;
-            document.getElementById('learnQuizProgress').textContent = `${quiz.score} out of ${quiz.list.length}.${missed ? ` The ${missed === 1 ? 'one you missed is' : `${missed} you missed are`} in your trouble spots.` : ' You know where it goes.'}`;
-            next.textContent = 'Again';
-            next.disabled = false;
-            return;
-          }
-          body.hidden = false;
-          document.getElementById('learnQuizHear').hidden = false;
-          document.getElementById('learnQuizProgress').textContent = `Change ${quiz.i + 1} of ${quiz.list.length} · line ${q.line} · ${quiz.score} right so far`;
-          document.getElementById('learnQuizBefore').textContent = q.before ? `${q.before.length > 40 ? '…' : ''}${q.before.slice(-40)}` : '';
-          document.getElementById('learnQuizAfter').textContent = q.after ? `${q.after.slice(0, 40)}${q.after.length > 40 ? '…' : ''}` : '';
-          document.getElementById('learnQuizFrom').textContent = q.from;
-          result.textContent = '';
-          next.textContent = quiz.i + 1 < quiz.list.length ? 'Next' : 'Finish';
-          next.disabled = true;
-          quiz.answered = false;
-          const options = document.getElementById('learnQuizOptions');
-          options.replaceChildren();
-          for (const chord of window.ukemusic.learn.quizOptions(q, quiz.songChords, quiz.key, quiz.i + 1)) {
-            const cell = document.createElement('div');
-            cell.className = 'lq-opt';
-            const pick = Object.assign(document.createElement('button'), { type: 'button', textContent: chord, className: 'lq-pick' });
-            pick.dataset.chord = chord;
-            pick.addEventListener('click', () => quizAnswer(chord));
-            const hear = Object.assign(document.createElement('button'), { type: 'button', textContent: `▶ ${q.from} → ${chord}`, className: 'lq-hear' });
-            hear.title = 'Hear it: does it sound right?';
-            hear.addEventListener('click', () => quizPlay([q.from, chord]));
-            cell.append(pick, hear);
-            options.appendChild(cell);
-          }
-        }
-        async function quizAnswer(chord) {
-          if (quiz.answered) return;
-          quiz.answered = true;
-          const q = quiz.list[quiz.i];
-          const right = chord === q.to;
-          if (right) quiz.score += 1;
-          for (const b of document.querySelectorAll('#learnQuizOptions .lq-pick')) {
-            if (b.dataset.chord === q.to) b.classList.add('right');
-            else if (b.dataset.chord === chord) b.classList.add('wrong');
-          }
-          document.getElementById('learnQuizResult').textContent = right ? `Yes: ${q.from} → ${q.to}.` : `It's ${q.to}: ${q.from} → ${q.to}.`;
-          document.getElementById('learnQuizNext').disabled = false;
-          if (!right) await learnAddTrouble([{ line: q.line, chord: q.to, from: 'quiz' }]);
-          quizPlay([q.from, q.to]);
-        }
+        const learnQuiz = UkeLearnQuiz.create({
+          els: Object.fromEntries(['progress', 'body', 'before', 'after', 'from', 'options', 'result', 'next', 'hear'].map((k) => [k, document.getElementById(`learnQuiz${k[0].toUpperCase()}${k.slice(1)}`)])),
+          learn: window.ukemusic.learn,
+          play: quizPlay,
+          onMiss: (q) => learnAddTrouble([{ line: q.line, chord: q.to, from: 'quiz' }]),
+          onAgain: () => openLearnQuiz(),
+          showLine: true,
+          context: 40,
+          missedNote: (n) => ` The ${n === 1 ? 'one you missed is' : `${n} you missed are`} in your trouble spots.`
+        });
         function openLearnQuiz() {
           const L = learnSong();
           const list = window.ukemusic.learn.quizQuestions(L.ir);
           if (!list.length) { setStatusMessage('No chord changes in this song yet.'); return; }
-          Object.assign(quiz, { list, i: 0, score: 0, answered: false, songChords: songChordList(L.ir), key: L.analysis.key, library: L.library, instrument: L.instrument.id });
-          document.getElementById('learnQuizNext').textContent = 'Next';
-          quizShow();
+          Object.assign(quizSound, { library: L.library, instrument: L.instrument.id });
+          learnQuiz.start({ list, chords: songChordList(L.ir), key: L.analysis.key });
           document.getElementById('learnQuizDialog').showModal();
         }
         document.getElementById('learnQuizButton').addEventListener('click', openLearnQuiz);
-        document.getElementById('learnQuizNext').addEventListener('click', () => {
-          if (quiz.i >= quiz.list.length) { openLearnQuiz(); return; }
-          quiz.i += 1;
-          quizShow();
-        });
-        document.getElementById('learnQuizHear').addEventListener('click', () => {
-          const q = quiz.list[quiz.i];
-          if (q) quizPlay(quiz.answered ? [q.from, q.to] : [q.from]);
-        });
         document.getElementById('learnQuizClose').addEventListener('click', () => {
           if (player && player.playing) { state.userStopped = true; player.stop(); }
           document.getElementById('learnQuizDialog').close();
@@ -12189,20 +12083,14 @@ function showTab(tab) {
         // ── Session screen (4.35): songs fitted to one screen, for a group (session.html) ──
         // A song for the screen: in its key (or the setlist's), with its capo, instrument and chord
         // shapes; both layouts (chords above / in the words), and its diagrams.
+        // 4.75: made by src/session-view.js sessionSongFromText (one copy, with the web player)
         function sessionSong({ title, content, config, semitones = 0, folder = '' }) {
           const instrument = window.ukemusic.instrument(config?.song?.instrument);
-          const once = config?.export?.stage_chorus === 'once';
-          const ir = window.ukemusic.parseSong(once ? stageText(content, config) : content, getParserOptions());
-          const capo = songCapo(config);
           const chosen = config?.song?.key && config.song.key !== 'auto' ? window.ukemusic.keys.parse(config.song.key) : null;
-          const key = chosen || window.ukemusic.progressions.songKeyGuess(ir);
-          const shown = window.ukemusic.transposeIR(ir, semitones - capo, { spelling: 'key', key, instrument: instrument.id });
-          const keyNow = key ? window.ukemusic.keys.transpose(key, semitones) : null;
-          const sub = [creditText(config), keyNow ? window.ukemusic.keys.describe(keyNow) : '', capo ? `Capo ${capo}` : '', instrument.id !== 'soprano' ? instrument.name : ''].filter(Boolean).join(' · ');
-          const song = window.ukemusic.sessionSong(shown, { title, sub, folder, library: chordLibraryFor(instrument.id, config), common: config?.diagrams?.common_chords, leftHanded: Boolean(state.config?.diagrams?.left_handed) });
-          // 4.74: with repeated choruses shown once, its lines aren't the song's own: nothing to light
-          if (once) for (const mode of Object.keys(song.html || {})) song.html[mode] = String(song.html[mode]).replace(/ data-line="\d+"/g, '');
-          return song;
+          return window.ukemusic.sessionSongFromText(content, {
+            parserOptions: getParserOptions(), chorusOnce: config?.export?.stage_chorus === 'once', key: chosen, semitones, capo: songCapo(config), instrument: instrument.id,
+            title, credit: creditText(config), folder, library: chordLibraryFor(instrument.id, config), common: config?.diagrams?.common_chords, leftHanded: Boolean(state.config?.diagrams?.left_handed)
+          });
         }
         async function sessionSongFromLine(line) {
           const folder = folderOf(line);

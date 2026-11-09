@@ -210,4 +210,40 @@ function sessionSong(shown, { title = '', sub = '', folder = '', library = null,
   return { title, sub, folder, diagrams, html: { over: sessionHtml(shown, { mode: 'over' }), inline: sessionHtml(shown, { mode: 'inline' }) } };
 }
 
-module.exports = { sessionHtml, sessionChords, sessionSong, blocks, SESSION_CSS };
+/**
+ * A song for the Session screen from its text (4.75: one copy, for the desktop app and the web
+ * player): read, repeated choruses shortened if asked, put in the key and capo to show, and its
+ * subtitle (credit · key · capo · instrument).
+ *   text           the song's text (--START MUSIC-- … --END MUSIC--)
+ *   parserOptions  as the app reads songs
+ *   chorusOnce     Stage copies' "choruses once": a part that comes back the same is a cue. Its
+ *                  lines then aren't the song's own, so they carry no line numbers (nothing lit)
+ *   key            the key chosen for the song, or null to guess it
+ *   semitones, capo, instrument ('soprano', 'baritone'…), title, credit, folder, library, common, leftHanded
+ */
+function sessionSongFromText(text, { parserOptions = {}, chorusOnce = false, key = null, semitones = 0, capo = 0, instrument = 'soprano', title = '', credit = '', folder = '', library = null, common, leftHanded = false } = {}) {
+  const parse = require('./parser');
+  const { transposeIR } = require('./transpose');
+  const keys = require('./keys');
+  const progressions = require('./progressions');
+  const { collapseRepeats } = require('./stage-formats');
+  const inst = require('./instruments').instrument(instrument);
+  const full = parse(text, parserOptions);
+  const songKey = key || progressions.songKeyGuess(full);
+  let ir = full;
+  let once = false;
+  if (chorusOnce) {
+    try {
+      const shorter = collapseRepeats(text, progressions.analyse(full, {}).sections).text;
+      if (shorter !== text) { ir = parse(shorter, parserOptions); once = true; }
+    } catch (_e) { ir = full; }
+  }
+  const shown = transposeIR(ir, semitones - capo, { spelling: 'key', key: songKey, instrument: inst.id });
+  const keyNow = songKey ? keys.transposeKey(songKey, semitones) : null;
+  const sub = [credit, keyNow ? keys.describeKey(keyNow) : '', capo ? `Capo ${capo}` : '', inst.id !== 'soprano' ? inst.name : ''].filter(Boolean).join(' · ');
+  const song = sessionSong(shown, { title, sub, folder, library, common, leftHanded });
+  if (once) for (const mode of Object.keys(song.html)) song.html[mode] = String(song.html[mode]).replace(/ data-line="\d+"/g, '');
+  return song;
+}
+
+module.exports = { sessionHtml, sessionChords, sessionSong, sessionSongFromText, blocks, SESSION_CSS };

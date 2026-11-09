@@ -135,4 +135,26 @@ function collapseRepeats(text, sections) {
   return { text: out.join('\n'), shortened };
 }
 
-module.exports = { FORMATS, AUTO, CHOICES, DEFAULT_FORMAT, formatOf, nameOf, formatsCss, charsAcross, collapseRepeats };
+/**
+ * A Stage copy's render options (4.75: one copy, for the desktop app and the web player): the
+ * format's layout, the chord diagrams kept or left off, how many letters to a line, and no tune
+ * notation (Stage copies are words and chords).
+ *   options         the sheet's render options, to start from
+ *   format          the Stage format chosen (export.stage_format; '' for the default)
+ *   screen          for a screen (true) or for paper: the default differs
+ *   diagrams        'song' (as the song has them) or 'none'
+ *   monospaceChars  letters to a line in the Stage font, for chords above the words with spaces
+ *   pageWidthPx, sizePx   the page's width and the text size, for the other layouts
+ */
+function stageRenderOptions(options, { format = '', screen = false, diagrams = 'song', monospaceChars = 48, pageWidthPx = 680, sizePx = 20 } = {}) {
+  const f = formatOf(format, { screen });
+  const out = { ...options };
+  if (f.layout) out.layout = f.layout;
+  if (diagrams === 'none') out.diagrams = { ...(out.diagrams || {}), enable: false };
+  out.maxLineChars = out.layout === 'lines' ? monospaceChars : charsAcross(f.id, { pageWidthPx, sizePx, monospaceChars });
+  if (out.layout === 'inline') delete out.maxLineChars; // words in a line wrap by themselves
+  out.tune = { ...(out.tune || {}), notation: 'off' };   // 4.44: Stage copies are words and chords
+  return out;
+}
+
+module.exports = { FORMATS, AUTO, CHOICES, DEFAULT_FORMAT, formatOf, nameOf, formatsCss, charsAcross, collapseRepeats, stageRenderOptions };

@@ -23,8 +23,9 @@ test('from memory in the web karaoke: fading chords, no shapes, kept on a line t
 });
 
 test('the analysis is the desktop app\'s own (src/learn.js through the bundle)', () => {
-  for (const f of ['U.learn.quizQuestions', 'U.learn.quizOptions', 'U.learn.learnSheetHtml', 'U.learn.chordMap', 'U.learn.circleSvg', 'U.learn.circleNotes', 'U.progressions.analyse(ir, { key })']) assert.ok(app.includes(f), f);
+  for (const f of ['U.learn.quizQuestions', 'U.learn.learnSheetHtml', 'U.learn.chordMap', 'U.learn.circleSvg', 'U.learn.circleNotes', 'U.progressions.analyse(ir, { key })']) assert.ok(app.includes(f), f);
   const preload = fs.readFileSync(path.join(__dirname, '..', 'src', 'preload.js'), 'utf8');
+  assert.ok(fs.readFileSync(path.join(__dirname, '..', 'src', 'learn-quiz.js'), 'utf8').includes('learn.quizOptions('), 'the quiz screen (4.75: src/learn-quiz.js, shared)');
   assert.ok(preload.includes("learn: require('./learn')"));
 });
 

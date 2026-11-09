@@ -201,7 +201,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
   libraryList: (() => { const l = require('./libraries'); return { parse: l.parseList, format: l.formatList }; })(),
   shorthandKeyHtml: (ir) => require('./print-notes').shorthandKeyHtml(ir),
   easyReadCss: () => require('./easy-read').css(), // 4.71: Easy to read text (Atkinson Hyperlegible)
-  stageFormats: (() => { const f = require('./stage-formats'); return { FORMATS: f.FORMATS, CHOICES: f.CHOICES, nameOf: f.nameOf, formatOf: f.formatOf, css: f.formatsCss(), charsAcross: f.charsAcross, collapseRepeats: f.collapseRepeats }; })(),
+  stageFormats: (() => { const f = require('./stage-formats'); return { FORMATS: f.FORMATS, CHOICES: f.CHOICES, nameOf: f.nameOf, formatOf: f.formatOf, css: f.formatsCss(), charsAcross: f.charsAcross, collapseRepeats: f.collapseRepeats, renderOptions: f.stageRenderOptions }; })(),
   libraries: {
     list: (paths) => ipcRenderer.invoke('libraries:list', paths),
     readInfo: (folder) => ipcRenderer.invoke('libraries:readInfo', folder),
@@ -221,6 +221,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
   sessionChords: (ir) => require('./session-view').sessionChords(ir),
   sessionCss: () => require('./session-view').SESSION_CSS,
   sessionSong: (shown, options) => require('./session-view').sessionSong(shown, options),
+  sessionSongFromText: (text, options) => require('./session-view').sessionSongFromText(text, options), // 4.75
   isCommonChord: (name, list) => require('./renderer-html').isCommonChord(name, list),
   session: {
     open: (payload) => ipcRenderer.invoke('session:open', payload),
