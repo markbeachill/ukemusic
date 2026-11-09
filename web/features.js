@@ -17,6 +17,7 @@ const SECTIONS = [
       { f: 'AI prompts for difficult sheets and PDFs', web: true, desktop: true },
       { f: 'Public-domain songs to start with, ready to play', web: true, desktop: true },
       { f: 'Change a song, or write your own', web: true, desktop: true },
+      { f: 'Drag a chord to the right word on the sheet (an option)', web: 'On the Edit page', desktop: true }, // 4.77
       { f: 'Find songs by title, artist, tag or key', web: true, desktop: 'Several libraries too' }
     ]
   },

@@ -2256,6 +2256,7 @@
                       <option value="chords">Chords only</option>
                     </select>
                   </div>
+                  <label class="rib-check" title="Drag a chord in the preview to where it's played (even part way into a word); click a chord to change it, choose its shape or take it out; click in the words to put a chord there; drag a chord shape onto the words. The song's text changes as if you'd typed it, so Undo works"><input id="viewChordEdit" type="checkbox" data-config-path="general.chord_edit" /> Edit chords on the sheet</label>
                   <details class="rib-menu" id="tabMenu">
                     <summary class="rib-small" title="How tab looks: fret numbers, size, a box, faint lines (all songs)">Tab look ▾</summary>
                     <div class="rib-menu-items tab-menu-items">
@@ -4114,6 +4115,7 @@
     <script src="src/sung-words.js"></script>
     <script src="src/learn-quiz.js"></script>
     <script src="src/sheet-extras.js"></script>
+    <script src="src/sheet-chord-editor.js"></script>
     <script src="src/playback-audio.js"></script>
     <script>
       // Error logging: send uncaught errors (with stack traces) to logs/ukemusic.log
@@ -4617,6 +4619,9 @@
             const shownIr = numbers ? window.ukemusic.learn.numberedIR(transposedIr, window.ukemusic.progressions.analyse(transposedIr, { key: learnKey(state.transpose - songCapo()) }).key) : transposedIr;
             const baseOptions = numbers ? { ...renderOptions(), diagrams: { ...(renderOptions().diagrams || {}), enable: false } } : renderOptions();
             baseOptions.tune = { ...(baseOptions.tune || {}), shift: state.transpose, key: keyAfter(state.transpose)?.name || '', keyGuessed: songKey()?.guessed === true };
+            // 4.77: Edit chords on the sheet (not on a Stage copy, or with the chords as numbers)
+            state.chordEditOn = chordEditWanted() && !stageLook && !numbers;
+            if (state.chordEditOn) { baseOptions.editable = true; state.shownChords = [...new Set(shownIr.filter((n) => n.type === 'chord' && !n.noChord && n.content).map((n) => n.content))]; }
             const html = window.ukemusic.renderHTML(shownIr, stageLook ? stageRenderOptions(baseOptions, undefined, { screen: true }) : baseOptions);
             if (previewLook() === 'stage' && !state.stageCss) state.stageCss = (await window.ukemusic.stageStyleRead())?.content || '';
             preview.srcdoc = buildPreviewDocument(html, docCss(previewLook() === 'stage', PREVIEW_CSS), undefined, '', docAttrs(undefined, { stage: previewLook() === 'stage', screen: true }));
@@ -4658,6 +4663,17 @@
             if (run !== pageCountRun) return;
             label.textContent = n ? `PDF: ${n} page${n === 1 ? '' : 's'}` : '';
           }, 1200);
+        }
+        // 4.77: chords edited on the sheet (src/sheet-chord-editor.js → src/chord-edit.js): the change
+        // is made in the song text, as if typed (so Undo works), and the preview stays where it was
+        const chordEditWanted = () => state.config?.general?.chord_edit === true || state.config?.general?.chord_edit === 'true';
+        function applyChordEdit(op) {
+          const before = getEditorValue();
+          const after = window.ukemusic.chordEdit.apply(before, op, { shift: state.transpose - songCapo() });
+          if (after === before) { setStatusMessage('That chord couldn\'t be changed there.'); return; }
+          state.keepPreviewScroll = preview.contentWindow ? preview.contentWindow.scrollY : null;
+          setEditorValue(after);
+          scheduleRender();
         }
         function scheduleRender() {
           clearTimeout(state.debounceId);
@@ -12999,6 +13015,11 @@ function showTab(tab) {
           });
           syncPreviewToEditor();
           highlightCursorLine();
+          // 4.77: Edit chords on the sheet
+          if (state.chordEditOn && doc.body) {
+            UkeSheetChordEditor.attach(doc.body, { onEdit: applyChordEdit, chords: () => state.shownChords || [], onShape: (name) => openShapeDialog(name) });
+          }
+          if (state.keepPreviewScroll != null) { preview.contentWindow.scrollTo(0, state.keepPreviewScroll); state.keepPreviewScroll = null; }
         });
 
         function bindEditorScroll() {

@@ -41,7 +41,7 @@ test('desktop: Display → Text → Easy to read, for the preview, PDFs, exports
   assert.match(html, /easyRead\(\) \? 'easy-read' : ''/, 'an export is "old" once it changes');
   assert.match(html, /session_min_px\) \|\| 18, easyRead: easyRead\(\),/); // (4.73: and the size)
   assert.match(read('session.html'), /document\.documentElement\.toggleAttribute\('data-easy-read', data\.easyRead === true\);/);
-  assert.match(read('main.js'), /easy_read: false \}/);
+  assert.match(read('main.js'), /easy_read: false[ ,}]/);
   assert.match(read('src/preload.js'), /easyReadCss: \(\) => require\('\.\/easy-read'\)\.css\(\)/);
 });
 

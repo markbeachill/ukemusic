@@ -222,6 +222,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
   sessionCss: () => require('./session-view').SESSION_CSS,
   sessionSong: (shown, options) => require('./session-view').sessionSong(shown, options),
   sessionSongFromText: (text, options) => require('./session-view').sessionSongFromText(text, options), // 4.75
+  chordEdit: { apply: (text, op, options) => require('./chord-edit').apply(text, op, options) }, // 4.77: chords edited on the sheet
   isCommonChord: (name, list) => require('./renderer-html').isCommonChord(name, list),
   session: {
     open: (payload) => ipcRenderer.invoke('session:open', payload),

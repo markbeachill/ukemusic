@@ -54,6 +54,7 @@
 | AI prompts for difficult sheets and PDFs | ✓ | ✓ |
 | Public-domain songs to start with, ready to play | ✓ | ✓ |
 | Change a song, or write your own | ✓ | ✓ |
+| Drag a chord to the right word on the sheet (an option) | ✓ On the Edit page | ✓ |
 | Find songs by title, artist, tag or key | ✓ | ✓ Several libraries too |
 | **[Play along](https://markbeachill.github.io/ukemusic/practise.html)** | | |
 | It plays along with you: the chords and the strum, or picking | ✓ | ✓ |

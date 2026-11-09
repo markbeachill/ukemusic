@@ -49,9 +49,12 @@ function lyricOf(group) {
   return group.filter((n) => n.type === 'lyric').map((n) => n.content).join('');
 }
 
-function makeLine(template, text, positioned, codes = null) {
+// 4.77: srcShift (on the words) and srcAt (on a chord): where a split part's letters and chords
+// were in the line as written, so a chord can be moved on the sheet (src/chord-edit.js)
+function makeLine(template, text, positioned, codes = null, srcShift = 0) {
   const line = template.line;
   const lyric = { type: 'lyric', content: text, line, offset: null, warnings: [] };
+  if (srcShift) lyric.srcShift = srcShift;
   if (codes && hasStyles(codes)) lyric.styles = codes;
   return [
     ...positioned.filter((n) => n.offset === null),
@@ -113,14 +116,16 @@ function splitGroup(group, max, indent) {
 
   const pad = ' '.repeat(indent);
   const codes = lineCodes(group); // bold/italic/underline go with the words
-  const firstPart = makeLine(group[0], text.slice(0, at), positioned.filter((n) => n.offset === null || n.offset < at), codes.slice(0, at));
+  const shift = (group.find((n) => n.type === 'lyric' && n.srcShift) || {}).srcShift || 0;
+  const firstPart = makeLine(group[0], text.slice(0, at), positioned.filter((n) => n.offset === null || n.offset < at), codes.slice(0, at), shift);
   const rest = makeLine(
     group[0],
     pad + text.slice(at + 1),
     positioned
       .filter((n) => n.offset !== null && n.offset >= at)
-      .map((n) => ({ ...n, offset: Math.max(indent, n.offset - at - 1 + indent) })),
-    [...new Array(indent).fill(0), ...codes.slice(at + 1, text.length)]
+      .map((n) => ({ ...n, offset: Math.max(indent, n.offset - at - 1 + indent), srcAt: n.srcAt ?? n.offset })),
+    [...new Array(indent).fill(0), ...codes.slice(at + 1, text.length)],
+    shift + at + 1 - indent
   );
   return [firstPart, ...splitGroup(rest, max, indent)];
 }

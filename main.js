@@ -34,7 +34,7 @@ process.on('uncaughtException', (error) => log.error('main', 'Uncaught exception
 process.on('unhandledRejection', (reason) => log.error('main', 'Unhandled promise rejection', reason));
 
 const DEFAULT_CONFIG = {
-  general: { theme: 'auto', look: 'standard', style_set: 'classic', easy_read: false }, // 4.71: easy_read: Atkinson Hyperlegible
+  general: { theme: 'auto', look: 'standard', style_set: 'classic', easy_read: false, chord_edit: false }, // 4.71: easy_read: Atkinson Hyperlegible; 4.77: chord_edit: Edit chords on the sheet
   library: { songs_folder: '', libraries: '', last_song: '', show_notes_on_open: true, start_screen: 'library', starters_added: false, starters_info: false },
   song: { instrument: 'soprano', key: 'auto' },
   parsing: { use_delimiters: true },

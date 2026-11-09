@@ -1,5 +1,21 @@
 # Changelog
 
+## v4.77.0
+
+### Edit chords on the sheet (an option)
+- **Turn it on:**
+  - **Desktop:** Display → **Edit chords on the sheet**.
+  - **Web player:** the Edit page → **Edit chords on the sheet**, beside the preview.
+  - It's off until you turn it on, and the choice is remembered.
+- **Then, on the sheet:**
+  - **Drag a chord** to where it's played: along the words, part way into a word, or onto another line. A line shows where it will land.
+  - **Click a chord** to change it to another of the song's chords, or type one. Its timing (×2, :2) stays. You can also **take it out**, or, on desktop, open **Its shape…**.
+  - **Click in the words** to put a chord there.
+  - **Drag a chord shape** from the diagrams onto the words to put that chord there.
+- **The change is made in the song's words, as if you'd typed it,** so Undo, saving and everything else work as usual. If you prefer typing [C], nothing changes for you.
+- **Works in every layout:** chords above (with spaces or in columns), in the words, and raised. Also in another key or with a capo: a chord named on the sheet is written in the song's own key.
+- **Not on a Stage copy, or with the chords shown as numbers,** because those aren't the song as written.
+
 ## v4.76.0
 
 ### For clubs: sheets that look like your songbook

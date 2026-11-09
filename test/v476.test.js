@@ -79,7 +79,7 @@ test('desktop: the logo is kept with the settings; the sheet, the status bar, th
 });
 
 test('web player: logo and date kept on this device, on printed and downloaded sheets; pages in Download', () => {
-  assert.match(read('web/build.js'), /'sheet-extras\.js'\]/);
+  assert.match(read('web/build.js'), /'sheet-extras\.js'[\],]/);
   assert.match(WEB, /<input id="clubLogoFile" type="file" accept="image\/png,image\/jpeg,image\/gif,image\/webp,image\/svg\+xml" hidden>/);
   assert.match(WEB, /<body>\$\{window\.UkeSheetExtras\.logoHtml\(look\.logo\)\}<h1>/);
   assert.match(WEB, /look\.sheetDate === true \? window\.UkeSheetExtras\.updatedHtml\(view\.song\.updated \|\| Date\.now\(\)\) : ''/);

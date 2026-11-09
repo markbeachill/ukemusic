@@ -25,7 +25,7 @@ put('/*PRACTICE_CSS*/', safe(fs.readFileSync('pr_css.css', 'utf8')));
 put('<!--PRACTICE_MARKUP-->', fs.readFileSync('pr_markup.html', 'utf8'));
 put('/*PRACTICE_JS*/', safe(fs.readFileSync('pr_js.js', 'utf8')));
 put('/*SESSION_JS*/', safe(fs.readFileSync(APP + 'src/session-fit.js', 'utf8') + '\n' + fs.readFileSync(APP + 'src/session-screen.js', 'utf8')));
-put('/*SHARED_UI_JS*/', safe(['sung-words.js', 'learn-quiz.js', 'sheet-extras.js'].map((f) => fs.readFileSync(APP + 'src/' + f, 'utf8')).join('\n'))); // 4.75: one copy for both apps
+put('/*SHARED_UI_JS*/', safe(['sung-words.js', 'learn-quiz.js', 'sheet-extras.js', 'sheet-chord-editor.js'].map((f) => fs.readFileSync(APP + 'src/' + f, 'utf8')).join('\n'))); // 4.75: one copy for both apps
 put('/*UMW_BUNDLE*/', safe(bundle));
 put('/*PLAYER*/', safe(player));
 put('/*SONG_UI_JS*/', safe(fs.readFileSync(APP + 'src/song-ui.js', 'utf8')));

@@ -83,6 +83,9 @@ function chordSet(text) {
 function normalizeOptions(options = {}) {
   return {
     layout: options.layout || 'lines',  // 'lines', 'table', 'inline' (chords in the words), 'raised' (4.76: chords raised in the words) or 'chords' (chords only)
+    // 4.77: chords that can be moved on the sheet (src/sheet-chord-editor.js): each chord, and the
+    // words, say where they are in the line as written (data-at on a chord; data-pad, data-shift, data-from on the words)
+    editable: options.editable === true,
     maxLineChars: options.maxLineChars || 0,
     rhythmNotation: options.rhythmNotation || 'raw', // 'raw' or 'arrows' (plain style)
     strumStyle: options.strumStyle || 'plain',       // src/strum-box.js: comic, clean, compact, plain
@@ -116,7 +119,7 @@ function transformRhythmNotation(text, notation) {
  * - Bar markers (|) insert a matching space in the lyric line
  * - At least 1 space separates consecutive chords when they'd otherwise touch
  */
-function renderAlignedLines(nodes) {
+function renderAlignedLines(nodes, editable = false) {
   const positioned = nodes
     .filter((n) => n.type === 'chord' || n.type === 'bar')
     .sort((a, b) => {
@@ -128,12 +131,14 @@ function renderAlignedLines(nodes) {
   const lyrics = nodes.filter((n) => n.type === 'lyric');
   const lyricText = lyrics.map((n) => n.content).join('');
   let codes = lineCodes(nodes); // bold/italic/underline, one number per letter (src/rich-text.js)
+  const shift = editable ? srcShiftOf(nodes) : 0;
+  const shiftAttr = editable && shift ? ` data-shift="${shift}"` : '';
 
   if (positioned.length === 0) {
     if (lyricText.length === 0) return { chordHtml: '', lyricHtml: '' };
     return {
       chordHtml: '',
-      lyricHtml: `<div class="lyrics">${styledHtml(lyricText, codes, textToHtml)}</div>`
+      lyricHtml: `<div class="lyrics"${shiftAttr}>${styledHtml(lyricText, codes, textToHtml)}</div>`
     };
   }
 
@@ -221,14 +226,16 @@ function renderAlignedLines(nodes) {
       continue;
     }
 
-    chordHtml += `<span class="chord">${escapeHtml(chordLabel(item.node))}</span>`;
+    chordHtml += `<span class="chord"${atAttr(item.node, editable)}>${escapeHtml(chordLabel(item.node))}</span>`;
     cursor += chordLabel(item.node).length;
   }
 
   const chordDiv = `<div class="chords">${chordHtml}</div>`;
+  // editable: the spaces put in to make room for the chords, so a place in the words can be found
+  const padAttr = editable && insertions.length ? ` data-pad="${insertions.map((x) => `${x.at}:${x.count}`).join(',')}"` : '';
   const lyricDiv = paddedLyric.length > 0
-    ? `<div class="lyrics">${styledHtml(paddedLyric, codes, textToHtml)}</div>`
-    : '';
+    ? `<div class="lyrics"${padAttr}${shiftAttr}>${styledHtml(paddedLyric, codes, textToHtml)}</div>`
+    : (editable ? `<div class="lyrics"${shiftAttr}></div>` : '');
 
   return { chordHtml: chordDiv, lyricHtml: lyricDiv };
 }
@@ -423,11 +430,11 @@ function renderGroupAsTable(group, options, state) {
       columns[columns.length - 1].lyric += lyricSlice;
       columns[columns.length - 1].codes.push(...codeSlice);
     } else if (lyricSlice.length > 0) {
-      columns.push({ chord: '', bar: false, lyric: lyricSlice, codes: codeSlice });
+      columns.push({ chord: '', bar: false, lyric: lyricSlice, codes: codeSlice, start: lastOffset });
     }
 
     const chordName = node.type === 'bar' ? '' : chordLabel(node);
-    columns.push({ chord: chordName, bar: node.type === 'bar', lyric: '', codes: [] });
+    columns.push({ chord: chordName, bar: node.type === 'bar', lyric: '', codes: [], start: offset, node });
     lastOffset = offset;
   }
 
@@ -438,7 +445,7 @@ function renderGroupAsTable(group, options, state) {
       columns[columns.length - 1].lyric = remaining;
       columns[columns.length - 1].codes = codes.slice(lastOffset);
     } else {
-      columns.push({ chord: '', bar: false, lyric: remaining, codes: codes.slice(lastOffset) });
+      columns.push({ chord: '', bar: false, lyric: remaining, codes: codes.slice(lastOffset), start: lastOffset });
     }
   }
 
@@ -461,7 +468,7 @@ function renderGroupAsTable(group, options, state) {
     if (col.bar) {
       tableHtml += '<td class="bar">|</td>';
     } else if (col.chord) {
-      tableHtml += `<td class="chord">${escapeHtml(col.chord)}</td>`;
+      tableHtml += `<td class="chord"${col.node ? atAttr(col.node, options.editable) : ''}>${escapeHtml(col.chord)}</td>`;
     } else {
       tableHtml += '<td></td>';
     }
@@ -471,7 +478,7 @@ function renderGroupAsTable(group, options, state) {
   // Lyric row
   tableHtml += '<tr class="lyric-row">';
   for (const col of columns) {
-    tableHtml += `<td class="lyric">${styledHtml(col.lyric, col.codes, textToHtml)}</td>`;
+    tableHtml += `<td class="lyric"${options.editable ? ` data-from="${(col.start || 0) + srcShiftOf(group)}"` : ''}>${styledHtml(col.lyric, col.codes, textToHtml)}</td>`;
   }
   tableHtml += '</tr>';
 
@@ -513,6 +520,10 @@ function diagramsForGroup(group, options, state) {
   return diagrams.length ? `<div class="chord-diagrams">${diagrams.join('')}</div>` : '';
 }
 
+// 4.77: where a chord is in the line as written (its letter), for moving it on the sheet
+const atAttr = (node, editable) => (editable && node.type === 'chord' && typeof (node.srcAt ?? node.offset) === 'number' ? ` data-at="${node.srcAt ?? node.offset}"` : '');
+const srcShiftOf = (nodes) => (nodes.find((n) => n.type === 'lyric' && n.srcShift) || {}).srcShift || 0;
+
 // Inline layout: chords stay in the words, "I [C]come from Alabama", in the ordinary font.
 // Compact, good on a phone, and how most websites show songs.
 // 4.76: 'raised': the same, the chord raised a little over the start of its word (as a club
@@ -523,8 +534,8 @@ function renderGroupInline(group, options, state) {
   let line = '';
   for (const node of group) {
     if (node.type === 'lyric') line += styledHtml(node.content, nodeCodes(node), escapeHtml);
-    else if (node.type === 'chord' && raised) line += `<span class="ichord up">${escapeHtml(chordLabel(node))}</span>`;
-    else if (node.type === 'chord') line += `<span class="ichord"><span class="ib">[</span>${escapeHtml(chordLabel(node))}<span class="ib">]</span></span>`;
+    else if (node.type === 'chord' && raised) line += `<span class="ichord up"${atAttr(node, options.editable)}>${escapeHtml(chordLabel(node))}</span>`;
+    else if (node.type === 'chord') line += `<span class="ichord"${atAttr(node, options.editable)}><span class="ib">[</span>${escapeHtml(chordLabel(node))}<span class="ib">]</span></span>`;
     else if (node.type === 'bar') line += '<span class="bar">|</span>';
   }
   if (line.trim()) parts.push(`<div class="inline-line">${line}</div>`);
@@ -588,7 +599,7 @@ function renderGroup(group, options, state) {
   }
 
   const rhythmHtml = renderRhythmLines(group, options, state);
-  const { chordHtml, lyricHtml } = renderAlignedLines(group);
+  const { chordHtml, lyricHtml } = renderAlignedLines(group, options.editable);
 
   if (rhythmHtml) {
     parts.push(rhythmHtml);

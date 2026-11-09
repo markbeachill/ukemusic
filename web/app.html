@@ -293,6 +293,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 .about-list { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
 .about-licence { display: inline-block; font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 0 7px; }
 .about-body a { color: var(--accent); }
+.chord-edit-toggle { margin-left: 4px; font-size: 14px; }
 .dl-h { font-size: 15px; margin: 14px 0 6px; }
 .club-logo-field { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
 .club-logo-field img { max-height: 44px; max-width: 140px; object-fit: contain; border: 1px solid var(--line); border-radius: 8px; padding: 2px; background: #fff; }
@@ -510,6 +511,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
           <button class="btn" type="button" data-ins="|" data-back="0" aria-label="Insert a bar line" title="A bar line">|</button>
           <button class="btn" type="button" data-ins="{melody: }" data-back="1" title="The tune of the next line, by note name: {melody: E E F G | G F E D}">♪ Tune</button>
           <button id="editPreviewBtn" class="btn" type="button" aria-pressed="false" title="See the chord sheet">Preview</button>
+          <label class="check-row chord-edit-toggle" title="In the preview: drag a chord to where it's played (even part way into a word); tap a chord to change it or take it out; tap in the words to put a chord there; drag a chord shape onto the words"><input id="chordEditToggle" type="checkbox"> Edit chords on the sheet</label>
         </div>
 <details class="note"><summary>Help with insertion buttons</summary><p>Chord inserts [ ] before a word, for example [C]Hello. Heading inserts [[Verse 1]] on its own line. Strum inserts a pattern such as {D-DU-UDU}. The bar line | separates bars. Tune inserts note names for the next line, for example {melody: E E F G}.</p></details>
 <details class="note ai-help"><summary>Help from an AI chat</summary><p>For a chord sheet from a website or a PDF, or to get a song ready to practise: copy a prompt, <a href="https://claude.ai/new" target="_blank" rel="noopener">open an AI chat</a> (Claude, or ChatGPT, Gemini…), paste the prompt with the chord sheet, then paste its answer here in place of the words. <b>Tidy a sheet</b> puts a difficult sheet into ukemusic's format. <b>Ready to practise</b> also sorts out each chord's timing, the parts and the strums, and lists what to check by ear; it takes this song as it is, so paste the website's sheet here first if that's what you have.</p><div class="add-row"><button id="aiPromptBtn" class="btn" type="button">Copy prompt: tidy a sheet</button><button id="aiPracticeBtn" class="btn" type="button">Copy prompt: ready to practise</button></div></details><div id="editWrap" class="edit-wrap">
@@ -1624,6 +1626,17 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     clearTimeout(edit.previewTimer);
     edit.previewTimer = setTimeout(() => { if (edit.open && view.song) renderSheet($('editSheet')); }, 250);
   }
+  // 4.77: a chord moved, changed, put in or taken out on the sheet: made in the song's words, as if typed
+  function applyChordEdit(op) {
+    const before = editorText();
+    const p = prefs();
+    const after = U.chordEdit.apply(before, op, { shift: p.transpose - p.capo });
+    if (after === before) { toast('That chord couldn’t be changed there.'); return; }
+    if (edit.usingCM) U.editorSetValue(after); else $('editorFallback').value = after;
+    onEditorChange();
+    clearTimeout(edit.previewTimer);
+    if (view.song) renderSheet($('editSheet'));
+  }
   function onEditorChange() {
     if (!edit.open || !view.song) return;
     const v = editorText();
@@ -1748,6 +1761,8 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   $('editUndo').addEventListener('click', () => { if (edit.usingCM) U.editorExecCommand('undo'); else document.execCommand && document.execCommand('undo'); });
   $('editRedo').addEventListener('click', () => { if (edit.usingCM) U.editorExecCommand('redo'); else document.execCommand && document.execCommand('redo'); });
   $('editHelp').addEventListener('click', () => openGuide());
+  $('chordEditToggle').checked = look.chordEdit === true;
+  $('chordEditToggle').addEventListener('change', () => { look.chordEdit = $('chordEditToggle').checked; local.set('look', look); if (view.song) renderSheet($('editSheet')); });
   $('editPreviewBtn').addEventListener('click', () => {
     const on = !$('editWrap').classList.contains('previewing');
     if (on) edit.scrollY = window.scrollY;
@@ -1872,7 +1887,15 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
       tune: tuneOptions()
     };
     if (stage) options = stageOptions(options, options.maxLineChars || charsAcross(sheet), sheet.clientWidth - 32, look.size);
-    try { sheet.innerHTML = U.renderHTML(currentIr(stage ? stageText(played(view.song.text)) : played(view.song.text)), options); }
+    // 4.77: Edit chords on the sheet, on the Edit page's preview (src/sheet-chord-editor.js)
+    const chordEdit = sheet.id === 'editSheet' && look.chordEdit === true && !stage;
+    if (chordEdit) options.editable = true;
+    try {
+      const ir = currentIr(stage ? stageText(played(view.song.text)) : played(view.song.text));
+      sheet.innerHTML = U.renderHTML(ir, options);
+      if (chordEdit) UkeSheetChordEditor.attach(sheet, { onEdit: applyChordEdit, chords: () => [...new Set(ir.filter((n) => n.type === 'chord' && !n.noChord && n.content).map((n) => n.content))] });
+      else if (sheet.__sce) sheet.__sce.detach();
+    }
     catch (error) { sheet.innerHTML = `<p>This song couldn’t be shown: ${esc(error.message)}</p>`; }
   }
   function prepareSongSheet() {
