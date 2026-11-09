@@ -285,6 +285,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
   renderStrum: (text, ctx) => strumBox.renderStrum(text, ctx),
   strumCss: () => strumBox.strumCss() + renderHtml.sheetCss(),
   writingGuide: () => guide.writingGuide(),
+  foldSections: (html, options) => guide.foldSections(html, options), // 4.69: long pages as an accordion
   appVersion: require('../package.json').version,
   aboutHtml: (options) => about.aboutHtml(options),
   training: {

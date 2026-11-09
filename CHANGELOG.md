@@ -1,5 +1,21 @@
 # Changelog
 
+## v4.69.0
+
+### Built-in songs and your own, together (web player)
+- **The built-in songs are always there, beside your own.** Before, the web player showed the public-domain songs only until you had songs of your own:
+  - writing a song quietly kept all of them as yours
+  - adding songs from files or Dropbox replaced them
+  - "Bring back the public-domain songs" replaced yours
+- **The library now lists Your songs first, then Built-in songs.** A **Hide** link puts the built-in songs away, and "Show the 16 built-in songs" brings them back.
+- **Change a built-in song and it becomes yours:** it's listed under Your songs, marked **Built-in, changed**, in place of the built-in one. Delete it to go back to the built-in song. A built-in song can't be deleted. Make a copy of one and the copy is simply yours.
+- **Only your songs are kept, backed up and synced with Dropbox.** The built-in songs come with the web player, so they're up to date when it is.
+- **Copies from before are tidied away:** if an older version kept the built-in songs as yours and you never changed them, they're put away, since the built-in ones are the same. Any you changed stay, marked.
+
+### Long help pages fold up
+- **The web player's guide (the ? button) opens as a list of its sections.** Tap one to open it. **Find in the guide** opens just the sections with what you typed, and **Open all** opens the rest.
+- **On the website, the song guide and What's new fold the same way:** the guide starts as a list of sections, and What's new opens at the latest version. The contents list beside each page, and links from elsewhere, open the section they point to. **Open every section** opens them all.
+
 ## v4.68.2
 
 ### The beginner songs, in time

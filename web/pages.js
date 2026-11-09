@@ -365,7 +365,7 @@ const PHONE_PAGE = {
 </div></section>
 <section><div class="wrap">
   <h2>2. Bring your songs in</h2>
-  <p class="intro">It starts with the public-domain songs to try. They become yours, to keep and change, as soon as you add or write a song.</p>
+  <p class="intro">The public-domain songs that come with it are always there, beside your own (hide them if you like). Change one and it becomes yours.</p>
   <div class="grid two">
     <div class="card"><h3>From files</h3><p>Press <strong>Add songs from files…</strong> and choose one or more from the Files app, iCloud Drive, Google Drive, OneDrive or Downloads:</p><ul>
       <li>ukemusic songs (<code>…-song.txt</code>)</li>

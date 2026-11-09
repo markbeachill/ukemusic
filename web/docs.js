@@ -4,7 +4,7 @@
 // the pages are made fresh each time (and aren't kept in git).
 const fs = require('fs');
 const path = require('path');
-const { markdownToHtml } = require('../src/guide');
+const { markdownToHtml, foldSections } = require('../src/guide');
 
 const APP = path.join(__dirname, '..');
 const SITE = path.join(APP, 'site');
@@ -33,6 +33,9 @@ function href(url, base = '') {
 }
 
 const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+// 4.69: a document with five sections or more folds into an accordion
+const FOLD_FROM = 5;
 
 function page(p, html, sections, siteCss) {
   // the menu and footer every page shares (web/pages.js)
@@ -78,6 +81,18 @@ ${siteCss}
 .doc th { font-weight: 700; background: var(--paper); }
 nav.links a[aria-current] { color: var(--ink); }
 .source { margin-top: 48px; font-size: 14px; color: var(--muted); }
+/* 4.69: sections fold away (an accordion) */
+.doc details.fold { border-top: 1px solid var(--line); scroll-margin-top: 80px; }
+.doc details.fold:last-of-type { border-bottom: 1px solid var(--line); }
+.doc details.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 14px 2px; }
+.doc details.fold > summary::-webkit-details-marker { display: none; }
+.doc details.fold > summary::after { content: ""; margin-left: auto; flex: none; width: 10px; height: 10px; border-right: 2.5px solid var(--teal); border-bottom: 2.5px solid var(--teal); transform: rotate(45deg); transition: transform .15s ease; }
+.doc details.fold[open] > summary::after { transform: rotate(225deg); }
+.doc details.fold > summary h2 { margin: 0; padding: 0; border: 0; font-size: 22px; }
+.doc details.fold > summary:hover h2 { color: var(--teal); }
+.doc .fold-body { padding: 0 0 18px; }
+.doc .fold-all { margin: 0 0 10px; text-align: right; }
+.doc .fold-all button { font: inherit; font-size: 14px; color: var(--teal); background: none; border: 0; cursor: pointer; padding: 4px 0; text-decoration: underline; }
 footer .ref a { color: var(--muted); }
 @media (max-width: 900px) { .toc { display: none; } }
 @media (min-width: 861px) and (max-width: 980px) { nav.links { gap: 14px; } }
@@ -88,12 +103,31 @@ ${siteHeader(p.html)}
 <main class="wrap doc-wrap">
   ${toc || '<div></div>'}
   <article class="doc">
-${p.ownIntro ? html : html.replace(/^<h1[^>]*>.*?<\/h1>/, (h) => `${h}\n<p class="lede">${esc(p.blurb)}</p>`)}
+${(p.ownIntro ? html : html.replace(/^<h1[^>]*>.*?<\/h1>/, (h) => `${h}\n<p class="lede">${esc(p.blurb)}</p>`)).replace(/(<details class="fold")/, (d) => `<p class="fold-all"><button type="button" id="foldAll">Open every section</button></p>\n${d}`)}
     <p class="source">This page is made from <a href="${REPO}/blob/main/${p.md}">${p.md}</a> in the ukemusic repository.</p>
   </article>
 </main>
 ${siteFooter()}
 <script>
+(() => {
+  // 4.69: a link to a section (from the contents, or another page) opens it
+  const openTarget = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const el = id && document.getElementById(id);
+    if (!el) return;
+    for (let x = el; x; x = x.parentElement) if (x.tagName === 'DETAILS') x.open = true;
+    el.scrollIntoView();
+  };
+  addEventListener('hashchange', openTarget);
+  openTarget();
+  const all = document.getElementById('foldAll');
+  if (all) all.addEventListener('click', () => {
+    const folds = [...document.querySelectorAll('details.fold')];
+    const open = !folds.every((d) => d.open);
+    for (const d of folds) d.open = open;
+    all.textContent = open ? 'Close every section' : 'Open every section';
+  });
+})();
 (() => {
   const root = document.documentElement;
   try { const t = localStorage.getItem('ukemusic-site-theme'); if (t) root.dataset.theme = t; } catch (_e) { /* not kept */ }
@@ -115,11 +149,13 @@ function build() {
   for (const p of PAGES) {
     const md = fs.readFileSync(path.join(APP, p.md), 'utf8');
     const base = path.posix.dirname(p.md) === '.' ? '' : path.posix.dirname(p.md);
-    const { html, sections } = markdownToHtml(md, { href: (u) => href(u, base), nested: true });
-    fs.writeFileSync(path.join(SITE, p.html), page(p, html, sections, siteCss));
+    const made = markdownToHtml(md, { href: (u) => href(u, base), nested: true });
+    // the newest changes start open; the guides start as a list of their sections
+    const html = made.sections.length >= FOLD_FROM ? foldSections(made.html, { open: p.html === 'changes.html' ? 1 : 0 }) : made.html;
+    fs.writeFileSync(path.join(SITE, p.html), page(p, html, made.sections, siteCss));
   }
   return PAGES.map((p) => p.html);
 }
 
-module.exports = { build, PAGES, href };
+module.exports = { build, PAGES, href, FOLD_FROM };
 if (require.main === module) console.log('pages:', build().join(', '));

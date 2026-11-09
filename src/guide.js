@@ -116,6 +116,22 @@ function markdownToHtml(markdown, options = {}) {
   return { html: out.join('\n'), sections };
 }
 
+/**
+ * 4.69: a long document as an accordion: each "## " section folds away under its heading
+ * (<details>, with the heading as its <summary>), so the page starts as a list of what's in it.
+ * The section's id moves to the <details>, so links to #guide-… still work (a page opens the
+ * section a link points to). open: how many sections start open.
+ */
+function foldSections(html, { open = 1 } = {}) {
+  const parts = String(html).split(/(?=<h2 id="guide-)/);
+  const head = parts.shift();
+  return head + parts.map((part, i) => {
+    const m = part.match(/^<h2 id="(guide-[^"]+)">([\s\S]*?)<\/h2>\n?/);
+    if (!m) return part;
+    return `<details class="fold" id="${m[1]}"${i < open ? ' open' : ''}><summary><h2>${m[2]}</h2></summary>\n<div class="fold-body">\n${part.slice(m[0].length)}</div></details>\n`;
+  }).join('');
+}
+
 /** The guide, read from WRITING.md beside the app */
 function writingGuide() {
   const candidates = [path.join(__dirname, '..', 'WRITING.md'), path.join(process.resourcesPath || '', 'WRITING.md')];
@@ -127,4 +143,4 @@ function writingGuide() {
   return { html: '<p>The guide (WRITING.md) could not be found.</p>', sections: [] };
 }
 
-module.exports = { markdownToHtml, writingGuide };
+module.exports = { markdownToHtml, writingGuide, foldSections };
