@@ -60,8 +60,9 @@ const DEFAULT_CONFIG = {
     stage_fit: true,
     stage_two_chords: 'format', // 4.54: the two-page Stage copy: chords as the Stage format, 'above' or 'in' the words
     stage_two_min: 12,          // 4.54: its smallest text, in points
-    stage_format: 'compact',   // 4.52: Compact (chords in the words) is the default
+    stage_format: 'auto',   // 4.70: Auto (chords above on screen, in the words in print); 4.52–4.69 Compact
     stage_compact: true,       // 4.52: settings from before then have been moved to Compact once
+    stage_auto: true,          // 4.70: and to Auto once
     stage_chorus: 'full',
     stage_diagrams: 'song'
   },
@@ -173,6 +174,13 @@ async function readConfigObject() {
   if (parsed.export && parsed.export.stage_compact !== true) {
     if (!parsed.export.stage_format || parsed.export.stage_format === 'clear') parsed.export.stage_format = 'compact';
     parsed.export.stage_compact = true;
+  }
+  // 4.70: Auto became the default (chords above on screen, in the words when printed). Compact
+  // was the default since 4.52, and every setting from before then was moved to it, so it moves
+  // to Auto once (prints the same); a format chosen after this is kept
+  if (parsed.export && parsed.export.stage_auto !== true) {
+    if (!parsed.export.stage_format || parsed.export.stage_format === 'compact') parsed.export.stage_format = 'auto';
+    parsed.export.stage_auto = true;
   }
   // 4.55: the one-line strum box became the default for every song: settings from before then
   // move to it once (a style chosen after this is kept)

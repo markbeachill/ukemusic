@@ -445,7 +445,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <p class="settings-scope">Playing choices · this song on this device</p><button id="resetPlaying" class="btn" type="button">Reset playing choices</button><div id="moreFirst"></div>
         <div class="tool"><label for="timeSel">Time signature</label><select id="timeSel"><option value="2">2/4</option><option value="3">3/4</option><option value="4">4/4</option><option value="6">6/8</option></select></div>
         <div class="tool"><select id="feelSel" aria-label="Rhythmic feel" title="Auto feel follows the song; Even uses equal beat divisions"><option value="auto">Auto feel</option><option value="straight">Even</option><option value="light">Light swing</option><option value="swing">Swing</option><option value="shuffle">Shuffle</option></select></div>
-        <details id="displaySettings"><summary>Display · all songs on this device</summary><div id="displayText"></div><div class="tool"><label for="layout">Sheet</label><select id="layout">
+        <details id="displaySettings"><summary>Display · all songs on this device</summary><div id="displayText"></div><div class="tool" id="layoutTool"><label for="layout">Sheet</label><select id="layout">
           <option value="lines">Chords above</option><option value="inline">Chords in the words</option><option value="table">Columns</option><option value="chords">Chords only</option></select></div>
         <div class="tool"><label for="diagrams">Shapes</label><select id="diagrams">
           <option value="song_start">At the top</option><option value="first_use">Where used</option><option value="none">None</option></select></div>
@@ -453,7 +453,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div class="tool"><button id="leftBtn" type="button" aria-pressed="false" title="Mirror every chord diagram for a left-handed instrument (Free Practice too)">Left-handed: off</button></div>
         <div class="tool"><label for="tuneSel">Tune</label><select id="tuneSel" title="Songs with their tune written in: the tune as notes on a staff"><option value="strip">At the top</option><option value="lines">Over every line</option><option value="off">Hidden</option></select></div>
         <div class="tool"><label for="lookSel">Look</label><select id="lookSel"><option value="standard">Song sheet</option><option value="stage">Stage copy</option></select></div>
-        <div class="tool" id="stageFormatTool" hidden><label for="stageFormat">Stage</label><select id="stageFormat"><option value="compact">Compact</option><option value="clear">Clear</option><option value="brackets">Brackets [C]</option><option value="heavy">Heavy</option></select></div>
+        <div class="tool" id="stageFormatTool" hidden><label for="stageFormat">Stage</label><select id="stageFormat"><option value="auto">Auto: chords above (printed: in the words)</option><option value="clear">Chords above</option><option value="brackets">Chords above, in [ ]</option><option value="compact">Chords in the words</option><option value="heavy">Heavy: all bold</option></select></div>
         <div class="tool" id="stageChorusTool" hidden><label for="stageChorus">Chorus</label><select id="stageChorus"><option value="full">Every time</option><option value="once">Once, then “as before”</option></select></div>
       </details></div>
     </header>
@@ -1506,11 +1506,14 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
       tune: S().tune !== undefined ? S().tune === true : (view.song.settings?.playback?.tune === true || view.song.settings?.playback?.tune === 'true'),
       pick: S().pick !== undefined ? S().pick : (U.picking.pattern(view.song.settings?.playback?.pick || '') ? view.song.settings.playback.pick : ''),
       feel: S().feel || view.song.settings?.playback?.swing || 'auto',
-      stageFormat: U.stageFormats.formatOf(look.stageFormat || S().stageFormat || view.song.settings?.export?.stage_format || 'compact').id,
+      // 4.70: Auto (the default) is chords above on screen, chords in the words when printed
+      stageFormat: (() => { const f = look.stageFormat || S().stageFormat || view.song.settings?.export?.stage_format || 'auto'; return U.stageFormats.FORMATS.some((x) => x.id === f) ? f : 'auto'; })(),
       stageChorus: (look.stageChorus || S().stageChorus || view.song.settings?.export?.stage_chorus) === 'once' ? 'once' : 'full'
     };
   };
-  // ── Stage formats (desktop 4.29–4.32): Clear, Brackets, Compact or Heavy; repeated choruses in full or once ──
+  // ── Stage formats (desktop 4.29–4.32, renamed 4.70): Auto, Chords above, … in [ ], Chords in the words or Heavy ──
+  // screen: on screen (Auto: chords above), or not (a download to print: Auto is chords in the words)
+  const stageFormatId = (screen) => U.stageFormats.formatOf(prefs().stageFormat, { screen }).id;
   const STAGE_CSS = U.stageFormats.css;
   document.head.insertAdjacentHTML('beforeend', `<style id="stageFormatsCss">${STAGE_CSS.split('html[data-stage-format').join('.sheet[data-stage-format')}</style>`);
   function stageText(text) {
@@ -1521,8 +1524,8 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     } catch (_e) { return text; }
   }
   /** Render options for a Stage copy: the format's layout, and how much fits across */
-  function stageOptions(options, monospaceChars, pageWidthPx, sizePx) {
-    const f = U.stageFormats.formatOf(prefs().stageFormat);
+  function stageOptions(options, monospaceChars, pageWidthPx, sizePx, screen = true) {
+    const f = U.stageFormats.formatOf(prefs().stageFormat, { screen });
     const out = { ...options };
     if (f.layout) out.layout = f.layout;
     if (view.song.settings?.export?.stage_diagrams === 'none') out.diagrams = { ...(out.diagrams || {}), enable: false };
@@ -1838,7 +1841,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     const p = prefs();
     sheet.style.setProperty('--monospace-size', `${look.size}px`);
     const stage = look.style === 'stage';
-    if (stage) { sheet.dataset.style = 'stage'; sheet.dataset.stageFormat = p.stageFormat; } else { delete sheet.dataset.style; delete sheet.dataset.stageFormat; }
+    if (stage) { sheet.dataset.style = 'stage'; sheet.dataset.stageFormat = stageFormatId(true); } else { delete sheet.dataset.style; delete sheet.dataset.stageFormat; }
     let options = {
       layout: look.layout,
       strumStyle: 'compact',
@@ -1904,6 +1907,8 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     $('leftBtn').setAttribute('aria-pressed', String(look.leftHanded === true));
     $('leftBtn').textContent = look.leftHanded ? 'Left-handed: on' : 'Left-handed: off';
     $('stageFormatTool').hidden = $('stageChorusTool').hidden = look.style !== 'stage';
+    // 4.70: a Stage copy has its own layouts (Stage), so Sheet isn't shown while it's being ignored
+    $('layoutTool').hidden = look.style === 'stage';
     $('stageFormat').value = p.stageFormat;
     $('stageChorus').value = p.stageChorus;
     $('tempoVal').textContent = `${p.tempo} bpm`;
@@ -2017,11 +2022,11 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     const lib = library();
     const base = { tune: tuneOptions(), layout: stage ? 'lines' : look.layout, strumStyle: 'compact', beatsPerBar: p.beats, tempo: p.tempo, diagrams: { enable: true, placement: 'song_start', show_fingers: true, skip_common: look.hideCommon === true, left_handed: look.leftHanded === true }, chordLibrary: lib, maxLineChars: stage ? 48 : 0 };
     const ir = currentIr(stage ? stageText(played(view.song.text)) : played(view.song.text));
-    const body = U.renderHTML(ir, stage ? stageOptions(base, 48, 680, 20) : base) + (U.shorthandKeyHtml ? U.shorthandKeyHtml(ir) : '');
+    const body = U.renderHTML(ir, stage ? stageOptions(base, 48, 680, 20, false) : base) + (U.shorthandKeyHtml ? U.shorthandKeyHtml(ir) : '');
     const k = keyText();
     const sub = [view.song.settings?.song?.artist, view.song.settings?.song?.year].filter(Boolean).join(', ');
     const stageCss = ':root{--stage-font:"Courier New",monospace;--stage-size:20px;--stage-color:#000}';
-    return `<!doctype html><html lang="en"${stage ? ` data-style="stage" data-stage-format="${p.stageFormat}"` : ''}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(view.song.title)}</title><style>
+    return `<!doctype html><html lang="en"${stage ? ` data-style="stage" data-stage-format="${stageFormatId(false)}"` : ''}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(view.song.title)}</title><style>
 :root{--bg-color:#fff;--text-color:#222;--chord-color:#b22222;--rhythm-color:#666;--section-color:#1a5276;--monospace-font:"Courier New",monospace;--monospace-size:15px;--font-family:system-ui,sans-serif;--rhythm-size:12px;--line-spacing:1.35;--section-spacing:1.3em;--verse-spacing:.9em}
 body{font-family:var(--font-family);margin:24px;background:#fff;color:var(--text-color)}h1{margin:0}.sub{color:#666;margin:2px 0 16px}
 ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:18px;font-size:12px;color:#555}</style></head><body><h1>${esc(view.song.title)}</h1><p class="sub">${esc([sub, k.shift ? `Key ${k.name}` : '', prefs().capo ? `Capo ${prefs().capo}` : ''].filter(Boolean).join(' · '))}</p>${body}</body></html>`;

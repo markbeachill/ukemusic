@@ -1,5 +1,20 @@
 # Changelog
 
+## v4.70.0
+
+### Stage copies: chords above on screen
+- **Auto is the new default for Stage copies:** the chords go above the words on screen, which is easiest to read on a phone or tablet at a gig. When printed, they go in the words, which takes the fewest pages. If you had Compact, the old default, you're moved to Auto once: printing is the same, and the screen now has the chords above. A layout chosen since is kept, and so is a song's own.
+- **The layouts are named by where the chords go:**
+  - Auto
+  - Chords above (was Clear)
+  - Chords above, in [ ] (was Brackets)
+  - Chords in the words (was Compact)
+  - Heavy
+
+  This applies in Settings → Stage copies, on the Export tab, and in the web player's Stage menu.
+- **No setting that isn't being used:** while the look is Stage copy, the chords go where the Stage layout says, so the web player hides **Sheet**. The desktop app's View tab shows "Chords: as the Stage format" in place of **Layout**. They come back with the song sheet look.
+- Stage copies stay black on white: that's what makes them easy to read at a gig and copy cleanly.
+
 ## v4.69.0
 
 ### Built-in songs and your own, together (web player)

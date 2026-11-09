@@ -2228,6 +2228,7 @@
             <div class="rib-group">
               <div class="rib-items">
                 <div class="rib-col">
+                  <p id="viewLayoutStage" class="rib-note" hidden title="A Stage copy places the chords by its Stage format: Export → Stage, or Settings → Stage copies">Chords: as the Stage format</p>
                   <div class="rib-field" title="Chords on a line above the words, or in columns">
                     <select id="viewLayout" aria-label="Layout" title="Where the chords go: above the words, in columns, in the words, or the chords alone">
                       <option value="lines">Chords above the words</option>
@@ -2319,10 +2320,10 @@
                   <div class="rib-field" title="How this song's Stage copy looks (for a gig, or practising at home). Default follows Settings.">
                     <select id="exportStageFormat" aria-label="Stage copy format">
                       <option value="default">Default</option>
-                      <option value="compact">Compact</option>
-                      <option value="clear">Clear</option>
-                      <option value="brackets">Brackets</option>
-                      <option value="heavy">Heavy</option>
+                      <option value="clear">Chords above</option>
+                      <option value="brackets">Chords above, in [ ]</option>
+                      <option value="compact">Chords in the words</option>
+                      <option value="heavy">Heavy: all bold</option>
                     </select>
                   </div>
                 </div>
@@ -2973,12 +2974,13 @@
                       <div class="field">
                         <label for="export-stage_format">Format</label>
                         <select id="export-stage_format" data-config-path="export.stage_format">
-                          <option value="compact">Compact: chords in the words (the default)</option>
-                          <option value="clear">Clear: chords above the words</option>
-                          <option value="brackets">Brackets: chords above, in [ ]</option>
+                          <option value="auto">Auto: chords above on screen, in the words when printed (the default)</option>
+                          <option value="clear">Chords above</option>
+                          <option value="brackets">Chords above, in [ ]</option>
+                          <option value="compact">Chords in the words</option>
                           <option value="heavy">Heavy: all bold, white-on-black chords</option>
                         </select>
-                        <p class="help">How Stage copies (for a gig, or practising at home) look. Compact, the default, puts the chords in the words: the fewest pages. Clear has plain words with bold chords above them: easier to scan for a song you don't know yet. A song can have its own: Export → Stage.</p>
+                        <p class="help">How Stage copies (for a gig, or practising at home) look. Auto, the default, puts the chords above the words on screen, the easiest to read, and in the words when printed, the fewest pages. A song can have its own: Export → Stage.</p>
                       </div>
                       <div class="field">
                         <label for="export-stage_diagrams">Chord diagrams</label>
@@ -4262,7 +4264,7 @@
             stage_fit: true,
             stage_two_chords: 'format',
             stage_two_min: 12,
-            stage_format: 'compact',
+            stage_format: 'auto',
             stage_chorus: 'full',
             stage_diagrams: 'song'
           },
@@ -4565,9 +4567,12 @@
             const shownIr = numbers ? window.ukemusic.learn.numberedIR(transposedIr, window.ukemusic.progressions.analyse(transposedIr, { key: learnKey(state.transpose - songCapo()) }).key) : transposedIr;
             const baseOptions = numbers ? { ...renderOptions(), diagrams: { ...(renderOptions().diagrams || {}), enable: false } } : renderOptions();
             baseOptions.tune = { ...(baseOptions.tune || {}), shift: state.transpose, key: keyAfter(state.transpose)?.name || '', keyGuessed: songKey()?.guessed === true };
-            const html = window.ukemusic.renderHTML(shownIr, stageLook ? stageRenderOptions(baseOptions) : baseOptions);
+            const html = window.ukemusic.renderHTML(shownIr, stageLook ? stageRenderOptions(baseOptions, undefined, { screen: true }) : baseOptions);
             if (previewLook() === 'stage' && !state.stageCss) state.stageCss = (await window.ukemusic.stageStyleRead())?.content || '';
-            preview.srcdoc = buildPreviewDocument(html, docCss(previewLook() === 'stage', PREVIEW_CSS), undefined, '', docAttrs(undefined, { stage: previewLook() === 'stage' }));
+            preview.srcdoc = buildPreviewDocument(html, docCss(previewLook() === 'stage', PREVIEW_CSS), undefined, '', docAttrs(undefined, { stage: previewLook() === 'stage', screen: true }));
+            // 4.70: a Stage copy has its own layouts (Export → Stage), so Layout isn't shown while it's being ignored
+            document.getElementById('viewLayout').closest('.rib-field').hidden = stageLook;
+            document.getElementById('viewLayoutStage').hidden = !stageLook;
             updateKeySetting();
             refreshRibbon();
             const warnings = collectWarnings(ir);
@@ -7044,8 +7049,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           return v === 'small' || v === 'hide' ? ` data-sections="${v}"` : '';
         }
         // ── Stage formats (4.29): Clear, Brackets, Compact or Heavy (src/stage-formats.js) ──
-        const stageFormatId = (config = effectiveConfig()) => window.ukemusic.stageFormats.formatOf(config?.export?.stage_format).id;
-        const stageFormatLayout = (config = effectiveConfig()) => window.ukemusic.stageFormats.formatOf(config?.export?.stage_format).layout;
+        // 4.70: Auto (the default) is chords above on screen (the preview), chords in the words in print
+        const stageFormatId = (config = effectiveConfig(), { screen = false } = {}) => window.ukemusic.stageFormats.formatOf(config?.export?.stage_format, { screen }).id;
+        const stageFormatLayout = (config = effectiveConfig(), { screen = false } = {}) => window.ukemusic.stageFormats.formatOf(config?.export?.stage_format, { screen }).layout;
         // 4.30: every chorus in full unless "Don't repeat" is chosen (Settings → Stage copies)
         const stageOnce = (config = effectiveConfig()) => config?.export?.stage_chorus === 'once';
         // A part that comes back exactly the same printed once, then as a cue (Stage copies)
@@ -7059,22 +7065,22 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           }
         }
         // The layout a Stage copy uses, and how many characters fit across the page in it
-        function stageRenderOptions(options, config = effectiveConfig()) {
-          const layout = stageFormatLayout(config);
+        function stageRenderOptions(options, config = effectiveConfig(), { screen = false } = {}) {
+          const layout = stageFormatLayout(config, { screen });
           const out = { ...options };
           if (layout) out.layout = layout;
           // 4.32: chord diagrams on Stage copies: as the song has them, or none (saves room)
           if (config?.export?.stage_diagrams === 'none') out.diagrams = { ...(out.diagrams || {}), enable: false };
           const width = ((state.config?.export?.pdf_page_size === 'Letter' ? 8.5 : 8.27) - 1.2) * 96;
-          out.maxLineChars = out.layout === 'lines' ? maxLineChars('stage') : window.ukemusic.stageFormats.charsAcross(stageFormatId(config), { pageWidthPx: width, sizePx: stageSettings().size, monospaceChars: maxLineChars('stage') });
+          out.maxLineChars = out.layout === 'lines' ? maxLineChars('stage') : window.ukemusic.stageFormats.charsAcross(stageFormatId(config, { screen }), { pageWidthPx: width, sizePx: stageSettings().size, monospaceChars: maxLineChars('stage') });
           if (out.layout === 'inline') delete out.maxLineChars; // words in a line wrap by themselves
           out.tune = { ...(out.tune || {}), notation: 'off' };   // 4.44: Stage copies are words and chords
           return out;
         }
-        function docAttrs(config = effectiveConfig(), { stage = false } = {}) {
+        function docAttrs(config = effectiveConfig(), { stage = false, screen = false } = {}) {
           const t = config?.tablature || {};
           const on = (v) => v === true || v === 'true';
-          let attrs = stage ? ` data-style="stage" data-stage-format="${stageFormatId(config)}"` : '';
+          let attrs = stage ? ` data-style="stage" data-stage-format="${stageFormatId(config, { screen })}"` : '';
           if (['bold', 'plain'].includes(t.frets)) attrs += ` data-tab-frets="${t.frets}"`;
           if (['smaller', 'larger'].includes(t.size)) attrs += ` data-tab-size="${t.size}"`;
           if (on(t.box)) attrs += ' data-tab-box';
@@ -13680,8 +13686,7 @@ ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or del
             select.value = ['show', 'small', 'hide'].includes(own) ? own : 'default';
             const ownFormat = getAt(state.songSettings || {}, 'export.stage_format');
             const stageSelect = document.getElementById('exportStageFormat');
-            const globalFormat = window.ukemusic.stageFormats.formatOf(state.config?.export?.stage_format).id;
-            stageSelect.options[0].textContent = `Default (${globalFormat[0].toUpperCase()}${globalFormat.slice(1)})`;
+            stageSelect.options[0].textContent = `Default (${window.ukemusic.stageFormats.nameOf(state.config?.export?.stage_format).split(':')[0]})`;
             stageSelect.value = window.ukemusic.stageFormats.FORMATS.some((f) => f.id === ownFormat) ? ownFormat : 'default';
           }
           // 4.33: a ribbon setting this song has its own value for is marked "this song"

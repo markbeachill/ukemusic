@@ -188,7 +188,7 @@ const PAGES = [
     features: [
       { h3: 'The Session screen', p: ['For a club night or a jam: the whole song on one screen, as big as it will go. Verses and choruses in columns, never split, with the chord shapes down the side. With a TV plugged in, the song fills it while the laptop shows what\'s next.'], img: 'session-setlist.webp', h: 765, alt: 'The Session screen: It\'s a Long Way to Tipperary in two columns, song 2 of 5 in the setlist' },
       { h3: 'Setlists and songbooks', p: ['Put the night\'s songs in order, in the keys you play them. Run the setlist on the Session screen, make one songbook PDF of the whole set, or a folder with a PDF per song for a tablet.'], img: 'setlist.webp', h: 860, alt: 'A setlist called Club night with five songs, and buttons for the Session screen and a songbook PDF' },
-      { h3: 'Stage copies', p: ['Print the song sheet for practice and a Stage copy for the gig, in the format that suits your eyes: Compact (chords in the words, the fewest pages, and the default), Clear, Brackets or Heavy. Choruses printed every time, or once and then "as before".'], img: 'stage.webp', h: 765, alt: 'A Stage copy: plain words with the chords in them' },
+      { h3: 'Stage copies', p: ['Print the song sheet for practice and a Stage copy for the gig, with the chords where they suit you: Auto (the default: chords above the words on screen, the easiest to read, and in the words when printed, the fewest pages), Chords above, Chords above in [ ], Chords in the words, or Heavy. Choruses printed every time, or once and then "as before".'], img: 'stage.webp', h: 765, alt: 'A Stage copy: plain words with the chords in them' },
       { h3: 'Karaoke for the whole room', p: ['Full screen, big words that light up as you sing, with the chord above each word and the shapes down the side. Tap any line to start from there.'], img: 'karaoke.webp', alt: 'The karaoke view' }
     ],
     best: 'desktop',
@@ -536,7 +536,7 @@ const DROPBOX_PAGE = {
 // songs by the desktop app; gallery.json lists them with their page counts)
 const GALLERY_KINDS = [
   { file: 'sheet.pdf', name: 'Chord sheet', what: 'The song to print: the chord shapes and the strum at the top, the chords over the words.' },
-  { file: 'stage.pdf', name: 'Stage copy', what: 'For a gig or a club night: big plain words with the chords in them (Compact), the fewest pages.' },
+  { file: 'stage.pdf', name: 'Stage copy', what: 'For a gig or a club night: big plain words with the chords in them, the fewest pages.' },
   { file: 'stage2.pdf', name: 'Two-page Stage', what: 'For a music stand: the Stage copy fitted to one page if it goes, or two, so there\'s no page to turn.' },
   { file: 'learn.pdf', name: 'Learn sheet', what: 'The chords and what each one does, the parts of the song, the chord map with its patterns, the changes to practise and the circle of fifths.' },
   { file: 'pick.pdf', name: 'Pick sheet', what: 'The song set out for fingerpicking: the pattern counted out, then the song as tab with the chords over it and the words under it.' },
@@ -585,7 +585,7 @@ ${songs}
 ${bookHtml}
 <section><div class="wrap">
   <h2>Making them</h2>
-  <p class="intro">In the desktop app: <strong>Export → Export now</strong> for a song (tick the kinds you want: the chord sheet, the Stage PDF and the Two-page Stage PDF are at the top), <strong>Learn → Learn sheet</strong>, <strong>Picking → Pick sheet</strong>, and <strong>Songbook PDF…</strong> on a setlist. The Stage copy's look (Compact, Clear, Brackets or Heavy) is on the <strong>Export</strong> tab, with the Two-page Stage's choices beside it. The web player prints and saves PDFs from <strong>Download</strong>.</p>
+  <p class="intro">In the desktop app: <strong>Export → Export now</strong> for a song (tick the kinds you want: the chord sheet, the Stage PDF and the Two-page Stage PDF are at the top), <strong>Learn → Learn sheet</strong>, <strong>Picking → Pick sheet</strong>, and <strong>Songbook PDF…</strong> on a setlist. Where a Stage copy puts the chords (Auto, Chords above, Chords above in [ ], Chords in the words, or Heavy) is on the <strong>Export</strong> tab, with the Two-page Stage's choices beside it. The web player prints and saves PDFs from <strong>Download</strong>.</p>
   <div class="next-pages" style="margin-top:20px"><a class="btn" href="chord-sheets.html">Chord sheets</a><a class="btn" href="learn.html">Learn a song</a><a class="btn" href="perform.html">Perform</a></div>
 </div></section>`;
   }

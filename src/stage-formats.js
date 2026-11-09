@@ -9,15 +9,23 @@
 
 const WORDS_FONT = 'var(--stage-words-font, "Segoe UI", Arial, "Liberation Sans", Helvetica, sans-serif)';
 
+// 4.70: names that say where the chords go (they were Clear, Brackets, Compact, Heavy)
 const FORMATS = [
-  { id: 'clear', name: 'Clear: chords above the words', layout: 'table', description: 'Words in plain type, chords in bold above them, a clear gap between parts. The easiest to scan.' },
-  { id: 'brackets', name: 'Brackets: chords above, in [ ]', layout: 'table', description: 'As Clear, with each chord in light brackets: [C].' },
-  { id: 'compact', name: 'Compact: chords in the words', layout: 'inline', description: 'Chords in bold brackets inside the words: [C]Oh, Susanna. The default: the fewest pages.' },
-  { id: 'heavy', name: 'Heavy: everything bold, white-on-black chords', layout: null, description: 'The Stage look from 4.19: all bold, chords as black blocks. Uses the song\'s own layout.' }
+  { id: 'clear', name: 'Chords above', layout: 'table', description: 'Words in plain type, chords in bold above them, a clear gap between parts. The easiest to scan.' },
+  { id: 'brackets', name: 'Chords above, in [ ]', layout: 'table', description: 'As Chords above, with each chord in light brackets: [C].' },
+  { id: 'compact', name: 'Chords in the words', layout: 'inline', description: 'Chords in bold brackets inside the words: [C]Oh, Susanna. The fewest pages.' },
+  { id: 'heavy', name: 'Heavy: all bold, white-on-black chords', layout: null, description: 'The Stage look from 4.19: all bold, chords as black blocks. Uses the song\'s own layout.' }
 ];
-const DEFAULT_FORMAT = 'compact';   // 4.52 (was Clear)
+// 4.70: Auto, the default: chords above on screen (a phone or tablet at a gig: easiest to read),
+// chords in the words when printed (the fewest pages)
+const AUTO = { id: 'auto', name: 'Auto: chords above on screen, in the words when printed', description: 'On screen, chords above the words, the easiest to read. Printed, chords in the words, the fewest pages.' };
+const DEFAULT_FORMAT = 'auto';
+const CHOICES = [AUTO, ...FORMATS];   // for the menus
 
-const formatOf = (id) => FORMATS.find((f) => f.id === id) || FORMATS.find((f) => f.id === DEFAULT_FORMAT);
+/** The format to use: a chosen one, or (Auto, or nothing chosen) chords above on screen, in the words in print */
+const formatOf = (id, { screen = false } = {}) => FORMATS.find((f) => f.id === id) || FORMATS.find((f) => f.id === (screen ? 'clear' : 'compact'));
+/** What a setting says, for a menu's "Default (…)" */
+const nameOf = (id) => (CHOICES.find((f) => f.id === id) || AUTO).name;
 
 /** Shared by the formats that read like a song sheet: plain words, a gap between parts */
 function wordsCss(s) {
@@ -127,4 +135,4 @@ function collapseRepeats(text, sections) {
   return { text: out.join('\n'), shortened };
 }
 
-module.exports = { FORMATS, DEFAULT_FORMAT, formatOf, formatsCss, charsAcross, collapseRepeats };
+module.exports = { FORMATS, AUTO, CHOICES, DEFAULT_FORMAT, formatOf, nameOf, formatsCss, charsAcross, collapseRepeats };

@@ -200,7 +200,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
   pathBasename: (p) => require('path').basename(String(p || '')),
   libraryList: (() => { const l = require('./libraries'); return { parse: l.parseList, format: l.formatList }; })(),
   shorthandKeyHtml: (ir) => require('./print-notes').shorthandKeyHtml(ir),
-  stageFormats: (() => { const f = require('./stage-formats'); return { FORMATS: f.FORMATS, formatOf: f.formatOf, css: f.formatsCss(), charsAcross: f.charsAcross, collapseRepeats: f.collapseRepeats }; })(),
+  stageFormats: (() => { const f = require('./stage-formats'); return { FORMATS: f.FORMATS, CHOICES: f.CHOICES, nameOf: f.nameOf, formatOf: f.formatOf, css: f.formatsCss(), charsAcross: f.charsAcross, collapseRepeats: f.collapseRepeats }; })(),
   libraries: {
     list: (paths) => ipcRenderer.invoke('libraries:list', paths),
     readInfo: (folder) => ipcRenderer.invoke('libraries:readInfo', folder),

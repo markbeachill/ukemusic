@@ -11,25 +11,26 @@ function test(name, fn) {
 const ROOT = path.join(__dirname, '..');
 const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');
 
-test('Compact is the default Stage format, in the app, Settings and the web player', () => {
-  assert.strictEqual(sf.formatOf(undefined).id, 'compact');
-  assert.match(read('main.js'), /stage_format: 'compact'/);
+test('Compact was the default Stage format (4.52); since 4.70 Auto is, which prints as Compact', () => {
+  assert.strictEqual(sf.formatOf(undefined).id, 'compact', 'printed: chords in the words');
+  assert.strictEqual(sf.formatOf('auto').id, 'compact');
+  assert.match(read('main.js'), /stage_format: 'auto'/);
   assert.match(read('main.js'), /stage_compact: true/);
-  assert.match(read('index.html'), /stage_format: 'compact'/);
-  assert.match(read('web/app.html'), /stage_format \|\| 'compact'\)/);
-  // Compact first in the choosers
-  assert.match(read('index.html'), /<select id="export-stage_format"[^>]*>\s*<option value="compact">/);
-  assert.match(read('web/app.html'), /<select id="stageFormat"><option value="compact">/);
+  assert.match(read('index.html'), /stage_format: 'auto'/);
+  assert.match(read('web/app.html'), /stage_format \|\| 'auto'; return/);
+  // Auto first in the choosers
+  assert.match(read('index.html'), /<select id="export-stage_format"[^>]*>\s*<option value="auto">/);
+  assert.match(read('web/app.html'), /<select id="stageFormat"><option value="auto">/);
 });
 
-test('settings from before 4.52 move to Compact once; a format chosen since is kept', () => {
+test('settings from before 4.52 moved to Compact once (and, 4.70, then to Auto); a format chosen since is kept', () => {
   const src = read('main.js');
   const body = src.slice(src.indexOf('// 4.52: Compact became'), src.indexOf('return { raw, config: mergeConfig(cloneDefaultConfig(), parsed) };'));
   // eslint-disable-next-line no-new-func
   const move = new Function('parsed', `${body.replace(/^\s*\/\/.*$/gm, '')}; return parsed;`);
-  assert.deepStrictEqual(move({ export: { stage_format: 'clear' } }).export, { stage_format: 'compact', stage_compact: true });
-  assert.deepStrictEqual(move({ export: { stage_format: 'heavy' } }).export, { stage_format: 'heavy', stage_compact: true });
-  assert.deepStrictEqual(move({ export: { stage_format: 'clear', stage_compact: true } }).export, { stage_format: 'clear', stage_compact: true });
+  assert.deepStrictEqual(move({ export: { stage_format: 'clear' } }).export, { stage_format: 'auto', stage_compact: true, stage_auto: true });
+  assert.deepStrictEqual(move({ export: { stage_format: 'heavy' } }).export, { stage_format: 'heavy', stage_compact: true, stage_auto: true });
+  assert.deepStrictEqual(move({ export: { stage_format: 'clear', stage_compact: true } }).export, { stage_format: 'clear', stage_compact: true, stage_auto: true });
 });
 
 test('the Learn, quiz and About dialogs keep their CSS (outside the shared practice block)', () => {
