@@ -14,6 +14,8 @@ const FORMATS = [
   { id: 'clear', name: 'Chords above', layout: 'table', description: 'Words in plain type, chords in bold above them, a clear gap between parts. The easiest to scan.' },
   { id: 'brackets', name: 'Chords above, in [ ]', layout: 'table', description: 'As Chords above, with each chord in light brackets: [C].' },
   { id: 'compact', name: 'Chords in the words', layout: 'inline', description: 'Chords in bold brackets inside the words: [C]Oh, Susanna. The fewest pages.' },
+  // 4.76: as a club songbook often has it
+  { id: 'raised', name: 'Chords raised in the words', layout: 'raised', description: 'Each chord in bold, raised a little over the start of its word: no brackets, no line of its own. Nearly as few pages as Chords in the words.' },
   { id: 'heavy', name: 'Heavy: all bold, white-on-black chords', layout: null, description: 'The Stage look from 4.19: all bold, chords as black blocks. Uses the song\'s own layout.' }
 ];
 // 4.70: Auto, the default: chords above on screen (a phone or tablet at a gig: easiest to read),
@@ -63,6 +65,12 @@ html[data-stage-format="brackets"] .chord-table td.chord::after { content: "]"; 
 ${c} .inline-line { font-size: var(--stage-size); line-height: 1.7; }
 ${c} .inline-line .ichord { background: none !important; color: #000 !important; font-weight: 800; padding: 0; margin: 0 0.04em 0 0; border-radius: 0; }
 ${c} .inline-line .ichord .ib { display: inline !important; font-weight: 400; color: #666; }`);
+  const r = 'html[data-stage-format="raised"]';
+  out.push(wordsCss(r));
+  out.push(`
+${r} .inline-line { font-size: var(--stage-size); line-height: 2; }
+${r} .inline-line .ichord { background: none !important; color: #000 !important; font-weight: 800; padding: 0; border-radius: 0; }
+${r} .inline-line .ichord.up { font-size: 0.8em; vertical-align: 0.62em; line-height: 0; margin: 0 0.06em 0 0; }`);
   return out.join('\n');
 }
 
@@ -152,7 +160,7 @@ function stageRenderOptions(options, { format = '', screen = false, diagrams = '
   if (f.layout) out.layout = f.layout;
   if (diagrams === 'none') out.diagrams = { ...(out.diagrams || {}), enable: false };
   out.maxLineChars = out.layout === 'lines' ? monospaceChars : charsAcross(f.id, { pageWidthPx, sizePx, monospaceChars });
-  if (out.layout === 'inline') delete out.maxLineChars; // words in a line wrap by themselves
+  if (out.layout === 'inline' || out.layout === 'raised') delete out.maxLineChars; // words in a line wrap by themselves
   out.tune = { ...(out.tune || {}), notation: 'off' };   // 4.44: Stage copies are words and chords
   return out;
 }

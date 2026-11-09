@@ -61,7 +61,8 @@ const SECTIONS = [
       { f: 'Pick sheets: tab for fingerpicking', web: true, desktop: true },
       { f: 'Easy-to-read text for low vision (Atkinson Hyperlegible)', web: true, desktop: true },
       { f: 'ChordPro, web page and lyrics files', web: true, desktop: 'And Markdown' },
-      { f: 'Songbook PDFs of a setlist', web: false, desktop: true },
+      { f: 'Songbook PDFs of a setlist, with a cover and contents', web: false, desktop: true },
+      { f: 'Your club\'s logo and an "Updated" date on sheets', web: true, desktop: true }, // 4.76
       { f: 'Export every song at once', web: false, desktop: true }
     ]
   },

@@ -1,5 +1,25 @@
 # Changelog
 
+## v4.76.0
+
+### For clubs: sheets that look like your songbook
+- **New layout: Chords raised in the words.** Each chord sits in bold, a little above the start of its word, with no brackets and no line of its own. It's as compact as Chords in the words, and the chords stand out more, as in many club songbooks.
+  - **Desktop:** Display → Layout, or Settings → Layout.
+  - **Web player:** Layout.
+  - It's also a **Stage copy format**, next to the others.
+- **Your club's logo on printed sheets.** It goes on the top right of each sheet and PDF, and on a songbook's cover.
+  - **Desktop:** Settings → How the chord sheet looks → **Club logo**. A copy is kept with your settings.
+  - **Web player:** Download → **Club logo…**, kept on this device.
+  - A PNG, JPEG, GIF, WebP or SVG picture.
+- **An "Updated" date at the foot of sheets**, such as "Updated 9 Nov 2026": when the song was last saved. When a club has several copies going round, it shows which one is the newest. It's off unless you turn it on:
+  - **Desktop:** Settings → How the chord sheet looks.
+  - **Web player:** Download → "Updated" date.
+- **Songbook PDFs can start with a cover:** the setlist's name, your logo, how many songs and the date. Tick it when you make the songbook. It's on by default; untick it for the songbook as before.
+- **How many pages a song will print on, while you work.**
+  - **Desktop:** the status bar says "PDF: 1 page" as you edit (not for the Stage look, whose copies fit themselves to one or two pages).
+  - **Web player:** the Download box says how many pages the sheet prints on.
+  - Now and then it's one short, because a part of a song is never split across pages.
+
 ## v4.75.0
 
 ### Desktop and web player: one copy of the shared parts

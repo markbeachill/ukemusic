@@ -24,7 +24,7 @@ test('Auto: chords above on screen, in the words in print; a chosen format is th
 });
 
 test('the formats are named by where the chords go', () => {
-  assert.deepStrictEqual(sf.CHOICES.map((f) => f.name.split(':')[0]), ['Auto', 'Chords above', 'Chords above, in [ ]', 'Chords in the words', 'Heavy']);
+  assert.deepStrictEqual(sf.CHOICES.map((f) => f.name.split(':')[0]), ['Auto', 'Chords above', 'Chords above, in [ ]', 'Chords in the words', 'Chords raised in the words', 'Heavy']);
   assert.strictEqual(sf.nameOf('compact'), 'Chords in the words');
   assert.strictEqual(sf.nameOf(undefined).split(':')[0], 'Auto');
   const app = read('web/app.html');

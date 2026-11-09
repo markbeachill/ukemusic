@@ -15,7 +15,7 @@ function test(name, fn) {
 const once = (text) => sf.collapseRepeats(text, progressions.analyse(parse(text)).sections);
 
 test('four formats; Compact by default (4.52); each with its layout', () => {
-  assert.deepStrictEqual(sf.FORMATS.map((f) => [f.id, f.layout]), [['clear', 'table'], ['brackets', 'table'], ['compact', 'inline'], ['heavy', null]]);
+  assert.deepStrictEqual(sf.FORMATS.map((f) => [f.id, f.layout]), [['clear', 'table'], ['brackets', 'table'], ['compact', 'inline'], ['raised', 'raised'], ['heavy', null]]);
   assert.strictEqual(sf.formatOf('nonsense').id, 'compact');
   const css = sf.formatsCss();
   for (const id of ['clear', 'brackets', 'compact']) assert.ok(css.includes(`html[data-stage-format="${id}"]`), id);

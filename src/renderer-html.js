@@ -82,7 +82,7 @@ function chordSet(text) {
 
 function normalizeOptions(options = {}) {
   return {
-    layout: options.layout || 'lines',  // 'lines', 'table', 'inline' (chords in the words) or 'chords' (chords only)
+    layout: options.layout || 'lines',  // 'lines', 'table', 'inline' (chords in the words), 'raised' (4.76: chords raised in the words) or 'chords' (chords only)
     maxLineChars: options.maxLineChars || 0,
     rhythmNotation: options.rhythmNotation || 'raw', // 'raw' or 'arrows' (plain style)
     strumStyle: options.strumStyle || 'plain',       // src/strum-box.js: comic, clean, compact, plain
@@ -515,11 +515,15 @@ function diagramsForGroup(group, options, state) {
 
 // Inline layout: chords stay in the words, "I [C]come from Alabama", in the ordinary font.
 // Compact, good on a phone, and how most websites show songs.
+// 4.76: 'raised': the same, the chord raised a little over the start of its word (as a club
+// songbook often has it): it stands out from the words without a line of its own.
 function renderGroupInline(group, options, state) {
   const parts = [diagramsForGroup(group, options, state), renderRhythmLines(group, options, state)];
+  const raised = options.layout === 'raised';
   let line = '';
   for (const node of group) {
     if (node.type === 'lyric') line += styledHtml(node.content, nodeCodes(node), escapeHtml);
+    else if (node.type === 'chord' && raised) line += `<span class="ichord up">${escapeHtml(chordLabel(node))}</span>`;
     else if (node.type === 'chord') line += `<span class="ichord"><span class="ib">[</span>${escapeHtml(chordLabel(node))}<span class="ib">]</span></span>`;
     else if (node.type === 'bar') line += '<span class="bar">|</span>';
   }
@@ -544,7 +548,7 @@ function renderGroup(group, options, state) {
     return `${diagramsForGroup(group, options, state)}${renderGridLine(group)}`;
   }
   const special = group.length === 1 && (group[0].type === 'structure' || group[0].type === 'tab');
-  if (!special && options.layout === 'inline') return renderGroupInline(group, options, state);
+  if (!special && (options.layout === 'inline' || options.layout === 'raised')) return renderGroupInline(group, options, state);
   if (!special && options.layout === 'chords') return renderGroupChordsOnly(group, options, state);
   if (options.layout === 'table') {
     return renderGroupAsTable(group, options, state);
@@ -616,13 +620,13 @@ function addInlineLabel(html, label, body, layout) {
   if (body.some((n) => n.grid)) {
     return html.replace('<div class="chords">', `<div class="chords">${strong}${spaces(1)}`);
   }
-  if (layout === 'inline' && html.includes('<div class="inline-line">')) {
+  if ((layout === 'inline' || layout === 'raised') && html.includes('<div class="inline-line">')) {
     return html.replace('<div class="inline-line">', `<div class="inline-line">${strong} `);
   }
   if (layout === 'chords' && html.includes('<div class="chords chords-only">')) {
     return html.replace('<div class="chords chords-only">', `<div class="chords chords-only">${strong}${spaces(1)}`);
   }
-  if (layout === 'inline' || layout === 'chords') return `<div class="lyrics">${strong}</div>${html}`;
+  if (layout === 'inline' || layout === 'raised' || layout === 'chords') return `<div class="lyrics">${strong}</div>${html}`;
   const hasLyrics = body.some((n) => n.type === 'lyric' && n.content.trim());
   if (layout === 'table') {
     if (hasLyrics) {
@@ -675,6 +679,8 @@ function sheetCss() {
   .inline-line { font-family: var(--font-family, system-ui, sans-serif); font-size: calc(var(--monospace-size, 14px) * 1.1); line-height: 1.6; color: var(--text-color, #333); white-space: pre-wrap; overflow-wrap: anywhere; min-height: 1em; }
   .inline-line .ichord { color: var(--chord-color, #b22222); font-weight: 800; white-space: nowrap; }
   .inline-line .ichord .ib { font-weight: 400; opacity: 0.7; }
+  .inline-line .ichord.up { font-size: 0.78em; vertical-align: 0.62em; line-height: 0; margin-right: 0.06em; }
+  .inline-line:has(.ichord.up) { line-height: 1.95; }
   .inline-line .bar { margin: 0 0.3em; }
   .chords-only { white-space: pre-wrap; }
   .key-change { display: inline-block; margin: 0.6em 0 0.2em; padding: 0.1em 0.6em; border: 1px solid var(--chord-color, #b22222); border-radius: 999px; color: var(--chord-color, #b22222); font-family: var(--font-family, system-ui, sans-serif); font-size: 0.85em; }

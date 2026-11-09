@@ -78,7 +78,8 @@
 | Pick sheets: tab for fingerpicking | ✓ | ✓ |
 | Easy-to-read text for low vision (Atkinson Hyperlegible) | ✓ | ✓ |
 | ChordPro, web page and lyrics files | ✓ | ✓ And Markdown |
-| Songbook PDFs of a setlist | — | ✓ |
+| Songbook PDFs of a setlist, with a cover and contents | — | ✓ |
+| Your club's logo and an "Updated" date on sheets | ✓ | ✓ |
 | Export every song at once | — | ✓ |
 | **[Play together](https://markbeachill.github.io/ukemusic/perform.html)** | | |
 | Setlists | — | ✓ |

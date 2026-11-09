@@ -293,6 +293,9 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 .about-list { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
 .about-licence { display: inline-block; font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 0 7px; }
 .about-body a { color: var(--accent); }
+.dl-h { font-size: 15px; margin: 14px 0 6px; }
+.club-logo-field { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.club-logo-field img { max-height: 44px; max-width: 140px; object-fit: contain; border: 1px solid var(--line); border-radius: 8px; padding: 2px; background: #fff; }
 #sessionView { position: fixed; inset: 0; z-index: 200; } /* its colours are the screen's own (src/session-screen.js), dark or light */
 #sessionView[hidden] { display: none; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(150px + env(safe-area-inset-bottom, 0px)); z-index: 60; background: var(--ink); color: var(--surface); padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; max-width: 90vw; }
@@ -446,7 +449,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div class="tool"><label for="timeSel">Time signature</label><select id="timeSel"><option value="2">2/4</option><option value="3">3/4</option><option value="4">4/4</option><option value="6">6/8</option></select></div>
         <div class="tool"><select id="feelSel" aria-label="Rhythmic feel" title="Auto feel follows the song; Even uses equal beat divisions"><option value="auto">Auto feel</option><option value="straight">Even</option><option value="light">Light swing</option><option value="swing">Swing</option><option value="shuffle">Shuffle</option></select></div>
         <details id="displaySettings"><summary>Display · all songs on this device</summary><div id="displayText"></div><div class="tool" id="layoutTool"><label for="layout">Sheet</label><select id="layout">
-          <option value="lines">Chords above</option><option value="inline">Chords in the words</option><option value="table">Columns</option><option value="chords">Chords only</option></select></div>
+          <option value="lines">Chords above</option><option value="inline">Chords in the words</option><option value="raised">Chords raised in the words</option><option value="table">Columns</option><option value="chords">Chords only</option></select></div>
         <div class="tool"><label for="diagrams">Shapes</label><select id="diagrams">
           <option value="song_start">At the top</option><option value="first_use">Where used</option><option value="none">None</option></select></div>
         <div class="tool"><button id="commonBtn" type="button" aria-pressed="false" title="No diagrams for the chords everyone knows: C, G, Am, F…">Common: shown</button></div>
@@ -454,7 +457,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div class="tool"><button id="easyBtn" type="button" aria-pressed="false" title="Song sheets and Stage copies in Atkinson Hyperlegible, a typeface made for readers with low vision: I, l and 1, O and 0, b and d are easy to tell apart. On screen and in downloads">Easy to read: off</button></div>
         <div class="tool"><label for="tuneSel">Tune</label><select id="tuneSel" title="Songs with their tune written in: the tune as notes on a staff"><option value="strip">At the top</option><option value="lines">Over every line</option><option value="off">Hidden</option></select></div>
         <div class="tool"><label for="lookSel">Look</label><select id="lookSel"><option value="standard">Song sheet</option><option value="stage">Stage copy</option></select></div>
-        <div class="tool" id="stageFormatTool" hidden><label for="stageFormat">Stage</label><select id="stageFormat"><option value="auto">Auto: chords above (printed: in the words)</option><option value="clear">Chords above</option><option value="brackets">Chords above, in [ ]</option><option value="compact">Chords in the words</option><option value="heavy">Heavy: all bold</option></select></div>
+        <div class="tool" id="stageFormatTool" hidden><label for="stageFormat">Stage</label><select id="stageFormat"><option value="auto">Auto: chords above (printed: in the words)</option><option value="clear">Chords above</option><option value="brackets">Chords above, in [ ]</option><option value="compact">Chords in the words</option><option value="raised">Chords raised in the words</option><option value="heavy">Heavy: all bold</option></select></div>
         <div class="tool" id="stageChorusTool" hidden><label for="stageChorus">Chorus</label><select id="stageChorus"><option value="full">Every time</option><option value="once">Once, then “as before”</option></select></div>
       </details></div>
     </header>
@@ -578,6 +581,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 
 <dialog id="downloadDialog"><button id="printSheet" class="btn" type="button">Print / Save PDF</button>
   <h2>Download</h2>
+  <p id="printPages" class="note" aria-live="polite"></p>
   <p class="note">Files are saved to your device (on iPhone and iPad: Files or the share sheet).</p>
   <div class="choice-list">
     <button type="button" data-dl="song"><strong>Song file (.txt)</strong><span>The song as written, to open in the ukemusic desktop app</span></button>
@@ -587,6 +591,10 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
     <button type="button" data-dl="chordpro"><strong>ChordPro (.txt)</strong><span>For other chord apps</span></button>
     <label class="check-row" title="Bold, italic and underlined words as ChordPro markup (&lt;b&gt; &lt;i&gt; &lt;u&gt;). Apps that don't know it may show the tags as text"><input id="dlMarkup" type="checkbox"> ChordPro with bold, italic and underline</label>
   </div>
+  <h3 class="dl-h">On printed sheets</h3>
+  <div class="club-logo-field"><img id="clubLogoPreview" alt="Your club logo" hidden><button id="clubLogoChoose" class="btn" type="button">Club logo…</button><button id="clubLogoRemove" class="btn" type="button" hidden>Remove logo</button><input id="clubLogoFile" type="file" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml" hidden></div>
+  <label class="check-row"><input id="sheetDate" type="checkbox"> “Updated” date at the foot (when the song last changed)</label>
+  <p class="note">Both are kept on this device, for every sheet you print or download.</p>
   <div class="dialog-actions"><button id="dlClose" class="btn" type="button">Close</button></div>
 </dialog>
 
@@ -2023,7 +2031,43 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (view.song && !(player && player.playing)) renderSong(); }, 200); });
 
   // ── Downloads ──
-  $('downloadBtn').addEventListener('click', () => $('downloadDialog').showModal());
+  $('downloadBtn').addEventListener('click', () => { $('downloadDialog').showModal(); showLogo(); countPages(); });
+  // 4.76: club logo and "Updated" date on printed sheets (src/sheet-extras.js), kept on this device;
+  // and how many pages the sheet prints on
+  const X = window.UkeSheetExtras;
+  function showLogo() {
+    const img = $('clubLogoPreview');
+    img.hidden = !look.logo;
+    if (look.logo) img.src = look.logo; else img.removeAttribute('src');
+    $('clubLogoRemove').hidden = !look.logo;
+    $('clubLogoChoose').textContent = look.logo ? 'Another logo…' : 'Club logo…';
+    $('sheetDate').checked = look.sheetDate === true;
+  }
+  let pagesRun = 0;
+  async function countPages() {
+    const run = ++pagesRun;
+    $('printPages').textContent = '';
+    const n = await X.pageCount(sheetDocument(false));
+    if (run === pagesRun && n) $('printPages').textContent = `Prints on ${n === 1 ? 'one page' : `about ${n} pages`} (A4).`;
+  }
+  $('clubLogoChoose').addEventListener('click', () => $('clubLogoFile').click());
+  $('clubLogoFile').addEventListener('change', () => {
+    const file = $('clubLogoFile').files[0];
+    $('clubLogoFile').value = '';
+    if (!file) return;
+    if (file.size > X.LOGO_MAX_BYTES / 2) { toast('That picture is too big: choose one under 500 KB (a logo needs only a few hundred pixels across).'); return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (!X.isLogo(reader.result)) { toast('Choose a PNG, JPEG, GIF, WebP or SVG picture.'); return; }
+      look.logo = reader.result;
+      local.set('look', look);
+      if (local.get('look', {}).logo !== look.logo) { delete look.logo; toast('There isn’t room on this device to keep that picture: try a smaller one.'); }
+      showLogo(); countPages();
+    };
+    reader.readAsDataURL(file);
+  });
+  $('clubLogoRemove').addEventListener('click', () => { delete look.logo; local.set('look', look); showLogo(); countPages(); });
+  $('sheetDate').addEventListener('change', () => { look.sheetDate = $('sheetDate').checked; local.set('look', look); countPages(); });
   $('printSheet').addEventListener('click', () => {
     const frame = document.createElement('iframe'); frame.title = 'Print song sheet'; frame.style.cssText = 'position:fixed;width:1px;height:1px;left:-10000px';
     frame.onload = () => { frame.contentWindow.addEventListener('afterprint', () => frame.remove(), {once:true}); frame.contentWindow.focus(); frame.contentWindow.print(); };
@@ -2044,7 +2088,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     return `<!doctype html><html lang="en"${stage ? ` data-style="stage" data-stage-format="${stageFormatId(false)}"` : ''}${look.easyRead ? ' data-easy-read' : ''}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(view.song.title)}</title><style>
 :root{--bg-color:#fff;--text-color:#222;--chord-color:#b22222;--rhythm-color:#666;--section-color:#1a5276;--monospace-font:"Courier New",monospace;--monospace-size:15px;--font-family:system-ui,sans-serif;--rhythm-size:12px;--line-spacing:1.35;--section-spacing:1.3em;--verse-spacing:.9em}
 body{font-family:var(--font-family);margin:24px;background:#fff;color:var(--text-color)}h1{margin:0}.sub{color:#666;margin:2px 0 16px}
-${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:18px;font-size:12px;color:#555}${look.easyRead ? U.easyReadCss() : ''}</style></head><body><h1>${esc(view.song.title)}</h1><p class="sub">${esc([sub, k.shift ? `Key ${k.name}` : '', prefs().capo ? `Capo ${prefs().capo}` : ''].filter(Boolean).join(' · '))}</p>${body}</body></html>`;
+${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:18px;font-size:12px;color:#555}${window.UkeSheetExtras.CSS}${look.easyRead ? U.easyReadCss() : ''}</style></head><body>${window.UkeSheetExtras.logoHtml(look.logo)}<h1>${esc(view.song.title)}</h1><p class="sub">${esc([sub, k.shift ? `Key ${k.name}` : '', prefs().capo ? `Capo ${prefs().capo}` : ''].filter(Boolean).join(' · '))}</p>${body}${look.sheetDate === true ? window.UkeSheetExtras.updatedHtml(view.song.updated || Date.now()) : ''}</body></html>`;
   }
   const SHEET_CSS_TEXT = document.getElementById('sheetCssText').textContent;
   for (const b of document.querySelectorAll('[data-dl]')) {

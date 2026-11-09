@@ -418,6 +418,9 @@ contextBridge.exposeInMainWorld('ukemusic', {
   stageStyleWrite: (payload) => ipcRenderer.invoke('styles:writeStage', payload),
   stageStyleRestore: () => ipcRenderer.invoke('styles:restoreStage'),
   getConfigPath: () => ipcRenderer.invoke('config:path'),
+  // 4.76: the club logo (a data: URL, '' for none), and when a song file last changed
+  logo: { read: () => ipcRenderer.invoke('logo:read'), choose: () => ipcRenderer.invoke('logo:choose'), clear: () => ipcRenderer.invoke('logo:clear') },
+  songModified: (file) => { try { return require('fs').statSync(file).mtimeMs; } catch (_e) { return 0; } },
   loadChordLibrary: (instrument) => ipcRenderer.invoke('chords:read', instrument),
   openExternal: (targetPath) => ipcRenderer.invoke('shell:openExternal', targetPath),
   confirmUnsavedAction: () => ipcRenderer.invoke('dialog:confirmUnsaved'),

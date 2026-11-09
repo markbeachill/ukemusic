@@ -25,7 +25,7 @@ test('one copy each: the apps no longer have their own', () => {
     assert.match(src, /stageFormats\.renderOptions\(options, \{ format:/);
   }
   assert.match(DESKTOP, /<script src="src\/sung-words\.js"><\/script>\n\s*<script src="src\/learn-quiz\.js"><\/script>/);
-  assert.match(read('web/build.js'), /put\('\/\*SHARED_UI_JS\*\/', safe\(\['sung-words\.js', 'learn-quiz\.js'\]/);
+  assert.match(read('web/build.js'), /put\('\/\*SHARED_UI_JS\*\/', safe\(\['sung-words\.js', 'learn-quiz\.js'[\],]/);
   assert.match(WEB, /<script>\/\*SHARED_UI_JS\*\/<\/script>/);
   assert.match(read('src/preload.js'), /renderOptions: f\.stageRenderOptions/);
 });

@@ -367,6 +367,8 @@
       .session-cta { border-color: #0e6b64; color: #0e6b64; }
       .session-bar { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 900; display: flex; align-items: center; gap: 12px; padding: 8px 10px 8px 16px; border-radius: 14px; background: #0e6b64; color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.25); font-size: 14px; max-width: 92vw; }
       .session-bar[hidden] { display: none; }
+      .club-logo-field { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .club-logo-field img { max-height: 48px; max-width: 160px; object-fit: contain; border: 1px solid var(--border); border-radius: 6px; padding: 2px; background: #fff; }
       /* 4.74: one row (left: 50% would otherwise squeeze it into half the window) */
       .session-bar { width: max-content; max-width: 96vw; gap: 8px; }
       .session-bar > * { white-space: nowrap; flex: 0 0 auto; }
@@ -2250,6 +2252,7 @@
                       <option value="lines">Chords above the words</option>
                       <option value="table">Chords above, in columns</option>
                       <option value="inline">Chords in the words</option>
+                      <option value="raised">Chords raised in the words</option>
                       <option value="chords">Chords only</option>
                     </select>
                   </div>
@@ -2339,6 +2342,7 @@
                       <option value="clear">Chords above</option>
                       <option value="brackets">Chords above, in [ ]</option>
                       <option value="compact">Chords in the words</option>
+                      <option value="raised">Chords raised in the words</option>
                       <option value="heavy">Heavy: all bold</option>
                     </select>
                   </div>
@@ -2879,9 +2883,19 @@
                           <option value="lines">Chords on a line above the words (fixed-width font)</option>
                           <option value="table">Chords and words in columns (any font)</option>
                           <option value="inline">Chords in the words: I [C]come from Alabama (compact)</option>
+                          <option value="raised">Chords raised in the words: each chord a little above the start of its word (compact, no brackets)</option>
                           <option value="chords">Chords only, no words (for playing along)</option>
                         </select>
-                        <p class="help">The first is the classic chord-sheet look. Columns keep chords above their words with ordinary fonts, but space words out more. Chords in the words takes the least room and suits a phone. Chords only shows each line's chords, for whoever is accompanying the singer.</p>
+                        <p class="help">The first is the classic chord-sheet look. Columns keep chords above their words with ordinary fonts, but space words out more. Chords in the words takes the least room and suits a phone; raised, the chords stand out from the words a little more, as in many club songbooks. Chords only shows each line's chords, for whoever is accompanying the singer.</p>
+                      </div>
+                      <div class="field">
+                        <label>Club logo</label>
+                        <div class="club-logo-field"><img id="clubLogoPreview" alt="Your club logo" hidden><button id="clubLogoChoose" type="button">Choose a picture…</button><button id="clubLogoRemove" type="button" hidden>Remove</button></div>
+                        <p class="help">On the top right of each printed sheet and PDF, and on a songbook's cover. A PNG, JPEG, GIF, WebP or SVG of up to 1 MB; a copy is kept with your settings.</p>
+                      </div>
+                      <div class="field">
+                        <label class="check-line"><input id="export-sheet_date" type="checkbox" data-config-path="export.sheet_date" /> "Updated" date on sheets</label>
+                        <p class="help">At the foot of each printed sheet and PDF: when the song was last saved, such as "Updated 9 Nov 2026". It shows which copy is the newest when a club has several.</p>
                       </div>
                       <div class="field">
                         <label for="export-section_names">Section names (Verse 1, Chorus…)</label>
@@ -2995,6 +3009,7 @@
                           <option value="clear">Chords above</option>
                           <option value="brackets">Chords above, in [ ]</option>
                           <option value="compact">Chords in the words</option>
+                          <option value="raised">Chords raised in the words</option>
                           <option value="heavy">Heavy: all bold, white-on-black chords</option>
                         </select>
                         <p class="help">How Stage copies (for a gig, or practising at home) look. Auto, the default, puts the chords above the words on screen, the easiest to read, and in the words when printed, the fewest pages. A song can have its own: Export → Stage.</p>
@@ -3135,6 +3150,7 @@
         <div class="status-left">
           <span id="cursorLabel">Ln 1, Col 1</span>
           <span id="songInfoLabel"></span>
+          <span id="pageCountLabel" title="About how many pages this song's PDF will take (Export → PDF). A part of the song is never split across pages, so now and then it's one more."></span>
         </div>
         <div class="status-right">
           <span id="configPathLabel" hidden>Config: ...</span>
@@ -3440,6 +3456,7 @@
         <p id="songbookWhat" class="dialog-note"></p>
         <fieldset id="songbookPages">
           <legend>Pages</legend>
+          <label><input id="songbookCover" type="checkbox" checked /> A cover: the setlist's name, your club logo (Settings → Export) and the date</label>
           <label><input id="songbookContents" type="checkbox" checked /> Contents page at the front</label>
           <label><input id="songbookNewPage" type="checkbox" checked /> Each song starts on a new page</label>
         </fieldset>
@@ -4096,6 +4113,7 @@
     <script src="src/session-screen.js"></script>
     <script src="src/sung-words.js"></script>
     <script src="src/learn-quiz.js"></script>
+    <script src="src/sheet-extras.js"></script>
     <script src="src/playback-audio.js"></script>
     <script>
       // Error logging: send uncaught errors (with stack traces) to logs/ukemusic.log
@@ -4296,6 +4314,7 @@
             session_size: 'fit',   // 4.73: Session screen text: 'fit' each song, or the 'same' size for every song
             session_same: 4.5,      // 4.73: that same size, in % of the screen's height
             session_theme: 'light', // 4.74: its colours: light, blue, dark, contrast (D)
+            sheet_date: false,      // 4.76: "Updated 9 Nov 2026" at the foot of printed sheets
             stage_chorus: 'full',
             stage_diagrams: 'song'
           },
@@ -4615,6 +4634,7 @@
               warnings.unshift(`Line${chordLines.length > 1 ? 's' : ''} ${list} look${chordLines.length > 1 ? '' : 's'} like chords above lyrics — use File → Tidy chords above words`);
             }
             setStatusMessage(warnings.length ? warnings.join(' | ') : (stickyNotice || 'No parser warnings.'));
+            schedulePageCount();
           } catch (error) {
             preview.srcdoc = buildPreviewDocument('<pre class="tab">Preview error</pre>', state.stylesheet);
             setStatusMessage(`Render error: ${error.message}`);
@@ -4622,6 +4642,23 @@
           }
         }
 
+        // 4.76: how many pages the song's PDF will take, in the status bar, as you work (laid out
+        // unseen at the page's width: src/sheet-extras.js). Not for the Stage look: Stage copies
+        // fit themselves to one or two pages.
+        let pageCountTimer = null;
+        let pageCountRun = 0;
+        function schedulePageCount() {
+          clearTimeout(pageCountTimer);
+          pageCountTimer = setTimeout(async () => {
+            const label = document.getElementById('pageCountLabel');
+            const run = ++pageCountRun;
+            if (!state.song || previewLook() === 'stage') { label.textContent = ''; return; }
+            let n = 0;
+            try { n = await UkeSheetExtras.pageCount(sheetDocument(state.transpose, effectiveConfig(), { forPrint: true }), { pageSize: state.config?.export?.pdf_page_size === 'Letter' ? 'Letter' : 'A4' }); } catch (_e) { n = 0; }
+            if (run !== pageCountRun) return;
+            label.textContent = n ? `PDF: ${n} page${n === 1 ? '' : 's'}` : '';
+          }, 1200);
+        }
         function scheduleRender() {
           clearTimeout(state.debounceId);
           state.debounceId = window.setTimeout(() => {
@@ -4642,10 +4679,11 @@
             setTimeout(() => showToast('Your settings could not be read', { detail: 'ukemusic is using its defaults for now and won\'t change config.ini. Close ukemusic and start it again; if this keeps happening, see config.ini.bak in the settings folder.', error: true }), 1500);
           }
           try {
-            const [stylesheetResult, configDirectory, , ...libraries] = await Promise.all([
+            const [stylesheetResult, configDirectory, , , ...libraries] = await Promise.all([
               window.ukemusic.stylesheetRead(),
               window.ukemusic.getConfigPath(),
               window.ukemusic.stageStyleRead().then((r) => { state.stageCss = r?.content || ''; }).catch(() => {}),
+              window.ukemusic.logo.read().then((url) => { state.clubLogo = url || ''; showClubLogo(); }).catch(() => {}), // 4.76
               ...window.ukemusic.instruments.map((i) => window.ukemusic.loadChordLibrary(i.id))
             ]);
             state.config = mergeConfig(clone(DEFAULT_CONFIG), configResult?.config || {});
@@ -5224,6 +5262,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         const EXPORT_CSS = `
   .shorthand-key { margin: 1.6em 0 0; padding-top: 0.4em; border-top: 1px solid #bbb; font-family: Arial, "Segoe UI", sans-serif; font-size: 11px; color: #444; }
   .shorthand-key strong { color: #000; }
+  ${UkeSheetExtras.CSS}
   @media print {
     html, body { background: #fff !important; }
     body { padding: 0 !important; }
@@ -5246,11 +5285,41 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           return [config?.song?.artist, config?.song?.year].filter(Boolean).join(', ');
         }
 
+        // 4.76: "Updated 9 Nov 2026" at the foot of a sheet, if asked for (Settings → Export): when the
+        // song was last saved (today, with changes not saved yet)
+        function showClubLogo() {
+          const img = document.getElementById('clubLogoPreview');
+          img.hidden = !state.clubLogo;
+          if (state.clubLogo) img.src = state.clubLogo; else img.removeAttribute('src');
+          document.getElementById('clubLogoRemove').hidden = !state.clubLogo;
+          document.getElementById('clubLogoChoose').textContent = state.clubLogo ? 'Choose another…' : 'Choose a picture…';
+        }
+        document.getElementById('clubLogoChoose').addEventListener('click', async () => {
+          try {
+            const url = await window.ukemusic.logo.choose();
+            if (url === null) return;
+            state.clubLogo = url;
+            showClubLogo();
+            showToast('Club logo added', { detail: 'It goes on the top right of each printed sheet and PDF, and on a songbook\'s cover.' });
+          } catch (error) { showToast('That picture couldn\'t be used', { detail: String(error.message || error).replace(/^Error invoking remote method '[^']+': (Error: )?/, ''), error: true }); }
+        });
+        document.getElementById('clubLogoRemove').addEventListener('click', async () => {
+          await window.ukemusic.logo.clear();
+          state.clubLogo = '';
+          showClubLogo();
+        });
+        function sheetUpdated(config = effectiveConfig()) {
+          const on = config?.export?.sheet_date === true || config?.export?.sheet_date === 'true';
+          if (!on) return '';
+          const saved = state.song?.songFile && !state.dirty ? window.ukemusic.songModified(state.song.songFile) : 0;
+          return UkeSheetExtras.updatedHtml(saved || Date.now());
+        }
         function exportHeader(semitones, config) {
           const key = keyAfter(semitones);
           const keyText = key ? ` · ${window.ukemusic.keys.describe(key)}` : '';
           const artist = creditText(config) ? `<p class="song-artist">${escapeText(creditText(config))}</p>` : '';
-          return `<h1 class="song-title">${escapeText(state.song.title)}</h1>${artist}
+          // 4.76: the club logo, if there is one (Settings → Export → Club logo)
+          return `${UkeSheetExtras.logoHtml(state.clubLogo)}<h1 class="song-title">${escapeText(state.song.title)}</h1>${artist}
 <p class="song-subtitle">${escapeText(keyLabel(semitones))}${escapeText(keyText)} · ${instrumentName(config)}${songCapo(config) ? ` · <strong>Capo ${songCapo(config)}</strong> (chords shown are the shapes to play)` : ''}</p>`;
         }
 
@@ -5321,7 +5390,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           if (stage) options = stageRenderOptions(options, config);
           // 4.32: a one-line key to any shorthand the song uses (C×2, F:1, |, %…) at the foot of the page
           const key = window.ukemusic.shorthandKeyHtml(transposedIr);
-          const markup = exportHeader(semitones, config) + window.ukemusic.renderHTML(transposedIr, options) + key;
+          const markup = exportHeader(semitones, config) + window.ukemusic.renderHTML(transposedIr, options) + key + sheetUpdated(config);
           const theme = forPrint || stage ? 'light' : (config?.export?.theme || 'light');
           const title = semitones ? `${state.song.title} — ${keyLabel(semitones)}` : state.song.title;
           if (!forPrint && !stage && config?.export?.include_stylesheet === false) return markup;
@@ -5387,7 +5456,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
                   ? Math.max(18, Math.floor(maxLineChars('stage') * (colW / pageW) * (stageSettings().size / minPx)))
                   : window.ukemusic.stageFormats.charsAcross(fmt, { pageWidthPx: colW, sizePx: minPx, monospaceChars: maxLineChars('stage') });
               }
-              markup += `<div class="tp-variant" data-cols="${cols}" data-once="${onceFlag}">${exportHeader(semitones, cfg)}${window.ukemusic.renderHTML(ir, options)}${window.ukemusic.shorthandKeyHtml(ir)}</div>`;
+              markup += `<div class="tp-variant" data-cols="${cols}" data-once="${onceFlag}">${exportHeader(semitones, cfg)}${window.ukemusic.renderHTML(ir, options)}${window.ukemusic.shorthandKeyHtml(ir)}${sheetUpdated(cfg)}</div>`;
             }
           }
           const title = semitones ? `${state.song.title} — ${keyLabel(semitones)}` : state.song.title;
@@ -5482,7 +5551,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             style: look,
             key: `${keyLabel(semitones)}${key ? ` (${key.name})` : ''}`,
             sections: config?.export?.section_names || 'show',
-            layout: { lines: '', table: 'columns', inline: 'chords in the words', chords: 'chords only' }[config?.export?.layout || 'lines'] || ''
+            layout: { lines: '', table: 'columns', inline: 'chords in the words', raised: 'chords raised in the words', chords: 'chords only' }[config?.export?.layout || 'lines'] || ''
           };
         }
 
@@ -13454,13 +13523,14 @@ function showTab(tab) {
   .book-contents .by { color: var(--rhythm-color); font-size: 0.85em; }
   .book-contents .missing { color: #b91c1c; }
   .book-number { color: var(--rhythm-color); font-weight: 400; }
+  .book-cover { font-family: var(--font-family); color: var(--text-color); }
   @media print {
     .book-contents { break-after: page; page-break-after: always; }
     .book-song.new-page + .book-song.new-page { break-before: page; page-break-before: always; }
   }
   .book-song + .book-song:not(.new-page) { margin-top: 2.5em; padding-top: 1.5em; border-top: 1px solid #ccc; }`;
 
-        async function songbookHtml(setlist, { contents = true, newPage = true, printStyle = 'standard', numberFrom = 1 } = {}) {
+        async function songbookHtml(setlist, { contents = true, newPage = true, printStyle = 'standard', numberFrom = 1, cover = false } = {}) {
           const stage = printStyle === 'stage';
           const parts = [];
           const entries = [];
@@ -13510,7 +13580,9 @@ ${window.ukemusic.renderHTML(shown, options)}
 <ol>${entries.filter((e) => !e.missing).map((e) => `<li><a href="#song-${e.number}">${escapeText(e.title)}</a>${e.artist ? ` <span class="by">· ${escapeText(e.artist)}</span>` : ''}</li>`).join('')}</ol>
 ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or deleted): ${entries.filter((e) => e.missing).map((e) => escapeText(e.title)).join(', ')}</p>` : ''}
 </section>` : '';
-          const markup = contentsHtml + parts.join('\n');
+          // 4.76: a cover page
+          const coverHtml = cover ? UkeSheetExtras.coverHtml({ title: setlist.name, logo: state.clubLogo, count: number }) : '';
+          const markup = coverHtml + contentsHtml + parts.join('\n');
           const css = stage ? `${state.stageCss || state.stylesheet}\n${window.ukemusic.stageFormats.css}\n${EXPORT_CSS}${BOOK_CSS}` : `${state.stylesheet}\n${EXPORT_CSS}${BOOK_CSS}`;
           return { html: buildPreviewDocument(markup, css, 'light', setlist.name, docAttrs(state.config, { stage })), count: number, missing: entries.filter((e) => e.missing).length };
         }
@@ -13583,6 +13655,7 @@ ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or del
             const book = await songbookHtml(setlist, {
               contents: document.getElementById('songbookContents').checked,
               newPage: document.getElementById('songbookNewPage').checked,
+              cover: document.getElementById('songbookCover').checked,
               printStyle
             });
             const file = await window.ukemusic.setlists.exportPdf({ songsFolder: songsFolder(), name: setlist.name, html: book.html, pageSize, printStyle });

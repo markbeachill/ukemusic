@@ -65,6 +65,7 @@ const DEFAULT_CONFIG = {
     session_size: 'fit',   // 4.73: Session screen text: 'fit' each song, or the 'same' size for every song
     session_same: 4.5,      // 4.73: that same size, in % of the screen's height
     session_theme: 'light', // 4.74: its colours: light, blue, dark, contrast (D)
+    sheet_date: false,      // 4.76: "Updated 9 Nov 2026" at the foot of printed sheets
     stage_compact: true,       // 4.52: settings from before then have been moved to Compact once
     stage_auto: true,          // 4.70: and to Auto once
     stage_chorus: 'full',
@@ -1264,6 +1265,34 @@ function registerIpc() {
   });
 
   handle('config:path', async () => configDir);
+  // 4.76: the club logo for printed sheets and songbook covers: a copy kept beside config.ini
+  const logoFiles = () => (fs.existsSync(configDir) ? fs.readdirSync(configDir).filter((f) => /^club-logo\.[a-z]+$/i.test(f)) : []);
+  const logoRead = async () => {
+    const { LOGO_TYPES } = require('./src/sheet-extras');
+    for (const f of logoFiles()) {
+      const type = LOGO_TYPES[path.extname(f).slice(1).toLowerCase()];
+      if (type) return `data:${type};base64,${(await fsp.readFile(path.join(configDir, f))).toString('base64')}`;
+    }
+    return '';
+  };
+  handle('logo:read', logoRead);
+  handle('logo:choose', async () => {
+    const { LOGO_TYPES, LOGO_MAX_BYTES } = require('./src/sheet-extras');
+    const result = await dialog.showOpenDialog(mainWindow, {
+      title: 'Choose your club logo',
+      properties: ['openFile'],
+      filters: [{ name: 'Pictures', extensions: Object.keys(LOGO_TYPES) }]
+    });
+    if (result.canceled || !result.filePaths.length) return null;
+    const source = result.filePaths[0];
+    const ext = path.extname(source).slice(1).toLowerCase();
+    if (!LOGO_TYPES[ext]) throw new Error('Choose a PNG, JPEG, GIF, WebP or SVG picture.');
+    if ((await fsp.stat(source)).size > LOGO_MAX_BYTES) throw new Error('That picture is over 1 MB: choose a smaller one (a logo needs only a few hundred pixels across).');
+    for (const f of logoFiles()) await fsp.unlink(path.join(configDir, f));
+    await fsp.copyFile(source, path.join(configDir, `club-logo.${ext === 'jpeg' ? 'jpg' : ext}`));
+    return logoRead();
+  });
+  handle('logo:clear', async () => { for (const f of logoFiles()) await fsp.unlink(path.join(configDir, f)); return ''; });
 
   handle('chords:read', async (_event, instrument) => loadChordLibrary(configDir, instrument));
 
