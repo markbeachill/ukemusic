@@ -75,6 +75,7 @@
 | Chord sheets with chord diagrams | ✓ Print or save a PDF | ✓ PDF |
 | Stage copies: big and easy to read at a gig | ✓ | ✓ One or two pages |
 | Pick sheets: tab for fingerpicking | ✓ | ✓ |
+| Easy-to-read text for low vision (Atkinson Hyperlegible) | ✓ | ✓ |
 | ChordPro, web page and lyrics files | ✓ | ✓ And Markdown |
 | Songbook PDFs of a setlist | — | ✓ |
 | Export every song at once | — | ✓ |

@@ -186,6 +186,10 @@ FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 OTHER DEALINGS IN THE FONT SOFTWARE.
 ```
 
+## Atkinson Hyperlegible Next and Mono (Easy to read text)
+
+The Easy to read setting (4.71) shows song sheets, Stage copies and the Session screen in Atkinson Hyperlegible Next and Atkinson Hyperlegible Mono, designed for the Braille Institute of America. The regular and bold fonts (Latin and Latin Extended) are in `src/easy-read-fonts.js`, made from the Fontsource packages @fontsource/atkinson-hyperlegible-next and @fontsource/atkinson-hyperlegible-mono 5.3.0 by `tools/make-easy-read-fonts.js`. Copyright 2020-2024 The Atkinson Hyperlegible Next Project Authors (https://github.com/googlefonts/atkinson-hyperlegible-next) and The Atkinson Hyperlegible Mono Project Authors (https://github.com/googlefonts/atkinson-hyperlegible-next-mono), licensed under the SIL Open Font License, Version 1.1. The licences are in full in `src/fonts/Atkinson-Hyperlegible-Next-OFL.txt` and `src/fonts/Atkinson-Hyperlegible-Mono-OFL.txt`.
+
 ## Starter songs and practice tunes
 
 The starter songs and the practice melodies are traditional or 19th-century songs in the public domain.

@@ -58,6 +58,7 @@ const SECTIONS = [
       { f: 'Chord sheets with chord diagrams', web: 'Print or save a PDF', desktop: 'PDF', home: true },
       { f: 'Stage copies: big and easy to read at a gig', web: true, desktop: 'One or two pages' },
       { f: 'Pick sheets: tab for fingerpicking', web: true, desktop: true },
+      { f: 'Easy-to-read text for low vision (Atkinson Hyperlegible)', web: true, desktop: true },
       { f: 'ChordPro, web page and lyrics files', web: true, desktop: 'And Markdown' },
       { f: 'Songbook PDFs of a setlist', web: false, desktop: true },
       { f: 'Export every song at once', web: false, desktop: true }

@@ -26,6 +26,9 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #fff; }
   U.session.onKey((k) => screen.key(k));
   U.session.onData(async (data) => {
     document.body.style.background = data.dark ? '#0f1312' : '#fff';
+    // 4.71: Easy to read text (Atkinson Hyperlegible), as in the main window
+    if (data.easyRead && !document.getElementById('easyReadCss')) document.head.insertAdjacentHTML('beforeend', `<style id="easyReadCss">${U.easyReadCss()}</style>`);
+    document.documentElement.toggleAttribute('data-easy-read', data.easyRead === true);
     if (data.check) {
       // the fits-one-screen check: lay out every song and report
       await document.fonts?.ready;

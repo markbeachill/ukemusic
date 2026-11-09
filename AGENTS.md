@@ -25,7 +25,7 @@ Most of the music logic lives in `src/` as plain functions, used by both. Change
 | To change… | Change this | And also |
 |---|---|---|
 | How songs are written (the song format, shorthand) | `src/parser.js` (text → IR nodes), `src/song-syntax.js` (shorthand), `src/chord-names.js` | `WRITING.md` (the guide, shown in the app and on the website); `src/ai-prompt.js` if the AI prompt should know it |
-| How the chord sheet looks | `src/renderer-html.js`, `src/default-style.css`, style sets in `src/style-sets.js` | Stage formats: `src/stage-formats.js`; lyrics only: `src/renderer-lyrics.js`; Markdown: `src/renderer-markdown.js` |
+| How the chord sheet looks | `src/renderer-html.js`, `src/default-style.css`, style sets in `src/style-sets.js` | Stage formats: `src/stage-formats.js`; Easy to read text (Atkinson Hyperlegible): `src/easy-read.js` (fonts in `src/easy-read-fonts.js`, made by `tools/make-easy-read-fonts.js`); lyrics only: `src/renderer-lyrics.js`; Markdown: `src/renderer-markdown.js` |
 | Chord diagrams and chord shapes | `src/diagram-svg.js`, `src/chord-library.js`, `src/chords.json`, `src/shapes.js` | Instruments: `src/instruments.js` (see `INSTRUMENTS.md`) |
 | Strum patterns and strum boxes | `src/strums.js` (the library), `src/strum-box.js` (how they look) | |
 | Tab | `src/tab.js` | `TABLATURE.md` |

@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.71.0
+
+### Easy to read text
+- **New setting: Easy to read.** It puts song sheets, Stage copies and the Session screen in **Atkinson Hyperlegible**, a typeface the Braille Institute made for readers with low vision. Letters that are easily confused are easy to tell apart: I, l and 1; O and 0; b and d. That helps at arm's length on a music stand, or on a tablet under stage lights.
+  - **Desktop:** Display → Text → **Easy to read**, beside Usual.
+  - **Web player:** Display → **Easy to read: on/off**, remembered on this device.
+- **Chords above the words still line up.** Where chords sit over the words with spaces, it uses Atkinson Hyperlegible Mono (every letter the same width, like the Courier it replaces). Everywhere else, it uses Atkinson Hyperlegible Next.
+- **It works offline and in print.** The fonts are inside the app, so it's the same on screen, in PDFs, in songbooks, in downloaded sheets and with no connection. It adds about 100 KB.
+- **The fonts are free,** under the SIL Open Font License. The licences are in `src/fonts/` and in the third-party notices.
+
 ## v4.70.0
 
 ### Stage copies: chords above on screen

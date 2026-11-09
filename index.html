@@ -2181,10 +2181,13 @@
                     <span id="viewTextSize" class="rib-value">14</span>
                     <button id="viewTextBigger" class="rib-small" type="button" title="Bigger text">A+</button>
                   </div>
-                  <button id="viewTextReset" class="rib-small" type="button" title="Back to the usual size">Usual</button>
+                  <div class="rib-row">
+                    <button id="viewTextReset" class="rib-small" type="button" title="Back to the usual size">Usual</button>
+                    <label class="rib-check" title="Song sheets and Stage copies in Atkinson Hyperlegible, a typeface made for readers with low vision: I, l and 1, O and 0, b and d are easy to tell apart. On screen and in print, for every song"><input id="viewEasyRead" type="checkbox" data-config-path="general.easy_read" /> Easy to read</label>
+                  </div>
                 </div>
               </div>
-              <span class="rib-label">Text size</span>
+              <span class="rib-label">Text</span>
             </div>
             <div class="rib-group">
               <div class="rib-items">
@@ -5259,8 +5262,11 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
 
         // The stylesheet for a document: the Stage style for Stage copies (never the song's own
         // font: Stage keeps its big bold one), otherwise the style set in use plus the song's font
+        // 4.71: Easy to read text: song sheets and Stage copies in Atkinson Hyperlegible (View → Style)
+        const easyRead = () => state.config?.general?.easy_read === true || state.config?.general?.easy_read === 'true';
         function docCss(stage, extra = '', { songFont = true } = {}) {
-          return stage ? `${state.stageCss || state.stylesheet}\n${window.ukemusic.stageFormats.css}\n${extra}` : `${state.stylesheet}\n${extra}${songFont ? songFontCss() : ''}`;
+          const easy = easyRead() ? `\n${window.ukemusic.easyReadCss()}` : '';
+          return stage ? `${state.stageCss || state.stylesheet}\n${window.ukemusic.stageFormats.css}\n${extra}${easy}` : `${state.stylesheet}\n${extra}${songFont ? songFontCss() : ''}${easy}`;
         }
 
         function sheetDocument(semitones, config, { forPrint = false, printStyle = 'standard' } = {}) {
@@ -5419,7 +5425,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             stage ? `${state.stageCss || ''}${window.ukemusic.stageFormats.css}` : `${state.stylesheet || ''}${songFontCss()}`,
             e.layout || 'lines', e.section_names || 'show',
             stage ? [stageFormatId(config), e.stage_chorus || 'full', e.stage_diagrams || 'song'].join('/') : '',
-            JSON.stringify(config?.diagrams || {}), config?.rhythm?.style || '', config?.rhythm?.notation || ''
+            JSON.stringify(config?.diagrams || {}), config?.rhythm?.style || '', config?.rhythm?.notation || '',
+            easyRead() ? 'easy-read' : ''
           ].join('|');
           let h = 5381;
           for (let i = 0; i < text.length; i += 1) h = ((h * 33) ^ text.charCodeAt(i)) >>> 0;
@@ -7084,6 +7091,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           if (['bold', 'plain'].includes(t.frets)) attrs += ` data-tab-frets="${t.frets}"`;
           if (['smaller', 'larger'].includes(t.size)) attrs += ` data-tab-size="${t.size}"`;
           if (on(t.box)) attrs += ' data-tab-box';
+          if (easyRead()) attrs += ' data-easy-read'; // 4.71: Easy to read text (Atkinson Hyperlegible)
           if (on(t.faint)) attrs += ' data-tab-faint';
           attrs += sectionsAttr(config);
           return attrs;
@@ -12113,7 +12121,7 @@ function showTab(tab) {
           const config = mergeConfig(clone(state.config), song.settings || {});
           return sessionSong({ title: entryLabel(line), content: song.content, config, semitones: entryOf(line).shift, folder });
         }
-        const sessionOptions = () => ({ hideCommon: state.config?.diagrams?.skip_common === true || state.config?.diagrams?.skip_common === 'true', minPx: Number(state.config?.export?.session_min_px) || 18 });
+        const sessionOptions = () => ({ hideCommon: state.config?.diagrams?.skip_common === true || state.config?.diagrams?.skip_common === 'true', minPx: Number(state.config?.export?.session_min_px) || 18, easyRead: easyRead() });
         let sessionExternal = false;
         async function openSession(songs, start = 0) {
           if (!songs.length) return;

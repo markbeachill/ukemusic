@@ -451,6 +451,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
           <option value="song_start">At the top</option><option value="first_use">Where used</option><option value="none">None</option></select></div>
         <div class="tool"><button id="commonBtn" type="button" aria-pressed="false" title="No diagrams for the chords everyone knows: C, G, Am, F…">Common: shown</button></div>
         <div class="tool"><button id="leftBtn" type="button" aria-pressed="false" title="Mirror every chord diagram for a left-handed instrument (Free Practice too)">Left-handed: off</button></div>
+        <div class="tool"><button id="easyBtn" type="button" aria-pressed="false" title="Song sheets and Stage copies in Atkinson Hyperlegible, a typeface made for readers with low vision: I, l and 1, O and 0, b and d are easy to tell apart. On screen and in downloads">Easy to read: off</button></div>
         <div class="tool"><label for="tuneSel">Tune</label><select id="tuneSel" title="Songs with their tune written in: the tune as notes on a staff"><option value="strip">At the top</option><option value="lines">Over every line</option><option value="off">Hidden</option></select></div>
         <div class="tool"><label for="lookSel">Look</label><select id="lookSel"><option value="standard">Song sheet</option><option value="stage">Stage copy</option></select></div>
         <div class="tool" id="stageFormatTool" hidden><label for="stageFormat">Stage</label><select id="stageFormat"><option value="auto">Auto: chords above (printed: in the words)</option><option value="clear">Chords above</option><option value="brackets">Chords above, in [ ]</option><option value="compact">Chords in the words</option><option value="heavy">Heavy: all bold</option></select></div>
@@ -1837,6 +1838,12 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     probe.remove();
     return Math.max(16, Math.floor((sheet.clientWidth - 32) / per) - 1);
   }
+  // 4.71: Easy to read text: sheets in Atkinson Hyperlegible (its fonts are in the CSS, so offline too)
+  function applyEasyRead() {
+    const on = look.easyRead === true;
+    if (on && !$('easyReadCss')) document.head.insertAdjacentHTML('beforeend', `<style id="easyReadCss">${U.easyReadCss()}</style>`);
+    document.documentElement.toggleAttribute('data-easy-read', on);
+  }
   function renderSheet(sheet) {
     const p = prefs();
     sheet.style.setProperty('--monospace-size', `${look.size}px`);
@@ -1905,6 +1912,9 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     $('commonBtn').setAttribute('aria-pressed', String(look.hideCommon === true));
     $('commonBtn').textContent = look.hideCommon ? 'Common: hidden' : 'Common: shown';
     $('leftBtn').setAttribute('aria-pressed', String(look.leftHanded === true));
+    $('easyBtn').setAttribute('aria-pressed', String(look.easyRead === true));
+    $('easyBtn').textContent = look.easyRead ? 'Easy to read: on' : 'Easy to read: off';
+    applyEasyRead();
     $('leftBtn').textContent = look.leftHanded ? 'Left-handed: on' : 'Left-handed: off';
     $('stageFormatTool').hidden = $('stageChorusTool').hidden = look.style !== 'stage';
     // 4.70: a Stage copy has its own layouts (Stage), so Sheet isn't shown while it's being ignored
@@ -1960,6 +1970,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
   $('commonBtn').addEventListener('click', change(() => { look.hideCommon = !look.hideCommon; }, { song: false }));
   // 4.64: left-handed diagrams, on this device: the song sheets, prints and Free Practice
   $('leftBtn').addEventListener('click', change(() => { look.leftHanded = !look.leftHanded; state.config.diagrams = { ...(state.config.diagrams || {}), left_handed: look.leftHanded }; }, { song: false }));
+  $('easyBtn').addEventListener('click', change(() => { look.easyRead = !look.easyRead; }, { song: false }));
   $('stageFormat').addEventListener('change', change(() => { look.stageFormat = $('stageFormat').value; }, { song: false }));
   $('stageChorus').addEventListener('change', change(() => { look.stageChorus = $('stageChorus').value; }, { song: false }));
   $('textDown').addEventListener('click', change(() => { look.size = Math.max(11, look.size - 1); }, { song: false }));
@@ -2026,10 +2037,10 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
     const k = keyText();
     const sub = [view.song.settings?.song?.artist, view.song.settings?.song?.year].filter(Boolean).join(', ');
     const stageCss = ':root{--stage-font:"Courier New",monospace;--stage-size:20px;--stage-color:#000}';
-    return `<!doctype html><html lang="en"${stage ? ` data-style="stage" data-stage-format="${stageFormatId(false)}"` : ''}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(view.song.title)}</title><style>
+    return `<!doctype html><html lang="en"${stage ? ` data-style="stage" data-stage-format="${stageFormatId(false)}"` : ''}${look.easyRead ? ' data-easy-read' : ''}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(view.song.title)}</title><style>
 :root{--bg-color:#fff;--text-color:#222;--chord-color:#b22222;--rhythm-color:#666;--section-color:#1a5276;--monospace-font:"Courier New",monospace;--monospace-size:15px;--font-family:system-ui,sans-serif;--rhythm-size:12px;--line-spacing:1.35;--section-spacing:1.3em;--verse-spacing:.9em}
 body{font-family:var(--font-family);margin:24px;background:#fff;color:var(--text-color)}h1{margin:0}.sub{color:#666;margin:2px 0 16px}
-${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:18px;font-size:12px;color:#555}</style></head><body><h1>${esc(view.song.title)}</h1><p class="sub">${esc([sub, k.shift ? `Key ${k.name}` : '', prefs().capo ? `Capo ${prefs().capo}` : ''].filter(Boolean).join(' · '))}</p>${body}</body></html>`;
+${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:18px;font-size:12px;color:#555}${look.easyRead ? U.easyReadCss() : ''}</style></head><body><h1>${esc(view.song.title)}</h1><p class="sub">${esc([sub, k.shift ? `Key ${k.name}` : '', prefs().capo ? `Capo ${prefs().capo}` : ''].filter(Boolean).join(' · '))}</p>${body}</body></html>`;
   }
   const SHEET_CSS_TEXT = document.getElementById('sheetCssText').textContent;
   for (const b of document.querySelectorAll('[data-dl]')) {
