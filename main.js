@@ -34,7 +34,7 @@ process.on('uncaughtException', (error) => log.error('main', 'Uncaught exception
 process.on('unhandledRejection', (reason) => log.error('main', 'Unhandled promise rejection', reason));
 
 const DEFAULT_CONFIG = {
-  general: { theme: 'auto', look: 'standard', style_set: 'classic', easy_read: false, chord_edit: false }, // 4.71: easy_read: Atkinson Hyperlegible; 4.77: chord_edit: Edit chords on the sheet
+  general: { theme: 'auto', look: 'standard', style_set: 'classic', easy_read: false, chord_edit: false, all_features: false, feature_levels: '' }, // 4.71: easy_read: Atkinson Hyperlegible; 4.77: chord_edit: Edit chords on the sheet; 4.78: all_features (off: the simple view), feature_levels (changes to src/feature-levels.js)
   library: { songs_folder: '', libraries: '', last_song: '', show_notes_on_open: true, start_screen: 'library', starters_added: false, starters_info: false },
   song: { instrument: 'soprano', key: 'auto' },
   parsing: { use_delimiters: true },
@@ -198,6 +198,10 @@ async function readConfigObject() {
   // move to it once (a style chosen after this is kept)
   if (!parsed.rhythm || parsed.rhythm.strum_compact !== true) {
     parsed.rhythm = { ...(parsed.rhythm || {}), style: 'compact', strum_compact: true };
+  }
+  // 4.78: the simple view is for someone new: settings from before then keep every feature shown
+  if (!parsed.general || parsed.general.all_features === undefined) {
+    parsed.general = { ...(parsed.general || {}), all_features: true };
   }
   return { raw, config: mergeConfig(cloneDefaultConfig(), parsed) };
 }

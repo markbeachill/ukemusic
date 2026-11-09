@@ -16,6 +16,7 @@ const SECTIONS = [
       { f: 'Import ChordPro files, or a whole songbook folder', web: 'Files, or a zipped folder', desktop: true, home: true },
       { f: 'AI prompts for difficult sheets and PDFs', web: true, desktop: true },
       { f: 'Public-domain songs to start with, ready to play', web: true, desktop: true },
+      { f: 'A simple view to start with; all features when you want them', web: true, desktop: true }, // 4.78
       { f: 'Change a song, or write your own', web: true, desktop: true },
       { f: 'Drag a chord to the right word on the sheet (an option)', web: 'On the Edit page', desktop: true }, // 4.77
       { f: 'Find songs by title, artist, tag or key', web: true, desktop: 'Several libraries too' }

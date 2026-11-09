@@ -1,5 +1,26 @@
 # Changelog
 
+## v4.78.0
+
+### A simple view for beginners
+- **ukemusic now starts simple for someone new.** It shows what you need to **play a song** and **add a song**: open, save, paste or import, key, capo, instrument, layout, chord diagrams, text size, play, karaoke, tempo, play from memory, Next chord?, PDF and print.
+- **What waits until you turn on all features:**
+  - Stage copies, setlists and songbooks, style sets and the Group screen
+  - picking, practice speed, sound and feel, count-in
+  - numbers, bold and italic, section names, the song's Links, Exports and ChordPro tabs
+- **Hidden is not off.** A song that uses a hidden feature plays and prints as before, and keyboard shortcuts still work.
+- **A song brings back what it uses.** The Picking tab appears for a song with picking or tab, and the tune setting for a song with its tune written in.
+- **In Settings, the settings for hidden features are greyed, not hidden,** so you can see what's there.
+- **Show all features:**
+  - **Desktop:** **More features…** at the end of the ribbon, or Settings → **Features**.
+  - **Web player:** Settings → Show all features.
+  - The first-run question can turn it on too: a box under "What do you play?", for anyone running a club or writing songs.
+- **Choose what the simple view shows.** Settings → Features (web: Settings → Features…) lists every feature, where it is, and a tick for "in the simple view". Untick or tick any of them. **Back to the defaults** undoes your changes.
+- **If you used ukemusic before, nothing changes.** Every feature stays shown.
+
+### Chord diagrams on the right-hand side
+- **A new place for chord diagrams: the right-hand side.** An option: they go in a column to the right of the words, in the order the chords come, as in many club songbooks. It's in Display → Chord diagrams and Settings, and in the web player's Shapes. It works for PDFs and printing too.
+
 ## v4.77.0
 
 ### Edit chords on the sheet (an option)

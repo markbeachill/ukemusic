@@ -53,6 +53,7 @@
 | Import ChordPro files, or a whole songbook folder | ✓ Files, or a zipped folder | ✓ |
 | AI prompts for difficult sheets and PDFs | ✓ | ✓ |
 | Public-domain songs to start with, ready to play | ✓ | ✓ |
+| A simple view to start with; all features when you want them | ✓ | ✓ |
 | Change a song, or write your own | ✓ | ✓ |
 | Drag a chord to the right word on the sheet (an option) | ✓ On the Edit page | ✓ |
 | Find songs by title, artist, tag or key | ✓ | ✓ Several libraries too |

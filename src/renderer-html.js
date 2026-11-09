@@ -332,8 +332,10 @@ function renderDiagramForChord(chordName, options) {
   }
 }
 
+// 4.78: 'side': the same diagrams in a column down the right of the words (as a club songbook
+// often has them), in the order the chords come in
 function renderSongStartDiagrams(groups, options) {
-  if (!options.diagrams.enable || options.diagrams.placement !== 'song_start') {
+  if (!options.diagrams.enable || (options.diagrams.placement !== 'song_start' && options.diagrams.placement !== 'side')) {
     return '';
   }
 
@@ -351,9 +353,8 @@ function renderSongStartDiagrams(groups, options) {
     }
   }
 
-  return chunks.length > 0
-    ? `<div class="chord-diagrams">${chunks.join('')}</div>`
-    : '';
+  if (!chunks.length) return '';
+  return options.diagrams.placement === 'side' ? `<div class="chord-diagrams side">${chunks.join('')}</div>` : `<div class="chord-diagrams">${chunks.join('')}</div>`;
 }
 
 /**
@@ -690,6 +691,8 @@ function sheetCss() {
   .inline-line { font-family: var(--font-family, system-ui, sans-serif); font-size: calc(var(--monospace-size, 14px) * 1.1); line-height: 1.6; color: var(--text-color, #333); white-space: pre-wrap; overflow-wrap: anywhere; min-height: 1em; }
   .inline-line .ichord { color: var(--chord-color, #b22222); font-weight: 800; white-space: nowrap; }
   .inline-line .ichord .ib { font-weight: 400; opacity: 0.7; }
+  .chord-diagrams.side { float: right; display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 0 0 12px 22px; max-width: 30%; clear: right; }
+  .side-end { clear: both; }
   .inline-line .ichord.up { font-size: 0.78em; vertical-align: 0.62em; line-height: 0; margin-right: 0.06em; }
   .inline-line:has(.ichord.up) { line-height: 1.95; }
   .inline-line .bar { margin: 0 0.3em; }
@@ -792,6 +795,7 @@ function renderHtml(irNodes, options = {}) {
   }
   closeSection();
 
+  if (songStartDiagrams && normalizedOptions.diagrams.placement === 'side') output.push('<div class="side-end"></div>'); // the next song starts below them
   return output.join('\n');
 }
 

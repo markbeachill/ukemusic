@@ -17,7 +17,7 @@ test('the tab is called Picking', () => {
 
 test('every group is a row of items over its name', () => {
   for (const [name, body] of Object.entries(panels)) {
-    const groups = body.split('<div class="rib-group">').slice(1);
+    const groups = body.split(/<div class="rib-group"(?: data-feature="\w+")?>/).slice(1);
     assert.ok(groups.length, name);
     for (const g of groups) {
       assert.match(g, /<div class="rib-items">/, `${name}: a group without rib-items`);
@@ -30,7 +30,7 @@ test('small controls sit in columns of two rows, and one setting on its own has 
   for (const [name, body] of Object.entries(panels)) {
     if (name === 'settings') continue;
     assert.ok(!/class="rib-items rib-fields"/.test(body), `${name}: the old free-form fields`);
-    for (const g of body.split('<div class="rib-group">').slice(1)) {
+    for (const g of body.split(/<div class="rib-group"(?: data-feature="\w+")?>/).slice(1)) {
       const items = g.slice(0, g.indexOf('<span class="rib-label">'));
       const labels = (items.match(/<label for=/g) || []).length;
       const selects = (items.match(/<select /g) || []).length + (items.match(/type="number"/g) || []).length;

@@ -85,7 +85,7 @@ test('an option, off at first; desktop and web', () => {
   assert.match(WEB, /<input id="chordEditToggle" type="checkbox"> Edit chords on the sheet/);
   assert.match(WEB, /const chordEdit = sheet\.id === 'editSheet' && look\.chordEdit === true && !stage;/);
   assert.match(WEB, /U\.chordEdit\.apply\(before, op, \{ shift: p\.transpose - p\.capo \}\)/);
-  assert.match(read('web/build.js'), /'sheet-chord-editor\.js'\]/);
+  assert.match(read('web/build.js'), /'sheet-chord-editor\.js'[\],]/);
   const { attach } = require('../src/sheet-chord-editor');
   assert.strictEqual(typeof attach, 'function');
 });
