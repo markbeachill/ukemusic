@@ -1,8 +1,12 @@
-        // ── Karaoke view ────────────────────────────────────────
+// ── Karaoke view ────────────────────────────────────────
         // Words on screen, several lines at once; the current line is lit and a line under
         // each chord's words lengthens as its bar plays. Timing comes from src/karaoke.js.
+        // 4.74: the web player runs this same code (web/k_js.js, k_css.css, k_markup.html are
+        // copies, checked by tools/sync-karaoke.js). What only the desktop has, trouble spots,
+        // is used only where it's there (karaokeTroubleSpots).
         const karaokeEl = document.getElementById('karaoke');
         const karaokeLines = document.getElementById('karaokeLines');
+        const karaokeTroubleSpots = typeof learnAddTrouble === 'function';
         const karaokeChord = document.getElementById('karaokeChord');
         const karaokeSteps = document.getElementById('karaokeSteps');
         const karaokeView = { lines: [], current: -1, raf: null, schedule: null, startLine: 0, stripKey: null, stripCells: [] };
@@ -59,8 +63,7 @@
         }
         function drawKaraokeShapes(index) {
           const holder = document.getElementById('karaokeShapes');
-          holder.hidden = !karaokeShapesOn() || Boolean(karaokeView.learn); // from memory: no shapes to give it away
-          if (karaokeView.learn) return;
+          holder.hidden = !karaokeShapesOn() || Boolean(karaokeView.learn); // 4.39: no shapes when playing from memory
           if (holder.hidden) return;
           drawShapes(holder, karaokeView, index);
         }
@@ -137,7 +140,8 @@
           const steps = bar.pickSteps
             ? stripSteps(bar.pickSteps.map((sym) => (sym === '·' ? '-' : 'P')).join(''), bar.beats || schedule.beatsPerBar).map((st, i) => ({ ...st, symbol: bar.pickSteps[i] }))
             : stripSteps(bar.pattern, bar.beats || schedule.beatsPerBar);
-          drawStrip(`bar${index}`, learnStripName(bar), false, steps);
+          const learnShown = learnMode(bar.line);
+          drawStrip(`bar${index}`, learnShown === 'hide' ? '?' : (learnShown === 'number' ? learnNumeral(bar.chord) : bar.chord), false, steps);
           // a chord shorter than a bar (share < 1) plays the start of the pattern at the usual speed
           const barTime = bar.duration / (bar.share || 1);
           lightStrip(Math.min(steps.length - 1, Math.floor((t - bar.time) / (barTime / steps.length))));
@@ -147,37 +151,6 @@
           karaokeView.stripCells = [];
           karaokeChord.textContent = '';
           karaokeSteps.textContent = '';
-        }
-
-        // ── Learn: playing from memory (as the desktop app, 4.39) ──
-        // karaokeView.learn: { opts: { stage }, plan (src/learn.js fadePlan), key, needed: Map }
-        function learnMode(line) {
-          const L = karaokeView.learn;
-          if (!L) return 'show';
-          return L.plan.lines[line] || L.plan.fallback;
-        }
-        function learnNumeral(chord) {
-          const L = karaokeView.learn;
-          return L && L.key ? window.ukemusic.learn.numeral(chord, L.key) : '?';
-        }
-        function learnStripName(bar) {
-          const mode = learnMode(bar.line);
-          return mode === 'show' ? bar.chord : mode === 'number' ? learnNumeral(bar.chord) : '?';
-        }
-        function learnChordEl(chordEl, chord, line) {
-          const mode = learnMode(line);
-          if (mode === 'show' || !chord) return;
-          if (mode === 'number') { chordEl.textContent = learnNumeral(chord); chordEl.classList.add('k-number'); return; }
-          chordEl.textContent = '?';
-          chordEl.classList.add('k-hidden');
-          chordEl.title = 'Tap to see the chord';
-          chordEl.addEventListener('click', (event) => {
-            event.stopPropagation(); // not "play from here"
-            chordEl.textContent = chord;
-            chordEl.classList.remove('k-hidden');
-            chordEl.classList.add('k-revealed');
-            if (karaokeView.learn) karaokeView.learn.needed.set(`${line}:${chord}`, { line, chord });
-          }, { once: true });
         }
 
         // 4.73: the words are sized to the screen, not in pixels: the same look on a phone, a laptop
@@ -229,6 +202,49 @@
         document.addEventListener('webkitfullscreenchange', onFullChange);
         karaokeFullButton.addEventListener('click', toggleKaraokeFull);
         for (const type of ['mousemove', 'pointerdown', 'keydown']) karaokeEl.addEventListener(type, karaokeAwake);
+
+        // 4.39: what a chord shows when playing from memory: itself, its number, or "?"
+        function learnMode(line) {
+          const L = karaokeView.learn;
+          if (!L) return 'show';
+          return L.plan.lines[line] || L.plan.fallback;
+        }
+        function learnNumeral(chord) {
+          const L = karaokeView.learn;
+          const bare = String(chord || '').replace(/[↓↑]+.*$/, '').replace(/:.*$/, '').replace(/\s.*$/, '');
+          return L && L.key ? window.ukemusic.learn.numeral(bare, L.key) : bare;
+        }
+        function learnInfo(ir) {
+          const L = karaokeView.learn;
+          if (!L) return '';
+          const stage = { repeats: 'chords the first time only', numbers: 'chords as numbers', none: 'no chords' }[L.opts.stage] || '';
+          let legend = '';
+          if (L.opts.legend && L.key) {
+            const chords = ir.filter((n) => n.type === 'chord' && !n.noChord && n.content).map((n) => n.content);
+            legend = window.ukemusic.learn.keyLegend(chords, L.key, L.key).map((x) => `${x.numeral} = ${x.chord}`).join(' · ');
+          }
+          return ` · From memory: ${stage}${legend ? ` · ${legend}` : ''}`;
+        }
+        function learnChordEl(chordEl, chord, line) {
+          const mode = learnMode(line);
+          if (mode === 'show' || !chord) return;
+          if (mode === 'number') {
+            chordEl.textContent = learnNumeral(chord);
+            chordEl.classList.add('k-number');
+            return;
+          }
+          chordEl.textContent = '?';
+          chordEl.classList.add('k-hidden');
+          chordEl.title = 'Click to see the chord';
+          chordEl.addEventListener('click', (event) => {
+            event.stopPropagation(); // not "play from here"
+            chordEl.textContent = chord;
+            chordEl.classList.remove('k-hidden');
+            chordEl.classList.add('k-revealed');
+            const needed = karaokeView.learn?.needed;
+            if (needed) needed.set(`${line}:${chord}`, { line, chord });
+          }, { once: true });
+        }
 
         function karaokeRender(ir, schedule, startLine, endLine = 0) {
           const built = window.ukemusic.buildKaraoke(ir, schedule, { startLine, endLine });
@@ -282,8 +298,7 @@
               // strings are picked, then nothing (tap to see it)
               const tabMode = learnMode(line.line);
               const passage = karaokeView.learn && karaokeView.learn.picking ? karaokeView.learn.picking[line.line] : null;
-              const faded = tabMode !== 'show' && Boolean(karaokeView.learn);
-              if (faded) {
+              if (tabMode !== 'show' && karaokeView.learn) {
                 const box = document.createElement('div');
                 box.className = 'k-pick';
                 const summary = passage ? window.ukemusic.learn.passageText(passage, '  ·  ') : 'Picking';
@@ -304,7 +319,7 @@
               } else span.append(pre, bar);
               el.appendChild(span);
               karaokeLines.appendChild(el);
-              karaokeView.lines.push({ line, el, pieces: [{ piece: line.pieces[0], span, bar, done: false }], played: line.start === null && line.line < startLine, tabMarks: faded ? [] : tabMarks, tabStep: -2 });
+              karaokeView.lines.push({ line, el, pieces: [{ piece: line.pieces[0], span, bar, done: false }], played: line.start === null && line.line < startLine, tabMarks: tabMode !== 'show' && karaokeView.learn ? [] : tabMarks, tabStep: -2 });
               continue;
             }
             // Chords with no words (an instrumental): the chords read along the line like words,
@@ -334,7 +349,7 @@
               chord.textContent = piece.chord || ' ';
               if (karaokeView.learn && piece.chord && !piece.bar) learnChordEl(chord, piece.chord, line.line);
               // Words that start before the line's first chord: the chord still playing, faintly (4.29)
-              if (!piece.chord && piece.carried && piece.text.trim() && learnMode(line.line) === 'show') {
+              if (!piece.chord && piece.carried && piece.text.trim() && learnMode(line.line) === 'show') { // (not when playing from memory: it would give the chord away)
                 chord.textContent = `(${piece.carried})`;
                 chord.classList.add('k-carried');
                 chord.title = `${piece.carried} is still playing from the line before`;
@@ -356,6 +371,7 @@
               sep.textContent = '|';
               el.appendChild(sep);
             }
+            if (karaokeView.learn && karaokeTroubleSpots && learnTroubleLines().has(line.line)) el.classList.add('k-trouble');
             karaokeLines.appendChild(el);
             karaokeView.lines.push({ line, el, pieces, played: line.start === null && line.line < startLine });
           }
@@ -420,17 +436,17 @@
         let releaseKaraokeFocus;
         function karaokeStart(ir, schedule, startLine, endLine = 0, learn = null) {
           karaokeView.schedule = schedule;
-          // from memory: which lines show their chords, as numbers, or hidden (kept on a line tap)
+          // 4.39: playing from memory: which lines show their chords, as numbers, or hidden
           const keep = karaokeView.learn && learn && karaokeView.learn.opts === learn ? karaokeView.learn.needed : null;
           if (learn) {
-            const analysis = window.ukemusic.progressions.analyse(ir, { key: learn.key });
-            karaokeView.learn = { opts: learn, plan: window.ukemusic.learn.fadePlan(ir, analysis, learn.stage), key: learn.key, needed: keep || new Map() };
+            const shift = (Number.isFinite(learn.transpose) ? learn.transpose : state.transpose) - songCapo();
+            const analysis = window.ukemusic.progressions.analyse(ir, { key: learn.key || learnKey(shift) }); // the web player passes the key
+            karaokeView.learn = { opts: learn, plan: window.ukemusic.learn.fadePlan(ir, analysis, learn.stage), key: analysis.key, needed: keep || new Map() };
+            // 4.43: the tab's bars as shapes and picking patterns, by line
+            const instrumentId = songInstrument(effectiveConfig()).id;
+            karaokeView.learn.picking = Object.fromEntries(window.ukemusic.learn.pickingSummary(ir, chordLibraryFor(instrumentId), { instrument: instrumentId }).map((x) => [x.line, x]));
           } else karaokeView.learn = null;
           karaokeView.library = chordLibraryFor(songInstrument(effectiveConfig()).id);
-          if (karaokeView.learn) {
-            const instrumentId = songInstrument(effectiveConfig()).id;
-            karaokeView.learn.picking = Object.fromEntries(window.ukemusic.learn.pickingSummary(ir, karaokeView.library, { instrument: instrumentId }).map((x) => [x.line, x]));
-          }
           karaokeView.shapesKey = null;
           karaokeView.shapesIndex = -1;
           document.getElementById('karaokeShapesToggle').setAttribute('aria-pressed', String(karaokeShapesOn()));
@@ -438,9 +454,9 @@
           karaokeView.current = -1;
           clearStrip();
           document.getElementById('karaokeTitle').textContent = state.song?.title || 'New song';
-          const stageText = { repeats: 'chords the first time only', numbers: 'chords as numbers', none: 'no chords' };
+          document.getElementById('karaokeTrouble').hidden = !learn || !karaokeTroubleSpots;
           document.getElementById('karaokeInfo').textContent =
-            `${keyLabel(state.transpose)}${songCapo() ? ` · capo ${songCapo()}` : ''}${karaokeView.learn ? ` · From memory: ${stageText[karaokeView.learn.opts.stage] || ''}` : ''}`;
+            `${learn && learn.legend && karaokeView.learn?.key ? `In ${karaokeView.learn.key.name}` : keyLabel(learn && Number.isFinite(learn.transpose) ? learn.transpose : state.transpose)}${songCapo() ? ` · capo ${songCapo()}` : ''}${learnInfo(ir)}`;
           karaokeRender(ir, schedule, startLine, endLine);
           const opening = karaokeEl.hidden;
           karaokeEl.hidden = false;
@@ -465,10 +481,13 @@
           if (player && player.playing) player.stop();
           if (fullscreenOn() === karaokeEl) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
           karaokeEl.hidden = true;
-          // how playing from memory went
+          // 4.39: how playing from memory went (4.40: the chords you needed are trouble spots)
           if (karaokeView.learn) {
             const needed = [...karaokeView.learn.needed.values()];
-            setStatusMessage(needed.length ? `From memory: you looked at ${needed.map((n) => n.chord).join(', ')}. Practise those, then try again.` : 'From memory: you didn\'t need to look at any chords.');
+            if (needed.length && karaokeTroubleSpots) learnAddTrouble(needed.map((n) => ({ line: n.line, chord: n.chord, from: 'memory' })));
+            showToast(needed.length ? `From memory: you looked at ${needed.length} chord${needed.length === 1 ? '' : 's'}` : 'From memory: you didn\'t need to look at a chord', {
+              detail: needed.length ? `${needed.map((n) => `${n.chord} (line ${n.line})`).join(', ')}: ${karaokeTroubleSpots ? 'they\'re in your trouble spots (Learn → Trouble). Loop them' : 'practise those'}, then try again.` : 'Next: try it with fewer chords shown, or in another key.'
+            });
             karaokeView.learn = null;
           }
           if (karaokeView.raf) window.cancelAnimationFrame(karaokeView.raf);
@@ -487,7 +506,7 @@
           }
         }
 
-        document.getElementById('karaokeButton').addEventListener('click', () => playSong({ karaoke: true }));
+        document.getElementById('karaokeButton').addEventListener('click', () => playSong({ karaoke: true, learn: null }));
         async function toggleKaraokePlayback() {
           try {
             if (!player?.playing) { playSong({karaoke:true,startLine:0}); return; }
@@ -523,7 +542,8 @@
           } else if ((event.key === ' ' || event.code === 'Space') && !event.target.closest('button, input, select')) {
             event.preventDefault();
             toggleKaraokePlayback();
+          } else if ((event.key === 't' || event.key === 'T') && karaokeView.learn && karaokeTroubleSpots && !event.ctrlKey && !event.metaKey && !event.altKey) {
+            event.preventDefault();
+            karaokeMarkTrouble();
           }
         });
-
-        window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : null), start: karaokeStart, stopped: karaokeStopped, close: karaokeClose, view: karaokeView };

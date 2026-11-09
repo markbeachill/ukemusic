@@ -130,17 +130,21 @@ function lineHtml(line, mode) {
   const rest = line.filter((n) => n.type !== 'rhythm' && n.type !== 'repeat');
   const repeat = line.find((n) => n.type === 'repeat');
   const label = rest[0] && rest[0].type === 'structure' ? `<span class="il">${esc(rest[0].content)}</span> ` : '';
+  // 4.74: the source line, so the line playing can be lit (UkeSessionScreen playing())
+  // (as the song sheet numbers it: a {melody} or {pick} line goes with the words after it)
+  const src = line.find((n) => Number.isFinite(n.line) && n.type !== 'melody' && n.type !== 'pick') || line.find((n) => Number.isFinite(n.line));
+  const at = src ? ` data-line="${src.line}"` : '';
   const body = rest.filter((n) => n.type !== 'structure');
   const rep = repeat ? ` <span class="rep">×${repeat.count}</span>` : '';
   if (!body.length) {
-    if (!rhythms.length) return label ? `<div class="ln">${label}${rep}</div>` : '';
+    if (!rhythms.length) return label ? `<div class="ln"${at}>${label}${rep}</div>` : '';
     // a strum on its own line: small, as written
     return `<div class="ss-strum"><span class="sl">Strum</span> ${rhythms.map((r) => esc(r.stop ? 'stop' : (r.recall ? r.strumName : (r.strumName ? `${r.strumName}: ${r.content.split(':').slice(1).join(':').trim() || r.content}` : r.content.trim())))).join(' ')}</div>`;
   }
-  if (body.some((n) => n.grid)) return `<div class="ln grid">${label}${gridLine(body)}${rep}</div>`;
+  if (body.some((n) => n.grid)) return `<div class="ln grid"${at}>${label}${gridLine(body)}${rep}</div>`;
   const { html, hasChords } = mode === 'inline' ? inlineLine(body) : overLine(body);
   const harmony = body.some((n) => n.harmony) ? ' harmony' : '';
-  return `<div class="ln${hasChords ? ' ch' : ''}${harmony}">${label}${html}${rep}</div>`;
+  return `<div class="ln${hasChords ? ' ch' : ''}${harmony}"${at}>${label}${html}${rep}</div>`;
 }
 
 /** The song as session-screen blocks */

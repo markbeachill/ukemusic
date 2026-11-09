@@ -62,7 +62,7 @@ test('a strum on its own line is labelled; line repeats show ×n', () => {
 
 test('harmony lines are marked', () => {
   const html = view.sessionHtml(ir('{harmony}\n[C]Ooh\n{lead}\n[G]Words\n'));
-  assert.ok(/<div class="ln ch harmony">/.test(html), html);
+  assert.ok(/<div class="ln ch harmony"( data-line="\d+")?>/.test(html), html);
 });
 
 test('sessionChords: the chords in order, once each, no N.C.', () => {

@@ -1,5 +1,4 @@
-      /* ── Karaoke view ─────────────────────────────────── */
-      .karaoke {
+.karaoke {
         position: fixed;
         inset: 0;
         z-index: 50;
@@ -114,11 +113,12 @@
       .k-text { display: block; }
       .k-progress { position: absolute; left: 0; bottom: 0; height: 4px; width: 0; border-radius: 2px; background: var(--accent); }
       .k-piece.done .k-progress { width: 100%; opacity: 0.35; }
-      /* from memory (Learn) */
-      .k-chord.k-hidden { color: #888; cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+      .k-line.current .k-piece.done .k-text { color: var(--accent); }
+      /* playing from memory (Learn): chords hidden or as numbers, the picking, trouble spots */
+      .k-chord.k-hidden { color: var(--muted, #888); cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
       .k-chord.k-revealed { color: #c2410c; }
       .k-chord.k-number { font-style: normal; }
-
-.k-pick { font: 600 0.75em var(--font-family, system-ui); color: var(--muted, #667); padding: 4px 0; }
-.k-pick.k-hidden { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
-.k-pick.k-revealed { color: #c2410c; }
+      .k-pick { font: 600 0.75em var(--font-family, system-ui); color: var(--muted, #667); padding: 4px 0; }
+      .k-pick.k-hidden { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+      .k-pick.k-revealed { color: #c2410c; }
+      .k-line.k-trouble::before { content: '⚑'; position: absolute; margin-left: -1.4em; color: #c2410c; font-size: 0.8em; }

@@ -53,7 +53,7 @@ test('desktop: the TV bar has the size buttons; the choice is saved', () => {
   for (const id of ['sessionSize', 'sessionSmaller', 'sessionBigger']) assert.match(DESKTOP, new RegExp(`<button id="${id}" type="button"`), id);
   assert.ok(DESKTOP.includes("size: state.config?.export?.session_size === 'same' ? 'same' : 'fit', same: Number(state.config?.export?.session_same) || 4.5"));
   assert.ok(DESKTOP.includes('ex.session_size = s.size;'));
-  assert.match(DESKTOP, /'c', 'C', 's', 'S'\]\.includes\(e\.key\)/, 'the laptop passes S on to the TV');
+  assert.match(DESKTOP, /'c', 'C', 's', 'S'[\],]/, 'the laptop passes S on to the TV');
   assert.match(read('main.js'), /session_size: 'fit',[^\n]*\n\s*session_same: 4\.5/);
 });
 

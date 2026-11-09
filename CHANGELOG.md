@@ -1,5 +1,30 @@
 # Changelog
 
+## v4.74.0
+
+### The Session screen follows the music
+- **The line being played lights up** on the Session screen (pale yellow), and the page turns to it by itself.
+  - **Desktop:** press Play on the laptop and the TV follows. If the song is later in the set, the TV goes to it.
+  - **Web player:** the Group screen has its own **▶ Play** button.
+- **The chord now and the next one** show in the screen's top bar while it plays ("G7 then C"). A thin bar along the bottom shows how far through the song you are.
+- **Blank the screen:** press B, or the clicker's blank button, for a black screen between songs or while you talk. Press B again, or tap, to bring the words back. On desktop, the laptop's bar has a **Blank** button.
+- **Go to a verse or chorus:** keys 1 to 9 jump to that part of the song, which flashes so everyone finds it. A **Go to…** list has every part: on the laptop's bar (desktop) and in the Group screen's bar (web).
+- **Colours for a hall:** press D, or **Colours** on the laptop's bar, to go round four schemes. Your choice is kept.
+  - **Light:** red chords, as before.
+  - **Blue chords:** dark blue, easier to read from the back of a room.
+  - **Dark.**
+  - **High contrast:** white words and yellow chords on black, for a bright hall or a weak projector.
+- **The screen stays awake:** no screen saver or sleep while the Session screen is up.
+- **Fixed:** on the web player, the Group screen's dark mode showed light text on a white background.
+- With **Stage → choruses once**, the shortened song's lines aren't the song's own, so nothing is lit; the chord now and next still show.
+
+### Karaoke: the same on desktop and web
+- **The web player's karaoke is now the desktop's own code,** copied over and checked by the tests, so the two can't drift apart again. What this brings to the web:
+  - sung words take the accent colour, as on desktop
+  - from memory: a chord's number stays right for chords like C×2
+  - the same messages when you finish
+- **Trouble spots stay desktop-only** (the web player doesn't keep them), so the ⚑ button and T don't appear there.
+
 ## v4.73.0
 
 ### Big screens for a club

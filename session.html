@@ -24,8 +24,9 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #fff; }
   });
   document.addEventListener('keydown', (e) => { if (screen.key(e.key)) e.preventDefault(); });
   U.session.onKey((k) => screen.key(k));
+  U.session.onPlaying((info) => screen.playing(info)); // 4.74: the line playing, lit
   U.session.onData(async (data) => {
-    document.body.style.background = data.dark ? '#0f1312' : '#fff';
+    document.body.style.background = data.dark || data.theme === 'dark' || data.theme === 'contrast' ? '#000' : '#fff';
     // 4.71: Easy to read text (Atkinson Hyperlegible), as in the main window
     if (data.easyRead && !document.getElementById('easyReadCss')) document.head.insertAdjacentHTML('beforeend', `<style id="easyReadCss">${U.easyReadCss()}</style>`);
     document.documentElement.toggleAttribute('data-easy-read', data.easyRead === true);

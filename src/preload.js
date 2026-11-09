@@ -226,6 +226,8 @@ contextBridge.exposeInMainWorld('ukemusic', {
     open: (payload) => ipcRenderer.invoke('session:open', payload),
     check: (payload) => ipcRenderer.invoke('session:check', payload),
     key: (key) => ipcRenderer.send('session:key', key),
+    playing: (info) => ipcRenderer.send('session:playing', info), // 4.74: the song playing on the laptop
+    onPlaying: (cb) => ipcRenderer.on('session:playing', (_e, info) => cb(info)),
     close: () => ipcRenderer.send('session:close'),
     sendState: (state) => ipcRenderer.send('session:state', state),
     sendChecked: (result) => ipcRenderer.send('session:checked', result),

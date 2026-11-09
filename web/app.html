@@ -293,7 +293,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 .about-list { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
 .about-licence { display: inline-block; font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 0 7px; }
 .about-body a { color: var(--accent); }
-#sessionView { position: fixed; inset: 0; z-index: 200; background: #fff; }
+#sessionView { position: fixed; inset: 0; z-index: 200; } /* its colours are the screen's own (src/session-screen.js), dark or light */
 #sessionView[hidden] { display: none; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(150px + env(safe-area-inset-bottom, 0px)); z-index: 60; background: var(--ink); color: var(--surface); padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; max-width: 90vw; }
 
@@ -726,6 +726,9 @@ function unlockAudio() {
 }
 for (const type of ['pointerdown', 'touchend', 'click', 'keydown']) document.addEventListener(type, unlockAudio, true);
 function setStatusMessage(text) { window.ukemusicToast && window.ukemusicToast(text); }
+// 4.74: karaoke is the desktop's own code (tools/sync-karaoke.js); these are the desktop helpers it uses
+function showToast(message, { detail = '' } = {}) { setStatusMessage(detail ? `${message}. ${detail}` : message); }
+function learnKey() { return null; } // the web player passes the song's key with the Learn options
 window.ukemusicLogError = (message, error) => console.warn(message, error);
 async function confirmLoseChanges() { return true; }
 // Karaoke: the song being played, its key and capo, and the text size (kept on this device)
@@ -748,6 +751,7 @@ function useScratchDocument(text, { suggestedTitle } = {}) { window.ukemusicNewS
 <script>
 (() => {
 /*KARAOKE_JS*/
+window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : null), start: karaokeStart, stopped: karaokeStopped, close: karaokeClose, view: karaokeView };
 })();
 </script>
 <script>
@@ -2118,7 +2122,10 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       const shown = currentIr(stageText(played(song.text)));
       const key = songKey(song);
       const sub = [[song.settings?.song?.artist, song.settings?.song?.year].filter(Boolean).join(', '), key ? U.keys.describe(U.keys.transpose(key, p.transpose)) : '', p.capo ? `Capo ${p.capo}` : '', p.instrument !== 'soprano' ? U.instrument(p.instrument).name : ''].filter(Boolean).join(' · ');
-      return U.sessionSong(shown, { title: song.title, sub, library: library(), common: song.settings?.diagrams?.common_chords });
+      const made = U.sessionSong(shown, { title: song.title, sub, library: library(), common: song.settings?.diagrams?.common_chords });
+      // 4.74: with repeated choruses shown once, its lines aren't the song's own: nothing to light
+      if (prefs().stageChorus === 'once') for (const mode of Object.keys(made.html || {})) made.html[mode] = String(made.html[mode]).replace(/ data-line="\d+"/g, '');
+      return made;
     } catch (error) {
       return { title: song.title, sub: '', diagrams: [], html: { over: `<p>This song couldn’t be shown: ${esc(error.message)}</p>`, inline: '' } };
     } finally { view.song = saved; }
@@ -2149,15 +2156,22 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     box.hidden = false;
     try { if (box.requestFullscreen) box.requestFullscreen().catch(() => {}); } catch (_e) { /* not here (iPhone) */ }
     // 4.73: fit each song, or the same size for every song (S, or the button in the bar): kept on this device
+    // 4.74: and the colours (D); ▶ Play plays the song on screen, its line lit as it goes
     session = UkeSessionScreen.create(box, { css: U.sessionCss(), onClose: closeSession, closeButton: true, onState: (st) => {
-      if (st.size && (look.sessionSize !== st.size || look.sessionSame !== st.same)) { look.sessionSize = st.size; look.sessionSame = st.same; local.set('look', look); }
+      if (st.size && (look.sessionSize !== st.size || look.sessionSame !== st.same || look.sessionTheme !== st.theme)) { look.sessionSize = st.size; look.sessionSame = st.same; look.sessionTheme = st.theme; local.set('look', look); }
+    }, onPlay: ({ index, playing }) => {
+      if (playing) { stop(); return; }
+      const song = songsList[index];
+      if (!song) return;
+      if (!view.song || view.song.id !== song.id) openSong(song.id);
+      start(0);
     } });
     const lazy = songsList.map((song) => {
       let made = null;
       const get = () => (made = made || sessionSong(song));
-      return { title: song.title, get sub() { return get().sub; }, get diagrams() { return get().diagrams; }, get html() { return get().html; } };
+      return { title: song.title, folder: song.id, get sub() { return get().sub; }, get diagrams() { return get().diagrams; }, get html() { return get().html; } };
     });
-    session.show({ songs: lazy, start: Math.max(0, ids.indexOf(view.song.id)), hideCommon: look.hideCommon === true, dark: isDark(), minPx: Math.round(Math.max(13, Math.min(18, Math.min(innerWidth, innerHeight) / 45))), size: look.sessionSize || 'fit', same: look.sessionSame || 4.5 });
+    session.show({ songs: lazy, start: Math.max(0, ids.indexOf(view.song.id)), hideCommon: look.hideCommon === true, theme: look.sessionTheme || (isDark() ? 'dark' : 'light'), minPx: Math.round(Math.max(13, Math.min(18, Math.min(innerWidth, innerHeight) / 45))), size: look.sessionSize || 'fit', same: look.sessionSame || 4.5 });
     box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', 'Group screen');
     releaseSessionFocus = UkeSongUI.enterOverlay(box);
     document.addEventListener('keydown', sessionKeys, true);
@@ -2287,6 +2301,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
   }
   function ended() {
     cancelAnimationFrame(play.raf);
+    if (session) session.playing(null);
     clearSung($('sheet'));
     $('playBtn').textContent = '▶ Play';
     $('player').classList.remove('active'); $('stopBtn').hidden = true;
@@ -2353,6 +2368,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       if (bar) {
         if (play.barKey !== index) {
           play.barKey = index;
+          if (session) session.playing(UkeSessionScreen.nowFrom(schedule, index, { folder: view.song.id, title: view.song.title })); // 4.74: lit on the Group screen
           showChords(schedule.bars, index, library());
           const all = bar.pickSteps
             ? bar.pickSteps.map((sym) => ({ stroke: sym === '·' ? '-' : 'P', symbol: sym }))   // picked (4.44): the strings in order

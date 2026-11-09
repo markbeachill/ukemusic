@@ -367,9 +367,16 @@
       .session-cta { border-color: #0e6b64; color: #0e6b64; }
       .session-bar { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 900; display: flex; align-items: center; gap: 12px; padding: 8px 10px 8px 16px; border-radius: 14px; background: #0e6b64; color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.25); font-size: 14px; max-width: 92vw; }
       .session-bar[hidden] { display: none; }
+      /* 4.74: one row (left: 50% would otherwise squeeze it into half the window) */
+      .session-bar { width: max-content; max-width: 96vw; gap: 8px; }
+      .session-bar > * { white-space: nowrap; flex: 0 0 auto; }
+      .session-bar #sessionNow, .session-bar #sessionNext { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; max-width: 18em; }
       .session-bar .muted { color: #cfe7e3; }
       .session-bar button { border: 0; border-radius: 9px; padding: 6px 12px; font: inherit; font-weight: 700; background: rgba(255,255,255,.16); color: #fff; cursor: pointer; }
       .session-bar button:hover { background: rgba(255,255,255,.28); }
+      .session-bar button[aria-pressed="true"] { background: #fff; color: #0e6b64; }
+      .session-bar select { border: 0; border-radius: 9px; padding: 6px 8px; font: inherit; font-weight: 700; background: rgba(255,255,255,.16); color: #fff; max-width: 14em; }
+      .session-bar select option { color: #111; }
       /* Free Practice: its own colour, first thing on the songs screen, so it isn't missed (4.33.1) */
       .practice-cta { flex: none; align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border: 0; border-radius: 12px; background: #c2410c; color: #fff; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
       .practice-cta:hover { background: #9a3412; }
@@ -1418,9 +1425,6 @@
       .learn-change .lc-actions { display: grid; gap: 4px; }
       .learn-change.trouble-row { grid-template-columns: minmax(0, 1fr) auto; }
       .learn-change.trouble-row .lc-actions { grid-auto-flow: column; }
-      .k-chord.k-hidden { color: var(--muted, #888); cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
-      .k-chord.k-revealed { color: #c2410c; }
-      .k-chord.k-number { font-style: normal; }
       .export-sub { margin-left: 22px; font-size: 13px; }
       .pick-h { font-size: 14px; margin: 14px 0 2px; }
       .rib-button.dim { opacity: 0.5; }
@@ -1437,10 +1441,6 @@
       .pick-help { max-height: calc(100vh - 190px); overflow: auto; font-size: 14px; line-height: 1.5; }
       .pick-help p, .pick-help ol { margin: 0 0 10px; }
       .pick-help-code { font: 12.5px/1.4 Consolas, "Courier New", monospace; background: var(--panel, #f4f6f5); padding: 8px 10px; border-radius: 6px; white-space: pre-wrap; margin: 0 0 10px; }
-      .k-pick { font: 600 0.75em var(--font-family, system-ui); color: var(--muted, #667); padding: 4px 0; }
-      .k-pick.k-hidden { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
-      .k-pick.k-revealed { color: #c2410c; }
-      .k-line.k-trouble::before { content: '⚑'; position: absolute; margin-left: -1.4em; color: #c2410c; font-size: 0.8em; }
       .learn-circle-dialog { width: min(860px, 96vw); }
       .learn-circle { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: start; }
       .learn-circle svg { width: min(440px, 80vw); height: auto; }
@@ -1840,6 +1840,14 @@
       .k-progress { position: absolute; left: 0; bottom: 0; height: 4px; width: 0; border-radius: 2px; background: var(--accent); }
       .k-piece.done .k-progress { width: 100%; opacity: 0.35; }
       .k-line.current .k-piece.done .k-text { color: var(--accent); }
+      /* playing from memory (Learn): chords hidden or as numbers, the picking, trouble spots */
+      .k-chord.k-hidden { color: var(--muted, #888); cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+      .k-chord.k-revealed { color: #c2410c; }
+      .k-chord.k-number { font-style: normal; }
+      .k-pick { font: 600 0.75em var(--font-family, system-ui); color: var(--muted, #667); padding: 4px 0; }
+      .k-pick.k-hidden { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+      .k-pick.k-revealed { color: #c2410c; }
+      .k-line.k-trouble::before { content: '⚑'; position: absolute; margin-left: -1.4em; color: #c2410c; font-size: 0.8em; }
 
       .capo-choices { display: grid; gap: 8px; margin: 12px 0; }
       .capo-choices button { text-align: left; display: grid; gap: 2px; padding: 10px 12px; }
@@ -3140,6 +3148,9 @@
       <span id="sessionNow"></span>
       <span id="sessionNext" class="muted"></span>
       <span class="appbar-spacer"></span>
+      <select id="sessionGoto" aria-label="Go to a verse or chorus on the TV" title="Go to a verse or chorus (1–9)" hidden></select>
+      <button id="sessionTheme" type="button" title="Colours on the TV: red chords, blue chords, dark, high contrast (D)">Colours</button>
+      <button id="sessionBlank" type="button" title="Blank the TV, and back (B)" aria-pressed="false">Blank</button>
       <button id="sessionSize" type="button" title="Text: each song as big as fits, or every song the same size (S)">Fit each song</button>
       <button id="sessionSmaller" type="button" title="Smaller text (−)">A−</button>
       <button id="sessionBigger" type="button" title="Bigger text (+)">A+</button>
@@ -4082,6 +4093,7 @@
       </div>
     </div>
     <script src="src/song-ui.js"></script>
+    <script src="src/session-screen.js"></script>
     <script src="src/playback-audio.js"></script>
     <script>
       // Error logging: send uncaught errors (with stack traces) to logs/ukemusic.log
@@ -4281,6 +4293,7 @@
             stage_format: 'auto',
             session_size: 'fit',   // 4.73: Session screen text: 'fit' each song, or the 'same' size for every song
             session_same: 4.5,      // 4.73: that same size, in % of the screen's height
+            session_theme: 'light', // 4.74: its colours: light, blue, dark, contrast (D)
             stage_chorus: 'full',
             stage_diagrams: 'song'
           },
@@ -7304,6 +7317,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           stopButton.disabled = !playing;
           document.getElementById('pickStopButton').disabled = !playing;   // 4.44: and on the Pick tab
           if (!playing) {
+            if (sessionOpen) window.ukemusic.session.playing(null);
             nowPlaying.textContent = '';
             playingLine = null;
             highlightLine(null);
@@ -7585,8 +7599,10 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           state.lastSchedule = schedule;
           try {
             await player.play(schedule, {
-              onBar: (bar) => {
+              onBar: (bar, index) => {
                 if (!bar) return;
+                // 4.74: the Session screen lights the line playing and shows the chord now and next
+                if (sessionOpen) window.ukemusic.session.playing(UkeSessionScreen.nowFrom(schedule, index, { folder: state.song?.folder || '', title: state.song?.title || state.suggestedTitle || 'Song' }));
                 nowPlaying.textContent = `${range ? `↻${round} ` : ''}♪ ${bar.chord}`;
                 if (bar.line !== playingLine) {
                   playingLine = bar.line;
@@ -7673,8 +7689,12 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         // ── Karaoke view ────────────────────────────────────────
         // Words on screen, several lines at once; the current line is lit and a line under
         // each chord's words lengthens as its bar plays. Timing comes from src/karaoke.js.
+        // 4.74: the web player runs this same code (web/k_js.js, k_css.css, k_markup.html are
+        // copies, checked by tools/sync-karaoke.js). What only the desktop has, trouble spots,
+        // is used only where it's there (karaokeTroubleSpots).
         const karaokeEl = document.getElementById('karaoke');
         const karaokeLines = document.getElementById('karaokeLines');
+        const karaokeTroubleSpots = typeof learnAddTrouble === 'function';
         const karaokeChord = document.getElementById('karaokeChord');
         const karaokeSteps = document.getElementById('karaokeSteps');
         const karaokeView = { lines: [], current: -1, raf: null, schedule: null, startLine: 0, stripKey: null, stripCells: [] };
@@ -8039,7 +8059,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               sep.textContent = '|';
               el.appendChild(sep);
             }
-            if (karaokeView.learn && learnTroubleLines().has(line.line)) el.classList.add('k-trouble');
+            if (karaokeView.learn && karaokeTroubleSpots && learnTroubleLines().has(line.line)) el.classList.add('k-trouble');
             karaokeLines.appendChild(el);
             karaokeView.lines.push({ line, el, pieces, played: line.start === null && line.line < startLine });
           }
@@ -8108,7 +8128,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const keep = karaokeView.learn && learn && karaokeView.learn.opts === learn ? karaokeView.learn.needed : null;
           if (learn) {
             const shift = (Number.isFinite(learn.transpose) ? learn.transpose : state.transpose) - songCapo();
-            const analysis = window.ukemusic.progressions.analyse(ir, { key: learnKey(shift) });
+            const analysis = window.ukemusic.progressions.analyse(ir, { key: learn.key || learnKey(shift) }); // the web player passes the key
             karaokeView.learn = { opts: learn, plan: window.ukemusic.learn.fadePlan(ir, analysis, learn.stage), key: analysis.key, needed: keep || new Map() };
             // 4.43: the tab's bars as shapes and picking patterns, by line
             const instrumentId = songInstrument(effectiveConfig()).id;
@@ -8122,7 +8142,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           karaokeView.current = -1;
           clearStrip();
           document.getElementById('karaokeTitle').textContent = state.song?.title || 'New song';
-          document.getElementById('karaokeTrouble').hidden = !learn;
+          document.getElementById('karaokeTrouble').hidden = !learn || !karaokeTroubleSpots;
           document.getElementById('karaokeInfo').textContent =
             `${learn && learn.legend && karaokeView.learn?.key ? `In ${karaokeView.learn.key.name}` : keyLabel(learn && Number.isFinite(learn.transpose) ? learn.transpose : state.transpose)}${songCapo() ? ` · capo ${songCapo()}` : ''}${learnInfo(ir)}`;
           karaokeRender(ir, schedule, startLine, endLine);
@@ -8152,9 +8172,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           // 4.39: how playing from memory went (4.40: the chords you needed are trouble spots)
           if (karaokeView.learn) {
             const needed = [...karaokeView.learn.needed.values()];
-            if (needed.length) learnAddTrouble(needed.map((n) => ({ line: n.line, chord: n.chord, from: 'memory' })));
+            if (needed.length && karaokeTroubleSpots) learnAddTrouble(needed.map((n) => ({ line: n.line, chord: n.chord, from: 'memory' })));
             showToast(needed.length ? `From memory: you looked at ${needed.length} chord${needed.length === 1 ? '' : 's'}` : 'From memory: you didn\'t need to look at a chord', {
-              detail: needed.length ? `${needed.map((n) => `${n.chord} (line ${n.line})`).join(', ')}: they're in your trouble spots (Learn → Trouble). Loop them, then try again.` : 'Next: try it with fewer chords shown (Learn → Chords shown), or in another key.'
+              detail: needed.length ? `${needed.map((n) => `${n.chord} (line ${n.line})`).join(', ')}: ${karaokeTroubleSpots ? 'they\'re in your trouble spots (Learn → Trouble). Loop them' : 'practise those'}, then try again.` : 'Next: try it with fewer chords shown, or in another key.'
             });
             karaokeView.learn = null;
           }
@@ -8210,7 +8230,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           } else if ((event.key === ' ' || event.code === 'Space') && !event.target.closest('button, input, select')) {
             event.preventDefault();
             toggleKaraokePlayback();
-          } else if ((event.key === 't' || event.key === 'T') && karaokeView.learn && !event.ctrlKey && !event.metaKey && !event.altKey) {
+          } else if ((event.key === 't' || event.key === 'T') && karaokeView.learn && karaokeTroubleSpots && !event.ctrlKey && !event.metaKey && !event.altKey) {
             event.preventDefault();
             karaokeMarkTrouble();
           }
@@ -12179,7 +12199,10 @@ function showTab(tab) {
           const shown = window.ukemusic.transposeIR(ir, semitones - capo, { spelling: 'key', key, instrument: instrument.id });
           const keyNow = key ? window.ukemusic.keys.transpose(key, semitones) : null;
           const sub = [creditText(config), keyNow ? window.ukemusic.keys.describe(keyNow) : '', capo ? `Capo ${capo}` : '', instrument.id !== 'soprano' ? instrument.name : ''].filter(Boolean).join(' · ');
-          return window.ukemusic.sessionSong(shown, { title, sub, folder, library: chordLibraryFor(instrument.id, config), common: config?.diagrams?.common_chords, leftHanded: Boolean(state.config?.diagrams?.left_handed) });
+          const song = window.ukemusic.sessionSong(shown, { title, sub, folder, library: chordLibraryFor(instrument.id, config), common: config?.diagrams?.common_chords, leftHanded: Boolean(state.config?.diagrams?.left_handed) });
+          // 4.74: with repeated choruses shown once, its lines aren't the song's own: nothing to light
+          if (once) for (const mode of Object.keys(song.html || {})) song.html[mode] = String(song.html[mode]).replace(/ data-line="\d+"/g, '');
+          return song;
         }
         async function sessionSongFromLine(line) {
           const folder = folderOf(line);
@@ -12190,13 +12213,15 @@ function showTab(tab) {
         }
         // 4.73: size: 'fit' (each song as big as fits) or 'same' (every song the same size: a share
         // of the screen's height, export.session_same %), chosen with S or the bar's button, saved
-        const sessionOptions = () => ({ hideCommon: state.config?.diagrams?.skip_common === true || state.config?.diagrams?.skip_common === 'true', minPx: Number(state.config?.export?.session_min_px) || 18, easyRead: easyRead(), size: state.config?.export?.session_size === 'same' ? 'same' : 'fit', same: Number(state.config?.export?.session_same) || 4.5 });
+        const sessionOptions = () => ({ hideCommon: state.config?.diagrams?.skip_common === true || state.config?.diagrams?.skip_common === 'true', minPx: Number(state.config?.export?.session_min_px) || 18, easyRead: easyRead(), size: state.config?.export?.session_size === 'same' ? 'same' : 'fit', same: Number(state.config?.export?.session_same) || 4.5, theme: state.config?.export?.session_theme || 'light' });
         let sessionExternal = false;
+        let sessionOpen = false; // 4.74: on the TV or not, the song playing is lit there
         async function openSession(songs, start = 0) {
           if (!songs.length) return;
           try {
             const r = await window.ukemusic.session.open({ songs, start, ...sessionOptions() });
             sessionExternal = Boolean(r?.external);
+            sessionOpen = true;
             document.getElementById('sessionBar').hidden = !sessionExternal;
           } catch (e) {
             showToast('Could not open the Session screen', { detail: String(e.message || e), error: true });
@@ -12220,11 +12245,27 @@ function showTab(tab) {
         document.getElementById('sessionFwd').addEventListener('click', () => window.ukemusic.session.key('ArrowRight'));
         document.getElementById('sessionEnd').addEventListener('click', () => window.ukemusic.session.close());
         document.getElementById('sessionSize').addEventListener('click', () => window.ukemusic.session.key('S'));
+        document.getElementById('sessionTheme').addEventListener('click', () => window.ukemusic.session.key('D'));
+        document.getElementById('sessionBlank').addEventListener('click', () => window.ukemusic.session.key('B'));
+        document.getElementById('sessionGoto').addEventListener('change', (e) => { if (e.target.value !== '') window.ukemusic.session.key(`#${e.target.value}`); });
         document.getElementById('sessionSmaller').addEventListener('click', () => window.ukemusic.session.key('-'));
         document.getElementById('sessionBigger').addEventListener('click', () => window.ukemusic.session.key('+'));
         window.ukemusic.session.onState((s) => {
           const bar = document.getElementById('sessionBar');
-          if (s.closed) { bar.hidden = true; sessionExternal = false; return; }
+          if (s.closed) { bar.hidden = true; sessionExternal = false; sessionOpen = false; return; }
+          // 4.74: blank, the colours, and the song's verses and choruses to go to
+          const blank = document.getElementById('sessionBlank');
+          blank.setAttribute('aria-pressed', String(Boolean(s.blank)));
+          blank.textContent = s.blank ? 'Show' : 'Blank';
+          const go = document.getElementById('sessionGoto');
+          const options = (s.sections || []).length > 1 ? `<option value="">Go to…</option>${s.sections.map((x, k) => `<option value="${k}">${k < 9 ? `${k + 1}. ` : ''}${escapeText(x.label)}</option>`).join('')}` : '';
+          if (go.innerHTML !== options) go.innerHTML = options;
+          go.hidden = !options;
+          go.value = '';
+          if (s.theme && state.config?.export && state.config.export.session_theme !== s.theme) {
+            state.config.export.session_theme = s.theme;
+            persistConfig().catch((error) => window.ukemusicLogError('Could not save the Session screen colours', error));
+          }
           // 4.73: fit each song / same size, and the same size, are kept for next time
           if (s.size) {
             document.getElementById('sessionSize').textContent = s.size === 'same' ? 'Same size' : 'Fit each song';
@@ -12242,7 +12283,7 @@ function showTab(tab) {
         document.addEventListener('keydown', (e) => {
           if (!sessionExternal || document.getElementById('sessionBar').hidden) return;
           if (e.target.closest?.('input, textarea, select, [contenteditable], .cm-editor')) return;
-          if (['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ' ', 'Home', 'End', 'Escape', '+', '-', '=', 'm', 'M', 'd', 'D', 'c', 'C', 's', 'S'].includes(e.key)) {
+          if (['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ' ', 'Home', 'End', 'Escape', '+', '-', '=', 'm', 'M', 'd', 'D', 'c', 'C', 's', 'S', 'b', 'B', '.', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(e.key)) {
             e.preventDefault();
             e.stopPropagation();
             window.ukemusic.session.key(e.key);

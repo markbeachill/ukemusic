@@ -99,7 +99,7 @@ test("4.40.1: Learn goes by the app's key, moved with the chords (Baby Love in G
   assert.strictEqual(r.key.name, 'G', 'the key given is the key used');
   assert.strictEqual(r.chords.find((c) => c.chord === 'C').numeral, 'IV');
   const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-  assert.strictEqual((html.match(/analyse\([^)]*\{ key: learnKey\(/g) || []).length, 4, 'the sheet, numbers in the preview, karaoke and Chord patterns');
+  assert.strictEqual((html.match(/analyse\([^)]*\{ key: (learn\.key \|\| )?learnKey\(/g) || []).length, 4, 'the sheet, numbers in the preview, karaoke and Chord patterns');
 });
 
 test('4.40.1: the circle turns so the key is at the top, ringed, with its numbers', () => {

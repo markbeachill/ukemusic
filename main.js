@@ -18,6 +18,7 @@ const {
   dialog,
   ipcMain,
   Menu,
+  powerSaveBlocker,
   screen,
   shell
 } = require('electron');
@@ -63,6 +64,7 @@ const DEFAULT_CONFIG = {
     stage_format: 'auto',   // 4.70: Auto (chords above on screen, in the words in print); 4.52–4.69 Compact
     session_size: 'fit',   // 4.73: Session screen text: 'fit' each song, or the 'same' size for every song
     session_same: 4.5,      // 4.73: that same size, in % of the screen's height
+    session_theme: 'light', // 4.74: its colours: light, blue, dark, contrast (D)
     stage_compact: true,       // 4.52: settings from before then have been moved to Compact once
     stage_auto: true,          // 4.70: and to Auto once
     stage_chorus: 'full',
@@ -1142,7 +1144,10 @@ function registerIpc() {
       });
       sessionWindow.setMenuBarVisibility(false);
       attachWindowLogging(sessionWindow);
+      // 4.74: no screen saver or sleep while the Session screen is up (a club night is long)
+      const awake = powerSaveBlocker.start('prevent-display-sleep');
       sessionWindow.on('closed', () => {
+        if (powerSaveBlocker.isStarted(awake)) powerSaveBlocker.stop(awake);
         sessionWindow = null;
         if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('session:state', { closed: true });
       });
@@ -1155,6 +1160,8 @@ function registerIpc() {
   });
   ipcMain.on('session:key', (_event, key) => { if (sessionWindow && !sessionWindow.isDestroyed()) sessionWindow.webContents.send('session:key', key); });
   ipcMain.on('session:state', (_event, state) => { if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('session:state', state); });
+  // 4.74: what's playing on the laptop (the line, the chord now and next, how far): lit on the TV
+  ipcMain.on('session:playing', (_event, info) => { if (sessionWindow && !sessionWindow.isDestroyed()) sessionWindow.webContents.send('session:playing', info); });
   ipcMain.on('session:close', () => { if (sessionWindow && !sessionWindow.isDestroyed()) sessionWindow.close(); });
   // Does every song fit one screen? Each is laid out, unseen, at 1920×1080 (a TV), as the
   // Session screen would; the answer lists the songs that need pages or small text.
