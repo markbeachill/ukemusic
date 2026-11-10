@@ -39,7 +39,7 @@
     { id: 'strumLook', app: 'desktop', where: 'Display', name: 'How strum patterns look', level: 'all' },
     { id: 'layout', app: 'both', where: 'Display; web: Settings', name: 'Layout: chords above, in the words, raised', level: 'simple' },
     { id: 'tabLook', app: 'desktop', where: 'Display', name: 'Tab: frets and size', level: 'all', uses: 'picking' },
-    { id: 'chordEdit', app: 'both', where: 'Display; web: the Edit page', name: 'Edit chords on the sheet', level: 'simple' },
+    { id: 'chordEdit', app: 'both', where: 'Write; web: the Edit page', name: 'Edit chords on the sheet', level: 'simple' },
     // ── Desktop: Export ──
     { id: 'export', app: 'desktop', where: 'Export', name: 'Export now, the exports folder', level: 'simple' },
     { id: 'pdfs', app: 'desktop', where: 'Export', name: 'PDFs', level: 'simple' },

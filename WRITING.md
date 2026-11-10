@@ -63,6 +63,17 @@ Oh! Su[F]sanna
 - A chord with nothing after it (at the end of a line, or on a line of its own) is fine.
 - Anything in single brackets that isn't a chord is shown as written, with a warning, so typos get noticed: `[Cmj]`.
 
+### Or move the chords on the sheet
+
+Rather not type brackets? Turn on **Edit chords on the sheet**: on the desktop, **Write → On the sheet**, or right-click the preview; in the web player, the box beside the preview on the Edit page. Then, on the sheet:
+
+- **Drag a chord** to where it's played: along the words, part way into a word, or onto another line. A thin line shows where it will land.
+- **Click a chord** to change it to another of the song's chords, or type one; its timing (`x2`, `:2`) stays. Or take it out, or choose its shape.
+- **Click in the words** to put a chord there.
+- **Drag a chord shape** from the diagrams onto the words to put that chord there.
+
+Each change is made in the song's words, `[C]` and all, as if you'd typed it: Undo works as usual. In another key or with a capo, a chord you name on the sheet is written in the song's own key.
+
 ### How long a chord lasts
 
 When the song is played, **each chord lasts one bar** (one pass of the strum pattern). To hold it longer:

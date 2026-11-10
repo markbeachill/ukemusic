@@ -12,6 +12,9 @@
 //
 //   const ed = UkeSheetChordEditor.attach(root, { onEdit(op), chords: () => names, onShape: (name) => … })
 //   ed.detach()
+//   UkeSheetChordEditor.contextToggle(doc, { isOn, onToggle(on), unavailable, within })   4.79: a
+//     right-click on the sheet (within an element, if given) offers "Edit chords on the sheet", on
+//     or off; unavailable() can say why not here ('' when it can be)
 (function (rootObj) {
   const SKIP = '.ichord, .chord, .ib, .inline-label, .bar, .sce-pop, .rhythm, .strum-box';
   const BOXES = '.lyrics, .inline-line, td.lyric';
@@ -32,7 +35,13 @@
 .sce-pop form { display: flex; gap: 5px; margin: 0 0 8px; }
 .sce-pop input { font: inherit; width: 7em; padding: 3px 6px; border: 1px solid #c9d3d0; border-radius: 8px; }
 .sce-pop .sce-del { color: #b91c1c; }
-.sce-pop .sce-tip { margin: 2px 0 0; font-size: 12px; color: #667; }`;
+.sce-pop .sce-tip { margin: 2px 0 0; font-size: 12px; color: #667; }
+.sce-menu { padding: 4px; }
+.sce-menu .sce-item { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; border: 0; background: none; padding: 6px 10px; border-radius: 8px; font-weight: 600; }
+.sce-menu .sce-item:hover:not(:disabled) { background: #e3ece9; }
+.sce-menu .sce-item:disabled { color: #888; cursor: default; }
+.sce-menu .sce-tick { width: 1.1em; color: #0e6b64; }
+.sce-menu .sce-tip { padding: 0 10px 4px 34px; max-width: 240px; }`;
 
   function attach(root, { onEdit, chords = () => [], onShape = null } = {}) {
     const doc = root.ownerDocument;
@@ -307,12 +316,58 @@
     root.__sce = api;
     return api;
   }
+  // 4.79: right-click the sheet: Edit chords on the sheet, on or off
+  function contextToggle(doc, { isOn, onToggle, unavailable = () => '', within = null } = {}) {
+    if (doc.__sceMenu) { Object.assign(doc.__sceMenu, { isOn, onToggle, unavailable, within }); return; }
+    const opts = { isOn, onToggle, unavailable, within };
+    doc.__sceMenu = opts;
+    const win = doc.defaultView;
+    if (!doc.getElementById('sce-css')) {
+      const style = doc.createElement('style');
+      style.id = 'sce-css';
+      style.textContent = CSS;
+      doc.head.appendChild(style);
+    }
+    let menu = null;
+    const close = () => { if (menu) { menu.remove(); menu = null; } };
+    doc.addEventListener('contextmenu', (e) => {
+      if (opts.within && !opts.within.contains(e.target)) return;
+      if (e.target.closest('input, textarea, [contenteditable="true"]')) return;
+      e.preventDefault();
+      close();
+      const on = Boolean(opts.isOn());
+      const why = opts.unavailable() || '';
+      menu = doc.createElement('div');
+      menu.className = 'sce-pop sce-menu';
+      menu.setAttribute('role', 'menu');
+      const item = doc.createElement('button');
+      item.type = 'button';
+      item.className = 'sce-item';
+      item.setAttribute('role', 'menuitemcheckbox');
+      item.setAttribute('aria-checked', String(on));
+      item.innerHTML = `<span class="sce-tick" aria-hidden="true">${on ? '✓' : ''}</span>Edit chords on the sheet`;
+      item.disabled = Boolean(why) && !on;
+      item.addEventListener('click', (ev) => { ev.stopPropagation(); close(); opts.onToggle(!on); });
+      const tip = doc.createElement('p');
+      tip.className = 'sce-tip';
+      tip.textContent = why ? `${why}.` : (on ? 'On: drag a chord to move it, click one to change it.' : 'Drag chords to where they\'re played, change or add them, here on the sheet.');
+      menu.append(item, tip);
+      doc.body.appendChild(menu);
+      const vw = doc.documentElement.clientWidth;
+      menu.style.left = `${Math.max(4, Math.min(e.clientX, vw - menu.offsetWidth - 4)) + win.scrollX}px`;
+      menu.style.top = `${e.clientY + win.scrollY}px`;
+      if (!item.disabled) item.focus({ preventScroll: true });
+    });
+    doc.addEventListener('pointerdown', (e) => { if (menu && !menu.contains(e.target)) close(); }, true);
+    doc.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); }, true);
+  }
+
   // a chord's name as shown: without the [ ] of Chords in the words
   function labelOf(el) { return [...el.childNodes].filter((n) => !(n.nodeType === 1 && n.classList.contains('ib'))).map((n) => n.textContent).join('').trim(); }
   // without its timing (C×2, F:2): the chord itself
   const baseOf = (label) => String(label).replace(/(?:[x×]\d.*|:.*|[↓↑].*)$/, '');
 
-  const api = { attach, CSS };
+  const api = { attach, contextToggle, CSS };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   rootObj.UkeSheetChordEditor = api;
 }(typeof window !== 'undefined' ? window : globalThis));

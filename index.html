@@ -370,6 +370,7 @@
       /* 4.78: the simple view (src/feature-levels.js) */
       html:not([data-simple]) [data-simple-only] { display: none !important; }
       .ribbon-more { font-style: italic; opacity: 0.85; }
+      .rib-button[aria-pressed="true"] { background: rgba(14, 107, 100, 0.14); box-shadow: inset 0 0 0 1px rgba(14, 107, 100, 0.55); border-radius: 8px; }
       .club-logo-field { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
       .club-logo-field img { max-height: 48px; max-width: 160px; object-fit: contain; border: 1px solid var(--border); border-radius: 6px; padding: 2px; background: #fff; }
       /* 4.74: one row (left: 50% would otherwise squeeze it into half the window) */
@@ -2036,6 +2037,12 @@
               </div>
               <span class="rib-label">Add</span>
             </div>
+            <div class="rib-group" data-feature="chordEdit">
+              <div class="rib-items">
+                <button id="chordEditButton" class="rib-button" type="button" data-icon="move" aria-pressed="false" title="Edit chords on the sheet, on or off (or right-click the sheet). On: drag a chord in the preview to where it's played, even part way into a word; click a chord to change it, choose its shape or take it out; click in the words to put a chord there; drag a chord shape onto the words. The song's words change as if you'd typed it, so Undo works">On the sheet</button>
+              </div>
+              <span class="rib-label">Edit chords</span>
+            </div>
             <div class="rib-group" data-feature="formatWords">
               <div class="rib-items">
                 <div class="rib-col rib-format" title="Bold, italic or underline the selected words. In the song they're written **bold**, *italic* and __underline__">
@@ -2261,9 +2268,6 @@
                       <option value="chords">Chords only</option>
                     </select>
                   </div>
-                  <label class="rib-check" data-feature="chordEdit" title="Drag a chord in the preview to where it's played (even part way into a word); click a chord to change it, choose its shape or take it out; click in the words to put a chord there; drag a chord shape onto the words. The song's text changes as if you'd typed it, so Undo works"><input id="viewChordEdit" type="checkbox" data-config-path="general.chord_edit" /> Edit chords on the sheet</label>
-                </div>
-                <div class="rib-col">
                   <details class="rib-menu" id="tabMenu" data-feature="tabLook">
                     <summary class="rib-small" title="How tab looks: fret numbers, size, a box, faint lines (all songs)">Tab look ▾</summary>
                     <div class="rib-menu-items tab-menu-items">
@@ -4601,6 +4605,7 @@
           renderSongSettings();
           refreshRibbon();
           applyFeatures(); // 4.78: the simple view, or all features
+          showChordEditButton(); // 4.79
         }
 
         async function persistConfig() {
@@ -4643,7 +4648,8 @@
             document.documentElement.dataset.songUses = UkeFeatureLevels.songUses(shownIr);
             if (document.documentElement.hasAttribute('data-simple')) featureTabsShown();
             // 4.77: Edit chords on the sheet (not on a Stage copy, or with the chords as numbers)
-            state.chordEditOn = chordEditWanted() && !stageLook && !numbers;
+            state.chordEditBlocked = stageLook ? 'Not on a Stage copy: it isn\'t the song as written' : (numbers ? 'Not with the chords shown as numbers' : '');
+            state.chordEditOn = chordEditWanted() && !state.chordEditBlocked;
             if (state.chordEditOn) { baseOptions.editable = true; state.shownChords = [...new Set(shownIr.filter((n) => n.type === 'chord' && !n.noChord && n.content).map((n) => n.content))]; }
             const html = window.ukemusic.renderHTML(shownIr, stageLook ? stageRenderOptions(baseOptions, undefined, { screen: true }) : baseOptions);
             if (previewLook() === 'stage' && !state.stageCss) state.stageCss = (await window.ukemusic.stageStyleRead())?.content || '';
@@ -4689,7 +4695,20 @@
         }
         // 4.77: chords edited on the sheet (src/sheet-chord-editor.js → src/chord-edit.js): the change
         // is made in the song text, as if typed (so Undo works), and the preview stays where it was
-        const chordEditWanted = () => state.config?.general?.chord_edit === true || state.config?.general?.chord_edit === 'true';
+        function chordEditWanted() { return state.config?.general?.chord_edit === true || state.config?.general?.chord_edit === 'true'; }
+        // 4.79: on or off from the Write tab (On the sheet), or by right-clicking the sheet
+        async function setChordEdit(on) {
+          state.config.general = { ...(state.config.general || {}), chord_edit: on };
+          showChordEditButton();
+          renderPreviewNow();
+          await persistConfig().catch((error) => window.ukemusicLogError('Could not save Edit chords on the sheet', error));
+          setStatusMessage(on ? 'Edit chords on the sheet: drag a chord to where it\'s played, or click one to change it. Right-click the sheet to turn it off.' : 'Edit chords on the sheet: off.');
+        }
+        function showChordEditButton() {
+          const button = document.getElementById('chordEditButton');
+          if (button) button.setAttribute('aria-pressed', String(chordEditWanted()));
+        }
+        document.getElementById('chordEditButton')?.addEventListener('click', () => setChordEdit(!chordEditWanted()));
         function applyChordEdit(op) {
           const before = getEditorValue();
           const after = window.ukemusic.chordEdit.apply(before, op, { shift: state.transpose - songCapo() });
@@ -11550,6 +11569,7 @@ function showTab(tab) {
           save: 'M5 3h11l3 3v15H5zM8 3v5h7V3M8 21v-7h8v7',
           saveAs: 'M5 3h11l3 3v15H5zM12 11v6M9 14h6',
           plus: 'M12 5v14M5 12h14',
+          move: 'M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3',
           open: 'M3 7h6l2 2h10v10H3zM3 11h18',
           import: 'M14 3H7v18h10V7zM14 3v4h4M12 11v6M9 14l3 3 3-3',
           paste: 'M8 4h8v3H8zM6 5H5v16h14V5h-1M9 12h6M9 16h4',
@@ -13082,6 +13102,8 @@ function showTab(tab) {
           });
           syncPreviewToEditor();
           highlightCursorLine();
+          // 4.79: right-click the sheet: Edit chords on the sheet, on or off
+          if (doc.body) UkeSheetChordEditor.contextToggle(doc, { isOn: chordEditWanted, onToggle: setChordEdit, unavailable: () => state.chordEditBlocked || '' });
           // 4.77: Edit chords on the sheet
           if (state.chordEditOn && doc.body) {
             UkeSheetChordEditor.attach(doc.body, { onEdit: applyChordEdit, chords: () => state.shownChords || [], onShape: (name) => openShapeDialog(name) });

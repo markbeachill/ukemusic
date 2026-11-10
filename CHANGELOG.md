@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.79.0
+
+- **Edit chords on the sheet is on the Write tab:** **Write → Edit chords → On the sheet** turns it on or off (the button stays pressed while it's on), in the simple view too. It has left the Display tab.
+- **Or right-click the sheet:** right-click the preview (desktop) or the sheet on the web Edit page for a small menu with **Edit chords on the sheet**, ticked when it's on. On a Stage copy, or with the chords shown as numbers, the menu says why it can't be used.
+- **The song guide (WRITING.md), the Features list and the website say so:** the Songs and Chord sheets pages describe it, and Chord sheets has a new picture (`site/img/chord-edit.webp`, a new `chord-edit` scene in `npm run site-pictures`).
+
 ## v4.78.4
 
 - **`npm run site-pictures` needs less setting up.** Without Playwright's own browser downloaded, it uses the Microsoft Edge or Google Chrome already on the computer. Its two helpers (Playwright and pdf.js) can be kept in `tools/node_modules`, apart from the app's own packages.

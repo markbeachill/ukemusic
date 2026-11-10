@@ -156,6 +156,16 @@ async function desktop() {
     await scene('setlist', async () => { await clubNight(); await shot('setlist'); });
     // a song open on the Write tab: the words and chords, and the sheet beside them
     await scene('editor', async () => { await open('The Wild Rover'); await tab('Write'); await shot('editor'); });
+    // 4.79: Edit chords on the sheet: a chord's menu open on the sheet (changes nothing)
+    await scene('chord-edit', async () => {
+      await open('The Wild Rover'); await tab('Write');
+      if (await page.getAttribute('#chordEditButton', 'aria-pressed') !== 'true') await page.click('#chordEditButton');
+      await page.waitForTimeout(1500);
+      const frame = page.frameLocator('#preview');
+      await frame.locator('.line-group[data-line] [data-at]').nth(1).click(); await page.waitForTimeout(500);
+      await shot('chord-edit');
+      await page.keyboard.press('Escape'); await page.click('#chordEditButton'); await page.waitForTimeout(800);
+    });
     // playing: the line, the chord and the strum lit, the next shapes ready
     await scene('playing', async () => {
       await open('The Wild Rover'); await tab('Play'); await page.click('#playButton'); await page.waitForTimeout(7000);

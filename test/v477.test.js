@@ -76,9 +76,9 @@ test('the sheet says where each chord and letter is (only when editable)', () =>
 
 test('an option, off at first; desktop and web', () => {
   assert.match(read('main.js'), /chord_edit: false/);
-  assert.match(DESKTOP, /<input id="viewChordEdit" type="checkbox" data-config-path="general\.chord_edit" \/> Edit chords on the sheet/);
+  assert.match(DESKTOP, /<button id="chordEditButton" class="rib-button" type="button" data-icon="move" aria-pressed="false"/, '4.79: on the Write tab');
   assert.match(DESKTOP, /<script src="src\/sheet-chord-editor\.js"><\/script>/);
-  assert.match(DESKTOP, /state\.chordEditOn = chordEditWanted\(\) && !stageLook && !numbers;/);
+  assert.match(DESKTOP, /state\.chordEditOn = chordEditWanted\(\) && !state\.chordEditBlocked;/);
   assert.match(DESKTOP, /window\.ukemusic\.chordEdit\.apply\(before, op, \{ shift: state\.transpose - songCapo\(\) \}\)/);
   assert.match(DESKTOP, /UkeSheetChordEditor\.attach\(doc\.body, \{ onEdit: applyChordEdit,/);
   assert.match(read('src/preload.js'), /chordEdit: \{ apply: /);
