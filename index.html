@@ -546,6 +546,7 @@
       .tag-chip { display: inline-block; font-size: 12px; padding: 1px 8px; margin: 0 4px 3px 0; border-radius: 999px; background: #eef2ff; color: #3730a3; cursor: pointer; border: 0; font-family: inherit; }
       .tag-chip:hover { background: #e0e7ff; }
       .library-tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--border); }
+      .library-tabs[hidden] { display: none; }
       .library-tab { border: 0; background: none; font: inherit; font-size: 17px; font-weight: 700; color: var(--muted); padding: 8px 16px; margin-bottom: -2px; border-bottom: 3px solid transparent; cursor: pointer; }
       .library-tab.active { color: var(--tabs-blue); border-bottom-color: var(--tabs-blue); }
       .library-setlists { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 22px; align-items: start; }
@@ -2295,7 +2296,7 @@
                   </details>
                 </div>
               </div>
-              <span class="rib-label">Layout and tab</span>
+              <span class="rib-label" data-label-without="tabLook:Layout">Layout and tab</span>
             </div>
           </div>
 
@@ -2402,7 +2403,7 @@
                 <button id="karaokeButton" data-feature="karaoke" class="rib-button" type="button" data-icon="karaoke" title="Karaoke: full screen, with big words lighting up as they're sung, the strum and the chord shapes">Karaoke</button>
                 <button id="sessionButton" data-feature="session" class="rib-button" type="button" data-icon="screen" title="Session screen: the whole song on one screen, as big as it will go, for a group to play from (on the TV or projector, if one is plugged in)">Group screen</button>
               </div>
-              <span class="rib-label">Full screen</span>
+              <span class="rib-label" data-label-without="session:Karaoke">Full screen</span>
             </div>
             <div class="rib-group" data-feature="tempo">
               <div class="rib-items">
@@ -4646,7 +4647,7 @@
             baseOptions.tune = { ...(baseOptions.tune || {}), shift: state.transpose, key: keyAfter(state.transpose)?.name || '', keyGuessed: songKey()?.guessed === true };
             // 4.78: what the song uses brings its features back in the simple view (its tune, picking, tab)
             document.documentElement.dataset.songUses = UkeFeatureLevels.songUses(shownIr);
-            if (document.documentElement.hasAttribute('data-simple')) featureTabsShown();
+            if (document.documentElement.hasAttribute('data-simple')) { featureTabsShown(); if (state.songUsesShown !== document.documentElement.dataset.songUses) { state.songUsesShown = document.documentElement.dataset.songUses; featuresSettled(); } }
             // 4.77: Edit chords on the sheet (not on a Stage copy, or with the chords as numbers)
             state.chordEditBlocked = stageLook ? 'Not on a Stage copy: it isn\'t the song as written' : (numbers ? 'Not with the chords shown as numbers' : '');
             state.chordEditOn = chordEditWanted() && !state.chordEditBlocked;
@@ -5383,6 +5384,23 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const box = document.getElementById('general-all_features');
           if (box) box.checked = allFeaturesOn();
           featureTabsShown();
+          featuresSettled();
+        }
+        // 4.80: after the simple view hides or shows things: a group's name follows what's left in it,
+        // a lone library tab goes, greyed settings can't be reached from the keyboard either, the ribbon
+        // is fitted again (it was fitted with every group there) and the hint line is the view's own
+        function featuresSettled() {
+          const gone = (id) => { const el = document.querySelector(`[data-feature~="${id}"]`); return !!el && getComputedStyle(el).display === 'none'; };
+          for (const label of document.querySelectorAll('[data-label-without]')) {
+            if (!label.dataset.labelAll) label.dataset.labelAll = label.textContent;
+            const [id, text] = label.dataset.labelWithout.split(':');
+            label.textContent = gone(id) ? text : label.dataset.labelAll;
+          }
+          const tabs = document.querySelector('.library-tabs');
+          if (tabs) tabs.hidden = gone('setlists');
+          for (const el of document.querySelectorAll('[data-feature-grey]')) el.inert = getComputedStyle(el).pointerEvents === 'none';
+          window.ukemusicFoldRibbon?.();
+          window.ukemusicRibbonHint?.();
         }
         // a ribbon tab or song tab that's now hidden: back to one that isn't
         function featureTabsShown() {
@@ -11742,14 +11760,27 @@ function showTab(tab) {
           song: 'Save, bring in or organise songs.',
           write: 'Write and edit the song. Strum patterns are in Help → Strums.',
           thissong: 'Song settings are saved with the song; trying another key is temporary.',
-          view: 'Choose the song display. Point at a control for its scope and details.',
+          view: 'Choose how the song is shown on screen and on paper.',
           play: 'Loop repeats the current section. Practice speed leaves the saved tempo unchanged.',
           learn: 'Choose chord help, practise changes or play in a new key.',
           pick: 'Choose a picking pattern. In the song writes a pattern change at the cursor.',
           export: 'Make files to print, share or use elsewhere.',
           settings: 'Choose settings for this song or defaults for all songs.'
         };
-        const defaultRibbonHint = () => RIBBON_HINTS[document.querySelector('.ribbon-tab.active')?.dataset.ribbon] || RIBBON_HINT_DEFAULT;
+        // 4.80: the simple view's own hints: they don't name what it has hidden
+        const RIBBON_HINTS_SIMPLE = {
+          write: 'Type the words, with each chord in [brackets] before its word. Writing explains the rest.',
+          view: 'How the chord sheet looks.',
+          play: 'Play the song, or sing along in Karaoke.',
+          learn: 'Play with fewer chords showing, or test yourself on what comes next.',
+          export: 'Make a PDF to print or share.',
+          settings: 'Choose settings for all your songs.'
+        };
+        const defaultRibbonHint = () => {
+          const tab = document.querySelector('.ribbon-tab.active')?.dataset.ribbon;
+          return (document.documentElement.hasAttribute('data-simple') && RIBBON_HINTS_SIMPLE[tab]) || RIBBON_HINTS[tab] || RIBBON_HINT_DEFAULT;
+        };
+        window.ukemusicRibbonHint = () => { ribbonHint.textContent = defaultRibbonHint(); };
         const headerEl = document.querySelector('.app-shell > .header');
         function hintFor(target) {
           const holder = target.closest('[title]');

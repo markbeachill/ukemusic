@@ -34,7 +34,7 @@ test('every ribbon group belongs to a feature (so a new one isn\'t forgotten)', 
     const [, panel, attrs, body] = m;
     if (panel === 'settings' || /data-feature=/.test(attrs)) continue;
     for (const g of body.split(/(?=<div class="rib-group")/).slice(1)) {
-      const name = (g.match(/<span class="rib-label">([^<]+)</) || [])[1];
+      const name = (g.match(/<span class="rib-label"[^>]*>([^<]+)</) || [])[1];
       assert.ok(/^<div class="rib-group" data-feature="\w+">/.test(g) || /data-feature="/.test(g), `${panel} / ${name}`);
     }
   }

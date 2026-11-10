@@ -21,7 +21,7 @@ test('every group is a row of items over its name', () => {
     assert.ok(groups.length, name);
     for (const g of groups) {
       assert.match(g, /<div class="rib-items">/, `${name}: a group without rib-items`);
-      assert.match(g, /<span class="rib-label">[^<]+<\/span>/, `${name}: a group without a name`);
+      assert.match(g, /<span class="rib-label"[^>]*>[^<]+<\/span>/, `${name}: a group without a name`);
     }
   }
 });
@@ -31,10 +31,10 @@ test('small controls sit in columns of two rows, and one setting on its own has 
     if (name === 'settings') continue;
     assert.ok(!/class="rib-items rib-fields"/.test(body), `${name}: the old free-form fields`);
     for (const g of body.split(/<div class="rib-group"(?: data-feature="\w+")?>/).slice(1)) {
-      const items = g.slice(0, g.indexOf('<span class="rib-label">'));
+      const items = g.slice(0, g.search(/<span class="rib-label"[ >]/));
       const labels = (items.match(/<label for=/g) || []).length;
       const selects = (items.match(/<select /g) || []).length + (items.match(/type="number"/g) || []).length;
-      const caption = g.match(/<span class="rib-label">([^<]+)</)[1];
+      const caption = g.match(/<span class="rib-label"[^>]*>([^<]+)</)[1];
       const others = /details|type="checkbox"|class="rib-small"|class="rib-button/.test(items);
       if (selects === 1 && !others) assert.strictEqual(labels, 0, `${name} / ${caption}: one setting, named by its group`);
     }

@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.80.0
+
+First of the changes from the UI review (`docs/ui-improvements.md`): the simple view, fixed.
+
+- **Ribbon groups no longer stay folded in the simple view:** the ribbon was fitted while every group was still there, so a group could sit folded behind a ▾ button with half the ribbon empty. It's now fitted again after the simple view hides things, and when a song brings a feature back.
+- **The hint line under the ribbon** no longer names things the simple view has hidden (Loop, Practice speed, changes, a new key).
+- **Group names follow what's shown:** "Layout and tab" is "Layout" when the tab look is hidden; "Full screen" is "Karaoke" when the Session screen is. The library's lone "Songs" tab goes when Setlists is hidden.
+- **Greyed settings can't be changed from the keyboard** either (they could be reached with Tab).
+- **For maintainers:** `npm run ui-review` has a new section, "The simple view", for all three apps, and the web review turns all features on for its other sections (since 4.78 it had been running in the simple view).
+
 ## v4.79.0
 
 - **Edit chords on the sheet is on the Write tab:** **Write → Edit chords → On the sheet** turns it on or off (the button stays pressed while it's on), in the simple view too. It has left the Display tab.

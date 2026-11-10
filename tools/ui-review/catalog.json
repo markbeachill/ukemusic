@@ -41,6 +41,11 @@
    "about": "App-wide settings (desktop) and per-song choices."
   },
   {
+   "key": "B",
+   "title": "The simple view",
+   "about": "What someone new sees: the features marked \"all\" in the Features table are hidden."
+  },
+  {
    "key": "F",
    "title": "Free Practice",
    "about": "Exercises, help, routines and progress."
@@ -145,7 +150,17 @@
   "F16": "My routine",
   "F17": "Practice backup",
   "D1": "Dropbox",
-  "D2": "Phone and tablet"
+  "D2": "Phone and tablet",
+  "B1": "Simple view: the library",
+  "B2": "Simple view: the File tab",
+  "B3": "Simple view: writing",
+  "B4": "Simple view: a song open",
+  "B5": "Simple view: the Display tab",
+  "B6": "Simple view: the Export tab",
+  "B7": "Simple view: playing",
+  "B8": "Simple view: the Learn tab",
+  "B9": "Simple view: Settings",
+  "B10": "Simple view: the Export choices"
  },
  "notIn": {
   "desktop": [
@@ -163,7 +178,6 @@
   "ipad": [
    "L3",
    "L5",
-   "L6",
    "L7",
    "L9",
    "S11",
@@ -195,12 +209,16 @@
    "G6",
    "G7",
    "G8",
-   "D2"
+   "D2",
+   "B2",
+   "B5",
+   "B6",
+   "B8",
+   "B10"
   ],
   "iphone": [
    "L3",
    "L5",
-   "L6",
    "L7",
    "L9",
    "S11",
@@ -232,7 +250,12 @@
    "G6",
    "G7",
    "G8",
-   "D2"
+   "D2",
+   "B2",
+   "B5",
+   "B6",
+   "B8",
+   "B10"
   ]
  },
  "_notIn": "Screens an app does not have, so the review page says \"Not in the iPad\" rather than \"not taken\". Any other screen missing after a run means its step failed (see run-log.txt)."

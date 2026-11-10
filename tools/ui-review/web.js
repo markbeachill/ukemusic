@@ -37,6 +37,15 @@ const log = (...a) => console.log(which, ...a);
   fs.mkdirSync(OUT, { recursive: true });
   const b = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
   const ctx = await b.newContext(DEV);
+  // the review looks at everything: all features on (someone new starts in the simple view, which
+  // section B looks at). Set once: section B's own choice has to survive its page loads.
+  await ctx.addInitScript(() => {
+    try {
+      if (localStorage.getItem('ukeweb.reviewSet')) return;
+      const look = JSON.parse(localStorage.getItem('ukeweb.look') || '{}'); look.allFeatures = true;
+      localStorage.setItem('ukeweb.look', JSON.stringify(look)); localStorage.setItem('ukeweb.reviewSet', '1');
+    } catch (_e) { /* no storage */ }
+  });
   const p = await ctx.newPage();
   p.on('pageerror', (e) => log('PAGE ERROR', e.message));
   p.on('dialog', (d) => d.dismiss());
@@ -85,6 +94,7 @@ const log = (...a) => console.log(which, ...a);
   await safe('L1b', async () => { await p.evaluate(() => window.scrollTo(0, document.body.scrollHeight)); await p.waitForTimeout(400); await shot('L11', 'The library, scrolled to the end: New song, Dropbox, Back up, About'); await p.evaluate(() => window.scrollTo(0, 0)); });
   await safe('L2', async () => { await p.fill('#search', 'traditional'); await p.waitForTimeout(600); await shot('L2', 'Searching the library ("traditional")'); await p.fill('#search', ''); });
   await dlg('#newSongBtn', 'L4', 'New song: choosing a title');
+  await dlg('#pasteSongBtn', 'L6', 'Paste from a website: a chord sheet copied from a web page');
   await dlg('#guideBtnLib', 'E5', 'How to write: the guide');
   await dlg('#aboutBtn', 'L10', 'About ukemusic');
   await dlg('#cloudBtn', 'D1', 'Songs in Dropbox: connect to a shared songs folder');
@@ -222,6 +232,22 @@ const log = (...a) => console.log(which, ...a);
 
   // ── X: Download ──
   await dlg('#downloadBtn', 'X1', 'Download: the song as a file, a web page, a Stage copy, words or ChordPro');
+
+  // ── B: the simple view (what someone new sees) ──
+  await safe('B', async () => {
+    const simple = (on) => p.evaluate((v) => { const look = JSON.parse(localStorage.getItem('ukeweb.look') || '{}'); look.allFeatures = !v; localStorage.setItem('ukeweb.look', JSON.stringify(look)); }, on);
+    await home(); await simple(true);
+    try {
+      await home(); await shot('B1', 'Simple view: the library');
+      await open('Amazing Grace'); await shot('B4', 'Simple view: a song open');
+      await p.click('#moreBtn'); await p.waitForTimeout(500); await shot('B9', 'Simple view: Settings');
+      await p.click('#moreBtn'); await p.waitForTimeout(300);
+      await p.click('#playBtn'); await p.waitForTimeout(2500); await shot('B7', 'Simple view: playing');
+      await p.evaluate(() => { const s = document.getElementById('stopBtn'); (s && s.offsetParent ? s : document.getElementById('playBtn')).click(); }); await p.waitForTimeout(500);
+      await p.click('#editBtn'); await p.waitForTimeout(1200); await shot('B3', 'Simple view: editing');
+      await p.click('#editDone').catch(() => {});
+    } finally { await simple(false); await home(); }
+  });
 
   // ── F: Free Practice ──
   await safe('F', async () => {
