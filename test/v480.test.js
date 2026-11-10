@@ -44,4 +44,18 @@ test('T1: the UI review looks at the simple view, and the web review at every fe
   assert.ok(!catalog.notIn.ipad.includes('L6'), 'the web player has Paste from a website');
 });
 
+test('the UI review runs on a computer without Playwright\'s browser, and gets past "unsaved changes"', () => {
+  // 4.86.1: Edge or Chrome when Playwright's Chromium hasn't been downloaded (as site-pictures)
+  assert.match(read('tools/ui-review/browser.js'), /for \(const channel of \[undefined, 'msedge', 'chrome'\]\)/);
+  assert.match(read('tools/ui-review/run.js'), /await require\('\.\/browser'\)\.launchBrowser\(chromium\);/);
+  assert.match(read('tools/ui-review/web.js'), /await require\('\.\/browser'\)\.launchBrowser\(chromium, \{ args:/);
+  const desktop = read('tools/ui-review/desktop.js');
+  assert.match(desktop, /await require\('\.\/browser'\)\.launchBrowser\(chromium\);/);
+  // the message box nothing can click: Discard, so the next song opens (it stopped R1 onwards)
+  assert.match(desktop, /if \(options && options\.title === 'Unsaved changes'\) return Promise\.resolve\(\{ response: options\.buttons\.indexOf\('Discard'\)/);
+  assert.match(read('main.js'), /title: 'Unsaved changes',[\s\S]{0,120}?buttons: \['Save', 'Discard', 'Cancel'\]|buttons: \['Save', 'Discard', 'Cancel'\],[\s\S]{0,120}?title: 'Unsaved changes'/, 'what the review answers is still there');
+  assert.match(desktop, /document\.getElementById\('songTitle'\)\?\.textContent\.trim\(\) === t/, 'a step that opens a song checks it did');
+  assert.match(desktop, /fs\.copyFileSync\(madeSheet\("Brahms' Lullaby", /);
+});
+
 console.log('v4.80 tests passed');

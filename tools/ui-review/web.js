@@ -35,7 +35,7 @@ const log = (...a) => console.log(which, ...a);
 (async () => {
   if (!only.length) fs.rmSync(OUT, { recursive: true, force: true });
   fs.mkdirSync(OUT, { recursive: true });
-  const b = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
+  const b = await require('./browser').launchBrowser(chromium, { args: ['--autoplay-policy=no-user-gesture-required'] });
   const ctx = await b.newContext(DEV);
   // the review looks at everything: all features on (someone new starts in the simple view, which
   // section B looks at). Set once: section B's own choice has to survive its page loads.

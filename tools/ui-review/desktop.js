@@ -57,6 +57,17 @@ async function launch() {
     // anything it deletes goes to the work folder's trash, not the Recycle Bin
     env: { ...process.env, UKEMUSIC_USER_DATA: HOME, UKEMUSIC_TEST_TRASH: TRASH }
   });
+  // "You have unsaved changes": a message box from the main process, which nothing here can click.
+  // Left open, it stops the next song opening, and every later step pictures the wrong song. The
+  // review's changes are only tries, so the answer is Discard (other message boxes are as usual).
+  await app.evaluate(({ dialog }) => {
+    const ask = dialog.showMessageBox.bind(dialog);
+    dialog.showMessageBox = (...a) => {
+      const options = a.find((x) => x && typeof x === 'object' && Array.isArray(x.buttons));
+      if (options && options.title === 'Unsaved changes') return Promise.resolve({ response: options.buttons.indexOf('Discard'), checkboxChecked: false });
+      return ask(...a);
+    };
+  });
   const page = await app.firstWindow();
   page.on('pageerror', (e) => log('page error:', e.message));
   page.on('dialog', (d) => d.dismiss());
@@ -143,8 +154,21 @@ async function launch() {
     await page.waitForTimeout(400);
     await page.locator('#libList .library-row', { hasText: title }).first().click();
     await page.waitForTimeout(1500);
+    // the song really is open (not still the one before), or the step says so
+    await page.waitForFunction((t) => document.getElementById('songTitle')?.textContent.trim() === t && document.getElementById('library')?.hidden, title, { timeout: 8000 });
     await page.evaluate(() => { const p = document.getElementById('preview'); if (p && p.contentWindow) p.contentWindow.scrollTo(0, 0); });
   }
+  // the learn or pick sheet just made: in the song's learn folder (the song's folder name can differ
+  // from its title, so the newest one anywhere if it isn't there)
+  const madeSheet = (title, pattern) => {
+    const own = path.join(SONGS, title, 'learn');
+    const found = [];
+    const look = (dir) => { for (const f of fs.existsSync(dir) ? fs.readdirSync(dir) : []) if (pattern.test(f)) found.push(path.join(dir, f)); };
+    look(own);
+    if (!found.length) for (const song of fs.readdirSync(SONGS)) look(path.join(SONGS, song, 'learn'));
+    if (!found.length) throw new Error(`no ${pattern} sheet was made`);
+    return found.sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs)[0];
+  };
   const tab = async (t) => { await page.click(`#ribbonTab${t}`); await page.waitForTimeout(400); };
 
   // ── L: Library ──
@@ -279,9 +303,7 @@ async function launch() {
     await page.waitForTimeout(300);
     await page.evaluate(() => { const t = document.getElementById('toast'); t.dataset.keep = '1'; });
     await page.screenshot({ path: shotPath('R10'), type: 'jpeg', quality: 85 }); record({ id: 'R10', caption: 'Learn sheet: made, with Open' }); log('shot R10');
-    const dir = path.join(SONGS, "It's a Long Way to Tipperary", 'learn');
-    const html = fs.readdirSync(dir).find((f) => f.endsWith('.html'));
-    fs.copyFileSync(path.join(dir, html), path.join(WORK, 'learn-sheet.html'));
+    fs.copyFileSync(madeSheet("It's a Long Way to Tipperary", /\(learn\)\.html$/), path.join(WORK, 'learn-sheet.html'));
   });
   await safe('R12', async () => { await tab('Learn'); await page.click('#learnDrillButton'); await page.waitForTimeout(1500); await shot('R12', 'Shapes: drill this song\'s chord shapes in Free Practice'); await page.click('#practiceClose').catch(() => page.keyboard.press('Escape')); await page.waitForTimeout(600); });
 
@@ -298,9 +320,7 @@ async function launch() {
   await safe('A4', async () => {
     await tab('Pick'); await page.click('#pickSheetButton');
     await page.waitForFunction(() => /sheet made|Could not/i.test(document.getElementById('toastMessage')?.textContent || ''), null, { timeout: 40000 });
-    const dir = path.join(SONGS, "Brahms' Lullaby", 'learn');
-    const html = fs.readdirSync(dir).find((f) => /pick/.test(f) && f.endsWith('.html'));
-    fs.copyFileSync(path.join(dir, html), path.join(WORK, 'pick-sheet.html'));
+    fs.copyFileSync(madeSheet("Brahms' Lullaby", /\(pick\)\.html$/), path.join(WORK, 'pick-sheet.html'));
     log('pick sheet made');
   });
   await safe('A5', async () => {
@@ -393,7 +413,7 @@ async function launch() {
   if (!only.length || only.includes('R') || only.includes('A')) {
     try {
       const { chromium } = require('playwright');
-      const browser = await chromium.launch();
+      const browser = await require('./browser').launchBrowser(chromium);
       const sheet = await browser.newPage({ viewport: { width: 1100, height: 1500 } });
       for (const [file, id, caption] of [['learn-sheet.html', 'R13', 'The learn sheet the app makes (web page and PDF, in the song\'s learn folder)'], ['pick-sheet.html', 'A4', 'The pick sheet the app makes (web page and PDF, in the song\'s learn folder)']]) {
         const f = path.join(WORK, file);
