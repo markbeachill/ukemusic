@@ -291,7 +291,7 @@ async function finish(base) {
   };
   /** Pages of a PDF in the work folder as WebP: { pages, images: [dataURL…] } */
   const pdfPages = (file, { pages = [1], height = 0, box = null, compose = null } = {}) => p.evaluate(async ({ url, pages, height, box, compose }) => {
-    const doc = await window.pdfjs.getDocument(url).promise;
+    const doc = await window.pdfjs.getDocument({ url }).promise; // { url }: pdf.js 5 and later no longer take the address alone
     const canvases = [];
     for (const n of pages) {
       if (n > doc.numPages) continue;

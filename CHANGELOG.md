@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.78.2
+
+- **`npm run site-pictures` works with newer pdf.js.** pdf.js 5 and later no longer open a PDF from its address alone, so the Stage, learn-sheet and gallery pictures stopped with a getDocument error. The website's pictures and gallery are retaken from v4.78.
+- **PDFs, pictures, fonts and sounds are marked as binary for git** (`.gitattributes`), so git never changes their line endings, which can spoil a PDF.
+
 ## v4.78.1
 
 - **`npm run site-check` builds the site first.** Some pages (Features, Instruments) are made by the build and not kept in git, so on a computer where the build hadn't been run, the check reported links to them as broken. Run on its own (`node tools/site-check.js`), it now says that the build is needed instead.

@@ -89,6 +89,10 @@
   .inline-line { font-family: var(--font-family, system-ui, sans-serif); font-size: calc(var(--monospace-size, 14px) * 1.1); line-height: 1.6; color: var(--text-color, #333); white-space: pre-wrap; overflow-wrap: anywhere; min-height: 1em; }
   .inline-line .ichord { color: var(--chord-color, #b22222); font-weight: 800; white-space: nowrap; }
   .inline-line .ichord .ib { font-weight: 400; opacity: 0.7; }
+  .chord-diagrams.side { float: right; display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 0 0 12px 22px; max-width: 30%; clear: right; }
+  .side-end { clear: both; }
+  .inline-line .ichord.up { font-size: 0.78em; vertical-align: 0.62em; line-height: 0; margin-right: 0.06em; }
+  .inline-line:has(.ichord.up) { line-height: 1.95; }
   .inline-line .bar { margin: 0 0.3em; }
   .chords-only { white-space: pre-wrap; }
   .key-change { display: inline-block; margin: 0.6em 0 0.2em; padding: 0.1em 0.6em; border: 1px solid var(--chord-color, #b22222); border-radius: 999px; color: var(--chord-color, #b22222); font-family: var(--font-family, system-ui, sans-serif); font-size: 0.85em; }
@@ -351,6 +355,16 @@ body {
 
   .shorthand-key { margin: 1.6em 0 0; padding-top: 0.4em; border-top: 1px solid #bbb; font-family: Arial, "Segoe UI", sans-serif; font-size: 11px; color: #444; }
   .shorthand-key strong { color: #000; }
+  
+/* 4.76: club logo, "Updated" date, songbook cover */
+.club-logo { float: right; max-height: 64px; max-width: 30%; margin: 0 0 8px 16px; object-fit: contain; }
+.sheet-updated { clear: both; margin: 18px 0 0; text-align: right; font: 11px var(--font-family, system-ui, sans-serif); color: #777; }
+.book-cover { min-height: 90vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 18px; page-break-after: always; break-after: page; }
+.book-cover .cover-logo { max-width: 60%; max-height: 40vh; object-fit: contain; }
+.book-cover .cover-title { font-size: 40px; margin: 0; line-height: 1.15; }
+.book-cover .cover-note { font-size: 18px; margin: 0; color: #444; }
+.book-cover .cover-meta { font-size: 14px; margin: 0; color: #666; }
+@media print { .book-cover { min-height: 0; height: calc(100vh - 2px); } }
   @media print {
     html, body { background: #fff !important; }
     body { padding: 0 !important; }
