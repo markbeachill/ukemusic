@@ -4746,6 +4746,9 @@
             state.chordEditBlocked = stageLook ? 'Not on a Stage copy: it isn\'t the song as written' : (numbers ? 'Not with the chords shown as numbers' : '');
             state.chordEditOn = chordEditWanted() && !state.chordEditBlocked;
             if (state.chordEditOn) { baseOptions.editable = true; state.shownChords = [...new Set(shownIr.filter((n) => n.type === 'chord' && !n.noChord && n.content).map((n) => n.content))]; }
+            // 4.86.2: a long line is split to fit the preview (Chords above, In columns), as the web player
+            // does; it ran off to the right. previewChars is measured in the preview, in its own font.
+            if (!stageLook && ['lines', 'table'].includes(baseOptions.layout || 'lines') && state.previewChars) baseOptions.maxLineChars = state.previewChars;
             const html = window.ukemusic.renderHTML(shownIr, stageLook ? stageRenderOptions(baseOptions, undefined, { screen: true }) : baseOptions);
             if (previewLook() === 'stage' && !state.stageCss) state.stageCss = (await window.ukemusic.stageStyleRead())?.content || '';
             preview.srcdoc = buildPreviewDocument(html, docCss(previewLook() === 'stage', PREVIEW_CSS), undefined, '', docAttrs(undefined, { stage: previewLook() === 'stage', screen: true }));
@@ -7622,7 +7625,39 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         // Re-apply the highlight if the preview is re-rendered while playing
         preview.addEventListener('load', () => {
           if (playingLine) highlightLine(playingLine, false);
+          fitPreviewLines();
         });
+        // 4.86.2: how many letters of the sheet's own font fit across the preview. When that isn't what
+        // the lines were split at, the preview is drawn again (once: the next measure agrees).
+        function previewCharsAcross() {
+          const doc = preview.contentDocument;
+          const sample = doc?.querySelector('.lyrics, .chords, .chord-line, pre');
+          if (!doc?.body || !sample) return 0;
+          const probe = doc.createElement('span');
+          const style = doc.defaultView.getComputedStyle(sample);
+          probe.style.cssText = `position:absolute;visibility:hidden;white-space:pre;font-family:${style.fontFamily};font-size:${style.fontSize};font-weight:${style.fontWeight};letter-spacing:${style.letterSpacing}`;
+          probe.textContent = 'M'.repeat(40);
+          doc.body.appendChild(probe);
+          const per = probe.getBoundingClientRect().width / 40;
+          probe.remove();
+          const bodyStyle = doc.defaultView.getComputedStyle(doc.body);
+          const room = doc.documentElement.clientWidth - parseFloat(bodyStyle.paddingLeft) - parseFloat(bodyStyle.paddingRight) - parseFloat(bodyStyle.marginLeft) - parseFloat(bodyStyle.marginRight) - 12;
+          return per > 0 ? Math.max(20, Math.floor(room / per) - 1) : 0;
+        }
+        function fitPreviewLines() {
+          const fits = previewCharsAcross();
+          if (!fits || fits === state.previewChars) return;
+          state.previewChars = fits;
+          if (state.song && ['lines', 'table'].includes(renderOptions().layout || 'lines') && previewLook() !== 'stage') renderPreviewNow();
+        }
+        let previewWidthSeen = 0;
+        new ResizeObserver(() => {
+          const width = preview.clientWidth;
+          if (!width || Math.abs(width - previewWidthSeen) < 8) return;
+          previewWidthSeen = width;
+          clearTimeout(fitPreviewLines.timer);
+          fitPreviewLines.timer = setTimeout(fitPreviewLines, 150);
+        }).observe(preview);
 
         function setPlayingUi(playing) {
           playButton.disabled = false;

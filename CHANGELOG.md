@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.86.2
+
+- **Desktop: the preview breaks long lines to fit it**, in "Chords above" and "In columns". A song written with a verse on one long line ran off the right of the preview, so it scrolled sideways. The preview now fits the lines again when you resize it or change the text size. PDFs and printing are unchanged: they already split lines to fit the page.
+- **Web player: "In columns" breaks long lines to fit** too, as "Chords above" already did.
+
 ## v4.86.1
 
 - **Web player: long lines wrap on a phone again.** If the display settings kept on the device didn't include a layout (as could happen, and did in the UI review), long lines ran off the right of the sheet instead of wrapping: The Wild Rover showed it. The settings kept on a device are now filled in from the defaults and checked.

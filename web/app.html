@@ -2041,7 +2041,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
       tempo: p.tempo,
       diagrams: { enable: look.diagrams !== 'none', placement: look.diagrams, show_fingers: true, skip_common: look.hideCommon === true, left_handed: look.leftHanded === true },
       chordLibrary: library(),
-      maxLineChars: look.layout === 'lines' ? charsAcross(sheet) : 0,
+      maxLineChars: ['lines', 'table'].includes(look.layout) ? charsAcross(sheet) : 0, // 4.86.2: In columns too
       tune: tuneOptions()
     };
     if (stage) options = stageOptions(options, options.maxLineChars || charsAcross(sheet), sheet.clientWidth - 32, look.size);

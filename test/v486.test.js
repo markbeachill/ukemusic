@@ -64,7 +64,19 @@ test('4.86.1: a look kept on the device without a layout still wraps long lines 
   assert.strictEqual(run({ layout: 'nonsense' }).layout, 'lines');
   assert.strictEqual(run({ size: 99 }).size, 30);
   assert.strictEqual(run(null).layout, 'lines');
-  assert.match(WEB, /maxLineChars: look\.layout === 'lines' \? charsAcross\(sheet\) : 0,/, 'what wraps the lines');
+  assert.match(WEB, /maxLineChars: \['lines', 'table'\]\.includes\(look\.layout\) \? charsAcross\(sheet\) : 0,/, 'what wraps the lines (4.86.2: In columns too)');
+});
+
+test('4.86.2: the desktop preview splits long lines to fit (Chords above, In columns)', () => {
+  assert.match(DESKTOP, /if \(!stageLook && \['lines', 'table'\]\.includes\(baseOptions\.layout \|\| 'lines'\) && state\.previewChars\) baseOptions\.maxLineChars = state\.previewChars;/);
+  assert.match(DESKTOP, /function previewCharsAcross\(\) \{/);
+  assert.match(DESKTOP, /preview\.addEventListener\('load', \(\) => \{\n\s*if \(playingLine\) highlightLine\(playingLine, false\);\n\s*fitPreviewLines\(\);/, 'measured in the preview\'s own font once it is drawn');
+  assert.match(DESKTOP, /new ResizeObserver\(\(\) => \{\n\s*const width = preview\.clientWidth;/, 'and again when the pane changes width');
+  // the renderer splits a long line at the width it's given
+  const parse = require('../src/parser');
+  const { renderHtml } = require('../src/renderer-html');
+  const long = parse('--START MUSIC--\n[C]Amazing grace, how [F]sweet the [C]sound that saved a wretch like [G7]me. I [C]once was [C7]lost but [F]now am [C]found\n--END MUSIC--\n');
+  for (const layout of ['lines', 'table']) assert.ok((renderHtml(long, { layout, maxLineChars: 40 }).match(/class="line-group/g) || []).length > 1, layout);
 });
 
 console.log('v4.86 tests passed');
