@@ -60,7 +60,7 @@
     { id: 'practice', app: 'desktop', where: 'Play', name: 'Practice speed', level: 'all' },
     { id: 'sound', app: 'both', where: 'Play; web: Settings', name: 'Sound and feel', level: 'all' },
     { id: 'countIn', app: 'desktop', where: 'Play', name: 'Count in and voice', level: 'all' },
-    { id: 'accompaniment', app: 'web', where: 'the song page and player', name: 'Accompaniment: the strum it plays', level: 'all' },
+    { id: 'accompaniment', app: 'web', where: 'the song page and player', name: 'Strum or pick: what it plays', level: 'all' },
     // ── Desktop: Learn ──
     { id: 'learnMemory', app: 'desktop', where: 'Learn', name: 'Play from memory', level: 'simple' },
     { id: 'learnQuiz', app: 'desktop', where: 'Learn', name: 'Test yourself: Next chord?', level: 'simple' },

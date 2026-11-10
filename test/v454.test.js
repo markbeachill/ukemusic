@@ -51,7 +51,7 @@ test('Chord sheet, Stage and two-page Stage are three separate choices, with the
   assert.match(html, /id="ribTwoChords" data-config-path="export\.stage_two_chords"/);
   assert.match(html, /id="ribTwoMin" data-config-path="export\.stage_two_min"/);
   assert.match(html, /<option value="above">Above the words<\/option>/);
-  assert.match(html, /<span class="rib-label">Two-page Stage<\/span>/);
+  assert.match(html, /<span class="rib-label"[^>]*>Two-page Stage<\/span>/);
   // the Stage PDF only when it's ticked
   assert.match(html, /formats\.includes\(printStyle === 'stage' \? 'sheet_stage' : 'sheet_pdf'\)/);
 });

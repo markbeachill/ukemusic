@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.85.0
+
+Where settings live (UI review L5, L6, L7, L8).
+
+- **Each group of settings on Display and Export says what it's for:** "· this song" or "· all songs", in its name. Before, you had to point at each control to find out. Left-handed, Hide common and Easy to read, which are for every song, have a group of their own ("For every song") instead of sitting among this song's settings.
+- **A song's Details has its title (with Rename…), tempo and time**, as the web player's Details does. They are still on the Song tab (and Rename on File): change them in either place.
+- **Song → "Key to play in"** is the group's name, so it isn't taken for the key the song is written in (Details → Written in).
+- **The Export choices' buttons stay in view** when the list of formats is long.
+- **Web player: "Strum or pick"** is the one name for the strum or picking it plays: it was "Accompaniment" on the song page and the player, "Pick" on its dialog and "Strumming" inside it.
+
 ## v4.84.0
 
 The desktop app: one of each (UI review L1, L3, L4, C3, D2).

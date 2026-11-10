@@ -483,7 +483,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div class="tool"><span class="lab">Key</span><button id="keyDown" type="button" aria-label="Key down">−</button><span id="keyVal" class="val"></span><button id="keyUp" type="button" aria-label="Key up">+</button></div>
         <div class="tool"><span class="lab">Capo</span><button id="capoDown" type="button" aria-label="Capo down">−</button><span id="capoVal" class="val"></span><button id="capoUp" type="button" aria-label="Capo up">+</button></div>
         <div class="tool" data-wide data-feature="instrument"><label for="instrument">Instrument</label><select id="instrument"></select></div>
-        <div class="tool" data-wide data-feature="accompaniment"><label for="strumSel">Accompaniment</label><select id="strumSel" title="The strum it plays: the song's own, or one from the strum library (strong strokes marked &gt;)"></select></div>
+        <div class="tool" data-wide data-feature="accompaniment"><label for="strumSel">Strum or pick</label><select id="strumSel" title="The strum it plays: the song's own, or one from the strum library (strong strokes marked &gt;)"></select></div>
         <div class="tool" data-display data-feature="textSize"><span class="lab">Text</span><button id="textDown" type="button" aria-label="Smaller text">A−</button><button id="textUp" type="button" aria-label="Bigger text">A+</button></div>
         <div class="tool more"><button id="moreBtn" type="button" aria-expanded="false" aria-controls="moreTools">Settings <span aria-hidden="true">▾</span></button></div>
       </div>
@@ -514,7 +514,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
       <div class="gutter">
         <div class="player-row">
           <button id="playBtn" data-feature="play" class="btn primary" type="button">▶ Play</button>
-          <button id="restartBtn" data-feature="restart" class="btn" type="button">Restart</button><button id="stopBtn" class="btn" type="button" hidden>Stop</button><button id="accompanimentBtn" data-feature="accompaniment" class="btn" type="button">Accompaniment</button><button id="karaokeButton" data-feature="karaoke" class="btn" type="button" title="Full screen, big words that light up as you sing, with the chord shapes">Karaoke</button>
+          <button id="restartBtn" data-feature="restart" class="btn" type="button">Restart</button><button id="stopBtn" class="btn" type="button" hidden>Stop</button><button id="accompanimentBtn" data-feature="accompaniment" class="btn" type="button">Strum or pick</button><button id="karaokeButton" data-feature="karaoke" class="btn" type="button" title="Full screen, big words that light up as you sing, with the chord shapes">Karaoke</button>
           <button id="learnBtn" data-feature="learn" class="btn" type="button" title="Learn the song by heart: play from memory, a quiz on the changes, the learn sheet, its chord patterns and the circle of fifths">Learn</button>
           <button id="sessionBtn" data-feature="session" class="btn" type="button" title="Session screen: the whole song on one screen for a group to play from (a TV or projector). Arrow keys, a clicker or a tap go to the next song in the list">Session screen</button>
           <div class="now"><div id="nowChord" class="now-chord"></div><div id="nowShapes" class="now-shapes"></div></div>
@@ -678,7 +678,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 </dialog>
 
 <dialog id="pickDialog">
-  <h2>Pick</h2>
+  <h2>Strum or pick</h2>
   <p class="note">Fingerpick the song instead of strumming: the chords stay, your right hand picks a pattern. Start at 1 and move up when it's easy. The one you choose is kept for this song on this device. <button id="pickHelpBtn" class="link-button" type="button">How picking works</button></p>
   <div id="pickSong" class="choice-list"></div>
   <div class="pick-sheet-row"><button id="pickStrumBtn" class="btn" type="button">Strum it again</button><button id="pickSheetBtn" class="btn" type="button">Pick sheet</button><label id="pickTuneRow"><input id="pickTune" type="checkbox"> Play the tune</label></div>
@@ -688,7 +688,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
     <div id="pickSteps" class="choice-list"></div>
     <p id="pickBars" class="note"></p>
   </div>
-  <label for="pickStrumming">Strumming</label><select id="pickStrumming"></select><p class="note">Choose a strum or a picking pattern. Selection changes this song on this device. Hear example stays here; Play in Karaoke opens the follow-along screen.</p><div class="dialog-actions"><button id="pickPlay" class="btn primary" type="button">Play in Karaoke</button><button id="pickHear" class="btn" type="button">Hear example</button><button id="pickClose" class="btn" type="button">Close</button></div>
+  <label for="pickStrumming">Strum or pick</label><select id="pickStrumming"></select><p class="note">Choose a strum or a picking pattern. Selection changes this song on this device. Hear example stays here; Play in Karaoke opens the follow-along screen.</p><div class="dialog-actions"><button id="pickPlay" class="btn primary" type="button">Play in Karaoke</button><button id="pickHear" class="btn" type="button">Hear example</button><button id="pickClose" class="btn" type="button">Close</button></div>
 </dialog>
 
 <dialog id="pickHelpDialog" class="guide-dialog">

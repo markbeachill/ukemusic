@@ -1353,6 +1353,8 @@
         color: var(--muted);
       }
 
+      /* 4.85: Export's buttons stay in view when the choices are long */
+      #exportDialog .dialog-actions { position: sticky; bottom: -20px; margin: 12px -20px -20px; padding: 12px 20px; background: var(--panel-bg); border-top: 1px solid var(--border); }
       .dialog-actions {
         display: flex;
         justify-content: space-between;
@@ -1954,7 +1956,10 @@
       .ribbon-panel .rib-col-strum { grid-template-rows: var(--rib-row) var(--rib-row); }
       .ribbon-panel .rib-label { white-space: nowrap; align-self: end; }
       /* a setting this song has its own value for: the group's name says so (the select is marked too) */
-      .ribbon-panel .rib-group:has(.rib-own) > .rib-label::after { content: " · this song"; color: var(--accent-dark); font-weight: 600; }
+      /* 4.85: a group of settings says what it applies to; bolder when this song has its own */
+      .ribbon-panel .rib-label[data-scope-label="song"]::after { content: " · this song"; opacity: 0.8; }
+      .ribbon-panel .rib-label[data-scope-label="all"]::after { content: " · all songs"; opacity: 0.8; }
+      .ribbon-panel .rib-group:has(.rib-own) > .rib-label::after { content: " · this song (its own)"; color: var(--accent-dark); font-weight: 600; opacity: 1; }
       .rib-field.has-own > label::after { content: none; }
       /* folded groups */
       .ribbon-panel .rib-fold { display: none; }
@@ -2109,7 +2114,7 @@
                   </div>
                 </div>
               </div>
-              <span class="rib-label">Key</span>
+              <span class="rib-label">Key to play in</span>
             </div>
             <div class="rib-group" data-feature="capo">
               <div class="rib-items">
@@ -2192,7 +2197,7 @@
                 </div>
                 <button id="editStylesheetButton" class="rib-button" type="button" data-icon="brush" title="Edit the style set in use (CSS): colours, spacing, fonts. Or save it as a new set of your own">Edit style</button>
               </div>
-              <span class="rib-label">Style</span>
+              <span class="rib-label" data-scope-label="all">Style</span>
             </div>
             <div class="rib-group" data-feature="diagrams">
               <div class="rib-items">
@@ -2206,12 +2211,8 @@
                     </select>
                   </div>
                 </div>
-                <div class="rib-col">
-                  <label class="rib-check" title="Mirror the diagrams for a left-handed instrument; applies to all songs"><input id="viewLeftHanded" type="checkbox" /> Left-handed</label>
-                  <label class="rib-check" title="No diagram for the chords everyone knows: C, G, Am, F… (all songs; change the list in Settings → All songs)"><input id="viewSkipCommon" type="checkbox" /> Hide common</label>
-                </div>
               </div>
-              <span class="rib-label">Chord diagrams</span>
+              <span class="rib-label" data-scope-label="song">Chord diagrams</span>
             </div>
             <div class="rib-group" data-feature="textSize">
               <div class="rib-items">
@@ -2223,11 +2224,22 @@
                   </div>
                   <div class="rib-row">
                     <button id="viewTextReset" class="rib-small" type="button" title="Back to the usual size">Reset size</button>
-                    <label class="rib-check" title="Song sheets and Stage copies in Atkinson Hyperlegible, a typeface made for readers with low vision: I, l and 1, O and 0, b and d are easy to tell apart. On screen and in print, for every song"><input id="viewEasyRead" type="checkbox" data-config-path="general.easy_read" /> Easy to read</label>
                   </div>
                 </div>
               </div>
-              <span class="rib-label">Text</span>
+              <span class="rib-label" data-scope-label="song">Text</span>
+            </div>
+            <div class="rib-group">
+              <div class="rib-items">
+                <div class="rib-col">
+                  <label class="rib-check" data-feature="diagrams" title="Mirror the diagrams for a left-handed instrument; applies to all songs"><input id="viewLeftHanded" type="checkbox" /> Left-handed</label>
+                  <label class="rib-check" data-feature="diagrams" title="No diagram for the chords everyone knows: C, G, Am, F… (all songs; change the list in Settings → All songs)"><input id="viewSkipCommon" type="checkbox" /> Hide common</label>
+                </div>
+                <div class="rib-col">
+                  <label class="rib-check" data-feature="textSize" title="Song sheets and Stage copies in Atkinson Hyperlegible, a typeface made for readers with low vision: I, l and 1, O and 0, b and d are easy to tell apart. On screen and in print, for every song"><input id="viewEasyRead" type="checkbox" data-config-path="general.easy_read" /> Easy to read</label>
+                </div>
+              </div>
+              <span class="rib-label">For every song</span>
             </div>
             <div class="rib-group" data-feature="tune">
               <div class="rib-items">
@@ -2241,7 +2253,7 @@
                   </div>
                 </div>
               </div>
-              <span class="rib-label">The tune as notes</span>
+              <span class="rib-label" data-scope-label="song">The tune</span>
             </div>
             <div class="rib-group" data-feature="strumLook">
               <div class="rib-items">
@@ -2256,7 +2268,7 @@
                     </select>
                   </div>
                   <div class="rib-field" title="How big plain strum patterns are, compared with the words (--plain-strum-scale in the style set)">
-                    <label for="viewStrumSize">Plain size</label>
+                    <label for="viewStrumSize">Plain size (all songs)</label>
                     <select id="viewStrumSize" title="When strum patterns are shown Plain: how big they are, compared with the words (all songs; kept in the style set)">
                       <option value="1">As the words</option>
                       <option value="1.2">Bigger</option>
@@ -2266,7 +2278,7 @@
                   </div>
                 </div>
               </div>
-              <span class="rib-label">Strum patterns</span>
+              <span class="rib-label" data-scope-label="song">Strum patterns</span>
             </div>
             <div class="rib-group">
               <div class="rib-items">
@@ -2282,7 +2294,7 @@
                     </select>
                   </div>
                   <details class="rib-menu" id="tabMenu" data-feature="tabLook">
-                    <summary class="rib-small" title="How tab looks: fret numbers, size, a box, faint lines (all songs)">Tab look ▾</summary>
+                    <summary class="rib-small" title="How tab looks: fret numbers, size, a box, faint lines (all songs)">Tab look (all songs) ▾</summary>
                     <div class="rib-menu-items tab-menu-items">
                       <div class="rib-field" title="How the fret numbers in tab look">
                         <label for="viewTabFrets">Frets</label>
@@ -2308,7 +2320,7 @@
                   </details>
                 </div>
               </div>
-              <span class="rib-label" data-label-without="tabLook:Layout">Layout and tab</span>
+              <span class="rib-label" data-scope-label="song">Layout</span>
             </div>
           </div>
 
@@ -2333,7 +2345,7 @@
                   <label class="rib-check" title="Untick to leave tab blocks out of PDFs (they stay in the song and on screen)"><input id="exportTabInPrint" type="checkbox" data-config-path="tablature.in_print" /> Tab in PDFs</label>
                 </div>
               </div>
-              <span class="rib-label">PDFs</span>
+              <span class="rib-label" data-scope-label="all">PDFs</span>
             </div>
             <div class="rib-group" data-feature="exportKeys">
               <div class="rib-items">
@@ -2341,7 +2353,7 @@
                   <label class="rib-check" title="Export the original and every saved key, not just the key you're looking at"><input id="exportAllQuick" type="checkbox" data-config-path="export.all_versions" /> Every saved key</label>
                 </div>
               </div>
-              <span class="rib-label">Keys</span>
+              <span class="rib-label" data-scope-label="all">Keys</span>
             </div>
             <div class="rib-group" data-feature="sectionNames">
               <div class="rib-items">
@@ -2356,7 +2368,7 @@
                   </div>
                 </div>
               </div>
-              <span class="rib-label">Section names</span>
+              <span class="rib-label" data-scope-label="song">Section names</span>
             </div>
             <div class="rib-group" data-feature="stage">
               <div class="rib-items">
@@ -2373,7 +2385,7 @@
                   </div>
                 </div>
               </div>
-              <span class="rib-label">Stage copy</span>
+              <span class="rib-label" data-scope-label="song">Stage copy</span>
             </div>
             <div class="rib-group" data-feature="twoPage">
               <div class="rib-items">
@@ -2397,7 +2409,7 @@
                   </div>
                 </div>
               </div>
-              <span class="rib-label">Two-page Stage</span>
+              <span class="rib-label" data-scope-label="all">Two-page Stage</span>
             </div>
           </div>
 
@@ -2698,6 +2710,11 @@
                 <section>
                   <h3>About the song</h3>
                   <div class="details-grid">
+                    <span class="details-label">Title</span>
+                    <div class="details-row">
+                      <span id="detailsTitle" class="details-value"></span>
+                      <button id="detailsRename" type="button" title="Change the song's name (as File → Rename)">Rename…</button>
+                    </div>
                     <label for="detailsArtist">Artist</label>
                     <input id="detailsArtist" type="text" maxlength="120" placeholder="Who it's by" data-config-path="song.artist" data-scope="song" />
                     <label for="detailsYear">Year</label>
@@ -2738,13 +2755,20 @@
                     </div>
                     <label for="detailsFirstNote" title="The first note you sing, in the written key: E, F#, Bb. It's sounded with the first click of the count-in (in the key you're playing in), and shown on the pick and learn sheets">First note</label>
                     <input id="detailsFirstNote" class="short" type="text" maxlength="4" placeholder="E" data-config-path="song.first_note" data-scope="song" title="The first note you sing, in the written key: E, F#, Bb. It's sounded with the first click of the count-in (in the key you're playing in), and shown on the pick and learn sheets" />
-                    <span class="details-label">Tempo and time</span>
+                    <label for="detailsTempo">Tempo</label>
                     <div class="details-row">
-                      <span id="detailsPlay" class="details-value"></span>
-                      <button id="detailsPlayChange" type="button" class="link-button" title="Tempo and time are set on the This song tab">Change on This song</button>
+                      <input id="detailsTempo" class="short" type="number" min="40" max="240" step="1" data-config-path="song.tempo" data-scope="song" title="Beats a minute (also on the Song and Play tabs)" />
+                      <span class="details-value">bpm</span>
                     </div>
+                    <label for="detailsBeats">Time</label>
+                    <select id="detailsBeats" class="short" data-config-path="song.beats_per_bar" data-scope="song" title="Beats in a bar (also on the Song tab)">
+                      <option value="4">4/4</option>
+                      <option value="3">3/4</option>
+                      <option value="2">2/4</option>
+                      <option value="6">6/8</option>
+                    </select>
                   </div>
-                  <p class="details-hint">Info is what the song <em>is</em>: who it's by, where it's from, and the key it's written in. How <em>you</em> play it (the key you're playing in, saved keys, capo, instrument, tempo, time and strum) is set on the <strong>This song</strong> tab above.</p>
+                  <p class="details-hint">Details are what the song <em>is</em>: its name, who it's by, the key it's written in, its tempo and time. How <em>you</em> play it (the key you're playing in, capo, instrument and strum) is on the <strong>Song</strong> tab of the ribbon, where tempo and time are too.</p>
                 </section>
               </fieldset>
             </div>
@@ -4269,13 +4293,9 @@
             ? `Auto: from the chords (${window.ukemusic.keys.describe(detected)})`
             : 'Auto: from the chords';
           select.value = effectiveConfig()?.song?.key || 'auto';
-          // Info shows tempo and time as facts; they're changed on This song
-          const play = document.getElementById('detailsPlay');
-          if (play) {
-            const song = effectiveConfig()?.song || {};
-            const beats = Number(song.beats_per_bar) || 4;
-            play.textContent = `${Number(song.tempo) || 100} bpm · ${beats === 6 ? '6/8' : `${beats}/4`}`;
-          }
+          // 4.85: Details has the title (Rename…), and the tempo and time themselves (as the Song tab has)
+          const shownTitle = document.getElementById('detailsTitle');
+          if (shownTitle) shownTitle.textContent = state.song?.title || document.getElementById('songTitle').textContent;
         }
         // Preview-only styling: the line being played
         const PREVIEW_CSS = `
@@ -11785,10 +11805,7 @@ function showTab(tab) {
             if (menu && menu.open && !menu.contains(event.target)) menu.open = false;
           }
         });
-        document.getElementById('detailsPlayChange').addEventListener('click', () => {
-          revealElement(document.getElementById('tempoInput'));
-          document.getElementById('tempoInput').focus();
-        });
+        document.getElementById('detailsRename').addEventListener('click', () => document.getElementById('renameButton').click());
 
         // ── Hint bar: says what the thing under the mouse does ──
         const ribbonHint = document.getElementById('ribbonHint');

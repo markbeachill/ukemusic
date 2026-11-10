@@ -21,7 +21,7 @@ test('S1, S4, A1: after the features are applied', () => {
   assert.match(settled, /tabs\.hidden = gone\('setlists'\);/, 'no lone Songs tab');
   assert.match(DESKTOP, /featureTabsShown\(\);\n {10}featuresSettled\(\);/);
   assert.match(DESKTOP, /state\.songUsesShown !== document\.documentElement\.dataset\.songUses\) \{[^\n]*featuresSettled\(\);/, 'and when a song brings a feature back');
-  assert.match(DESKTOP, /<span class="rib-label" data-label-without="tabLook:Layout">Layout and tab<\/span>/);
+  assert.match(DESKTOP, /<span class="rib-label" data-scope-label="song">Layout<\/span>/); // 4.85: the tab look says "(all songs)" itself
   assert.match(DESKTOP, /<span class="rib-label" data-label-without="session:Karaoke">Full screen<\/span>/);
   assert.match(DESKTOP, /\.library-tabs\[hidden\] \{ display: none; \}/);
 });
