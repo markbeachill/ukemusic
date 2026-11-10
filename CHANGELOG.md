@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.78.4
+
+- **`npm run site-pictures` needs less setting up.** Without Playwright's own browser downloaded, it uses the Microsoft Edge or Google Chrome already on the computer. Its two helpers (Playwright and pdf.js) can be kept in `tools/node_modules`, apart from the app's own packages.
+
 ## v4.78.3
 
 - **Display → Layout and tab:** **Tab look** sits beside the layout choice again, instead of below Edit chords on the sheet, where it covered the group's name.

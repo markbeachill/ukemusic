@@ -8,7 +8,9 @@
 //
 // Needs, once (as for the UI review, plus pdf.js for the pictures of PDFs):
 //   npm install --no-save playwright pdfjs-dist@4.10.38
-//   npx playwright install chromium
+//   npx playwright install chromium   (or not: without it, the Microsoft Edge or Google Chrome
+//                                      already on the computer is used)
+// They can also be kept in tools/node_modules (npm install --prefix tools …), apart from the app's.
 //
 // It runs the desktop app with its own settings folder and a copy of the public-domain songs
 // (your songs and settings are left alone), and the web player (built with node web/make.js) as
@@ -46,6 +48,17 @@ try { PDFJS = path.dirname(find('pdfjs-dist/build/pdf.min.mjs')); } catch (_e) {
   process.exit(1);
 }
 const ELECTRON = process.env.UKEMUSIC_ELECTRON || need('electron', 'Run  npm install  in the project folder first.');
+
+// A browser for the web player and the PDFs: Playwright's own Chromium, or, if it hasn't been
+// downloaded (npx playwright install chromium), the Edge or Chrome already on the computer
+async function launchBrowser() {
+  const errors = [];
+  for (const channel of [undefined, 'msedge', 'chrome']) {
+    try { return await playwright.chromium.launch(channel ? { channel } : {}); } catch (error) { errors.push(String(error.message).split('\n')[0]); }
+  }
+  console.error(`\nThe site pictures need a browser. Download Playwright's once with:  npx playwright install chromium\n(or install Microsoft Edge or Google Chrome)\n${errors.join('\n')}\n`);
+  process.exit(1);
+}
 
 /** A small web server: the web player at /app/, pdf.js at /pdfjs/, the work folder at /work/ */
 function serve() {
@@ -254,7 +267,7 @@ async function desktop() {
 async function phone(base) {
   const DEV = { ...playwright.devices['iPhone 15'], viewport: { width: 390, height: 844 }, screen: { width: 390, height: 844 }, deviceScaleFactor: 2 };
   delete DEV.defaultBrowserType;
-  const b = await playwright.chromium.launch();
+  const b = await launchBrowser();
   const ctx = await b.newContext(DEV);
   const p = await ctx.newPage();
   p.on('dialog', (d) => d.dismiss());
@@ -271,7 +284,7 @@ async function phone(base) {
 
 // ── Pictures of files, and the WebP files themselves (made in Chromium) ──────────────────────
 async function finish(base) {
-  const b = await playwright.chromium.launch();
+  const b = await launchBrowser();
   const p = await b.newPage();
   await p.goto(`${base}/pdfjs/pdf.min.mjs`);   // a page on the server, so pdf.js can be imported
   await p.evaluate(async () => {
