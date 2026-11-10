@@ -182,7 +182,7 @@ async function launch() {
     for (const width of [W, 1120]) {
       await size(width, H);
       const heights = [];
-      for (const name of ['Song', 'Write', 'ThisSong', 'View', 'Export', 'Play', 'Learn', 'Pick', 'Settings']) {
+      for (const name of ['Song', 'Write', 'ThisSong', 'View', 'Export', 'Play', 'Learn', 'Pick']) {
         await tab(name);
         const geometry = await page.evaluate(() => ({
           height: document.querySelector('.app-shell > .header').getBoundingClientRect().height,
@@ -362,7 +362,7 @@ async function launch() {
     }
     await page.click('#closeSettingsButton').catch(() => {});
   });
-  await dialog('#aboutButton', 'L10', 'About ukemusic', 'aboutDialog');
+  await safe('L10', async () => { await page.click('#settingsToggleButton'); await page.waitForTimeout(600); await page.click('#aboutButton'); await page.waitForSelector('#aboutDialog[open]', { timeout: 5000 }); await page.waitForTimeout(500); await shot('L10', 'About ukemusic'); await closeDialogs(); await page.click('#closeSettingsButton').catch(() => {}); });
 
   // ── B: the simple view (what someone new sees) ──
   await safe('B', async () => {
@@ -374,7 +374,7 @@ async function launch() {
       const tabs = await page.evaluate(() => [...document.querySelectorAll('.ribbon-tab[data-ribbon]')].filter((b) => b.offsetParent).map((b) => b.id.replace('ribbonTab', '')));
       const ids = { Song: 'B2', Write: 'B3', ThisSong: 'B4', View: 'B5', Export: 'B6', Play: 'B7', Learn: 'B8' };
       for (const t of tabs) if (ids[t]) { await tab(t); await shot(ids[t], `Simple view: the ${await page.textContent(`#ribbonTab${t}`)} tab`); }
-      await tab('Settings'); await page.click('#settingsToggleButton'); await page.waitForTimeout(700); await shot('B9', 'Simple view: Settings');
+      await page.click('#settingsToggleButton'); await page.waitForTimeout(700); await shot('B9', 'Simple view: Settings');
       await page.click('#closeSettingsButton').catch(() => {});
       await tab('Export'); await page.click('#exportNowButton'); await page.waitForSelector('#exportDialog[open]', { timeout: 5000 }); await page.waitForTimeout(500);
       await shot('B10', 'Simple view: the Export choices'); await closeDialogs();

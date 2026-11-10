@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.84.0
+
+The desktop app: one of each (UI review L1, L3, L4, C3, D2).
+
+- **Chord, Heading, Strum, Bar line and Tune buttons on Write → Put in**, as the web player has: each writes the brackets at the cursor, with the cursor inside, so nobody has to hunt for [ ] and { } to start a song.
+- **‹ Songs, top left,** goes back to your songs. It replaces the × at the end of the ribbon, which sat beside "hide the tools" and looked as if it closed them. File → Close and Ctrl+W are as before.
+- **Settings is a button at the end of the tab row** (the same corner as on the library). It was a tab that held one button. With a song open it starts on This song; in the simple view, on All songs. About is in Settings, and in the Help menu.
+- **The preview's header has an "Edit chords" switch**, the same setting as Write → On the sheet and the right-click menu, and with it on the header says what you can do: drag a chord to its word, click a chord to change it.
+- **The top bar's button says Play** (then Pause, then Resume). It read "Play / Pause" until first pressed. Play and Stop stay on the Play and Picking tabs too.
+
 ## v4.83.0
 
 The web player's library and phone layout (UI review C7, S7, E1, E2, E3, C2).

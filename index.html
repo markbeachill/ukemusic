@@ -285,6 +285,13 @@
       }
       .pane-head strong { color: #fff; font-size: 13px; }
       .pane-head.preview-head { background: var(--preview-head); border-bottom-color: var(--preview-head); }
+      .pane-head .preview-edit { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; color: #fff; font-size: 12px; white-space: nowrap; cursor: pointer; }
+      .appbar-back { border: 1px solid var(--border); background: var(--surface, #fff); color: inherit; border-radius: 8px; padding: 5px 10px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+      .appbar-back:hover { background: var(--accent-soft); }
+      .ribbon-settings { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: rgba(255, 255, 255, 0.9); font: inherit; font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: 8px; cursor: pointer; }
+      .ribbon-settings:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
+      .ribbon-settings svg { width: 16px; height: 16px; }
+      .rib-ins::before { content: attr(data-glyph); display: block; height: 22px; line-height: 22px; font-family: var(--monospace-font, monospace); font-size: 15px; font-weight: 700; color: var(--accent, #0e6b64); }
 
       /* ── Library: the home screen ───────────────────────── */
       .library {
@@ -1966,12 +1973,13 @@
     <div class="app-shell">
       <header class="header">
         <div class="appbar">
+          <button id="backToSongs" class="appbar-back" type="button" title="Close the song and go back to your songs (Ctrl+W)">‹ Songs</button>
           <div class="appbar-title">
             <strong id="songTitle">New song</strong>
             <span id="savedBadge" class="saved-badge">Saved</span>
           </div>
           <span class="appbar-spacer"></span>
-          <button id="quickPlay" type="button" title="Play, pause or resume">Play / Pause</button>
+          <button id="quickPlay" type="button" title="Play, pause or resume">Play</button>
           <button id="quickStop" type="button">Stop</button>
           <select id="songSections" aria-label="Jump to section"><option value="">Jump to section</option></select>
           <span id="nowPlaying" class="now-playing" aria-live="polite"></span>
@@ -1986,11 +1994,10 @@
             <button id="ribbonTabPlay" class="ribbon-tab" type="button" role="tab" data-ribbon="play" title="Play, stop, karaoke, tempo and how playback sounds">Play</button>
             <button id="ribbonTabLearn" class="ribbon-tab" type="button" role="tab" data-ribbon="learn" title="Learn the song: play it from memory, practise its changes, think in numbers, and make a learn sheet">Learn</button>
             <button id="ribbonTabPick" data-feature="picking" class="ribbon-tab" type="button" role="tab" data-ribbon="pick" title="Fingerpick the song instead of strumming: choose a pattern, play it, make a pick sheet, and learn any tab in steps">Picking</button>
-            <button id="ribbonTabSettings" class="ribbon-tab" type="button" role="tab" data-ribbon="settings" title="Settings for this song and the defaults for all songs">Settings</button>
             <button id="moreFeaturesButton" class="ribbon-tab ribbon-more" type="button" data-simple-only title="Show every feature: Stage copies, setlists and songbooks, picking, practice and more. You can choose what the simple view shows in Settings → Features">More features</button>
             <span class="ribbon-end">
+              <button id="settingsToggleButton" class="ribbon-settings" type="button" title="Settings: for this song, and the defaults for all songs (Ctrl+,)"><span data-icon="gear" aria-hidden="true"></span>Settings</button>
               <button id="ribbonHide" class="ribbon-close ribbon-hide" type="button" title="Hide the tools, for more room (click any tab, or this again, to show them)" aria-label="Hide the tools"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-              <button id="ribbonClose" class="ribbon-close" type="button" title="Close the song and go back to your songs (as File → Close)" aria-label="Close the song">×</button>
             </span>
           </div>
 
@@ -2033,6 +2040,11 @@
           <div class="ribbon-panel" data-ribbon-panel="write" role="tabpanel" hidden>
             <div class="rib-group" data-feature="writeAdd">
               <div class="rib-items">
+                <button class="rib-button rib-ins" type="button" data-ins="[]" data-back="1" title="Put in a chord: [ ] at the cursor, to type the chord name in. It goes just before the word it's played on: [C]Hello" data-glyph="[ ]">Chord</button>
+                <button class="rib-button rib-ins" type="button" data-ins="[[]]" data-back="2" title="Put in a heading on a line of its own: [[Verse 1]], [[Chorus]]" data-glyph="[[ ]]">Heading</button>
+                <button class="rib-button rib-ins" type="button" data-ins="{}" data-back="1" title="Put in a strum pattern: {D-DU-UDU}. D is down, U is up, - is a miss" data-glyph="{ }">Strum</button>
+                <button class="rib-button rib-ins" type="button" data-ins="|" data-back="0" title="Put in a bar line" data-glyph="|">Bar line</button>
+                <button class="rib-button rib-ins" data-feature="tune" type="button" data-ins="{melody: }" data-back="1" title="Put in the tune for the next line, as note names: {melody: E E F G}" data-glyph="♪">Tune</button>
                 <button id="insertTabButton" class="rib-button" type="button" data-icon="tab" title="Add an empty tab block for your instrument's strings below the cursor. In a tab block, typing writes over the dashes.">Insert tab</button>
                 <button id="shapesButton" class="rib-button" type="button" data-icon="shape" title="Choose another fingering for a chord in this song, or type your own. You can also click a chord diagram in the preview.">Chord shapes</button>
               </div>
@@ -2616,22 +2628,6 @@
             </div>
           </div>
 
-          <div class="ribbon-panel" data-ribbon-panel="settings" role="tabpanel" hidden>
-            <div class="rib-group">
-              <div class="rib-items">
-                <button id="settingsToggleButton" class="rib-button" type="button" data-icon="gear" title="Open Settings: this song's own settings, and the defaults for all songs (Ctrl+,)">Settings</button>
-                <button id="songSettingsButton" data-feature="setSongCustom" class="rib-button" type="button" data-icon="sliders" title="This song's own settings: chord diagrams, layout, font and more">This song's settings</button>
-              </div>
-              <span class="rib-label">Settings</span>
-            </div>
-            <div class="rib-group">
-              <div class="rib-items">
-                <button id="aboutButton" class="rib-button" type="button" data-icon="help" title="About ukemusic: its version, and thanks for the sounds, chord shapes and software it uses">About</button>
-              </div>
-              <span class="rib-label">Help</span>
-            </div>
-          </div>
-
           <div id="ribbonHint" class="ribbon-hint" aria-live="polite">Point at a button to see what it does.</div>
         </nav>
       </header>
@@ -2756,7 +2752,7 @@
         </section>
         <div id="splitter" aria-hidden="true"></div>
         <section class="panel preview-panel">
-          <div class="pane-head preview-head"><strong>Preview</strong><span>follows the song as you scroll · click a line to go to it</span></div>
+          <div class="pane-head preview-head"><strong>Preview</strong><span id="previewHint">follows the song as you scroll · click a line to go to it</span><label class="preview-edit" data-feature="chordEdit" title="Edit chords on the sheet: drag a chord to its word, click one to change it (also Write → On the sheet, or right-click the sheet)"><input id="previewChordEdit" type="checkbox" /> Edit chords</label></div>
           <div id="playBand" class="play-band" hidden aria-live="off">
             <span id="pbChord" class="pb-chord"></span>
             <span id="pbSteps" class="k-steps pb-steps" aria-hidden="true"></span>
@@ -2773,6 +2769,7 @@
               </div>
               <span class="settings-spacer"></span>
               <span id="settingsSavedNote" class="settings-saved">Kept when you save the song</span>
+              <button id="aboutButton" type="button" title="About ukemusic: the version, and thanks">About</button>
               <button id="closeSettingsButton" type="button">Close</button>
             </div>
             <div class="settings-body">
@@ -4709,7 +4706,13 @@
         function showChordEditButton() {
           const button = document.getElementById('chordEditButton');
           if (button) button.setAttribute('aria-pressed', String(chordEditWanted()));
+          // 4.84: the same switch on the preview's own header, and what you can do there
+          const box = document.getElementById('previewChordEdit');
+          if (box) box.checked = chordEditWanted();
+          const hint = document.getElementById('previewHint');
+          if (hint) hint.textContent = chordEditWanted() ? 'drag a chord to its word · click a chord to change it' : 'follows the song as you scroll · click a line to go to it';
         }
+        document.getElementById('previewChordEdit')?.addEventListener('change', (event) => setChordEdit(event.target.checked));
         document.getElementById('chordEditButton')?.addEventListener('click', () => setChordEdit(!chordEditWanted()));
         function applyChordEdit(op) {
           const before = getEditorValue();
@@ -5967,7 +5970,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           settingsPanel.classList.toggle('is-visible', shouldShow);
           settingsPanel.setAttribute('aria-hidden', String(!shouldShow));
           // 4.81: in the simple view, the page with settings you can change (This song's are for all features)
-          if (shouldShow && document.documentElement.hasAttribute('data-simple')) showSettingsTab('all');
+          if (shouldShow && typeof forceValue !== 'boolean') showSettingsTab(!document.documentElement.hasAttribute('data-simple') && libraryEl.hidden && state.song ? 'song' : 'all');
+          else if (shouldShow && document.documentElement.hasAttribute('data-simple')) showSettingsTab('all');
           if (shouldShow) buildSettingsNav();
         }
 
@@ -7166,6 +7170,24 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           focusEditor();
         }
         document.getElementById('insertTabButton').addEventListener('click', insertTabBlock);
+        // 4.84: Chord, Heading, Strum, Bar line (and Tune): the brackets at the cursor, the cursor inside
+        for (const b of document.querySelectorAll('.rib-ins[data-ins]')) {
+          b.addEventListener('mousedown', (event) => event.preventDefault()); // the editor keeps its cursor
+          b.addEventListener('click', () => {
+            showTab('song');
+            const text = b.dataset.ins;
+            const back = Number(b.dataset.back) || 0;
+            if (state.usingCodeMirror) window.ukemusic.editorInsert(text, back);
+            else {
+              const ta = document.getElementById('editor');
+              const from = ta.selectionStart;
+              ta.setRangeText(text, from, ta.selectionEnd, 'end');
+              ta.selectionStart = ta.selectionEnd = from + text.length - back;
+              ta.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            focusEditor();
+          });
+        }
 
         async function convertCurrentSong() {
           showTab('song');
@@ -11692,7 +11714,7 @@ function showTab(tab) {
           button.title = hide ? 'Show the tools' : 'Hide the tools, for more room (click any tab, or this again, to show them)';
           button.setAttribute('aria-label', hide ? 'Show the tools' : 'Hide the tools');
         });
-        document.getElementById('ribbonClose').addEventListener('click', () => document.getElementById('closeSongButton').click());
+        document.getElementById('backToSongs').addEventListener('click', () => document.getElementById('closeSongButton').click());
         try { if (localStorage.getItem(RIBBON_HIDDEN_KEY) === '1') setRibbonHidden(true); } catch (_err) { /* shown */ }
         function showRibbon(name) {
           if (document.querySelector('nav.ribbon.collapsed')) setRibbonHidden(false);
@@ -11852,10 +11874,9 @@ function showTab(tab) {
           if (state.usingCodeMirror) window.ukemusic.editorExecCommand('redo');
           else document.execCommand('redo');
         });
-        document.getElementById('songSettingsButton').addEventListener('click', () => {
-          toggleSettingsPanel(true);
-          showSettingsTab('song');
-        });
+        // 4.84: Settings is one button at the end of the tab row (it was a tab holding a button); with
+        // a song open and all features on, it opens on This song
+
 
         // Play tab: Play / Stop, and the tempo (−/+ 5, or typed); a change while playing carries on at the new speed
         function setSongTempo(value) {
