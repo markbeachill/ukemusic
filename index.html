@@ -1987,7 +1987,7 @@
             <button id="ribbonTabLearn" class="ribbon-tab" type="button" role="tab" data-ribbon="learn" title="Learn the song: play it from memory, practise its changes, think in numbers, and make a learn sheet">Learn</button>
             <button id="ribbonTabPick" data-feature="picking" class="ribbon-tab" type="button" role="tab" data-ribbon="pick" title="Fingerpick the song instead of strumming: choose a pattern, play it, make a pick sheet, and learn any tab in steps">Picking</button>
             <button id="ribbonTabSettings" class="ribbon-tab" type="button" role="tab" data-ribbon="settings" title="Settings for this song and the defaults for all songs">Settings</button>
-            <button id="moreFeaturesButton" class="ribbon-tab ribbon-more" type="button" data-simple-only title="Show every feature: Stage copies, setlists and songbooks, picking, practice and more. You can choose what the simple view shows in Settings → Features">More features…</button>
+            <button id="moreFeaturesButton" class="ribbon-tab ribbon-more" type="button" data-simple-only title="Show every feature: Stage copies, setlists and songbooks, picking, practice and more. You can choose what the simple view shows in Settings → Features">More features</button>
             <span class="ribbon-end">
               <button id="ribbonHide" class="ribbon-close ribbon-hide" type="button" title="Hide the tools, for more room (click any tab, or this again, to show them)" aria-label="Hide the tools"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
               <button id="ribbonClose" class="ribbon-close" type="button" title="Close the song and go back to your songs (as File → Close)" aria-label="Close the song">×</button>
@@ -2003,7 +2003,7 @@
               <div class="rib-items">
                 <button id="saveButton" class="rib-button" type="button" data-icon="save" title="Save this song (Ctrl+S)">Save</button>
                 <button id="saveAsButton" class="rib-button" type="button" data-icon="saveAs" title="Make a new song from this one: asks for the new song's name">Save new</button>
-                <button id="historyButton" class="rib-button" type="button" data-icon="history" title="Earlier versions of this song: every save keeps the one before (the last 20). Look at one and put it back.">Versions</button>
+                <button id="historyButton" data-feature="versions" class="rib-button" type="button" data-icon="history" title="Earlier versions of this song: every save keeps the one before (the last 20). Look at one and put it back.">Versions</button>
               </div>
               <span class="rib-label">Save</span>
             </div>
@@ -2018,7 +2018,7 @@
               <div class="rib-items">
                 <button id="importButton" class="rib-button" type="button" data-icon="import" title="Bring in a text or ChordPro (.cho) file from your computer as a new song">Import file</button>
                 <button id="pasteSheetButton" class="rib-button" type="button" data-icon="paste" title="Paste a song from a website (chords above the words, tab or ChordPro) and have it tidied (Ctrl+Shift+V)">Paste from web</button>
-                <button id="convertLinesButton" class="rib-button" type="button" data-icon="convert" title="Tidy chords above words: songs copied from websites often have the chords on their own line above the words. This moves them into the words, as [C]hords, so the app can play, transpose and lay them out. Check the lines it marks afterwards.">Tidy chords</button>
+                <button id="convertLinesButton" data-feature="tidy" class="rib-button" type="button" data-icon="convert" title="Tidy chords above words: songs copied from websites often have the chords on their own line above the words. This moves them into the words, as [C]hords, so the app can play, transpose and lay them out. Check the lines it marks afterwards.">Tidy chords</button>
               </div>
               <span class="rib-label">Bring in</span>
             </div>
@@ -2086,7 +2086,7 @@
                   <div class="rib-row">
                     <button id="transposeDown" class="rib-small" type="button" title="Try it one semitone lower" aria-label="One semitone lower">−</button>
                     <button id="transposeUp" class="rib-small" type="button" title="Try it one semitone higher" aria-label="One semitone higher">+</button>
-                    <details class="rib-menu" id="keyMenu">
+                    <details class="rib-menu" id="keyMenu" data-feature="keyVersions">
                       <summary class="rib-small" title="Save the key you're looking at, remove a saved key, or make it the song's own key">Keys ▾</summary>
                       <div class="rib-menu-items">
                         <button id="saveVersionButton" type="button" title="Keep this song in another key as a version, alongside the original">Save this key as a version…</button>
@@ -2109,7 +2109,7 @@
                       <option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option>
                     </select>
                   </div>
-                  <button id="capoSuggestButton" class="rib-small" type="button" title="Find the capo position with the easiest shapes for this song on your instrument">Suggest…</button>
+                  <button id="capoSuggestButton" data-feature="capoSuggest" class="rib-small" type="button" title="Find the capo position with the easiest shapes for this song on your instrument">Suggest…</button>
                 </div>
               </div>
               <span class="rib-label">Capo</span>
@@ -2620,7 +2620,7 @@
             <div class="rib-group">
               <div class="rib-items">
                 <button id="settingsToggleButton" class="rib-button" type="button" data-icon="gear" title="Open Settings: this song's own settings, and the defaults for all songs (Ctrl+,)">Settings</button>
-                <button id="songSettingsButton" class="rib-button" type="button" data-icon="sliders" title="This song's own settings: chord diagrams, layout, font and more">This song's settings…</button>
+                <button id="songSettingsButton" data-feature="setSongCustom" class="rib-button" type="button" data-icon="sliders" title="This song's own settings: chord diagrams, layout, font and more">This song's settings…</button>
               </div>
               <span class="rib-label">Settings</span>
             </div>
@@ -2708,21 +2708,21 @@
                     <input id="detailsYear" class="short" type="text" inputmode="numeric" maxlength="12" placeholder="1964" data-config-path="song.year" data-scope="song" />
                     <label for="detailsWriter">Written by</label>
                     <input id="detailsWriter" type="text" maxlength="160" placeholder="Songwriters, if not the artist" data-config-path="song.writer" data-scope="song" />
-                    <label for="detailsAlbum">Album</label>
-                    <input id="detailsAlbum" type="text" maxlength="160" placeholder="Album or collection" data-config-path="song.album" data-scope="song" />
-                    <label for="detailsSource">Source</label>
-                    <input id="detailsSource" type="text" maxlength="300" placeholder="Where you got it: a website, a book, a teacher" data-config-path="song.source" data-scope="song" />
+                    <label for="detailsAlbum" data-feature="detailsMore">Album</label>
+                    <input id="detailsAlbum" data-feature="detailsMore" type="text" maxlength="160" placeholder="Album or collection" data-config-path="song.album" data-scope="song" />
+                    <label for="detailsSource" data-feature="detailsMore">Source</label>
+                    <input id="detailsSource" data-feature="detailsMore" type="text" maxlength="300" placeholder="Where you got it: a website, a book, a teacher" data-config-path="song.source" data-scope="song" />
                     <label for="detailsTags">Tags</label>
                     <input id="detailsTags" type="text" maxlength="300" placeholder="folk, singalong, christmas" data-config-path="song.tags" data-scope="song" />
-                    <label for="detailsDifficulty">Difficulty</label>
-                    <select id="detailsDifficulty" data-config-path="song.difficulty" data-scope="song">
+                    <label for="detailsDifficulty" data-feature="detailsMore">Difficulty</label>
+                    <select id="detailsDifficulty" data-feature="detailsMore" data-config-path="song.difficulty" data-scope="song">
                       <option value="">Not set</option>
                       <option value="beginner">Beginner</option>
                       <option value="intermediate">Intermediate</option>
                       <option value="advanced">Advanced</option>
                     </select>
-                    <label for="detailsLicence" title="Whether the song can go in a library pack you share">Licence</label>
-                    <select id="detailsLicence" data-config-path="song.licence" data-scope="song">
+                    <label for="detailsLicence" data-feature="detailsMore" title="Whether the song can go in a library pack you share">Licence</label>
+                    <select id="detailsLicence" data-feature="detailsMore" data-config-path="song.licence" data-scope="song">
                       <option value="">Not set</option>
                       <option value="public-domain">Public domain (old enough to be free)</option>
                       <option value="own">My own song</option>
@@ -3200,7 +3200,7 @@
     <section id="library" class="library" aria-label="Your songs">
       <header class="library-bar">
         <div class="library-brand"><span data-icon="uke" aria-hidden="true"></span><strong>ukemusic</strong></div>
-        <button id="libSwitch" class="lib-switch" type="button" title="Your libraries: switch to another, start a new one, share one as a library pack or open a pack"><span data-icon="folder" aria-hidden="true"></span><span id="libSwitchName">Songs</span><span class="caret" aria-hidden="true">▾</span></button>
+        <button id="libSwitch" data-feature="libraries" class="lib-switch" type="button" title="Your libraries: switch to another, start a new one, share one as a library pack or open a pack"><span data-icon="folder" aria-hidden="true"></span><span id="libSwitchName">Songs</span><span class="caret" aria-hidden="true">▾</span></button>
         <span class="library-folder" id="libFolder"></span>
         <span class="appbar-spacer"></span>
         <button id="libSettingsButton" class="appbar-button" type="button" data-icon="gear" title="Defaults for all songs">Settings</button>
@@ -3221,9 +3221,9 @@
         <section id="libSongsView" class="library-songs">
           <div class="library-songs-head">
             <h2>All songs <span id="libCount" class="muted"></span></h2>
-            <button id="libOpenFolder" class="lib-folder-button" type="button" title="See your song folders and exports in Explorer"><span data-icon="folder" aria-hidden="true"></span>Open library folder</button>
-            <button id="libExportAll" class="lib-folder-button" type="button" title="Export every song again: PDFs, web pages, lyrics… (after you change a style, say)"><span data-icon="export" aria-hidden="true"></span>Export every song…</button>
-            <button id="libPhone" class="lib-folder-button" type="button" title="Your songs on a phone or tablet (the web player): send them there in one file, and bring back the songs you write or change there"><span data-icon="screen" aria-hidden="true"></span>Phone and tablet…</button>
+            <button id="libOpenFolder" data-feature="libraryTools" class="lib-folder-button" type="button" title="See your song folders and exports in Explorer"><span data-icon="folder" aria-hidden="true"></span>Open library folder</button>
+            <button id="libExportAll" data-feature="libraryTools" class="lib-folder-button" type="button" title="Export every song again: PDFs, web pages, lyrics… (after you change a style, say)"><span data-icon="export" aria-hidden="true"></span>Export every song…</button>
+            <button id="libPhone" data-feature="phone" class="lib-folder-button" type="button" title="Your songs on a phone or tablet (the web player): send them there in one file, and bring back the songs you write or change there"><span data-icon="screen" aria-hidden="true"></span>Phone and tablet…</button>
             <span class="appbar-spacer"></span>
             <label for="libSearch">Find</label>
             <input id="libSearch" type="search" placeholder="Title, artist, tag or key…" autocomplete="off" />
@@ -3386,9 +3386,9 @@
         <h2 id="exportHeading">Export</h2>
         <p id="exportWhere" class="dialog-note"></p>
         <label class="export-main"><input type="checkbox" name="format" value="sheet_pdf" /> <strong>Chord sheet PDF</strong> — for printing, in your style set (in the <em>Song</em> folder, or the key's own folder)</label>
-        <label class="export-main"><input type="checkbox" name="format" value="sheet_stage" /> <strong>Stage PDF</strong> — big and bold, for playing from (in the <em>Stage</em> folder)</label>
-        <label class="export-main" title="Chords above or in the words, and the smallest text: ribbon → Export → Two-page Stage"><input type="checkbox" name="format" value="sheet_stage2" /> <strong>Two-page Stage PDF</strong> — on one page if it fits, otherwise two, for a music stand with no page to turn (in the <em>Stage</em> folder)</label>
-        <details id="exportMore" class="export-more">
+        <label class="export-main" data-feature="stage"><input type="checkbox" name="format" value="sheet_stage" /> <strong>Stage PDF</strong> — big and bold, for playing from (in the <em>Stage</em> folder)</label>
+        <label class="export-main" data-feature="twoPage" title="Chords above or in the words, and the smallest text: ribbon → Export → Two-page Stage"><input type="checkbox" name="format" value="sheet_stage2" /> <strong>Two-page Stage PDF</strong> — on one page if it fits, otherwise two, for a music stand with no page to turn (in the <em>Stage</em> folder)</label>
+        <details id="exportMore" class="export-more" data-feature="exportMore">
           <summary>More formats</summary>
           <div class="export-grid">
             <fieldset>
@@ -3412,7 +3412,7 @@
             </fieldset>
           </div>
         </details>
-        <fieldset>
+        <fieldset data-feature="exportKeys">
           <legend>Key (chord sheets, learn and pick sheets)</legend>
           <label><input type="radio" name="exportScope" value="current" /> <span id="exportCurrentLabel">Current key</span></label>
           <label><input type="radio" name="exportScope" value="all" /> <span id="exportAllLabel">Original and every saved version</span></label>
@@ -3424,7 +3424,8 @@
             <option value="Letter">US Letter</option>
           </select>
         </div>
-        <label class="check-line"><input id="exportMakeUsual" type="checkbox" /> Make these my usual (ticked next time)</label>
+        <label class="check-line" data-feature="exportMore"><input id="exportMakeUsual" type="checkbox" /> Make these my usual (ticked next time)</label>
+        <p class="dialog-note" data-simple-only>Stage copies, web pages, ChordPro and other kinds of file come with all features (More features, on the ribbon).</p>
         <p id="exportGigNote" class="dialog-note"></p>
         <p id="exportError" class="dialog-error" role="alert"></p>
         <div class="dialog-actions">
@@ -5389,8 +5390,10 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         // 4.80: after the simple view hides or shows things: a group's name follows what's left in it,
         // a lone library tab goes, greyed settings can't be reached from the keyboard either, the ribbon
         // is fitted again (it was fitted with every group there) and the hint line is the view's own
+        // is this feature's control hidden just now (the simple view, and the song doesn't bring it back)?
+        function featureGone(id) { const el = document.querySelector(`[data-feature~="${id}"]`); return !!el && getComputedStyle(el).display === 'none'; }
         function featuresSettled() {
-          const gone = (id) => { const el = document.querySelector(`[data-feature~="${id}"]`); return !!el && getComputedStyle(el).display === 'none'; };
+          const gone = featureGone;
           for (const label of document.querySelectorAll('[data-label-without]')) {
             if (!label.dataset.labelAll) label.dataset.labelAll = label.textContent;
             const [id, text] = label.dataset.labelWithout.split(':');
@@ -5425,8 +5428,11 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         document.getElementById('featureTableReset').addEventListener('click', () => saveFeatures({}));
         document.getElementById('general-all_features').addEventListener('change', () => setTimeout(applyFeatures, 0));
         document.getElementById('moreFeaturesButton').addEventListener('click', () => {
+          // 4.81: you stay on the tab you were on, and one click takes it back
+          const was = document.querySelector('.ribbon-tab.active[data-ribbon]');
           saveFeatures(null, true);
-          showToast('All features shown', { detail: 'To go back to the simple view, or choose what it shows: Settings → Features.' });
+          was?.click();
+          showToast('All features shown', { detail: 'Choose what the simple view shows in Settings → Features.', action: 'Back to simple', onAction: () => saveFeatures(null, false) });
         });
         function sheetUpdated(config = effectiveConfig()) {
           const on = config?.export?.sheet_date === true || config?.export?.sheet_date === 'true';
@@ -5825,7 +5831,11 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           // 4.22: your usual formats ticked. 4.33: until you choose, just the chord sheet PDF (and
           // its Stage copy); the rest are under More formats
           const ticked = usualFormats(state.config);
-          boxes.forEach((box) => { box.checked = ticked.includes(box.value); });
+          // 4.81: a kind of file the simple view hides isn't ticked (you can't untick what you can't see);
+          // with nothing left, the chord sheet PDF is
+          const hiddenBox = (box) => { const f = box.closest('[data-feature]'); return !!f && getComputedStyle(f).display === 'none'; };
+          boxes.forEach((box) => { box.checked = ticked.includes(box.value) && !hiddenBox(box); });
+          if (!boxes.some((box) => box.checked)) boxes.find((box) => box.value === 'sheet_pdf').checked = true;
           document.getElementById('exportMore').open = ticked.some((f) => !MAIN_FORMATS.includes(f));
           document.getElementById('exportMakeUsual').checked = false;
           const gig = state.config?.export?.gig_folder;
@@ -5956,6 +5966,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             : !settingsPanel.classList.contains('is-visible');
           settingsPanel.classList.toggle('is-visible', shouldShow);
           settingsPanel.setAttribute('aria-hidden', String(!shouldShow));
+          // 4.81: in the simple view, the page with settings you can change (This song's are for all features)
+          if (shouldShow && document.documentElement.hasAttribute('data-simple')) showSettingsTab('all');
           if (shouldShow) buildSettingsNav();
         }
 
@@ -11488,6 +11500,9 @@ function showTab(tab) {
             case 'strum-library':
               openStrumLibrary();
               break;
+            case 'guide':
+              openGuide();
+              break;
             case 'insert-tab':
               insertTabBlock();
               break;
@@ -11681,7 +11696,7 @@ function showTab(tab) {
         try { if (localStorage.getItem(RIBBON_HIDDEN_KEY) === '1') setRibbonHidden(true); } catch (_err) { /* shown */ }
         function showRibbon(name) {
           if (document.querySelector('nav.ribbon.collapsed')) setRibbonHidden(false);
-          for (const tab of document.querySelectorAll('.ribbon-tab')) {
+          for (const tab of document.querySelectorAll('.ribbon-tab[data-ribbon]')) {
             const on = tab.dataset.ribbon === name;
             tab.classList.toggle('active', on);
             tab.setAttribute('aria-selected', String(on));
@@ -11692,7 +11707,7 @@ function showTab(tab) {
           }
           try { localStorage.setItem(RIBBON_KEY, name); } catch (_err) { /* not kept: fine */ }
         }
-        for (const tab of document.querySelectorAll('.ribbon-tab')) {
+        for (const tab of document.querySelectorAll('.ribbon-tab[data-ribbon]')) {
           tab.addEventListener('click', () => showRibbon(tab.dataset.ribbon));
         }
         let firstRibbon = 'song';
@@ -11758,7 +11773,7 @@ function showTab(tab) {
         const RIBBON_HINT_DEFAULT = 'Point at a button to see what it does.';
         const RIBBON_HINTS = {
           song: 'Save, bring in or organise songs.',
-          write: 'Write and edit the song. Strum patterns are in Help → Strums.',
+          write: 'Write and edit the song. Strum patterns are in Help → Strum Patterns.',
           thissong: 'Song settings are saved with the song; trying another key is temporary.',
           view: 'Choose how the song is shown on screen and on paper.',
           play: 'Loop repeats the current section. Practice speed leaves the saved tempo unchanged.',
@@ -11809,7 +11824,7 @@ function showTab(tab) {
           ribbonHint.textContent = defaultRibbonHint();
           ribbonHint.classList.remove('active');
         });
-        for (const tab of document.querySelectorAll('.ribbon-tab')) tab.addEventListener('click', () => {
+        for (const tab of document.querySelectorAll('.ribbon-tab[data-ribbon]')) tab.addEventListener('click', () => {
           ribbonHint.textContent = defaultRibbonHint();
           ribbonHint.classList.remove('active');
         });
@@ -12566,7 +12581,7 @@ function showTab(tab) {
             head.textContent = shift ? `${song.title} (in ${keyNameFor(song, shift)})` : song.title;
             menu.appendChild(head);
             const last = state.config?.library?.last_setlist;
-            menuButton(menu, `Add to a setlist…${last ? ` (last: ${last})` : ''}`, () => openSetlistMenu(button, song.title, shift)).classList.add('rm-setlist');
+            if (!featureGone('setlists')) menuButton(menu, `Add to a setlist…${last ? ` (last: ${last})` : ''}`, () => openSetlistMenu(button, song.title, shift)).classList.add('rm-setlist');
             if (!shift) {
               const others = libraryPaths().length > 1;
               menuButton(menu, 'Copy or move to another library…', () => openCopyMenu(button, song), { disabled: !others, title: others ? '' : 'Make or add a second library first (the library button, top left)' }).classList.add('rm-copy');

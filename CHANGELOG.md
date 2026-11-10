@@ -1,5 +1,16 @@
 # Changelog
 
+## v4.81.0
+
+The simple view, sealed, and a shorter menu bar (UI review S3, S5, S6, S8, S9, L2).
+
+- **Nothing hidden shows through any more.** In the simple view the Export choices offer the chord sheet PDF only (Stage copies and the other kinds of file aren't ticked behind your back); a song's ⋯ menu has no "Add to a setlist"; the library's switcher, "Open library folder" and "Export every song" wait for all features, and so do Album, Source, Difficulty and Licence in a song's Details. On the web, Download offers the song file and the chord sheet page.
+- **Simpler by default.** Earlier versions, Tidy chords, Suggest a capo and the saved keys menu are now "all features" things. **Phone and tablet** stays in the simple view. As ever, each is a tick in Settings → Features.
+- **Settings in the simple view** opens on the page you can change (All songs), and a greyed section is just its heading, "shown with all features", not a long greyed list.
+- **More features** (on the ribbon) keeps you on the tab you were on, and its message has a **Back to simple** button.
+- **The Features table** is grouped under where each feature is (File, Write, Song…), with a plain tick box per row.
+- **A short menu bar: File, Edit, View, Help.** Everything else is on the ribbon, under one name. The shortcuts all still work: F5 plays, Shift+F5 stops, Ctrl+K guesses the key, Ctrl+Alt+E edits the style. Help has **How to Write Songs** (F1) and **Strum Patterns**. The library's own ▾ menu has what the Library menu had.
+
 ## v4.80.0
 
 First of the changes from the UI review (`docs/ui-improvements.md`): the simple view, fixed.

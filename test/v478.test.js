@@ -48,7 +48,7 @@ test('levels, changes kept as text, the CSS', () => {
   const css = F.css();
   assert.match(css, /html\[data-simple\] \[data-feature~="session"\]:not\(\[data-feature-grey\]\) \{ display: none !important; \}/);
   assert.match(css, /html\[data-simple\]:not\(\[data-song-uses~="picking"\]\) \[data-feature~="picking"\]/, 'the song brings it back');
-  assert.match(css, /\[data-feature~="setStage"\]\[data-feature-grey\] \{ opacity: 0\.45; pointer-events: none; \}/, 'settings greyed');
+  assert.match(css, /\[data-feature~="setStage"\]\[data-feature-grey\] \{ opacity: 0\.6; pointer-events: none; \}/, 'settings greyed');
   assert.ok(!/"karaoke"/.test(css), 'simple features aren\'t touched');
   assert.ok(!/"session"/.test(F.css({ session: 'simple' })));
 });
@@ -61,9 +61,11 @@ test('what a song uses', () => {
 
 test('the in-app table: desktop Settings, web Features dialog', () => {
   const html = F.tableHtml('web', { session: 'simple' });
-  assert.match(html, /<tr class="feature-changed"><td>Session screen \(web: Group screen\)<\/td><td>the player<\/td><td><label class="feature-check"><input type="checkbox" data-feature-level="session" checked>/);
+  // 4.81: rows grouped under where they are; the tick box alone, named for a screen reader
+  assert.match(html, /<tr class="feature-where"><th colspan="2" scope="colgroup">the player<\/th><\/tr>/);
+  assert.match(html, /<tr class="feature-changed"><td>Session screen[^<]*<span class="feature-note">changed<\/span><\/td><td><label class="feature-check"><input type="checkbox" data-feature-level="session" aria-label="[^"]*: in the simple view" checked>/);
   assert.ok(!/Two-page Stage/.test(html), 'only this app\'s features');
-  assert.match(F.tableHtml('desktop'), /<td>Display<\/td>/);
+  assert.match(F.tableHtml('desktop'), /<th colspan="2" scope="colgroup">Display<\/th>/);
   assert.match(DESKTOP, /<section class="settings-group" id="set-features">/);
   assert.match(DESKTOP, /<input id="general-all_features" type="checkbox" data-config-path="general\.all_features" \/> Show all features/);
   assert.match(DESKTOP, /<button id="moreFeaturesButton" class="ribbon-tab ribbon-more" type="button" data-simple-only/);

@@ -353,8 +353,21 @@ function sendMenuAction(action) {
 }
 
 // Menu items that work on a song page only (greyed out on Your songs, settings etc.) (4.20)
-const SONG_PAGE_ITEMS = ['song-history', 'song-close', 'song-save', 'song-save-as', 'song-import', 'song-export', 'song-exports', 'song-print',
-  'song-undo', 'song-redo', 'song-paste', 'song-convert', 'song-style', 'song-key', 'song-capo', 'song-patterns', 'song-strums', 'song-tab', 'song-play', 'song-stop'];
+const SONG_PAGE_ITEMS = ['song-close', 'song-save', 'song-save-as', 'song-export', 'song-print',
+  'song-undo', 'song-redo', 'song-paste', 'song-strums'];
+// 4.81: shortcuts of things that are on the ribbon and no longer in the menu bar
+const KEYS_OFF_MENU = [
+  { key: 'f5', shift: false, action: 'play' },
+  { key: 'f5', shift: true, action: 'stop' },
+  { key: 'k', mod: true, action: 'guess-key' },
+  { key: 'e', mod: true, alt: true, action: 'edit-stylesheet' }
+];
+function keyOffMenu(input) {
+  if (input.type !== 'keyDown') return null;
+  const mod = input.control || input.meta;
+  const hit = KEYS_OFF_MENU.find((k) => k.key === String(input.key).toLowerCase() && Boolean(k.mod) === Boolean(mod) && Boolean(k.alt) === Boolean(input.alt) && (k.shift === undefined ? !input.shift : k.shift === Boolean(input.shift)));
+  return hit ? hit.action : null;
+}
 // …and of those, the ones that also need the song saved (it has a folder)
 const SAVED_SONG_ITEMS = ['song-exports', 'song-history'];
 function setMenuState({ songPage = true, saved = true, librarySongs = 1, library = true } = {}) {
@@ -374,6 +387,8 @@ function setMenuState({ songPage = true, saved = true, librarySongs = 1, library
 }
 
 function buildMenu() {
+  // 4.81: a short menu bar (File, Edit, View, Help): what a menu bar is for. Everything else is on
+  // the ribbon, under one name; the shortcuts of what left the menu still work (KEYS_OFF_MENU).
   const template = [
     {
       label: 'File',
@@ -382,33 +397,13 @@ function buildMenu() {
         { type: 'separator' },
         { label: 'New Song…', accelerator: 'CmdOrCtrl+N', click: () => sendMenuAction('file-new') },
         { label: 'Open Song…', accelerator: 'CmdOrCtrl+O', click: () => sendMenuAction('file-open') },
-        { id: 'song-history', label: 'Earlier Versions…', click: () => sendMenuAction('song-history') },
-        { id: 'song-close', label: 'Close Song', accelerator: 'CmdOrCtrl+W', click: () => sendMenuAction('file-close') },
         { id: 'song-save', label: 'Save', accelerator: 'CmdOrCtrl+S', click: () => sendMenuAction('file-save') },
-        { id: 'song-save-as', label: 'Save as New Song…', accelerator: 'CmdOrCtrl+Shift+S', click: () => sendMenuAction('file-save-as') },
-        { type: 'separator' },
-        { id: 'song-import', label: 'Import Text File…', click: () => sendMenuAction('file-import') },
+        { id: 'song-save-as', label: 'Save as New…', accelerator: 'CmdOrCtrl+Shift+S', click: () => sendMenuAction('file-save-as') },
         { type: 'separator' },
         { id: 'song-export', label: 'Export…', accelerator: 'CmdOrCtrl+E', click: () => sendMenuAction('export') },
-        { id: 'song-exports', label: 'Open Exports Folder', click: () => sendMenuAction('open-exports') },
-        { type: 'separator' },
-        {
-          label: 'Library',
-          submenu: [
-            { label: 'Switch Library…', click: () => sendMenuAction('lib-switch') },
-            { label: 'New Library…', click: () => sendMenuAction('lib-new') },
-            { label: 'Add a Library Folder…', click: () => sendMenuAction('choose-songs-folder') },
-            { type: 'separator' },
-            { label: 'Open a Library Pack…', click: () => sendMenuAction('lib-open-pack') },
-            { id: 'lib-share', label: 'Share This Library as a Pack…', click: () => sendMenuAction('lib-share') },
-            { id: 'lib-import-cho', label: 'Import ChordPro Files…', click: () => sendMenuAction('lib-import-cho') },
-            { type: 'separator' },
-            { id: 'lib-about', label: 'About This Library…', click: () => sendMenuAction('lib-about') }
-          ]
-        },
-        { type: 'separator' },
         { id: 'song-print', label: 'Print', accelerator: 'CmdOrCtrl+P', click: () => sendMenuAction('print') },
         { type: 'separator' },
+        { id: 'song-close', label: 'Close Song', accelerator: 'CmdOrCtrl+W', click: () => sendMenuAction('file-close') },
         { role: process.platform === 'darwin' ? 'close' : 'quit', label: process.platform === 'darwin' ? 'Close' : 'Quit' }
       ]
     },
@@ -422,15 +417,13 @@ function buildMenu() {
         { role: 'copy' },
         { role: 'paste' },
         { type: 'separator' },
-        { id: 'song-paste', label: 'Paste from Website…', accelerator: 'CmdOrCtrl+Shift+V', click: () => sendMenuAction('paste-chord-sheet') },
-        { id: 'song-convert', label: 'Tidy Chords Above Words', click: () => sendMenuAction('convert-chord-lines') }
+        { id: 'song-paste', label: 'Paste from a Website…', accelerator: 'CmdOrCtrl+Shift+V', click: () => sendMenuAction('paste-chord-sheet') }
       ]
     },
     {
       label: 'View',
       submenu: [
         { label: 'Settings', accelerator: 'CmdOrCtrl+,', click: () => sendMenuAction('toggle-settings') },
-        { id: 'song-style', label: 'Edit Style…', accelerator: 'CmdOrCtrl+Alt+E', click: () => sendMenuAction('edit-stylesheet') },
         { type: 'separator' },
         { role: 'zoomIn', label: 'Zoom In' },
         { role: 'zoomOut', label: 'Zoom Out' },
@@ -438,26 +431,10 @@ function buildMenu() {
       ]
     },
     {
-      label: 'Write',
-      submenu: [
-        { id: 'song-key', label: 'Guess the Key…', accelerator: 'CmdOrCtrl+K', click: () => sendMenuAction('guess-key') },
-        { id: 'song-capo', label: 'Suggest a Capo…', click: () => sendMenuAction('suggest-capo') },
-        { id: 'song-patterns', label: 'Chord Patterns…', click: () => sendMenuAction('chord-patterns') },
-        { type: 'separator' },
-        { id: 'song-tab', label: 'Insert Tab Block', click: () => sendMenuAction('insert-tab') }
-      ]
-    },
-    {
-      label: 'Play',
-      submenu: [
-        { id: 'song-play', label: 'Play', accelerator: 'F5', click: () => sendMenuAction('play') },
-        { id: 'song-stop', label: 'Stop', accelerator: 'Shift+F5', click: () => sendMenuAction('stop') }
-      ]
-    },
-    {
       label: 'Help',
       submenu: [
-        { id: 'song-strums', label: 'Strums…', click: () => sendMenuAction('strum-library') },
+        { label: 'How to Write Songs', accelerator: 'F1', click: () => sendMenuAction('guide') },
+        { id: 'song-strums', label: 'Strum Patterns…', click: () => sendMenuAction('strum-library') },
         { type: 'separator' },
         {
           label: 'Open Log File',
@@ -563,6 +540,11 @@ function createWindow() {
       sandbox: false,
       plugins: true // the PDF viewer, for previews in the Exports tab
     }
+  });
+  // 4.81: F5, Shift+F5, Ctrl+K, Ctrl+Alt+E: their menu items went; the keys stay (in the preview too)
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    const action = keyOffMenu(input);
+    if (action) { event.preventDefault(); sendMenuAction(action); }
   });
 
   // Capture the id now: by the time 'closed' fires, webContents is destroyed and can't be read

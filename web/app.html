@@ -597,15 +597,17 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
   <div class="choice-list">
     <button type="button" data-dl="song"><strong>Song file (.txt)</strong><span>The song as written, to open in the ukemusic desktop app</span></button>
     <button type="button" data-dl="html"><strong>Chord sheet web page</strong><span>As shown here, in the current key</span></button>
-    <button type="button" data-dl="stage"><strong>Stage chord sheet</strong><span>Big and easy to scan at a gig, in the Stage format chosen for this song</span></button>
-    <button type="button" data-dl="lyrics"><strong>Lyrics only (.txt)</strong><span>The words, without chords</span></button>
-    <button type="button" data-dl="chordpro"><strong>ChordPro (.txt)</strong><span>For other chord apps</span></button>
-    <label class="check-row" title="Bold, italic and underlined words as ChordPro markup (&lt;b&gt; &lt;i&gt; &lt;u&gt;). Apps that don't know it may show the tags as text"><input id="dlMarkup" type="checkbox"> ChordPro with bold, italic and underline</label>
+    <button type="button" data-dl="stage" data-feature="stage"><strong>Stage chord sheet</strong><span>Big and easy to scan at a gig, in the Stage format chosen for this song</span></button>
+    <button type="button" data-dl="lyrics" data-feature="downloadMore"><strong>Lyrics only (.txt)</strong><span>The words, without chords</span></button>
+    <button type="button" data-dl="chordpro" data-feature="downloadMore"><strong>ChordPro (.txt)</strong><span>For other chord apps</span></button>
+    <label class="check-row" data-feature="downloadMore" title="Bold, italic and underlined words as ChordPro markup (&lt;b&gt; &lt;i&gt; &lt;u&gt;). Apps that don't know it may show the tags as text"><input id="dlMarkup" type="checkbox"> ChordPro with bold, italic and underline</label>
   </div>
+  <div data-feature="downloadMore">
   <h3 class="dl-h">On printed sheets</h3>
   <div class="club-logo-field"><img id="clubLogoPreview" alt="Your club logo" hidden><button id="clubLogoChoose" class="btn" type="button">Club logo…</button><button id="clubLogoRemove" class="btn" type="button" hidden>Remove logo</button><input id="clubLogoFile" type="file" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml" hidden></div>
   <label class="check-row"><input id="sheetDate" type="checkbox"> “Updated” date at the foot (when the song last changed)</label>
   <p class="note">Both are kept on this device, for every sheet you print or download.</p>
+  </div>
   <div class="dialog-actions"><button id="dlClose" class="btn" type="button">Close</button></div>
 </dialog>
 

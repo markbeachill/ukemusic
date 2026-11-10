@@ -15,9 +15,11 @@
   // app: 'desktop', 'web' or 'both'. level: 'simple' (in the simple view) or 'all' (all features only)
   const FEATURES = [
     // ── Desktop: File ──
-    { id: 'save', app: 'desktop', where: 'File', name: 'Save, Save new, Versions', level: 'simple' },
+    { id: 'save', app: 'desktop', where: 'File', name: 'Save, Save new', level: 'simple' },
+    { id: 'versions', app: 'desktop', where: 'File', name: 'Earlier versions of a song', level: 'all' },
     { id: 'songFile', app: 'desktop', where: 'File', name: 'Rename, Close', level: 'simple' },
     { id: 'bringIn', app: 'desktop', where: 'File', name: 'Bring in: import, paste a chord sheet', level: 'simple' },
+    { id: 'tidy', app: 'desktop', where: 'File', name: 'Tidy chords above the words', level: 'all' },
     { id: 'setlists', app: 'desktop', where: 'File, and the Setlists tab', name: 'Setlists and songbooks', level: 'all' },
     // ── Desktop: Write ──
     { id: 'writeAdd', app: 'desktop', where: 'Write', name: 'Add tab, chord shapes', level: 'simple' },
@@ -27,7 +29,9 @@
     { id: 'writeHelp', app: 'desktop', where: 'Write', name: 'How to write songs', level: 'simple' },
     // ── Desktop: Song ──
     { id: 'key', app: 'desktop', where: 'Song', name: 'Key: try it higher or lower, other keys', level: 'simple' },
+    { id: 'keyVersions', app: 'desktop', where: 'Song', name: 'Saved keys: keep a key as a version, rewrite the song in a key', level: 'all' },
     { id: 'capo', app: 'desktop', where: 'Song', name: 'Capo', level: 'simple' },
+    { id: 'capoSuggest', app: 'desktop', where: 'Song', name: 'Suggest a capo', level: 'all' },
     { id: 'instrument', app: 'both', where: 'Song; web: the song page', name: 'Instrument', level: 'simple' },
     { id: 'tempoTime', app: 'desktop', where: 'Song', name: 'Tempo and time', level: 'simple' },
     { id: 'songStrum', app: 'desktop', where: 'Song', name: 'Strum where none is written', level: 'all' },
@@ -47,6 +51,7 @@
     { id: 'sectionNames', app: 'desktop', where: 'Export', name: 'Section names', level: 'all' },
     { id: 'stage', app: 'both', where: 'Export; web: Settings', name: 'Stage copies', level: 'all' },
     { id: 'twoPage', app: 'desktop', where: 'Export', name: 'Two-page Stage', level: 'all' },
+    { id: 'exportMore', app: 'desktop', where: 'Export', name: 'More formats: web page, text, ChordPro, words only, learn and pick sheets', level: 'all' },
     // ── Desktop: Play ──
     { id: 'play', app: 'both', where: 'Play; web: the player', name: 'Play, Stop', level: 'simple' },
     { id: 'karaoke', app: 'both', where: 'Play; web: the player', name: 'Karaoke', level: 'simple' },
@@ -66,7 +71,12 @@
     { id: 'learn', app: 'web', where: 'the player', name: 'Learn', level: 'simple' },
     // ── Desktop: Picking ──
     { id: 'picking', app: 'desktop', where: 'Picking', name: 'Picking: the whole tab', level: 'all', uses: 'picking' },
+    // ── Desktop: the library ──
+    { id: 'phone', app: 'desktop', where: 'the library', name: 'Phone and tablet', level: 'simple' },
+    { id: 'libraries', app: 'desktop', where: 'the library', name: 'Other libraries and library packs', level: 'all' },
+    { id: 'libraryTools', app: 'desktop', where: 'the library', name: 'Open the library folder, export every song', level: 'all' },
     // ── Desktop: song tabs ──
+    { id: 'detailsMore', app: 'desktop', where: 'the song: Details tab', name: 'Album, source, difficulty, licence', level: 'all' },
     { id: 'songLinks', app: 'desktop', where: 'the song: Links tab', name: 'Links', level: 'all' },
     { id: 'songExports', app: 'desktop', where: 'the song: Exports tab', name: 'Exports', level: 'all' },
     { id: 'songChordPro', app: 'desktop', where: 'the song: ChordPro tab', name: 'ChordPro fields', level: 'all' },
@@ -79,6 +89,7 @@
     { id: 'sectionJump', app: 'web', where: 'the song page', name: 'Jump to section', level: 'all' },
     { id: 'playingReset', app: 'web', where: 'Settings', name: 'Reset playing choices', level: 'simple' },
     { id: 'restart', app: 'web', where: 'the player', name: 'Restart', level: 'simple' },
+    { id: 'downloadMore', app: 'web', where: 'Download', name: 'More downloads: words only, ChordPro, club logo, date', level: 'all' },
     { id: 'tuneButton', app: 'web', where: 'the Edit page', name: 'Tune button (♪)', level: 'all' }
   ];
 
@@ -103,8 +114,10 @@
       if (lv[f.id] !== 'all') continue;
       const on = `html[data-simple]${f.uses ? `:not([data-song-uses~="${f.uses}"])` : ''}`;
       rules.push(`${on} [data-feature~="${f.id}"]:not([data-feature-grey]) { display: none !important; }`);
-      rules.push(`${on} [data-feature~="${f.id}"][data-feature-grey] { opacity: 0.45; pointer-events: none; }`);
-      rules.push(`${on} [data-feature~="${f.id}"][data-feature-grey] > h3::after { content: " · all features"; font-weight: 400; font-size: 0.85em; }`);
+      // 4.81: a greyed settings section is its heading only (a long greyed list helped nobody)
+      rules.push(`${on} [data-feature~="${f.id}"][data-feature-grey] { opacity: 0.6; pointer-events: none; }`);
+      rules.push(`${on} [data-feature~="${f.id}"][data-feature-grey] > :not(h3) { display: none !important; }`);
+      rules.push(`${on} [data-feature~="${f.id}"][data-feature-grey] > h3::after { content: " · shown with all features"; font-weight: 400; font-size: 0.85em; }`);
     }
     return rules.join('\n');
   }
@@ -128,11 +141,16 @@
     const lv = levels(changes);
     // where: "Display; web: Settings" is Display on the desktop, Settings in the web player
     const whereIn = (f) => { const [desk, web] = String(f.where).split('; web: '); return app === 'web' && f.app === 'both' ? (web || desk) : desk; };
+    // 4.81: rows grouped under where they are; "Simple view" is the column's heading, not each row's words
+    let last = null;
     const rows = forApp(app).map((f) => {
       const changed = lv[f.id] !== f.level;
-      return `<tr${changed ? ' class="feature-changed"' : ''}><td>${esc(f.name)}${f.uses ? ' <span class="feature-note">(shown when the song uses it)</span>' : ''}</td><td>${esc(whereIn(f))}</td><td><label class="feature-check"><input type="checkbox" data-feature-level="${f.id}"${lv[f.id] === 'simple' ? ' checked' : ''}> <span class="sr-only">${esc(f.name)}: </span>in the simple view</label>${changed ? ' <span class="feature-note">changed</span>' : ''}</td></tr>`;
+      const where = whereIn(f);
+      const head = where === last ? '' : `<tr class="feature-where"><th colspan="2" scope="colgroup">${esc(where)}</th></tr>`;
+      last = where;
+      return `${head}<tr${changed ? ' class="feature-changed"' : ''}><td>${esc(f.name)}${f.uses ? ' <span class="feature-note">(shown when the song uses it)</span>' : ''}${changed ? ' <span class="feature-note">changed</span>' : ''}</td><td><label class="feature-check"><input type="checkbox" data-feature-level="${f.id}" aria-label="${esc(f.name)}: in the simple view"${lv[f.id] === 'simple' ? ' checked' : ''}></label></td></tr>`;
     }).join('');
-    return `<table class="feature-table"><thead><tr><th>Feature</th><th>Where</th><th>Simple view</th></tr></thead><tbody>${rows}</tbody></table>`;
+    return `<table class="feature-table"><thead><tr><th>Feature</th><th>Simple view</th></tr></thead><tbody>${rows}</tbody></table>`;
   }
 
   const TABLE_CSS = `
@@ -141,7 +159,10 @@
 .feature-table th { font-weight: 700; }
 .feature-table tr.feature-changed td:first-child { font-weight: 700; }
 .feature-table .feature-note { color: #888; font-size: 0.9em; }
-.feature-table .feature-check { white-space: nowrap; }
+.feature-table .feature-check { display: block; text-align: center; }
+.feature-table th:last-child, .feature-table td:last-child { text-align: center; width: 6em; }
+.feature-table tr.feature-where th { padding-top: 12px; font-size: 0.85em; text-transform: uppercase; letter-spacing: .04em; opacity: .7; border-bottom: 0; }
+.feature-table tr.feature-where th::first-letter { text-transform: uppercase; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }`;
 
   const api = { FEATURES, levels, parseChanges, changesText, css, songUses, tableHtml, TABLE_CSS, forApp };
