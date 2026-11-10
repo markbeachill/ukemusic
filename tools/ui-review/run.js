@@ -57,7 +57,8 @@ function serve(root) {
     // after Playwright is installed or updated, it has to be downloaded once
     // (or, if that hasn't been downloaded, the Edge or Chrome on the computer)
     try {
-      const { chromium } = require(require.resolve('playwright', { paths: [REPO, __dirname] }));
+      // the Playwright the steps use (tools/node_modules first, as they find it)
+      const { chromium } = require(require.resolve('playwright', { paths: [__dirname, REPO] }));
       const browser = await require('./browser').launchBrowser(chromium);
       await browser.close();
     } catch (error) {
