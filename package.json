@@ -118,6 +118,7 @@
     "@codemirror/language": "^6.11.3",
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.38.6",
+    "@playwright/test": "^1.65.0",
     "ini": "^6.0.0"
   },
   "overrides": {
