@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.78.3
+
+- **Display → Layout and tab:** **Tab look** sits beside the layout choice again, instead of below Edit chords on the sheet, where it covered the group's name.
+
 ## v4.78.2
 
 - **`npm run site-pictures` works with newer pdf.js.** pdf.js 5 and later no longer open a PDF from its address alone, so the Stage, learn-sheet and gallery pictures stopped with a getDocument error. The website's pictures and gallery are retaken from v4.78.
