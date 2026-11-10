@@ -435,6 +435,7 @@ function buildMenu() {
       submenu: [
         { label: 'How to Write Songs', accelerator: 'F1', click: () => sendMenuAction('guide') },
         { id: 'song-strums', label: 'Strum Patterns…', click: () => sendMenuAction('strum-library') },
+        { label: 'Keyboard Shortcuts', click: () => sendMenuAction('shortcuts') },
         { type: 'separator' },
         {
           label: 'Open Log File',

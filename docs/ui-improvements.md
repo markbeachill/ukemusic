@@ -6,6 +6,37 @@ This paper is written to be handed to an AI coding assistant (or read by the own
 
 It goes with the earlier reviews, and doesn't repeat what they fixed: `docs/ribbon-review.md` (4.52), `docs/song-interface-review.md` (4.50). Where one of their findings is still open, this paper says so.
 
+## Where this stands (after 4.86)
+
+The owner answered the paper's five questions: **Session screen** is the name; the menu bar is cut down (L2, option A); all of S9's suggestions are taken, and "Phone and tablet" is in the simple view; Play and Stop **stay** on the Play and Picking tabs (so L1 became only the top bar's label); Details shows title, tempo and time **as well as** the Song tab.
+
+| Release | Done |
+|---|---|
+| 4.80 | S1, S2, S4, A1, T1 |
+| 4.81 | S3, S5, S6, S8, S9, L2 (option A) |
+| 4.82 | C1, C4, C6, W3, and the two tests of T2 (names, directions) |
+| 4.83 | C7, S7, E1, E2, E3, C2 |
+| 4.84 | L1 (the label only), L3, L4, C3, D2 |
+| 4.85 | L5, L6, L7 (the buttons stay in view), L8 |
+| 4.86 | C5 (but see below), D3, D4, W1, W2, W4, A2, A3, L9, and from E4 the section list and the edit preview |
+
+**Not done, and why:**
+
+| Finding | What's left |
+|---|---|
+| C1 | "Chord diagrams" was kept as the one name (the desktop, the guide and the website already used it); the paper had suggested "Chord shapes". "Shape" now means one fingering (Write → Chord shapes). |
+| C5 | Free Practice's "replace your progress with this backup?" still uses the browser's own box: it's shared code with its own sync check (rule 4). Dialog closers (Close, Cancel, Done) weren't audited one by one. |
+| C8 | The library's "Default (Uke)" stays: showing it in grey for a song that follows your instrument was a deliberate choice in 4.65. Tags on the web library, and one first-run sentence, not done. |
+| D1 | Tooltips are still long and still carry detail. The scope is now in the group names (L6), which was the worst of it. |
+| D5 | No "open a song and press Play" strip for a first visit. |
+| E4 | The desktop at 1024 wide (a sideways scrollbar, the song's first tab wrapping) wasn't looked at again. |
+| E5 | The karaoke bar is as it was, apart from the names (Diagrams, Restart). |
+| A4 | Greyed buttons still don't say why. |
+| L6 | With all features on at 1280 wide, Display now folds two groups (Strum patterns, Layout) where it folded one: the new "For every song" group takes the room. |
+| L7 | "Export now" keeps its name (the guide and the website use it), and the dialog has no line summing up the tab's choices. |
+| T2 | The phone-size check (44 px, 13 px) was done by hand for this work; it isn't part of `npm run ui-review` yet. |
+| Website | The pictures in `site/img` show the old labels: run `npm run site-pictures`. |
+
 ## How to use this paper (for an AI assistant)
 
 1. Read `AGENTS.md` first. Its rules apply to every change here, above all: change the desktop app and the web player together (rule 3), Free Practice and karaoke are shared code with their own sync tools (rules 4 and 5), every new control belongs to a row of `src/feature-levels.js` (rule 6), plain words for users (rule 10).

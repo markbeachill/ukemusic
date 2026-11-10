@@ -1,5 +1,19 @@
 # Changelog
 
+## v4.86.0
+
+Polish from the UI review (C5, D3, D4, W1, W2, W4, A2, A3, L9, part of E4).
+
+- **Questions are asked in the app's own dialog, with the button named for what it does:** "Remove", "Rewrite the song", "Delete this song", "Disconnect", "Add to Dropbox / Not now". They were the browser's own "OK / Cancel" boxes. (Free Practice's restore-a-backup question is unchanged.)
+- **Help → Keyboard Shortcuts** lists them all: F5 plays, Space plays or pauses, Ctrl+L goes to your songs, and the rest.
+- **Write → Help → Strums** opens the strum patterns, beside the writing guide.
+- **A plainer status bar:** "Line 12" (was "Ln 12, Col 1"); "Prints on 2 pages" (was "PDF: 2 pages"); nothing where it said "No parser warnings." A message no longer follows you to another tab, and a long one shows in full when you point at it.
+- **The library's "Last changed"** fits on one line ("Today 07:03").
+- **Keyboard users** get a clear focus ring on every button, list and tab; the ribbon's group names are 12 px, not 11.
+- **Web player, playing on a phone:** the player is Pause, Stop, the chord now and next, and the tempo, on one row; it takes about a quarter of the screen (it took a third), so two more lines of the song show.
+- **Web player:** "Jump to section" looks like the other controls; the preview beside the editor fills the height of the window; Features and Download start with their heading and end with Close.
+- **`docs/ui-improvements.md`** now starts with "Where this stands": what each release did, and what was left, with the reason.
+
 ## v4.85.0
 
 Where settings live (UI review L5, L6, L7, L8).

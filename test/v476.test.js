@@ -73,7 +73,7 @@ test('desktop: the logo is kept with the settings; the sheet, the status bar, th
   assert.ok(DESKTOP.includes('+ key + sheetUpdated(config);'));
   assert.match(DESKTOP, /id="export-sheet_date" type="checkbox" data-config-path="export\.sheet_date"/);
   assert.match(DESKTOP, /<span id="pageCountLabel"/);
-  assert.match(DESKTOP, /label\.textContent = n \? `PDF: \$\{n\} page\$\{n === 1 \? '' : 's'\}` : '';/);
+  assert.match(DESKTOP, /label\.textContent = n \? `Prints on \$\{n\} page\$\{n === 1 \? '' : 's'\}` : '';/);
   assert.match(DESKTOP, /<input id="songbookCover" type="checkbox" checked \/>/);
   assert.match(DESKTOP, /const coverHtml = cover \? UkeSheetExtras\.coverHtml\(\{ title: setlist\.name, logo: state\.clubLogo, count: number \}\) : '';/);
 });

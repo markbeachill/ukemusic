@@ -140,7 +140,7 @@ button { cursor: pointer; }
 
 /* Edit: the editor and the sheet side by side on a wide screen */
 .edit-wrap { display: grid; gap: 12px; }
-@media (min-width: 900px) { .edit-wrap { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } .edit-wrap .sheet { position: sticky; top: 170px; max-height: calc(100vh - 360px); overflow: auto; } }
+@media (min-width: 900px) { .edit-wrap { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } .edit-wrap .sheet { position: sticky; top: 170px; height: calc(100vh - 200px); max-height: none; overflow: auto; box-sizing: border-box; } }
 .edit-tools { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .edit-tools .fmt { width: 40px; font-family: Georgia, serif; font-size: 17px; }
 .editor-box { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; min-height: 55vh; background: var(--surface); --editor-font-size: 15px; }
@@ -167,6 +167,9 @@ button { cursor: pointer; }
 .app-settings #displaySettings > summary { font-weight: 650; }
 /* the insert buttons: one row that scrolls sideways on a narrow screen */
 @media (max-width: 640px) { .edit-main > *, #editWordsPanel > * { min-width: 0; max-width: 100%; } .edit-tools { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; } .edit-tools > * { flex: none; } }
+.features-dialog .dialog-actions { position: sticky; bottom: -20px; background: var(--surface); padding: 10px 0 20px; margin-bottom: -20px; justify-content: space-between; }
+.ask-dialog #askText { white-space: pre-line; margin: 0 0 6px; line-height: 1.5; }
+.btn.danger-fill { background: var(--danger); border-color: var(--danger); color: #fff; }
 .import-list { display: grid; gap: 2px; max-height: 40vh; overflow: auto; font-size: 14px; }
 .import-list .grp { font-weight: 700; margin-top: 6px; }
 .import-list .it { color: var(--muted); }
@@ -376,7 +379,8 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 .settings-scope {flex-basis:100%;margin:8px 0 0;font-weight:650;font-size:13px}
 .song-overview {border:1px solid var(--border);border-radius:8px;padding:8px;margin-bottom:16px}
 .song-overview summary {cursor:pointer;font:14px system-ui;white-space:normal}
-.section-jump {display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;font-size:13px}
+.section-jump {display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;font-size:13px;font-weight:600;color:var(--muted)}
+.section-jump select {min-height:36px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);padding:0 8px;font:inherit;font-weight:600}
 .selected-line {outline:2px solid var(--accent);outline-offset:3px}
 .player:not(.active) .now,.player:not(.active) #strip {display:none}
 .player:not(.active) .status {font-size:13px;margin-top:2px}
@@ -393,6 +397,8 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
  .player:not(.active) #status {display:none}
  #songMeta {font-size:13px;margin:7px 0}
 }
+/* 4.86: while it plays on a narrow screen, the player is Pause and Stop: more of the song shows */
+@media (max-width: 640px) { .player.active #restartBtn, .player.active #accompanimentBtn, .player.active #karaokeButton, .player.active #learnBtn, .player.active #sessionBtn { display: none; } .player.active .now-shapes { zoom: 0.72; } .player.active .now-shapes > :nth-child(n+3) { display: none; } .player.active .tempo { margin-left: auto; } .player.active .player-row { flex-wrap: nowrap; } .player.active .now { min-width: 0; flex: 1 1 auto; overflow: hidden; } .player.active .tempo .val { display: none; } }
 /* 4.83: on a touch screen, nothing to tap is under 44px and nothing to read under 13px */
 @media (pointer: coarse), (max-width: 640px) {
   .tool button, .tool select { min-width: 44px; min-height: 44px; }
@@ -632,14 +638,19 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
   <p class="add-row"><button id="appTheme" class="btn" type="button">Light or dark</button><button id="appBackup" class="btn" type="button">Back up all songs</button><button id="appAbout" class="btn" type="button">About ukemusic</button></p>
   <div class="dialog-actions"><button id="appSettingsClose" class="btn" type="button">Close</button></div>
 </dialog>
-<dialog id="featuresDialog" class="features-dialog"><button id="featuresClose" class="btn" type="button" style="float:right">Done</button>
+<dialog id="askDialog" class="ask-dialog">
+  <p id="askText"></p>
+  <div class="dialog-actions"><button id="askCancel" class="btn" type="button">Cancel</button><button id="askOk" class="btn primary" type="button">OK</button></div>
+</dialog>
+<dialog id="featuresDialog" class="features-dialog">
   <h2>Features</h2>
   <p class="note">The simple view shows only the ticked features; <label class="check-row" style="display:inline-flex"><input id="allFeatures2" type="checkbox"> Show all features</label> shows everything. Hidden is not off: a song that uses a hidden feature still plays and prints as before. Your changes are kept on this device.</p>
   <div id="featuresTable"></div>
-  <p><button id="featuresReset" class="btn" type="button">Back to the defaults</button></p>
+  <div class="dialog-actions"><button id="featuresReset" class="btn" type="button">Back to the defaults</button><button id="featuresClose" class="btn primary" type="button">Close</button></div>
 </dialog>
-<dialog id="downloadDialog"><button id="printSheet" class="btn" type="button">Print / Save PDF</button>
+<dialog id="downloadDialog">
   <h2>Download</h2>
+  <p><button id="printSheet" class="btn primary" type="button">Print / Save PDF</button></p>
   <p id="printPages" class="note" aria-live="polite"></p>
   <p class="note">Files are saved to your device (on iPhone and iPad: Files or the share sheet).</p>
   <div class="choice-list">
@@ -833,6 +844,22 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     set(key, value) { try { localStorage.setItem('ukeweb.' + key, JSON.stringify(value)); } catch (_e) { /* not kept */ } }
   };
   const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  // 4.86: a yes-or-no question in the app's own dialog, the button named for what it does
+  // (not the browser's "OK / Cancel" box). Resolves true or false.
+  function askConfirm(message, { ok = 'OK', cancel = 'Cancel', danger = false } = {}) {
+    return new Promise((resolve) => {
+      const dialog = $('askDialog');
+      $('askText').textContent = message;
+      $('askOk').textContent = ok; $('askCancel').textContent = cancel;
+      $('askOk').classList.toggle('danger-fill', danger);
+      let answer = false;
+      const done = () => { dialog.removeEventListener('close', done); resolve(answer); };
+      $('askOk').onclick = () => { answer = true; dialog.close(); };
+      $('askCancel').onclick = () => dialog.close();
+      dialog.addEventListener('close', done);
+      dialog.showModal();
+    });
+  }
   let toastTimer = null;
   function toast(text) {
     const el = $('toast');
@@ -1395,7 +1422,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
       const attempt = async (title, fn) => { try { await fn(); } catch (error) { if (error.signIn) throw error; done.failed.push(`${title} (${error.message})`); } };
       // songs only here: the first time, ask; after that, new songs go to Dropbox as they're made
       if (plan.newLocal.length && !cloudConf.askedNew) {
-        const send = confirm(`${plan.newLocal.length} song${plan.newLocal.length === 1 ? ' is' : 's are'} only on this device. Add ${plan.newLocal.length === 1 ? 'it' : 'them'} to your Dropbox songs folder too?\n\n(Cancel keeps ${plan.newLocal.length === 1 ? 'it' : 'them'} on this device only.)`);
+        const send = await askConfirm(`${plan.newLocal.length} song${plan.newLocal.length === 1 ? ' is' : 's are'} only on this device. Add ${plan.newLocal.length === 1 ? 'it' : 'them'} to your Dropbox songs folder too?\n\n(Cancel keeps ${plan.newLocal.length === 1 ? 'it' : 'them'} on this device only.)`, { ok: 'Add to Dropbox', cancel: 'Not now' });
         cloudConf.askedNew = true;
         saveCloud();
         if (!send) { for (const s of plan.newLocal) { s.cloudSkip = true; await store.save(s, { cloud: false }); } plan.newLocal = []; }
@@ -1510,8 +1537,8 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   });
   $('cloudSyncNow').addEventListener('click', () => cloudSync());
   $('cloudChange').addEventListener('click', () => { cloudConf.root = ''; saveCloud(); showCloudMode(); showCloudDialog(); });
-  $('cloudDisconnect').addEventListener('click', () => {
-    if (!confirm('Disconnect from Dropbox? The songs stay on this device, and in Dropbox, but stop syncing.')) return;
+  $('cloudDisconnect').addEventListener('click', async () => {
+    if (!(await askConfirm('Disconnect from Dropbox? The songs stay on this device, and in Dropbox, but stop syncing.', { ok: 'Disconnect' }))) return;
     for (const k of ['refresh', 'access', 'expires', 'root', 'lastSync', 'deleted', 'askedNew', 'state']) delete cloudConf[k];
     saveCloud();
     showCloudMode();
@@ -1921,7 +1948,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     if (!view.song) return;
     if (view.song.builtIn) { toast('Built-in songs come with ukemusic and can’t be deleted. To hide them all, use Hide beside Built-in songs.'); return; }
     const back = view.song.from === 'built-in' && builtinFor(view.song);
-    if (!confirm(back ? `Delete your changes to “${view.song.title}” and go back to the built-in song?` : UkeSongUI.deletionInfo(view.song, cloudOn()).confirm)) return;
+    if (!(await askConfirm(back ? `Delete your changes to “${view.song.title}” and go back to the built-in song?` : UkeSongUI.deletionInfo(view.song, cloudOn()).confirm, { ok: back ? 'Delete my changes' : 'Delete this song', danger: true }))) return;
     if (!await flushEdit()) return;
     clearTimeout(edit.saveTimer);
     edit.dirty = false;

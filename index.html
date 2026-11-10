@@ -175,7 +175,7 @@
       .rib-fields { gap: 6px; align-items: flex-start; padding-bottom: 4px; }
       .rib-label {
         text-align: center;
-        font-size: 11px;
+        font-size: 12px;
         color: var(--muted);
         padding-bottom: 3px;
       }
@@ -393,6 +393,9 @@
       /* Free Practice: its own colour, first thing on the songs screen, so it isn't missed (4.33.1) */
       .practice-cta { flex: none; align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border: 0; border-radius: 12px; background: #c2410c; color: #fff; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
       .practice-cta:hover { background: #9a3412; }
+      /* 4.86: one focus ring for everything reached by Tab (white on the blue tab row) */
+      :focus-visible { outline: 2px solid var(--accent, #0e6b64); outline-offset: 2px; }
+      .ribbon-tabs :focus-visible { outline-color: #fff; outline-offset: -3px; }
       .practice-cta:focus-visible { outline: 3px solid #fdba74; outline-offset: 2px; }
       .practice-cta [data-icon] svg, .practice-cta svg { stroke: currentColor; }
       .library-new { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 0; border-radius: 12px; background: var(--accent); color: #fff; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
@@ -1355,6 +1358,13 @@
 
       /* 4.85: Export's buttons stay in view when the choices are long */
       #exportDialog .dialog-actions { position: sticky; bottom: -20px; margin: 12px -20px -20px; padding: 12px 20px; background: var(--panel-bg); border-top: 1px solid var(--border); }
+      .ask-dialog #askText { white-space: pre-line; margin: 0 0 6px; line-height: 1.5; }
+      .ask-dialog button.danger { background: #b42318; border-color: #b42318; color: #fff; }
+      .shortcuts { border-collapse: collapse; width: 100%; font-size: 13px; }
+      .shortcuts th { text-align: left; padding: 10px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.7; }
+      .shortcuts td { padding: 3px 12px 3px 0; vertical-align: top; }
+      .shortcuts td:first-child { white-space: nowrap; }
+      .shortcuts kbd { font: inherit; font-size: 12px; padding: 1px 5px; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 5px; background: var(--surface, #fff); }
       .dialog-actions {
         display: flex;
         justify-content: space-between;
@@ -2090,6 +2100,7 @@
             <div class="rib-group" data-feature="writeHelp">
               <div class="rib-items">
                 <button id="guideButton" class="rib-button" type="button" data-icon="help" title="Everything you can type in a song, with examples: chords, bars, repeats, sections, strums and tab (F1)">Writing</button>
+                <button id="strumsButton2" class="rib-button" type="button" data-icon="patterns" title="A library of strum patterns to listen to and put in the song (also Help → Strum Patterns)">Strums</button>
               </div>
               <span class="rib-label">Help</span>
             </div>
@@ -3192,13 +3203,13 @@
 
       <footer class="status-bar">
         <div class="status-left">
-          <span id="cursorLabel">Ln 1, Col 1</span>
+          <span id="cursorLabel">Line 1</span>
           <span id="songInfoLabel"></span>
           <span id="pageCountLabel" title="About how many pages this song's PDF will take (Export → PDF). A part of the song is never split across pages, so now and then it's one more."></span>
         </div>
         <div class="status-right">
           <span id="configPathLabel" hidden>Config: ...</span>
-          <span id="warningLabel" class="status-message">No parser warnings.</span>
+          <span id="warningLabel" class="status-message"></span>
         </div>
       </footer>
     </div>
@@ -3400,6 +3411,51 @@
           <div class="right"><button id="patternsClose" type="button" class="primary">Close</button></div>
         </div>
       </form>
+    </dialog>
+
+    <dialog id="askDialog" class="ask-dialog">
+      <p id="askText"></p>
+      <div class="dialog-actions">
+        <span></span>
+        <div class="right">
+          <button id="askCancel" type="button">Cancel</button>
+          <button id="askOk" class="primary" type="button">OK</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="shortcutsDialog" class="shortcuts-dialog">
+      <h2>Keyboard shortcuts</h2>
+      <table class="shortcuts">
+        <tbody>
+          <tr><th colspan="2">Songs</th></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>L</kbd></td><td>Your songs (the library)</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>N</kbd></td><td>New song</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>O</kbd></td><td>Open a song file</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>Save</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd></td><td>Save as new</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>W</kbd></td><td>Close the song</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>E</kbd></td><td>Export</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>P</kbd></td><td>Print</td></tr>
+          <tr><th colspan="2">Writing</th></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd></td><td>Paste from a website</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>B</kbd>, <kbd>I</kbd>, <kbd>U</kbd></td><td>Bold, italic, underline the selected words</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd></td><td>Undo, redo</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>K</kbd></td><td>Guess the key</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>E</kbd></td><td>Edit the style</td></tr>
+          <tr><td><kbd>F1</kbd></td><td>How to write songs</td></tr>
+          <tr><th colspan="2">Playing</th></tr>
+          <tr><td><kbd>F5</kbd></td><td>Play</td></tr>
+          <tr><td><kbd>Shift</kbd>+<kbd>F5</kbd></td><td>Stop</td></tr>
+          <tr><td><kbd>Space</kbd></td><td>Play or pause (when you're not typing)</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Close karaoke, a dialog or a menu</td></tr>
+          <tr><th colspan="2">The app</th></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>,</kbd></td><td>Settings</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>+</kbd>, <kbd>Ctrl</kbd>+<kbd>−</kbd>, <kbd>Ctrl</kbd>+<kbd>0</kbd></td><td>Zoom in, out, back to normal</td></tr>
+        </tbody>
+      </table>
+      <p class="dialog-note">On a Mac, Cmd is used where this says Ctrl.</p>
+      <div class="dialog-actions"><span></span><div class="right"><button id="shortcutsClose" type="button">Close</button></div></div>
     </dialog>
 
     <dialog id="exportDialog">
@@ -4410,8 +4466,28 @@
           document.getElementById('songsFolderLabel').textContent = folder || 'Not set — you will be asked when you create or open a song.';
         }
 
+        // 4.86: a yes-or-no question, in the app's own dialog with the button named for what it does
+        // (not the browser's "OK / Cancel" box). Resolves true or false.
+        function askConfirm(message, { ok = 'OK', danger = false } = {}) {
+          return new Promise((resolve) => {
+            const dialog = document.getElementById('askDialog');
+            const okButton = document.getElementById('askOk');
+            document.getElementById('askText').textContent = message;
+            okButton.textContent = ok;
+            okButton.classList.toggle('danger', danger);
+            let answer = false;
+            const done = () => { dialog.removeEventListener('close', done); resolve(answer); };
+            okButton.onclick = () => { answer = true; dialog.close(); };
+            document.getElementById('askCancel').onclick = () => dialog.close();
+            dialog.addEventListener('close', done);
+            dialog.showModal();
+          });
+        }
+        document.getElementById('shortcutsClose').addEventListener('click', () => document.getElementById('shortcutsDialog').close());
+        document.getElementById('strumsButton2').addEventListener('click', () => openStrumLibrary());
         function setStatusMessage(message) {
           warningLabel.textContent = message;
+          warningLabel.title = message; // 4.86: a long one is cut with …: the whole of it on hover
         }
 
         // A message that stays in the status bar (instead of "No parser warnings.") until the song is edited
@@ -4500,7 +4576,7 @@
 
         function updateCursorPosition() {
           const cursor = getEditorCursor();
-          cursorLabel.textContent = `Ln ${cursor.line}, Col ${cursor.col}`;
+          cursorLabel.textContent = `Line ${cursor.line}`; // 4.86: was "Ln 1, Col 1"
         }
 
         function collectWarnings(irNodes) {
@@ -4686,7 +4762,7 @@
               const list = chordLines.length > 6 ? `${chordLines.slice(0, 6).join(', ')}…` : chordLines.join(', ');
               warnings.unshift(`Line${chordLines.length > 1 ? 's' : ''} ${list} look${chordLines.length > 1 ? '' : 's'} like chords above lyrics — use File → Tidy chords`);
             }
-            setStatusMessage(warnings.length ? warnings.join(' | ') : (stickyNotice || 'No parser warnings.'));
+            setStatusMessage(warnings.length ? warnings.join(' | ') : (stickyNotice || '')); // 4.86: nothing to say when all's well
             schedulePageCount();
           } catch (error) {
             preview.srcdoc = buildPreviewDocument('<pre class="tab">Preview error</pre>', state.stylesheet);
@@ -4709,7 +4785,7 @@
             let n = 0;
             try { n = await UkeSheetExtras.pageCount(sheetDocument(state.transpose, effectiveConfig(), { forPrint: true }), { pageSize: state.config?.export?.pdf_page_size === 'Letter' ? 'Letter' : 'A4' }); } catch (_e) { n = 0; }
             if (run !== pageCountRun) return;
-            label.textContent = n ? `PDF: ${n} page${n === 1 ? '' : 's'}` : '';
+            label.textContent = n ? `Prints on ${n} page${n === 1 ? '' : 's'}` : '';
           }, 1200);
         }
         // 4.77: chords edited on the sheet (src/sheet-chord-editor.js → src/chord-edit.js): the change
@@ -6624,7 +6700,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         async function removeCurrentVersion() {
           const version = currentVersion();
           if (!version) return;
-          if (!window.confirm(`Remove the version "${version.name}"?\n\nIts exports folder is kept.`)) return;
+          if (!(await askConfirm(`Remove the saved key "${version.name}"?\n\nIts exports folder is kept.`, { ok: 'Remove', danger: true }))) return;
           const list = window.ukemusic.versions.remove(getVersions(), version.semitones);
           state.songSettings.versions = { list: window.ukemusic.versions.format(list) };
           await setTranspose(0);
@@ -11545,6 +11621,9 @@ function showTab(tab) {
             case 'guide':
               openGuide();
               break;
+            case 'shortcuts':
+              document.getElementById('shortcutsDialog').showModal();
+              break;
             case 'insert-tab':
               insertTabBlock();
               break;
@@ -11750,7 +11829,11 @@ function showTab(tab) {
           try { localStorage.setItem(RIBBON_KEY, name); } catch (_err) { /* not kept: fine */ }
         }
         for (const tab of document.querySelectorAll('.ribbon-tab[data-ribbon]')) {
-          tab.addEventListener('click', () => showRibbon(tab.dataset.ribbon));
+          tab.addEventListener('click', () => {
+            // 4.86: a message from the tab you've left goes with it (it used to sit there on the next tab)
+            if (!tab.classList.contains('active') && stickyNotice) setNotice('');
+            showRibbon(tab.dataset.ribbon);
+          });
         }
         let firstRibbon = 'song';
         try { firstRibbon = localStorage.getItem(RIBBON_KEY) || 'song'; } catch (_err) { /* default */ }
@@ -12025,9 +12108,9 @@ function showTab(tab) {
           const now = new Date();
           const day = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
           const days = Math.round((day(now) - day(date)) / 86400000);
-          const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-          if (days === 0) return `Today, ${time}`;
-          if (days === 1) return `Yesterday, ${time}`;
+          const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+          if (days === 0) return `Today ${time}`;
+          if (days === 1) return `Yesterday ${time}`;
           const options = { day: 'numeric', month: 'short' };
           if (date.getFullYear() !== now.getFullYear()) options.year = 'numeric';
           return date.toLocaleDateString(undefined, options);
@@ -14041,7 +14124,7 @@ ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or del
           const from = key ? window.ukemusic.keys.describe(key) : 'the original key';
           const toKey = key ? window.ukemusic.keys.transpose(key, shift) : null;
           const to = toKey ? window.ukemusic.keys.describe(toKey) : `${signed(shift)} semitones`;
-          if (!window.confirm(`Rewrite "${state.song.title}" in ${to}?\n\nThe chords in the song itself change (from ${from}). ${from[0].toUpperCase()}${from.slice(1)} is kept as a saved version, so you can still use it.`)) return;
+          if (!(await askConfirm(`Rewrite "${state.song.title}" in ${to}?\n\nThe chords in the song itself change (from ${from}). ${from[0].toUpperCase()}${from.slice(1)} is kept as a saved version, so you can still use it.`, { ok: 'Rewrite the song' }))) return;
           const ir = window.ukemusic.parseSong(getEditorValue(), getParserOptions());
           const chords = window.ukemusic.versions.songChords(ir);
           const plainKey = key ? { tonic: key.tonic, mode: key.mode, name: key.name } : null;
