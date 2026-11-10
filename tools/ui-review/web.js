@@ -231,6 +231,8 @@ const log = (...a) => console.log(which, ...a);
   });
 
   // ── X: Download ──
+  // a song open first: the section can be run on its own (npm run ui-review -- ipad X)
+  await safe('X0', () => open('Danny Boy'));
   await dlg('#downloadBtn', 'X1', 'Download: the song as a file, a web page, a Stage copy, words or ChordPro');
 
   // ── B: the simple view (what someone new sees) ──
