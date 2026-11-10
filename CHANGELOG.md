@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.86.1
+
+- **Web player: long lines wrap on a phone again.** If the display settings kept on the device didn't include a layout (as could happen, and did in the UI review), long lines ran off the right of the sheet instead of wrapping: The Wild Rover showed it. The settings kept on a device are now filled in from the defaults and checked.
+- **`@playwright/test` is out of the app's dependencies** (it would have been packed into the installer); the UI review uses the Playwright in `tools/node_modules`.
+- **For maintainers:** `npm run ui-review` works on a computer without Playwright's own browser (it uses Edge or Chrome, as `npm run site-pictures` does); it answers "You have unsaved changes" itself (Discard), which had left the Learn and Picking pictures showing the wrong song; and each section can be run on its own.
+
 ## v4.86.0
 
 Polish from the UI review (C5, D3, D4, W1, W2, W4, A2, A3, L9, part of E4).

@@ -1571,7 +1571,19 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
 
   // ── Song view ──
   const view = { song: null, panel: 'songPanel' };
-  const look = local.get('look', { layout: 'lines', diagrams: 'song_start', size: 16 });
+  // 4.86.1: what's kept on this device, over the defaults: a kept look without a layout (or with one
+  // this version doesn't know) is "Chords above", and long lines wrap on a phone; they ran off the
+  // right of the sheet when the layout was missing
+  const LOOK_DEFAULTS = { layout: 'lines', diagrams: 'song_start', size: 16 };
+  const look = (() => {
+    const kept = local.get('look', {});
+    const out = { ...LOOK_DEFAULTS, ...(kept && typeof kept === 'object' ? kept : {}) };
+    if (!['lines', 'inline', 'raised', 'table', 'chords'].includes(out.layout)) out.layout = LOOK_DEFAULTS.layout;
+    if (!['song_start', 'first_use', 'side', 'none'].includes(out.diagrams)) out.diagrams = LOOK_DEFAULTS.diagrams;
+    const size = Number(out.size);
+    out.size = Number.isFinite(size) ? Math.min(30, Math.max(11, Math.round(size))) : LOOK_DEFAULTS.size;
+    return out;
+  })();
   state.config.diagrams = { ...(state.config.diagrams || {}), left_handed: look.leftHanded === true }; // 4.64: Free Practice's starting point
   // 4.65: first, "Default (Guitar)": the song follows your instrument; the others are the song's own on this device
   const INSTRUMENT_SHORT = { soprano: 'Uke', lowg: 'Low G', baritone: 'Baritone', guitar: 'Guitar' };

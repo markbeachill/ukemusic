@@ -56,4 +56,15 @@ test('L9, E4: the web player while playing on a phone; the section list; the edi
   assert.match(WEB, /\.edit-wrap \.sheet \{ position: sticky; top: 170px; height: calc\(100vh - 200px\);/);
 });
 
+test('4.86.1: a look kept on the device without a layout still wraps long lines on a phone', () => {
+  const src = WEB.match(/const LOOK_DEFAULTS = [\s\S]*?\n  \}\)\(\);/)[0];
+  const run = (kept) => new Function('local', `${src}; return look;`)({ get: () => kept });
+  assert.deepStrictEqual(run({ allFeatures: true }), { layout: 'lines', diagrams: 'song_start', size: 16, allFeatures: true });
+  assert.strictEqual(run({ layout: 'inline', size: 20 }).layout, 'inline', 'a layout chosen stays');
+  assert.strictEqual(run({ layout: 'nonsense' }).layout, 'lines');
+  assert.strictEqual(run({ size: 99 }).size, 30);
+  assert.strictEqual(run(null).layout, 'lines');
+  assert.match(WEB, /maxLineChars: look\.layout === 'lines' \? charsAcross\(sheet\) : 0,/, 'what wraps the lines');
+});
+
 console.log('v4.86 tests passed');
