@@ -47,7 +47,7 @@ test('desktop: Display → Text → Easy to read, for the preview, PDFs, exports
 
 test('web player: Display → Easy to read, remembered on this device, in downloads too', () => {
   const app = read('web/app.html');
-  assert.match(app, /<button id="easyBtn" type="button" aria-pressed="false"[^>]*>Easy to read: off<\/button>/);
+  assert.match(app, /<input id="easyBtn" type="checkbox"> Easy to read<\/label>/); // 4.83: a tick box
   assert.match(app, /document\.documentElement\.toggleAttribute\('data-easy-read', on\);/);
   assert.match(app, /\$\{look\.easyRead \? ' data-easy-read' : ''\}><head>/);
   assert.match(app, /\$\{look\.easyRead \? U\.easyReadCss\(\) : ''\}<\/style>/);

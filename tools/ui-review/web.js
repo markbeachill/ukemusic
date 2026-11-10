@@ -91,13 +91,13 @@ const log = (...a) => console.log(which, ...a);
   // ── L: Library ──
   await home();
   await safe('L1', () => shot('L1', 'Songs to play: the library'));
-  await safe('L1b', async () => { await p.evaluate(() => window.scrollTo(0, document.body.scrollHeight)); await p.waitForTimeout(400); await shot('L11', 'The library, scrolled to the end: New song, Dropbox, Back up, About'); await p.evaluate(() => window.scrollTo(0, 0)); });
+  await safe('L1b', async () => { await p.evaluate(() => window.scrollTo(0, document.body.scrollHeight)); await p.waitForTimeout(400); await shot('L11', 'The library, scrolled to the end: backing up, About, adding to the home screen'); await p.evaluate(() => window.scrollTo(0, 0)); });
   await safe('L2', async () => { await p.fill('#search', 'traditional'); await p.waitForTimeout(600); await shot('L2', 'Searching the library ("traditional")'); await p.fill('#search', ''); });
   await dlg('#newSongBtn', 'L4', 'New song: choosing a title');
   await dlg('#pasteSongBtn', 'L6', 'Paste from a website: a chord sheet copied from a web page');
   await dlg('#guideBtnLib', 'E5', 'How to write: the guide');
   await dlg('#aboutBtn', 'L10', 'About ukemusic');
-  await dlg('#cloudBtn', 'D1', 'Songs in Dropbox: connect to a shared songs folder');
+  await safe('D1', async () => { await p.click('#libMore > summary'); await p.waitForTimeout(300); await p.click('#cloudBtn'); await p.waitForTimeout(900); await shot('D1', 'Songs in Dropbox: connect to a shared songs folder'); await closeDialogs(); });
 
   // ── S: Song sheet ──
   await safe('S1', async () => { await open('The Wild Rover'); await shot('S1', 'A song open: the sheet, with the player at the bottom'); });

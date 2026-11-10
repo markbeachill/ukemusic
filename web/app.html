@@ -132,8 +132,7 @@ button { cursor: pointer; }
 .tool { flex: none; display: flex; align-items: center; gap: 4px; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
 .tool label, .tool .lab { font-size: 12px; font-weight: 700; color: var(--muted); padding: 0 4px 0 8px; text-transform: uppercase; letter-spacing: 0.05em; }
 .tool .val { min-width: 3.4em; text-align: center; font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
-#commonBtn, #leftBtn { font-size: 14px; padding: 0 10px; }
-#commonBtn[aria-pressed="true"], #leftBtn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.look-check { align-items: center; min-height: 36px; padding: 0 6px; }
 .tool button { min-width: 36px; min-height: 34px; border: 0; border-radius: 9px; background: var(--surface); font-weight: 700; font-size: 16px; }
 .tool select { min-height: 34px; border: 0; border-radius: 9px; background: var(--surface); padding: 0 6px; font-size: 14px; font-weight: 600; }
 .panel { max-width: 1100px; margin: 0 auto; padding-block: 14px 190px; }
@@ -155,6 +154,19 @@ button { cursor: pointer; }
 #editPreviewBtn[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
 @media (min-width: 900px) { #editPreviewBtn { display: none; } }
 @media (max-width: 899px) { .edit-wrap .edit-preview { display: none; } .edit-wrap.previewing .edit-preview { display: block; } .edit-wrap.previewing .editor-box { display: none; } }
+/* 4.83: the library's add-a-song row is above the list; the rest is behind More */
+.lib-add { margin: 0 0 12px; position: relative; }
+.lib-more { position: relative; }
+.lib-more > summary { list-style: none; display: inline-flex; align-items: center; cursor: pointer; }
+.lib-more > summary::-webkit-details-marker { display: none; }
+.lib-more-items { position: absolute; z-index: 30; top: calc(100% + 6px); left: 0; display: flex; flex-direction: column; gap: 6px; padding: 8px; min-width: 230px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+.lib-more-items .btn { justify-content: flex-start; width: 100%; box-sizing: border-box; }
+.library:has(#instrumentAsk:not([hidden])) .my-instrument { display: none; } /* asked once, not twice */
+.app-settings { max-width: 560px; }
+.app-settings #displaySettings { margin: 10px 0; }
+.app-settings #displaySettings > summary { font-weight: 650; }
+/* the insert buttons: one row that scrolls sideways on a narrow screen */
+@media (max-width: 640px) { .edit-main > *, #editWordsPanel > * { min-width: 0; max-width: 100%; } .edit-tools { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; } .edit-tools > * { flex: none; } }
 .import-list { display: grid; gap: 2px; max-height: 40vh; overflow: auto; font-size: 14px; }
 .import-list .grp { font-weight: 700; margin-top: 6px; }
 .import-list .it { color: var(--muted); }
@@ -367,7 +379,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 .section-jump {display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;font-size:13px}
 .selected-line {outline:2px solid var(--accent);outline-offset:3px}
 .player:not(.active) .now,.player:not(.active) #strip {display:none}
-.player:not(.active) .status {font-size:11px;margin-top:2px}
+.player:not(.active) .status {font-size:13px;margin-top:2px}
 #saveRecovery {padding:12px;border:2px solid #b44;border-radius:8px;margin-bottom:12px}
 #editSaved {white-space:nowrap}
 @media(max-width:720px){
@@ -376,10 +388,34 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
  #songView .bar-row .song-head {flex-basis:calc(100% - 50px)}
  #songView .bar-row .spacer,#saveState:empty {display:none}
  #moreTools {position:fixed;top:90px;left:8px;right:8px;max-height:65dvh;overflow:auto;background:var(--surface);border:1px solid var(--border);box-shadow:0 6px 30px #0004;border-radius:10px;z-index:90;padding:14px}
- .player-row {gap:5px}.player-row .btn {padding:6px 8px;font-size:12px}
+ .player-row {gap:5px}.player-row .btn {padding:6px 8px;font-size:13px}
  .panel {padding-bottom:160px}
  .player:not(.active) #status {display:none}
- #songMeta {font-size:11px;margin:7px 0}
+ #songMeta {font-size:13px;margin:7px 0}
+}
+/* 4.83: on a touch screen, nothing to tap is under 44px and nothing to read under 13px */
+@media (pointer: coarse), (max-width: 640px) {
+  .tool button, .tool select { min-width: 44px; min-height: 44px; }
+  .btn, .lib-more > summary { min-height: 44px; }
+  .btn.icon { width: 44px; }
+  .edit-tools .btn { min-height: 44px; min-width: 44px; }
+  .tabs [role="tab"] { min-height: 44px; }
+  .my-instrument select { min-height: 44px; }
+  .check-row { min-height: 44px; align-items: center; }
+  .check-row input { margin-top: 0; width: 20px; height: 20px; }
+  .tool label, .tool .lab { font-size: 13px; }
+  .song-meta { font-size: 14px; }
+  .btn.icon { flex: none; }
+  .tools .tool button { min-width: 40px; }
+  .tools .tool .lab { font-size: 13px; padding: 0 2px 0 5px; letter-spacing: 0; }
+  .tools .tool .val { min-width: 2.5em; }
+  .tools .tool { gap: 1px; padding: 2px; }
+  .tools { gap: 6px; }
+  .tempo button { width: 44px; height: 44px; }
+  .sync, .song-row .badge { font-size: 13px; }
+  .bar-row .sync { min-width: 0; flex-shrink: 1; overflow: hidden; text-overflow: ellipsis; }
+  #libraryView .brand { flex: none; }
+  .song-overview > summary { min-height: 44px; display: flex; align-items: center; }
 }
 </style>
 
@@ -391,6 +427,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
       <span class="spacer"></span>
       <span id="syncState" class="sync"></span>
       <span id="cloudState" class="sync" hidden></span>
+      <button id="appSettingsBtn" class="btn" type="button" title="Settings for all your songs on this device">Settings</button>
       <button id="guideBtnLib" class="btn ghost icon" type="button" title="How to write songs" aria-label="How to write songs">?</button>
       <button id="themeBtn" class="btn ghost icon" type="button" title="Light or dark" aria-label="Switch light or dark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
     </div></header>
@@ -403,18 +440,18 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <label class="my-instrument" title="Songs without an instrument of their own, new songs and Free Practice use it">Your instrument <select id="myInstrument"></select></label>
         </div>
       </div>
-      <div id="instrumentAsk" class="banner" hidden><strong>What do you play?</strong> Chord shapes, tab, playback and Free Practice are set for it. You can change it any time, just above.
+      <div id="instrumentAsk" class="banner" hidden><strong>What do you play?</strong> Chord shapes, tab, playback and Free Practice are set for it. You can change it any time.
         <div id="instrumentAskButtons" class="add-row" style="margin-top:8px"></div><label class="check-row" style="margin-top:6px"><input id="askAllFeatures" type="checkbox"> Show all features: for running a club, Stage copies, the Session screen and more. You can change it any time in Settings.</label></div>
       <div id="storeBanner" class="banner" hidden></div>
-      <input id="search" class="search" type="search" placeholder="Find a song, artist, tag or key…" autocomplete="off" aria-label="Find a song">
-      <div id="songList" class="songs"><div class="empty">Loading your songs…</div></div>
-      <div class="add-row">
+      <div class="add-row lib-add">
         <button id="pasteSongBtn" class="btn primary" type="button" title="Copy a chord sheet from a website, then paste it here: the chords go into the words for you">Paste from a website</button>
         <button id="newSongBtn" class="btn" type="button" title="Write a new song: words with the chords in square brackets">+ New song</button>
-        <label class="btn" for="updateInput" title="Song files (ukemusic, ChordPro, or chords above the words), a zipped songs folder, or a backup">Add songs from files…</label>
+        <details id="libMore" class="lib-more"><summary class="btn">More <span aria-hidden="true">▾</span></summary><div class="lib-more-items">
+          <label class="btn" for="updateInput" title="Song files (ukemusic, ChordPro, or chords above the words), a zipped songs folder, or a backup">Add songs from files…</label>
+          <button id="cloudBtn" class="btn" type="button" hidden title="Keep your songs in Dropbox, in the desktop app's songs folder: changes here go there, and changes there come here">Dropbox…</button>
+          <button id="backupBtn" class="btn" type="button" title="Every song in one file, to keep somewhere safe (iCloud Drive, Google Drive, your computer) and to bring changes back into the desktop app">Back up all songs</button>
+        </div></details>
         <input id="updateInput" type="file" multiple hidden>
-        <button id="cloudBtn" class="btn" type="button" hidden title="Keep your songs in Dropbox, in the desktop app's songs folder: changes here go there, and changes there come here">Dropbox…</button>
-        <button id="backupBtn" class="btn" type="button" title="Every song in one file, to keep somewhere safe (iCloud Drive, Google Drive, your computer) and to bring changes back into the desktop app">Back up all songs</button>
       </div>
       <div id="updatePanel" class="card-form" hidden>
         <p id="updateText" class="note" style="color:var(--ink)"></p>
@@ -423,6 +460,8 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <label id="updateRemoveRow" class="check-row" hidden><input id="updateRemove" type="checkbox"> <span id="updateRemoveText"></span></label>
         <div class="add-row"><button id="updateGo" class="btn primary" type="button">Bring them in</button><button id="updateCancel" class="btn" type="button">Cancel</button></div>
       </div>
+      <input id="search" class="search" type="search" placeholder="Find a song, artist, tag or key…" autocomplete="off" aria-label="Find a song">
+      <div id="songList" class="songs"><div class="empty">Loading your songs…</div></div>
       <p class="note">The songs here stay on this device: <strong>Back up all songs</strong> now and then, and keep the file somewhere safe. To take songs you've changed here back to the desktop app, open the backup there with <strong>Phone and tablet → Bring in songs from the web player</strong>.</p>
       <p class="note"><button id="aboutBtn" class="link-button" type="button">About ukemusic and thanks</button></p>
       <p class="note">On iPhone and iPad, Safari's Share button → <strong>Add to Home Screen</strong> gives ukemusic its own icon, and then it works without a connection. Its songs are separate from Safari's, so bring your songs in from the icon. On Android, Chrome's menu → <strong>Install app</strong>. Key, capo, instrument and tempo changes are kept on each device.<span id="phoneHelp" hidden> <a href="../phone.html">More about using ukemusic on a phone or tablet</a>.</span></p>
@@ -449,21 +488,21 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div class="tool more"><button id="moreBtn" type="button" aria-expanded="false" aria-controls="moreTools">Settings <span aria-hidden="true">▾</span></button></div>
       </div>
       <div id="moreTools" class="more-tools gutter" role="group" aria-label="More settings" hidden>
-        <p class="features-row"><label class="check-row"><input id="allFeatures" type="checkbox"> Show all features</label> <button id="featuresBtn" class="btn" type="button" title="Which features the simple view shows: change any of them">Features…</button></p><p class="settings-scope">Playing choices · this song on this device</p><button id="resetPlaying" data-feature="playingReset" class="btn" type="button">Reset playing choices</button><div id="moreFirst"></div>
+        <p class="settings-scope">Playing choices · this song on this device</p><button id="resetPlaying" data-feature="playingReset" class="btn" type="button">Reset playing choices</button><div id="moreFirst"></div>
         <div class="tool" data-feature="sound"><label for="timeSel">Time</label><select id="timeSel"><option value="2">2/4</option><option value="3">3/4</option><option value="4">4/4</option><option value="6">6/8</option></select></div>
         <div class="tool" data-feature="sound"><select id="feelSel" aria-label="Rhythmic feel" title="Auto feel follows the song; Even uses equal beat divisions"><option value="auto">Auto feel</option><option value="straight">Even</option><option value="light">Light swing</option><option value="swing">Swing</option><option value="shuffle">Shuffle</option></select></div>
         <details id="displaySettings"><summary>Display · all songs on this device</summary><div id="displayText"></div><div class="tool" id="layoutTool" data-feature="layout"><label for="layout">Layout</label><select id="layout">
           <option value="lines">Chords above</option><option value="inline">Chords in the words</option><option value="raised">Chords raised in the words</option><option value="table">Columns</option><option value="chords">Chords only</option></select></div>
         <div class="tool" data-feature="diagrams"><label for="diagrams">Chord diagrams</label><select id="diagrams">
           <option value="song_start">At the top</option><option value="first_use">Where used</option><option value="side">Right-hand side</option><option value="none">None</option></select></div>
-        <div class="tool" data-feature="diagrams"><button id="commonBtn" type="button" aria-pressed="false" title="No diagrams for the chords everyone knows: C, G, Am, F…">Common: shown</button></div>
-        <div class="tool" data-feature="diagrams"><button id="leftBtn" type="button" aria-pressed="false" title="Mirror every chord diagram for a left-handed instrument (Free Practice too)">Left-handed: off</button></div>
-        <div class="tool"><button id="easyBtn" type="button" aria-pressed="false" title="Song sheets and Stage copies in Atkinson Hyperlegible, a typeface made for readers with low vision: I, l and 1, O and 0, b and d are easy to tell apart. On screen and in downloads">Easy to read: off</button></div>
+        <label class="check-row look-check" data-feature="diagrams" title="No diagrams for the chords everyone knows: C, G, Am, F…"><input id="commonBtn" type="checkbox"> Hide common</label>
+        <label class="check-row look-check" data-feature="diagrams" title="Mirror every chord diagram for a left-handed instrument (Free Practice too)"><input id="leftBtn" type="checkbox"> Left-handed</label>
+        <label class="check-row look-check" title="Song sheets and Stage copies in Atkinson Hyperlegible, a typeface made for readers with low vision: I, l and 1, O and 0, b and d are easy to tell apart. On screen and in downloads"><input id="easyBtn" type="checkbox"> Easy to read</label>
         <div class="tool" data-feature="tune"><label for="tuneSel">Tune</label><select id="tuneSel" title="Songs with their tune written in: the tune as notes on a staff"><option value="strip">A strip at the top</option><option value="lines">Over every line</option><option value="off">Hidden</option></select></div>
         <div class="tool" data-feature="stage"><label for="lookSel">Look</label><select id="lookSel"><option value="standard">Song sheet</option><option value="stage">Stage copy</option></select></div>
         <div class="tool" id="stageFormatTool" data-feature="stage" hidden><label for="stageFormat">Stage</label><select id="stageFormat"><option value="auto">Auto: chords above (printed: in the words)</option><option value="clear">Chords above</option><option value="brackets">Chords above, in [ ]</option><option value="compact">Chords in the words</option><option value="raised">Chords raised in the words</option><option value="heavy">Heavy: all bold</option></select></div>
         <div class="tool" id="stageChorusTool" data-feature="stage" hidden><label for="stageChorus">Chorus</label><select id="stageChorus"><option value="full">Every time</option><option value="once">Once, then “as before”</option></select></div>
-      </details></div>
+      </details><p class="features-row" id="appSettingsRow"><button id="appSettingsBtn2" class="btn" type="button">Settings for all songs…</button></p></div>
     </header>
 
     <main id="songPanel" class="panel gutter">
@@ -516,11 +555,12 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
           <button id="editPreviewBtn" class="btn" type="button" aria-pressed="false" title="See the chord sheet">Preview</button>
           <label class="check-row chord-edit-toggle" data-feature="chordEdit" title="In the preview: drag a chord to where it's played (even part way into a word); tap a chord to change it or take it out; tap in the words to put a chord there; drag a chord shape onto the words. Or right-click the preview to turn it on or off"><input id="chordEditToggle" type="checkbox"> Edit chords on the sheet</label>
         </div>
-<details class="note"><summary>Help with insertion buttons</summary><p>Chord inserts [ ] before a word, for example [C]Hello. Heading inserts [[Verse 1]] on its own line. Strum inserts a pattern such as {D-DU-UDU}. The bar line | separates bars. Tune inserts note names for the next line, for example {melody: E E F G}.</p></details>
-<details class="note ai-help"><summary>Help from an AI chat</summary><p>For a chord sheet from a website or a PDF, or to get a song ready to practise: copy a prompt, <a href="https://claude.ai/new" target="_blank" rel="noopener">open an AI chat</a> (Claude, or ChatGPT, Gemini…), paste the prompt with the chord sheet, then paste its answer here in place of the words. <b>Tidy a sheet</b> puts a difficult sheet into ukemusic's format. <b>Ready to practise</b> also sorts out each chord's timing, the parts and the strums, and lists what to check by ear; it takes this song as it is, so paste the website's sheet here first if that's what you have.</p><div class="add-row"><button id="aiPromptBtn" class="btn" type="button">Copy prompt: tidy a sheet</button><button id="aiPracticeBtn" class="btn" type="button">Copy prompt: ready to practise</button></div></details><div id="editWrap" class="edit-wrap">
+<div id="editWrap" class="edit-wrap">
           <div class="editor-box"><div id="editorHost"></div><textarea id="editorFallback" spellcheck="false" autocapitalize="off" autocomplete="off" hidden aria-label="The song: words with the chords in square brackets"></textarea></div>
           <div id="editSheet" class="sheet edit-preview"></div>
         </div>
+<details class="note"><summary>Help with insertion buttons</summary><p>Chord inserts [ ] before a word, for example [C]Hello. Heading inserts [[Verse 1]] on its own line. Strum inserts a pattern such as {D-DU-UDU}. The bar line | separates bars. Tune inserts note names for the next line, for example {melody: E E F G}.</p></details>
+<details class="note ai-help"><summary>Help from an AI chat</summary><p>For a chord sheet from a website or a PDF, or to get a song ready to practise: copy a prompt, <a href="https://claude.ai/new" target="_blank" rel="noopener">open an AI chat</a> (Claude, or ChatGPT, Gemini…), paste the prompt with the chord sheet, then paste its answer here in place of the words. <b>Tidy a sheet</b> puts a difficult sheet into ukemusic's format. <b>Ready to practise</b> also sorts out each chord's timing, the parts and the strums, and lists what to check by ear; it takes this song as it is, so paste the website's sheet here first if that's what you have.</p><div class="add-row"><button id="aiPromptBtn" class="btn" type="button">Copy prompt: tidy a sheet</button><button id="aiPracticeBtn" class="btn" type="button">Copy prompt: ready to practise</button></div></details>
       </div>
       <div id="editInfoPanel" class="fields" hidden><p class="note">Song details · saved with the song and shared through Dropbox when linked. Playing choices are separate.</p>
         <div class="row"><label for="fTitle">Title</label><input id="fTitle" autocomplete="off"></div>
@@ -584,6 +624,14 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
   </form>
 </dialog>
 
+<dialog id="appSettingsDialog" class="app-settings">
+  <h2>Settings</h2>
+  <p class="note">For all your songs, on this device. A song's own choices (key, capo, instrument) are on the song.</p>
+  <p class="features-row"><label class="check-row"><input id="allFeatures" type="checkbox"> Show all features</label> <button id="featuresBtn" class="btn" type="button" title="Which features the simple view shows: change any of them">Features…</button></p>
+  <div id="appDisplaySlot"></div>
+  <p class="add-row"><button id="appTheme" class="btn" type="button">Light or dark</button><button id="appBackup" class="btn" type="button">Back up all songs</button><button id="appAbout" class="btn" type="button">About ukemusic</button></p>
+  <div class="dialog-actions"><button id="appSettingsClose" class="btn" type="button">Close</button></div>
+</dialog>
 <dialog id="featuresDialog" class="features-dialog"><button id="featuresClose" class="btn" type="button" style="float:right">Done</button>
   <h2>Features</h2>
   <p class="note">The simple view shows only the ticked features; <label class="check-row" style="display:inline-flex"><input id="allFeatures2" type="checkbox"> Show all features</label> shows everything. Hidden is not off: a song that uses a hidden feature still plays and prints as before. Your changes are kept on this device.</p>
@@ -1539,6 +1587,28 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   }
   function setAllFeatures(on) { look.allFeatures = on; local.set('look', look); applyFeatures(); }
   for (const id of ['allFeatures', 'allFeatures2', 'askAllFeatures']) $(id).addEventListener('change', (e) => setAllFeatures(e.target.checked));
+  // 4.83: Settings for all songs, from the library (and from a song's Settings). The display choices
+  // are the song page's own controls, moved in while the dialog is open.
+  function openAppSettings() {
+    const d = $('displaySettings');
+    d.dataset.wasOpen = d.open ? '1' : '';
+    $('appDisplaySlot').appendChild(d); d.open = true;
+    renderLookControls();
+    $('appSettingsDialog').showModal();
+  }
+  $('appSettingsDialog').addEventListener('close', () => {
+    const d = $('displaySettings');
+    $('moreTools').insertBefore(d, $('appSettingsRow')); d.open = d.dataset.wasOpen === '1';
+  });
+  $('appSettingsBtn').addEventListener('click', openAppSettings);
+  $('appSettingsBtn2').addEventListener('click', openAppSettings);
+  $('appSettingsClose').addEventListener('click', () => $('appSettingsDialog').close());
+  $('appTheme').addEventListener('click', () => $('themeBtn').click());
+  $('appBackup').addEventListener('click', () => { $('appSettingsDialog').close(); $('backupBtn').click(); });
+  $('appAbout').addEventListener('click', () => { $('appSettingsDialog').close(); $('aboutBtn').click(); });
+  // the library's More ▾ closes when something in it is chosen, or on a click elsewhere
+  $('libMore').addEventListener('click', (e) => { if (e.target.closest('.lib-more-items .btn')) $('libMore').open = false; });
+  document.addEventListener('click', (e) => { if (!e.target.closest('#libMore')) $('libMore').open = false; });
   $('featuresBtn').addEventListener('click', () => { $('featuresTable').innerHTML = F.tableHtml('web', look.featureLevels || {}); $('featuresDialog').showModal(); });
   $('featuresClose').addEventListener('click', () => $('featuresDialog').close());
   $('featuresTable').addEventListener('change', (e) => {
@@ -1779,6 +1849,8 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     $('fNotes').value = view.song.notes || '';
     showEditTab('editTabWords');
     $('editWrap').classList.remove('previewing');
+    // 4.83: the line about saving shows the first time; after that the header's "Saved" says it
+    $('autosaveNote').hidden = local.get('autosaveSeen', false) === true; local.set('autosaveSeen', true);
     $('editPreviewBtn').setAttribute('aria-pressed', 'false');
     renderEditPreview();
     window.scrollTo(0, 0);
@@ -1803,6 +1875,8 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   function setChordEdit(on) {
     look.chordEdit = on; local.set('look', look);
     $('chordEditToggle').checked = on;
+    // 4.83: on a narrow screen the sheet is behind Preview: show it, or turning this on does nothing you can see
+    if (on && $('editPreviewBtn').offsetParent && !$('editWrap').classList.contains('previewing')) { $('editPreviewBtn').click(); return; }
     if (view.song) renderSheet($('editSheet'));
   }
   $('chordEditToggle').addEventListener('change', () => setChordEdit($('chordEditToggle').checked));
@@ -1978,6 +2052,22 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     const shown = key ? U.keys.transpose(key, t) : null;
     return { name: shown ? shown.name : (t > 0 ? `+${t}` : String(t)), shift: t };
   }
+  // 4.83: the display choices for all songs: shown without a song open too (the library's Settings)
+  function renderLookControls() {
+    $('layout').value = look.layout;
+    $('tuneSel').value = ['strip', 'lines', 'off'].includes(look.tune) ? look.tune : 'strip';
+    $('diagrams').value = look.diagrams;
+    $('lookSel').value = look.style || 'standard';
+    // tick boxes with fixed labels (they were buttons whose label was their state)
+    $('commonBtn').checked = look.hideCommon === true;
+    $('leftBtn').checked = look.leftHanded === true;
+    $('easyBtn').checked = look.easyRead === true;
+    applyEasyRead();
+    // a Stage copy's format and chorus are this song's: not without a song
+    $('stageFormatTool').hidden = $('stageChorusTool').hidden = look.style !== 'stage' || !view.song;
+    // 4.70: a Stage copy has its own layouts (Stage), so Layout isn't shown while it's being ignored
+    $('layoutTool').hidden = look.style === 'stage';
+  }
   function renderTools() {
     const p = prefs();
     const k = keyText();
@@ -1985,20 +2075,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     $('capoVal').textContent = p.capo ? String(p.capo) : 'None';
     $('instrument').options[0].textContent = `Default (${INSTRUMENT_SHORT[myInstrument()] || 'Uke'})`;
     { const own = S().instrument !== undefined ? S().instrument : view.song.settings?.song?.instrument; $('instrument').value = UMW.INSTRUMENTS.some((i) => i.id === own) ? own : ''; }
-    $('layout').value = look.layout;
-    $('tuneSel').value = ['strip', 'lines', 'off'].includes(look.tune) ? look.tune : 'strip';
-    $('diagrams').value = look.diagrams;
-    $('lookSel').value = look.style || 'standard';
-    $('commonBtn').setAttribute('aria-pressed', String(look.hideCommon === true));
-    $('commonBtn').textContent = look.hideCommon ? 'Common: hidden' : 'Common: shown';
-    $('leftBtn').setAttribute('aria-pressed', String(look.leftHanded === true));
-    $('easyBtn').setAttribute('aria-pressed', String(look.easyRead === true));
-    $('easyBtn').textContent = look.easyRead ? 'Easy to read: on' : 'Easy to read: off';
-    applyEasyRead();
-    $('leftBtn').textContent = look.leftHanded ? 'Left-handed: on' : 'Left-handed: off';
-    $('stageFormatTool').hidden = $('stageChorusTool').hidden = look.style !== 'stage';
-    // 4.70: a Stage copy has its own layouts (Stage), so Sheet isn't shown while it's being ignored
-    $('layoutTool').hidden = look.style === 'stage';
+    renderLookControls();
     $('stageFormat').value = p.stageFormat;
     $('stageChorus').value = p.stageChorus;
     $('tempoVal').textContent = `${p.tempo} bpm`;
@@ -2035,6 +2112,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   const change = (fn, { song = true } = {}) => () => {
     fn();
     local.set('look', look);
+    if (!view.song) { renderLookControls(); return; } // from the library's Settings: nothing to draw yet
     if (song) saveSoon();
     state.config.song.instrument = prefs().instrument;
     if (player && player.playing) restart(); else renderSong();

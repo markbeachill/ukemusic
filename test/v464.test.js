@@ -29,7 +29,7 @@ test('the instruments page: the four instruments, your instrument, song sheets, 
 
 test('the web player: Left-handed in Display, for the sheets and Free Practice', () => {
   const app = read('web/app.html');
-  assert.match(app, /<button id="leftBtn" type="button" aria-pressed="false"[^>]*>Left-handed: off<\/button>/);
+  assert.match(app, /<input id="leftBtn" type="checkbox"> Left-handed<\/label>/); // 4.83: a tick box
   assert.strictEqual((app.match(/left_handed: look\.leftHanded === true/g) || []).length, 3);
 });
 

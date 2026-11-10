@@ -1,5 +1,17 @@
 # Changelog
 
+## v4.83.0
+
+The web player's library and phone layout (UI review C7, S7, E1, E2, E3, C2).
+
+- **Paste from a website and New song are at the top of the library**, as on the desktop: they were under the song list, three screens down on a phone. Add songs from files, Dropbox and Back up are behind **More ▾** beside them.
+- **Settings on the library.** Show all features, the Features list, the display choices for all songs (layout, chord diagrams, left-handed, easy to read, the tune, text size), light or dark, backing up and About are now reached without opening a song. A song's own Settings keeps this song's choices, with "Settings for all songs…" at the foot.
+- **Tick boxes, not buttons whose label was their state:** Hide common, Left-handed, Easy to read (they read "Common: shown", "Left-handed: off").
+- **Easier to tap and read on a phone:** every button, list and tab is at least 44 px high (key, capo and tempo − and + were 32–34), and nothing is smaller than 13 px (labels were 11).
+- **The Edit page starts with the song:** the two help lines are under the editor, the line about saving shows the first time only, and the insert buttons are one row that scrolls sideways.
+- **Edit chords on the sheet, on a phone,** now shows the sheet when you turn it on (it was behind Preview, so nothing seemed to happen).
+- **First run:** "What do you play?" is asked once (the instrument list above it waits until you've answered).
+
 ## v4.82.0
 
 One name for each thing (UI review C1, C4, C6, W3).
