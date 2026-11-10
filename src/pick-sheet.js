@@ -237,7 +237,7 @@ ${pat.id === 'melody'
 <h2>The pattern</h2>${patternHtml}${usedHtml}
 ${shapesHtml ? `<h2>The chords</h2><div class="shapes">${shapesHtml}</div>` : ''}
 <h2>The song</h2>${ownTab ? '<p class="key">Where the song has its own tab (an intro or a riff), it\'s played as written; the pattern is for the chords.</p>' : ''}<div class="song">${songHtml}</div>
-<h2>How to learn it</h2><ol class="how"><li>Hold one chord and play the pattern over and over, slowly, until your picking hand does it on its own.</li><li>Change chords on beat 1: the new shape has to be down by the time your thumb picks.</li><li>Then the song, slowly (Pick → Play, with the practice speed turned down), up to speed over a few days.</li><li>Then sing over it. If the words throw your fingers, go back to an easier pattern for a while.</li></ol>
+<h2>How to learn it</h2><ol class="how"><li>Hold one chord and play the pattern over and over, slowly, until your picking hand does it on its own.</li><li>Change chords on beat 1: the new shape has to be down by the time your thumb picks.</li><li>Then the song, slowly (Picking → Play, with the practice speed turned down), up to speed over a few days.</li><li>Then sing over it. If the words throw your fingers, go back to an easier pattern for a while.</li></ol>
 <p class="made">Made with ukemusic${made ? ` · ${esc(made)}` : ''}</p>
 </body></html>`;
 }

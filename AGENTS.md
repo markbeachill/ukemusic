@@ -75,3 +75,25 @@ The **UI review** (`tools/ui-review/`) takes a picture of every screen of the de
 ## Finishing
 
 Say what changed in plain words, what you tested, and anything the owner has to do (commit, tag a release). The owner commits and tags releases himself, unless he asks you to.
+
+## The names we use
+
+One name for each thing, in both apps, the menu, the guide and the website (4.82; `test/v482.test.js` keeps the retired ones out, and checks that every "Tab → Button" in the app and the guide is a real button).
+
+| The thing | We call it | Not |
+|---|---|---|
+| The whole song on one screen for a group | Session screen | Group screen |
+| The pictures of chords | Chord diagrams (karaoke's button: Diagrams) | Shapes |
+| One way of fingering a chord | A chord shape (Write → Chord shapes) | |
+| How chords sit with the words | Layout | Sheet |
+| Back to the beginning | Restart | From the start |
+| The big copy for a gig | Stage copy | Stage chord sheet |
+| Beats in a bar | Time | Time signature |
+| Save under another name | Save as new | Save new, Save as new song |
+| Older saves of a song | Earlier versions | Versions |
+| Bring a sheet in from the web | Paste from a website | Paste from web, Paste a chord sheet |
+| Chords above the words, moved into them | Tidy chords | Tidy chords above words |
+| Files out of the desktop app | Export | |
+| Files out of the web player | Download | |
+
+Ribbon buttons have no "…"; menu items and ordinary buttons that ask something first do. A dialog that only shows something ends with Close; one that changes something, with Cancel and a button named for what it does.

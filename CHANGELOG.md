@@ -1,5 +1,16 @@
 # Changelog
 
+## v4.82.0
+
+One name for each thing (UI review C1, C4, C6, W3).
+
+- **Session screen** is its name everywhere: the desktop's Play tab and the web player both said "Group screen" on the button while the rest of the app, the guide and the website said Session screen.
+- **The same names in both apps and the menu:** Save as new; Earlier versions; Paste from a website; Restart (karaoke said "From the start"); Stage copy; Time; and on the web, Layout (was "Sheet") and Chord diagrams (was "Shapes"; karaoke's button is "Diagrams").
+- **Directions that point at real buttons.** Help text and the song guide still sent you to "Pick → Pattern", "View → The tune", "the This song tab", "Learn → Trouble", "File → Tidy chords above words" and others, from before those were renamed. All fixed.
+- **Clearer group names on the ribbon:** Put in; Key and patterns; Chord changes; Chords as numbers; How the song works; and on Learn → Play from memory, "Show" where it said "Help". The Write button for fingerings is "Chord shapes"; File's is "Add to setlist"; Display's is "Reset size".
+- **No "…" on ribbon buttons** (a few had it, most didn't).
+- **For maintainers:** `AGENTS.md` has "The names we use"; a test keeps the retired names out and checks every "Tab → Button" in the app and the guide against the ribbon. The website's pictures show the old labels until `npm run site-pictures` is run again.
+
 ## v4.81.0
 
 The simple view, sealed, and a shorter menu bar (UI review S3, S5, S6, S8, S9, L2).

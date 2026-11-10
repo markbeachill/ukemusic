@@ -15,16 +15,16 @@
   // app: 'desktop', 'web' or 'both'. level: 'simple' (in the simple view) or 'all' (all features only)
   const FEATURES = [
     // ── Desktop: File ──
-    { id: 'save', app: 'desktop', where: 'File', name: 'Save, Save new', level: 'simple' },
+    { id: 'save', app: 'desktop', where: 'File', name: 'Save, Save as new', level: 'simple' },
     { id: 'versions', app: 'desktop', where: 'File', name: 'Earlier versions of a song', level: 'all' },
     { id: 'songFile', app: 'desktop', where: 'File', name: 'Rename, Close', level: 'simple' },
     { id: 'bringIn', app: 'desktop', where: 'File', name: 'Bring in: import, paste a chord sheet', level: 'simple' },
     { id: 'tidy', app: 'desktop', where: 'File', name: 'Tidy chords above the words', level: 'all' },
     { id: 'setlists', app: 'desktop', where: 'File, and the Setlists tab', name: 'Setlists and songbooks', level: 'all' },
     // ── Desktop: Write ──
-    { id: 'writeAdd', app: 'desktop', where: 'Write', name: 'Add tab, chord shapes', level: 'simple' },
+    { id: 'writeAdd', app: 'desktop', where: 'Write', name: 'Put in: tab, chord shapes', level: 'simple' },
     { id: 'formatWords', app: 'desktop', where: 'Write', name: 'Bold, italic, underline', level: 'all' },
-    { id: 'writeCheck', app: 'desktop', where: 'Write', name: 'Check: guess the key, strum patterns', level: 'all' },
+    { id: 'writeCheck', app: 'desktop', where: 'Write', name: 'Key and patterns: guess the key, chord patterns', level: 'all' },
     { id: 'writeEdit', app: 'desktop', where: 'Write', name: 'Undo, Redo', level: 'simple' },
     { id: 'writeHelp', app: 'desktop', where: 'Write', name: 'How to write songs', level: 'simple' },
     // ── Desktop: Song ──
@@ -55,7 +55,7 @@
     // ── Desktop: Play ──
     { id: 'play', app: 'both', where: 'Play; web: the player', name: 'Play, Stop', level: 'simple' },
     { id: 'karaoke', app: 'both', where: 'Play; web: the player', name: 'Karaoke', level: 'simple' },
-    { id: 'session', app: 'both', where: 'Play; web: the player', name: 'Session screen (web: Group screen)', level: 'all' },
+    { id: 'session', app: 'both', where: 'Play; web: the player', name: 'Session screen', level: 'all' },
     { id: 'tempo', app: 'both', where: 'Play; web: the player', name: 'Tempo: slower, faster, tap', level: 'simple' },
     { id: 'practice', app: 'desktop', where: 'Play', name: 'Practice speed', level: 'all' },
     { id: 'sound', app: 'both', where: 'Play; web: Settings', name: 'Sound and feel', level: 'all' },
@@ -64,10 +64,10 @@
     // ── Desktop: Learn ──
     { id: 'learnMemory', app: 'desktop', where: 'Learn', name: 'Play from memory', level: 'simple' },
     { id: 'learnQuiz', app: 'desktop', where: 'Learn', name: 'Test yourself: Next chord?', level: 'simple' },
-    { id: 'learnFingers', app: 'desktop', where: 'Learn', name: 'Fingers: chord changes, drills', level: 'all' },
-    { id: 'learnNumbers', app: 'desktop', where: 'Learn', name: 'Numbers', level: 'all' },
+    { id: 'learnFingers', app: 'desktop', where: 'Learn', name: 'Chord changes, drills', level: 'all' },
+    { id: 'learnNumbers', app: 'desktop', where: 'Learn', name: 'Chords as numbers', level: 'all' },
     { id: 'learnKey', app: 'desktop', where: 'Learn', name: 'Learn it in another key', level: 'all' },
-    { id: 'learnTheory', app: 'desktop', where: 'Learn', name: 'Understand it: learn sheet, circle, patterns', level: 'all' },
+    { id: 'learnTheory', app: 'desktop', where: 'Learn', name: 'How the song works: learn sheet, circle, patterns', level: 'all' },
     { id: 'learn', app: 'web', where: 'the player', name: 'Learn', level: 'simple' },
     // ── Desktop: Picking ──
     { id: 'picking', app: 'desktop', where: 'Picking', name: 'Picking: the whole tab', level: 'all', uses: 'picking' },

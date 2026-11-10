@@ -30,8 +30,8 @@ test('the analysis is the desktop app\'s own (src/learn.js through the bundle)',
 });
 
 test('the web player\'s learn sheet names the web player\'s menus', () => {
-  assert.ok(app.includes(".replace(' (Learn → Changes…)', ' (Free Practice → Chord switching)')"));
-  assert.ok(require('../src/learn').learnSheetHtml({ title: 'T' }).includes(' (Learn → Changes…)'), 'the text it replaces is still there');
+  assert.ok(app.includes(".replace(' (Learn → Changes)', ' (Free Practice → Chord switching)')"));
+  assert.ok(require('../src/learn').learnSheetHtml({ title: 'T' }).includes(' (Learn → Changes)'), 'the text it replaces is still there');
 });
 
 test('on a phone the play bar wraps (Learn made it too wide)', () => {

@@ -80,7 +80,7 @@ test('the learn sheet: Picking, each passage once', () => {
 
 test('the app: Picking… and Changes… in the Learn tab', () => {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-  for (const s of ['id="learnPickButton"', 'id="learnPickDialog"', 'id="learnPickSteps"', 'textTransform', 'learn.pickingSummary(', 'Changes…']) assert.ok(html.includes(s), s);
+  for (const s of ['id="learnPickButton"', 'id="learnPickDialog"', 'id="learnPickSteps"', 'textTransform', 'learn.pickingSummary(', '>Changes<']) assert.ok(html.includes(s), s);
   assert.ok(!html.includes('The changes…'));
 });
 

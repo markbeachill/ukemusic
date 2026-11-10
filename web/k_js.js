@@ -486,7 +486,7 @@
             const needed = [...karaokeView.learn.needed.values()];
             if (needed.length && karaokeTroubleSpots) learnAddTrouble(needed.map((n) => ({ line: n.line, chord: n.chord, from: 'memory' })));
             showToast(needed.length ? `From memory: you looked at ${needed.length} chord${needed.length === 1 ? '' : 's'}` : 'From memory: you didn\'t need to look at a chord', {
-              detail: needed.length ? `${needed.map((n) => `${n.chord} (line ${n.line})`).join(', ')}: ${karaokeTroubleSpots ? 'they\'re in your trouble spots (Learn → Trouble). Loop them' : 'practise those'}, then try again.` : 'Next: try it with fewer chords shown, or in another key.'
+              detail: needed.length ? `${needed.map((n) => `${n.chord} (line ${n.line})`).join(', ')}: ${karaokeTroubleSpots ? 'they\'re in your trouble spots (Learn → Practise trouble spots). Loop them' : 'practise those'}, then try again.` : 'Next: try it with fewer chords shown, or in another key.'
             });
             karaokeView.learn = null;
           }

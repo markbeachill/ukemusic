@@ -172,7 +172,7 @@ const PAGES = [
     features: [
       { h3: 'Free Practice', p: ['40 exercises, marked beginner, improver or intermediate: warm-ups, chord switching, strumming patterns, fingerpicking, scales and noodling. Open an exercise and start; Help gives instructions for that exercise only.', 'Your last three started exercises are at the top, and each exercise remembers your settings. On a phone, Edit settings opens the controls while the playing view keeps the exercise and Start/Stop together.', 'Progress, scores and personal routines stay on this device between visits. Keep your practice safe has a separate practice backup; Dropbox song sync and song backups do not include practice history.', '<a href="practice/">See all 40 exercises, by category</a>'], img: 'practice.webp', alt: 'Free Practice: exercise cards by category and level' },
       { h3: 'Practise your songs', p: ['Press Play and hear the song on a real ukulele, the way it\'s written. Slow it down, loop the part you\'re learning, or have it speed up a little each time round.'], list: ['Waltzes, swing and shuffle feel, picked out from the strum', 'Tap the tempo, or count yourself in', 'The strum lit up as it plays, with the next chord shapes'], img: 'playing.webp', alt: 'A song playing, the current line and its strum lit' },
-      { h3: 'Practise the hard changes', p: ['Learn → The changes lists every change in the song, hardest first, with what each finger does. One click turns any of them into a drill, or a one-minute challenge with your best score kept.'], img: 'changes.webp', h: 860, alt: 'The changes in a song, hardest first, each with Practise and One minute buttons' }
+      { h3: 'Practise the hard changes', p: ['Learn → Changes lists every change in the song, hardest first, with what each finger does. One click turns any of them into a drill, or a one-minute challenge with your best score kept.'], img: 'changes.webp', h: 860, alt: 'The changes in a song, hardest first, each with Practise and One minute buttons' }
     ],
     best: 'web',
     web: ['All of Free Practice, routines and progress', 'Play along with your songs: slower, looped, faster'],
@@ -283,7 +283,7 @@ const SONGS_PAGE = {
   <p class="intro">The usual way in. Chord sheets with the chords on their own line above the words, or in the words, or in ChordPro, all work.</p>
   <ol class="steps">
     <li><span><strong>Copy the song</strong> from the website: select from the title to the last chord, and copy (Ctrl+C, or Copy on a phone).</span></li>
-    <li><span><strong>Paste it into ukemusic.</strong> Web player: <b>Paste from a website</b>, under Your songs. Desktop: <b>Paste from a website</b> in Your songs (or File → Paste from website).</span></li>
+    <li><span><strong>Paste it into ukemusic.</strong> Web player: <b>Paste from a website</b>, under Your songs. Desktop: <b>Paste from a website</b> in Your songs (or File → Paste from a website).</span></li>
     <li><span><strong>Give it a title</strong> and look it over: the chords sit in the words, and the parts have headings.</span></li>
     <li><span><strong>Press Play</strong> and listen alongside the recording. If the timing needs work, the <a href="#ai">ready-to-practise AI prompt</a> sorts it out.</span></li>
   </ol>
@@ -304,8 +304,8 @@ const SONGS_PAGE = {
   <p class="intro">ukemusic's own import handles most chord sheets. For the awkward ones (a PDF where the chords have lost their places, a sheet that says "two bars of Dm" in words, chords at the top and words somewhere else), an AI chat such as Claude, ChatGPT or Gemini can do the tidying.</p>
   <ol class="steps">
     <li><span><strong><a href="${AI_CHAT_URL}" target="_blank" rel="noopener">Open an AI chat</a></strong> (Claude, or ChatGPT, Gemini…) and paste the chord sheet in (or attach the PDF).</span></li>
-    <li><span><strong>Copy one of the prompts below</strong> into the same message, so the AI knows ukemusic's format. (They're in the apps too: in the desktop app <b>File → Paste from website</b>, in the web player <b>Edit → Help from an AI chat</b>.)</span></li>
-    <li><span><strong>Copy its answer into ukemusic</strong> with <b>File → Paste from website</b>, and save.</span></li>
+    <li><span><strong>Copy one of the prompts below</strong> into the same message, so the AI knows ukemusic's format. (They're in the apps too: in the desktop app <b>File → Paste from a website</b>, in the web player <b>Edit → Help from an AI chat</b>.)</span></li>
+    <li><span><strong>Copy its answer into ukemusic</strong> with <b>File → Paste from a website</b>, and save.</span></li>
     <li><span><strong>Press Play and check it</strong> against the original. The chords are usually right; the timing (how many bars each chord lasts) is the part to listen for.</span></li>
   </ol>
   <h3 id="ai-prompts" style="margin-top:32px">The prompts, to copy</h3>

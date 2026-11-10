@@ -1023,7 +1023,7 @@ function learnSheetHtml(info) {
   }
   const pickingHtml = passages.length ? `<h2>Picking</h2>${passages.map((p) => `<div class="part"><h3>${esc(p.heading || 'Tab')} <span class="times">(line ${esc(p.line)}${p.times > 1 ? `, ×${p.times}` : ''})</span></h3>${p.chordal
     ? `<ol class="changes">${p.bars.map((b) => `<li><b>Hold ${esc(b.shape)}</b>, pick ${esc(b.pick || b.pattern)}</li>`).join('')}</ol>`
-    : '<p>A tune, picked note by note rather than on chord shapes. Learn it slowly, a bar at a time.</p>'}</div>`).join('')}<p class="pick-key">Strings by name, as on the tab (g C E A on a ukulele); g+A means picked together. Learn it in steps (Learn → Picking…): the chords strummed, then the pattern on open strings, then both, slowly first.</p>` : '';
+    : '<p>A tune, picked note by note rather than on chord shapes. Learn it slowly, a bar at a time.</p>'}</div>`).join('')}<p class="pick-key">Strings by name, as on the tab (g C E A on a ukulele); g+A means picked together. Learn it in steps (Picking → Tab in steps): the chords strummed, then the pattern on open strings, then both, slowly first.</p>` : '';
   const circleHtml = circle ? `<h2>On the circle of fifths</h2><div class="circle">${circle}<ul>${cNotes.map((n) => `<li>${esc(n)}</li>`).join('')}</ul></div>` : '';
   const troubleHtml = trouble.filter((t) => !t.gone).slice(0, 12).map((t) => `<li>Line ${esc(t.line)}${t.chord ? `, <b>${esc(t.chord)}</b>` : ''}${t.words ? `: “${esc(t.words)}”` : ''}${t.count > 1 ? ` (×${t.count})` : ''}</li>`).join('');
   const factsHtml = facts.filter(([, v]) => v).map(([k, v]) => `<span>${esc(k)}: <b>${esc(v)}</b></span>`).join('');
@@ -1039,8 +1039,8 @@ ${patternsHtml && !marked ? `<h2>Patterns in it</h2><ul class="changes">${patter
 ${pickingHtml}
 ${circleHtml}
 <h2>Learning it</h2><ol class="steps">
-<li>Practise the hardest changes above until they're smooth (Learn → Changes…).</li>
-<li>Play along with the chords, then <b>from memory</b>: the chords hidden after the first time each part comes, then as numbers only, then none (Learn → From memory).</li>
+<li>Practise the hardest changes above until they're smooth (Learn → Changes).</li>
+<li>Play along with the chords, then <b>from memory</b>: the chords hidden after the first time each part comes, then as numbers only, then none (Learn → Play from memory).</li>
 <li>Play it in another key, thinking in numbers. If you can, you know the song, not just the shapes.</li>
 <li>Come back to it in a day or two, and again in a week.</li>
 </ol>

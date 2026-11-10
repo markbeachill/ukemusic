@@ -164,9 +164,9 @@ const log = (...a) => console.log(which, ...a);
   await safe('P4', async () => {
     await open('The Wild Rover');
     await p.click('#sessionBtn'); await p.waitForTimeout(900);
-    await shot('P6', 'Group screen: the queue of songs');
+    await shot('P6', 'Session screen: the queue of songs');
     await p.click('dialog[open] [data-open]'); await p.waitForTimeout(1500);
-    await shot('P4', 'The Group screen: the whole song on one screen');
+    await shot('P4', 'The Session screen: the whole song on one screen');
     await p.keyboard.press('Escape'); await p.waitForTimeout(500);
   });
 

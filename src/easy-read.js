@@ -25,7 +25,7 @@ const RULES = `
   --stage-font: ${MONO} !important;
   --stage-words-font: ${NEXT} !important;
 }
-/* the Session screen (desktop's second screen, the web player's Group screen) sets its own fonts */
+/* the Session screen (desktop's second screen, the web player's too) sets its own fonts */
 :root[data-easy-read] .ss-screen, :root[data-easy-read] .ss-screen .ss-strum .sl { font-family: ${NEXT} !important; }
 :root[data-easy-read] .ss-screen .ss-strum, :root[data-easy-read] .ss-screen .ss-tab { font-family: ${MONO} !important; }`;
 

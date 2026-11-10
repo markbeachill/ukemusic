@@ -1,6 +1,6 @@
 # Writing songs in ukemusic
 
-A guide for anyone writing or editing songs. It covers everything you can type, with examples. In the app, it's under **Write → How to write**.
+A guide for anyone writing or editing songs. It covers everything you can type, with examples. In the app, it's under **Write → Writing** (or F1).
 
 A song is plain text. Chords go in square brackets inside the words, and a few other kinds of brackets add sections, strums and repeats. ukemusic turns that into a chord sheet, plays it, and prints it.
 
@@ -160,7 +160,7 @@ A label in double square brackets **on a line of its own** starts a section:
 [[Bridge]]
 ```
 
-Sections are printed as headings, are kept together on one page when printing, and are what **Play → Loop the section I'm in** repeats.
+Sections are printed as headings, are kept together on one page when printing, and are what **Play → Loop current section** repeats.
 
 A label **at the start of a line with chords** is printed in bold at the start of that line, and doesn't start a new section:
 
@@ -188,7 +188,7 @@ A strum pattern goes in curly brackets on a line of its own. It applies from the
 
 The pattern is spread evenly over one bar. `D-DU-UDU` is eight slots in a 4/4 bar, so each is half a beat: **1 & 2 & 3 & 4 &**.
 
-On the sheet, a pattern is shown on one line: the time (and the tempo, on the song's first pattern), arrows, letters and, for a common pattern, its name. **Display → Strum patterns → Show as** can show it as a box with the count (1 & 2 &) under the arrows instead. **Write → Strum patterns** has a library of patterns to hear and add.
+On the sheet, a pattern is shown on one line: the time (and the tempo, on the song's first pattern), arrows, letters and, for a common pattern, its name. **Display → Strum patterns → Show as** can show it as a box with the count (1 & 2 &) under the arrows instead. **Help → Strum Patterns** has a library of patterns to hear and add.
 
 ### Changing the time
 
@@ -289,9 +289,9 @@ G|--------------|
 
 One line per string, numbers are frets, dashes are space, `|` is a bar line. **Write → Insert tab** adds an empty block, and inside a block typing writes over the dashes. [TABLATURE.md](TABLATURE.md) has all the details.
 
-Tab doesn't say how long notes are, so ukemusic times it by the spacing: the most common gap between notes is an eighth. **A time after the word tab** (`` ```tab 4/4 ``, `` ```tab 3/4 ``, `` ```tab 6/8 ``) times it by its bars instead: each `|…|` is a whole bar, and a note's place in its bar is when it's played. That's exact for held notes and slow patterns; it's what **Pick → Write out** writes. Lines of words and chord names inside the block are shown with the tab and don't affect the timing.
+Tab doesn't say how long notes are, so ukemusic times it by the spacing: the most common gap between notes is an eighth. **A time after the word tab** (`` ```tab 4/4 ``, `` ```tab 3/4 ``, `` ```tab 6/8 ``) times it by its bars instead: each `|…|` is a whole bar, and a note's place in its bar is when it's played. That's exact for held notes and slow patterns; it's what **Picking → Write out** writes. Lines of words and chord names inside the block are shown with the tab and don't affect the timing.
 
-**View → Tab** sets how tab looks in every song: the fret numbers (bold in the chord colour, bold, or plain), its size compared with the words, a shaded box behind it, and faint dashes so the frets stand out. **Export → Tab in PDFs** can leave it out of printed sheets.
+**Display → Tab look** sets how tab looks in every song: the fret numbers (bold in the chord colour, bold, or plain), its size compared with the words, a shaded box behind it, and faint dashes so the frets stand out. **Export → Tab in PDFs** can leave it out of printed sheets.
 
 ---
 
@@ -313,13 +313,13 @@ A song can be picked instead of strummed (the **Pick** tab), and change pattern 
 - **Named, to use again:** `{pick V: g+A C E C}`, then `{pick V}` later.
 - **Back to strumming:** `{pick: strum}`.
 
-**Pick → Change here** adds the line for you at the cursor. Marked strums (`[C↓]`, `{stop}`) are still strummed. A mistake in a `{pick}` line shows as a warning and the pattern carries on as it was.
+**Picking → Change here** adds the line for you at the cursor. Marked strums (`[C↓]`, `{stop}`) are still strummed. A mistake in a `{pick}` line shows as a warning and the pattern carries on as it was.
 
-**Pick → Write out ▾ → This line** turns the line at the cursor into tab, there in the song, so you can change single notes of it (a fill, a bar done differently); the rest of the song stays chords and patterns.
+**Picking → Write out ▾ → This line** turns the line at the cursor into tab, there in the song, so you can change single notes of it (a fill, a bar done differently); the rest of the song stays chords and patterns.
 
 ## The tune
 
-A song can carry its tune, so ukemusic can play it while you learn the song (**Pick → Play the tune**) and make a picked solo from it (**Pick → Pattern → Chord melody**). Write it on a line of its own, just above the words it's sung to:
+A song can carry its tune, so ukemusic can play it while you learn the song (**Picking → Play the tune**) and make a picked solo from it (**Picking → Picking pattern → Chord melody**). Write it on a line of its own, just above the words it's sung to:
 
 ```
 {melody: E E F G | G F E D | C C D E | E. D/2 D2}
@@ -337,7 +337,7 @@ A song can carry its tune, so ukemusic can play it while you learn the song (**P
 - **Verses share their tune:** a line without a `{melody}` of its own is sung to the tune of the first line before it with exactly the same chords. So usually only the first verse needs writing; give a line its own `{melody}` when it's different.
 - **ABC:** if you have a tune in ABC (the folk tune text format, from sites like The Session), use `{melody abc: …}` with the ABC notes: `C` is middle C, `c` the octave above, lengths count eighth notes (`E2` is a beat), `z` is a rest.
 
-**Seeing the tune as notes.** A song with its tune written in shows it as music on a staff (treble clef), at the pitch you sing, in the key you're playing in. **View → The tune** chooses how:
+**Seeing the tune as notes.** A song with its tune written in shows it as music on a staff (treble clef), at the pitch you sing, in the key you're playing in. **Display → The tune as notes** chooses how:
 - **A strip at the top** (the usual): each tune once, with the chords above the staff where they change and the first words of its line. Verse 2 sung to verse 1's tune isn't drawn again. The sheet stays short.
 - **Over every line**: a staff above each line it's sung on, like a printed songbook. It's about twice as long.
 - **Hidden.**
@@ -381,15 +381,15 @@ When some lines are a harmony part sung with (or over) the main line, put `{harm
 
 ## Pasting songs from websites
 
-- **File → Paste from website** takes a song copied from a chord website and turns it into ukemusic's format.
-- **A difficult sheet** (a PDF or scan where the chords have lost their places, or the timing written in words): **Copy AI prompt** in the same window copies a prompt that tells an AI chat (Claude, ChatGPT, Gemini…) ukemusic's format. The window's **open an AI chat** link opens one. Paste the prompt into the chat with the chord sheet, paste the answer back into Paste from website, and check the timing when you play it.
+- **File → Paste from a website** takes a song copied from a chord website and turns it into ukemusic's format.
+- **A difficult sheet** (a PDF or scan where the chords have lost their places, or the timing written in words): **Copy AI prompt** in the same window copies a prompt that tells an AI chat (Claude, ChatGPT, Gemini…) ukemusic's format. The window's **open an AI chat** link opens one. Paste the prompt into the chat with the chord sheet, paste the answer back into Paste from a website, and check the timing when you play it.
 - **To get a song ready to practise**, **Copy AI prompt: ready to practise** asks for more: each chord's length (so playback follows the recording), the parts named the same way each time, strums for your level, what to check by ear, and practice notes. It takes the sheet pasted in the window or, if that's empty, the song that's open. In the web player both prompts are under **Edit → Help from an AI chat**.
-- Many websites put the chords **on a line above the words**. **File → Tidy chords above words** moves them into the words as `[chords]`. Check lines it marks: where a website has lost the spacing, it has to guess.
-- ChordPro files (`.cho`, `.chopro`) can be imported with **File → Import text file**. A whole folder of them (a club's songbook, say) comes in at once with **the library’s ▾ menu → Import ChordPro files…** (or the library button): one song each, with their tags and links, and each subfolder becomes a setlist.
+- Many websites put the chords **on a line above the words**. **File → Tidy chords** moves them into the words as `[chords]`. Check lines it marks: where a website has lost the spacing, it has to guess.
+- ChordPro files (`.cho`, `.chopro`) can be imported with **File → Import file**. A whole folder of them (a club's songbook, say) comes in at once with **the library’s ▾ menu → Import ChordPro files…** (or the library button): one song each, with their tags and links, and each subfolder becomes a setlist.
 - Songbook marks in the brackets (`[C↓]`, `[x]`, `[.]`, `[Gs4]`…) are part of ukemusic's own format, so they come in as written; strum boxes of arrows over counts become strum patterns, and `[Riff 1]` a label.
 - Saved as ChordPro, ukemusic's shorthand goes out as ChordPro notes, which other apps print above the words: `[C][*×3]`, `[Em][*2 beats]`, `[*stop][C]`. They come back exactly as they were.
 - Everything about ChordPro (what comes in, what goes out, and what ukemusic adds to it) is in [ukemusic and ChordPro](CHORDPRO.md).
-- **Words templates:** a line where each letter is a dot and the chords sit in brackets at their letter, `[Dm:2]······· [F:1][G:1]····`. Paste the line of words underneath and **File → Tidy chords above words** fills them in, each chord on its syllable. Handy when you have the chords and their places, and the words are in another document.
+- **Words templates:** a line where each letter is a dot and the chords sit in brackets at their letter, `[Dm:2]······· [F:1][G:1]····`. Paste the line of words underneath and **File → Tidy chords** fills them in, each chord on its syllable. Handy when you have the chords and their places, and the words are in another document.
 
 ---
 
@@ -419,7 +419,7 @@ Artist, year, written by, album, source, tags and difficulty go on the **Info** 
 
 ## How the sheet can look
 
-**View → Layout** chooses where the chords go. The song is written the same way for all of them:
+**Display → Layout** chooses where the chords go. The song is written the same way for all of them:
 
 | Layout | Looks like |
 |---|---|
@@ -430,22 +430,22 @@ Artist, year, written by, album, source, tags and difficulty go on the **Info** 
 
 The same choice is in **Settings → How the chord sheet looks**, and it applies to exports and songbooks too.
 
-**View → Not the common ones** leaves out the diagrams of the chords everyone knows (C, G, Am, F, D7 and so on), so the shapes that need looking at stand out. The list is yours to change: **Settings → All songs → Chord diagrams → Common chords**.
+**Display → Hide common** leaves out the diagrams of the chords everyone knows (C, G, Am, F, D7 and so on), so the shapes that need looking at stand out. The list is yours to change: **Settings → All songs → Chord diagrams → Common chords**.
 
 
 ### On the big screen: the Session screen
 
-**Play → Session** (or **Session** on a setlist) shows the song for a whole group to play from, as big as it fits on one screen. It uses the song as you wrote it, so a few habits help it fit:
+**Play → Session screen** (or **Session** on a setlist) shows the song for a whole group to play from, as big as it fits on one screen. It uses the song as you wrote it, so a few habits help it fit:
 
 - **A blank line between parts** (or a heading like `[[Chorus]]`). Each part is kept together in its column, so parts are what it arranges.
-- **Chorus once:** in **This song → Stage copies**, "Once, then as before" prints the chorus in full the first time and "Chorus" after that. The Session screen does the same, which often saves a page.
+- **Chorus once:** in **Settings → This song**, "Once, then as before" prints the chorus in full the first time and "Chorus" after that. The Session screen does the same, which often saves a page.
 - **Short lines** wrap less. A long line still wraps with the chords above the right words.
 
 **Library → Check songs fit one screen…** tells you which songs need a page turn before the night.
 
 ### On a music stand: the Stage copy on two pages
 
-**Export → Two-page Stage PDF** fits the song onto one page if it will go, or two, so you never turn a page mid-song. It makes the text as big as will fit (but no smaller than the smallest size you choose), then closes up the gaps, then uses two columns a page, then prints a repeated chorus once. On the ribbon's Export tab (Two-page Stage) you choose the chords above or in the words, and the smallest text it may use (12 pt to start with). The same habits help: a blank line or a heading between parts, since parts are kept together.
+**Export → Two-page Stage** fits the song onto one page if it will go, or two, so you never turn a page mid-song. It makes the text as big as will fit (but no smaller than the smallest size you choose), then closes up the gaps, then uses two columns a page, then prints a repeated chorus once. On the ribbon's Export tab (Two-page Stage) you choose the chords above or in the words, and the smallest text it may use (12 pt to start with). The same habits help: a blank line or a heading between parts, since parts are kept together.
 
 
 ---
@@ -459,16 +459,16 @@ The **Learn** tab is for getting a song into your head and your fingers, so you 
 - **Trouble:** your trouble spots, with how often and where they came from. **Loop it** plays that line round and round, slower to start and a little faster each time; **Got it ✓** takes it off. They're kept in the song's learn folder (`trouble-spots.json`) and follow the words if you edit the song.
 - **Changes…:** every chord change in the song, the hardest first, with what each finger does (stays, slides, moves, goes down, lifts) and **Practise** or **One minute** for that change in Free Practice. **Shapes** runs the shapes drill with the song's chords.
 - **Pick** (its own tab): fingerpick the song instead of strumming. Choose a **Pattern** (saved with the song): **1 One string a beat** (g C E A), **2 Up, twice a bar**, **3 Up and back** (g C E A E C), **4 Pinch and roll** (g+A C E C) or **5 Alternating thumb** (Travis). On a ukulele each finger has its own string: thumb g, index C, middle E, ring A. **Play** and **Karaoke** play it picked, with each string shown in the strip as it comes. Marked strums ([C↓], {stop}) stay strummed. **How it works** explains it all.
-- **Picking to sing along to:** the pattern is the accompaniment; the tune is your voice's job, as when you strum. Set **Info → First note** (the first note you sing, e.g. E) and it's sounded with the first click of the count-in, in the key you're playing in; **Pick → First note** plays it any time.
-- **Pick → Play the tune:** with the song's tune written in (see The tune), it's played quietly over the chords while you learn. **Pattern → Chord melody** turns it into a picked solo: the tune on the top strings from the chord you're holding, a chord note under it on beat 1.
+- **Picking to sing along to:** the pattern is the accompaniment; the tune is your voice's job, as when you strum. Set **Info → First note** (the first note you sing, e.g. E) and it's sounded with the first click of the count-in, in the key you're playing in; **Picking → First note** plays it any time.
+- **Picking → Play the tune:** with the song's tune written in (see The tune), it's played quietly over the chords while you learn. **Pattern → Chord melody** turns it into a picked solo: the tune on the top strings from the chord you're holding, a chord note under it on beat 1.
 - **Change here / Write out ▾ → This line** (Pick): change the pattern from the cursor on (a `{pick}` line: see Picking patterns), or turn just the line at the cursor into tab you can change note by note.
-- **Pick → Write out ▾ → The whole song:** makes a **new song** in your library with the picking written out as tab (each line in a `` ```tab 4/4 `` block, the chords over the bars and the words under them), so you can change any note, add a fill or rework a bar. Choose its name, the pattern, the key (when you're playing in another key) and whether the chord names and words go with the tab. The original song isn't changed, and the two stay separate from then on.
-- **Pick sheet** (Pick, or Export → To learn from): the song laid out like a fingerstyle songbook: the pattern counted out, the chord boxes, then each line as tab with the chord over the bar where it starts and the words underneath. A PDF and a web page in the song's learn folder.
-- **Pick → Tab in steps…:** for a song with its own tab (which is always played as written), learn it in steps: **1** the chords under the tab, strummed; **2** the same picking with every string open, so your picking hand learns it on its own; **3** both, slowly; **4** both, in time. When the tab sits on chord shapes, each bar is shown as the chord to hold and the strings in the order they're picked ("Hold C, pick g-C-E-A"; g+A means together). Tab that's a tune, picked note by note, is left as a tune, and step 1 plays it slowly. Playing from memory, the tab fades like the chords: the first time as written, then as shapes and patterns, then nothing.
+- **Picking → Write out ▾ → The whole song:** makes a **new song** in your library with the picking written out as tab (each line in a `` ```tab 4/4 `` block, the chords over the bars and the words under them), so you can change any note, add a fill or rework a bar. Choose its name, the pattern, the key (when you're playing in another key) and whether the chord names and words go with the tab. The original song isn't changed, and the two stay separate from then on.
+- **Pick sheet** (Picking → Pick sheet, or Export → Export now → More formats): the song laid out like a fingerstyle songbook: the pattern counted out, the chord boxes, then each line as tab with the chord over the bar where it starts and the words underneath. A PDF and a web page in the song's learn folder.
+- **Picking → Tab in steps…:** for a song with its own tab (which is always played as written), learn it in steps: **1** the chords under the tab, strummed; **2** the same picking with every string open, so your picking hand learns it on its own; **3** both, slowly; **4** both, in time. When the tab sits on chord shapes, each bar is shown as the chord to hold and the strings in the order they're picked ("Hold C, pick g-C-E-A"; g+A means together). Tab that's a tune, picked note by note, is left as a tune, and step 1 plays it slowly. Playing from memory, the tab fades like the chords: the first time as written, then as shapes and patterns, then nothing.
 - **Numbers:** the chords on the sheet as numbers in the key. I is home; IV and V are away and back. A song in numbers is the same in every key.
 - **Another key → Play it:** play from memory in another key, with the chords as numbers and what each number is in that key ("I = G · IV = C · V7 = D7"). If you can, you know the song, not just the shapes.
 - **Circle:** the circle of fifths, with the song's chords lit, the key's family shaded (home, its neighbours either side, and their relative minors inside), and arrows for how the song moves. Most songs live in that family, and most of their changes are one step round the circle: one step anticlockwise into home (V → I) is the strongest pull in music.
-- **Learn sheet:** one page to learn the song from, as a PDF and a web page in the song's **learn** folder (also from Export → More formats → Learn sheet, and Library → Export every song… for them all): the song's parts in order, a chord map (each part once, bar by bar, a row per line with its first words, the numbers, the familiar patterns shaded and named where they happen, and a note when a part is only the start of another), the chords, the changes to practise, the patterns in it, the circle of fifths, and your trouble spots.
+- **Learn sheet:** one page to learn the song from, as a PDF and a web page in the song's **learn** folder (also from Export → Export now → More formats → Learn sheet, and the library's Export every song… for them all): the song's parts in order, a chord map (each part once, bar by bar, a row per line with its first words, the numbers, the familiar patterns shaded and named where they happen, and a note when a part is only the start of another), the chords, the changes to practise, the patterns in it, the circle of fifths, and your trouble spots.
 
 ---
 
@@ -482,7 +482,7 @@ The web player (ukemusic in the browser) keeps its own songs on the device, and 
 
 ## Tips
 
-- **Write → Guess the key** works out the likeliest key from the chords, with its reasons. It's only needed for spelling chords when you change key (F♯ or G♭).
-- **This song → Make this the song's key…** rewrites the chords in the text itself after you've tried a key with − and +.
+- **Write → Guess key** works out the likeliest key from the chords, with its reasons. It's only needed for spelling chords when you change key (F♯ or G♭).
+- **Song → Keys ▾ → Make this the song's key…** rewrites the chords in the text itself after you've tried a key with − and +.
 - Warnings (an unknown chord, an unknown strum name, tab that doesn't line up) are shown in the bar below the editor, with their line numbers.
 - The song file is plain text, so it can also be edited in any text editor.

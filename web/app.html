@@ -404,7 +404,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         </div>
       </div>
       <div id="instrumentAsk" class="banner" hidden><strong>What do you play?</strong> Chord shapes, tab, playback and Free Practice are set for it. You can change it any time, just above.
-        <div id="instrumentAskButtons" class="add-row" style="margin-top:8px"></div><label class="check-row" style="margin-top:6px"><input id="askAllFeatures" type="checkbox"> Show all features: for running a club, Stage copies, the group screen and more. You can change it any time in Settings.</label></div>
+        <div id="instrumentAskButtons" class="add-row" style="margin-top:8px"></div><label class="check-row" style="margin-top:6px"><input id="askAllFeatures" type="checkbox"> Show all features: for running a club, Stage copies, the Session screen and more. You can change it any time in Settings.</label></div>
       <div id="storeBanner" class="banner" hidden></div>
       <input id="search" class="search" type="search" placeholder="Find a song, artist, tag or key…" autocomplete="off" aria-label="Find a song">
       <div id="songList" class="songs"><div class="empty">Loading your songs…</div></div>
@@ -450,16 +450,16 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
       </div>
       <div id="moreTools" class="more-tools gutter" role="group" aria-label="More settings" hidden>
         <p class="features-row"><label class="check-row"><input id="allFeatures" type="checkbox"> Show all features</label> <button id="featuresBtn" class="btn" type="button" title="Which features the simple view shows: change any of them">Features…</button></p><p class="settings-scope">Playing choices · this song on this device</p><button id="resetPlaying" data-feature="playingReset" class="btn" type="button">Reset playing choices</button><div id="moreFirst"></div>
-        <div class="tool" data-feature="sound"><label for="timeSel">Time signature</label><select id="timeSel"><option value="2">2/4</option><option value="3">3/4</option><option value="4">4/4</option><option value="6">6/8</option></select></div>
+        <div class="tool" data-feature="sound"><label for="timeSel">Time</label><select id="timeSel"><option value="2">2/4</option><option value="3">3/4</option><option value="4">4/4</option><option value="6">6/8</option></select></div>
         <div class="tool" data-feature="sound"><select id="feelSel" aria-label="Rhythmic feel" title="Auto feel follows the song; Even uses equal beat divisions"><option value="auto">Auto feel</option><option value="straight">Even</option><option value="light">Light swing</option><option value="swing">Swing</option><option value="shuffle">Shuffle</option></select></div>
-        <details id="displaySettings"><summary>Display · all songs on this device</summary><div id="displayText"></div><div class="tool" id="layoutTool" data-feature="layout"><label for="layout">Sheet</label><select id="layout">
+        <details id="displaySettings"><summary>Display · all songs on this device</summary><div id="displayText"></div><div class="tool" id="layoutTool" data-feature="layout"><label for="layout">Layout</label><select id="layout">
           <option value="lines">Chords above</option><option value="inline">Chords in the words</option><option value="raised">Chords raised in the words</option><option value="table">Columns</option><option value="chords">Chords only</option></select></div>
-        <div class="tool" data-feature="diagrams"><label for="diagrams">Shapes</label><select id="diagrams">
+        <div class="tool" data-feature="diagrams"><label for="diagrams">Chord diagrams</label><select id="diagrams">
           <option value="song_start">At the top</option><option value="first_use">Where used</option><option value="side">Right-hand side</option><option value="none">None</option></select></div>
         <div class="tool" data-feature="diagrams"><button id="commonBtn" type="button" aria-pressed="false" title="No diagrams for the chords everyone knows: C, G, Am, F…">Common: shown</button></div>
         <div class="tool" data-feature="diagrams"><button id="leftBtn" type="button" aria-pressed="false" title="Mirror every chord diagram for a left-handed instrument (Free Practice too)">Left-handed: off</button></div>
         <div class="tool"><button id="easyBtn" type="button" aria-pressed="false" title="Song sheets and Stage copies in Atkinson Hyperlegible, a typeface made for readers with low vision: I, l and 1, O and 0, b and d are easy to tell apart. On screen and in downloads">Easy to read: off</button></div>
-        <div class="tool" data-feature="tune"><label for="tuneSel">Tune</label><select id="tuneSel" title="Songs with their tune written in: the tune as notes on a staff"><option value="strip">At the top</option><option value="lines">Over every line</option><option value="off">Hidden</option></select></div>
+        <div class="tool" data-feature="tune"><label for="tuneSel">Tune</label><select id="tuneSel" title="Songs with their tune written in: the tune as notes on a staff"><option value="strip">A strip at the top</option><option value="lines">Over every line</option><option value="off">Hidden</option></select></div>
         <div class="tool" data-feature="stage"><label for="lookSel">Look</label><select id="lookSel"><option value="standard">Song sheet</option><option value="stage">Stage copy</option></select></div>
         <div class="tool" id="stageFormatTool" data-feature="stage" hidden><label for="stageFormat">Stage</label><select id="stageFormat"><option value="auto">Auto: chords above (printed: in the words)</option><option value="clear">Chords above</option><option value="brackets">Chords above, in [ ]</option><option value="compact">Chords in the words</option><option value="raised">Chords raised in the words</option><option value="heavy">Heavy: all bold</option></select></div>
         <div class="tool" id="stageChorusTool" data-feature="stage" hidden><label for="stageChorus">Chorus</label><select id="stageChorus"><option value="full">Every time</option><option value="once">Once, then “as before”</option></select></div>
@@ -477,7 +477,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
           <button id="playBtn" data-feature="play" class="btn primary" type="button">▶ Play</button>
           <button id="restartBtn" data-feature="restart" class="btn" type="button">Restart</button><button id="stopBtn" class="btn" type="button" hidden>Stop</button><button id="accompanimentBtn" data-feature="accompaniment" class="btn" type="button">Accompaniment</button><button id="karaokeButton" data-feature="karaoke" class="btn" type="button" title="Full screen, big words that light up as you sing, with the chord shapes">Karaoke</button>
           <button id="learnBtn" data-feature="learn" class="btn" type="button" title="Learn the song by heart: play from memory, a quiz on the changes, the learn sheet, its chord patterns and the circle of fifths">Learn</button>
-          <button id="sessionBtn" data-feature="session" class="btn" type="button" title="Session screen: the whole song on one screen for a group to play from (a TV or projector). Arrow keys, a clicker or a tap go to the next song in the list">Group screen</button>
+          <button id="sessionBtn" data-feature="session" class="btn" type="button" title="Session screen: the whole song on one screen for a group to play from (a TV or projector). Arrow keys, a clicker or a tap go to the next song in the list">Session screen</button>
           <div class="now"><div id="nowChord" class="now-chord"></div><div id="nowShapes" class="now-shapes"></div></div>
           <div class="tempo" data-feature="tempo"><button id="slower" type="button" aria-label="Slower">−</button><span id="tempoVal" class="val"></span><button id="faster" type="button" aria-label="Faster">+</button></div>
         </div>
@@ -527,7 +527,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div class="pair"><div class="row"><label for="fArtist">Artist</label><input id="fArtist" autocomplete="off"></div><div class="row"><label for="fYear">Year</label><input id="fYear" inputmode="numeric" autocomplete="off"></div></div>
         <div class="row"><label for="fWriter">Written by</label><input id="fWriter" autocomplete="off"></div>
         <div class="pair"><div class="row"><label for="fKey">Key</label><select id="fKey"></select></div><div class="row"><label for="fCapo">Capo</label><select id="fCapo"></select></div></div>
-        <div class="pair"><div class="row"><label for="fTempo">Tempo (beats a minute)</label><input id="fTempo" type="number" min="40" max="240" inputmode="numeric"></div><div class="row"><label for="fTime">Time signature</label><select id="fTime"><option value="2">2/4</option><option value="3">3/4</option><option value="4">4/4</option><option value="6">6/8</option></select></div></div>
+        <div class="pair"><div class="row"><label for="fTempo">Tempo (beats a minute)</label><input id="fTempo" type="number" min="40" max="240" inputmode="numeric"></div><div class="row"><label for="fTime">Time</label><select id="fTime"><option value="2">2/4</option><option value="3">3/4</option><option value="4">4/4</option><option value="6">6/8</option></select></div></div>
         <div class="row"><label for="fTags">Tags (commas between them)</label><input id="fTags" autocomplete="off"></div>
         <h2>This song</h2>
         <div class="add-row"><button id="editDuplicate" class="btn" type="button">Make a copy</button><button id="editDelete" class="btn danger" type="button">Delete this song</button></div>
@@ -597,7 +597,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
   <div class="choice-list">
     <button type="button" data-dl="song"><strong>Song file (.txt)</strong><span>The song as written, to open in the ukemusic desktop app</span></button>
     <button type="button" data-dl="html"><strong>Chord sheet web page</strong><span>As shown here, in the current key</span></button>
-    <button type="button" data-dl="stage" data-feature="stage"><strong>Stage chord sheet</strong><span>Big and easy to scan at a gig, in the Stage format chosen for this song</span></button>
+    <button type="button" data-dl="stage" data-feature="stage"><strong>Stage copy</strong><span>Big and easy to scan at a gig, in the Stage format chosen for this song</span></button>
     <button type="button" data-dl="lyrics" data-feature="downloadMore"><strong>Lyrics only (.txt)</strong><span>The words, without chords</span></button>
     <button type="button" data-dl="chordpro" data-feature="downloadMore"><strong>ChordPro (.txt)</strong><span>For other chord apps</span></button>
     <label class="check-row" data-feature="downloadMore" title="Bold, italic and underlined words as ChordPro markup (&lt;b&gt; &lt;i&gt; &lt;u&gt;). Apps that don't know it may show the tags as text"><input id="dlMarkup" type="checkbox"> ChordPro with bold, italic and underline</label>
@@ -654,7 +654,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
     <p><b>Tab and chord boxes.</b> Tab is the usual way to write picking: one line per string (the top line is A), and a number says which fret to hold as you pick that string (0 is open). With picked chords, hold the whole chord shape: every number in the tab is already under a finger. So read the chord, and let the tab tell your right hand which strings and when.</p>
     <p><b>The pick sheet</b> sets the song out like a fingerstyle songbook: the pattern counted out, the chord boxes, then each line as tab with the chord over the bar where it starts and the words underneath.</p>
     <p><b>The tune.</b> A song can carry its tune on a line above the words, by note name in the written key: <code>{melody: E E F G | G F E D | C C D E | E. D/2 D2}</code>. E2 is two beats, E/2 half a beat, E. a beat and a half, r a rest; each note is the nearest to the one before (' up an octave, , down). Lines with the same chords share the tune. Then <b>Play the tune</b> plays it quietly over the chords, and <b>Chord melody</b> makes a picked solo from it.</p>
-    <p><b>Changing the pattern part-way.</b> A song can change pattern with a line like <code>{pick: travis}</code> or its own pattern, <code>{pick: g C E A E C}</code> (by string) or <code>{pick: p i m a}</code> (by finger); <code>{pick: strum}</code> goes back to strumming. Write them in the desktop app (Pick → Choose picking).</p>
+    <p><b>Changing the pattern part-way.</b> A song can change pattern with a line like <code>{pick: travis}</code> or its own pattern, <code>{pick: g C E A E C}</code> (by string) or <code>{pick: p i m a}</code> (by finger); <code>{pick: strum}</code> goes back to strumming. Write them in the desktop app (Picking → Choose picking).</p>
     <p><b>Learning it.</b> Hold one chord and play the pattern until your picking hand does it on its own. Then change chords on beat 1. Then the song, slowly, a little faster each day.</p>
   </div>
   <div class="dialog-actions"><button id="pickHelpClose" class="btn primary" type="button">Close</button></div>
@@ -2280,12 +2280,12 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       return { title: song.title, folder: song.id, get sub() { return get().sub; }, get diagrams() { return get().diagrams; }, get html() { return get().html; } };
     });
     session.show({ songs: lazy, start: Math.max(0, ids.indexOf(view.song.id)), hideCommon: look.hideCommon === true, theme: look.sessionTheme || (isDark() ? 'dark' : 'light'), minPx: Math.round(Math.max(13, Math.min(18, Math.min(innerWidth, innerHeight) / 45))), size: look.sessionSize || 'fit', same: look.sessionSame || 4.5 });
-    box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', 'Group screen');
+    box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', 'Session screen');
     releaseSessionFocus = UkeSongUI.enterOverlay(box);
     document.addEventListener('keydown', sessionKeys, true);
   }
   const queueDialog = document.createElement('dialog');
-  queueDialog.innerHTML = '<h2>Group screen</h2><p>The current library search and order provide this queue. Use arrow keys or tap to move between songs.</p><ol></ol><div class="dialog-actions"><button class="btn" data-cancel>Cancel</button><button class="btn primary" data-open>Open group screen</button></div>';
+  queueDialog.innerHTML = '<h2>Session screen</h2><p>The current library search and order provide this queue. Use arrow keys or tap to move between songs.</p><ol></ol><div class="dialog-actions"><button class="btn" data-cancel>Cancel</button><button class="btn primary" data-open>Open Session screen</button></div>';
   document.body.append(queueDialog);
   queueDialog.querySelector('[data-cancel]').onclick = () => queueDialog.close();
   queueDialog.querySelector('[data-open]').onclick = () => { queueDialog.close(); openSession(); };
@@ -2428,7 +2428,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       if (bar) {
         if (play.barKey !== index) {
           play.barKey = index;
-          if (session) session.playing(UkeSessionScreen.nowFrom(schedule, index, { folder: view.song.id, title: view.song.title })); // 4.74: lit on the Group screen
+          if (session) session.playing(UkeSessionScreen.nowFrom(schedule, index, { folder: view.song.id, title: view.song.title })); // 4.74: lit on the Session screen
           showChords(schedule.bars, index, library());
           const all = bar.pickSteps
             ? bar.pickSteps.map((sym) => ({ stroke: sym === '·' ? '-' : 'P', symbol: sym }))   // picked (4.44): the strings in order
@@ -2648,7 +2648,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
         patternId, instrument: p.instrument, beats: p.beats, ir: L.ir, schedule,
         chordDef: (name) => U.chordDefinition(L.lib, name),
         made: new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
-      }).replace('(Pick → Play, with the practice speed turned down)', '(Learn → Pick, with the tempo turned down)');
+      }).replace('(Picking → Play, with the practice speed turned down)', '(Learn → Pick, with the tempo turned down)');
       learnSheet = { html, name: `${view.song.title.replace(/[\\/:*?"<>|]+/g, '').trim() || 'song'} (pick).html` };
       $('learnSheetFrame').srcdoc = html;
       $('pickDialog').close();
@@ -2720,7 +2720,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       circleNotes: U.learn.circleNotes(L.ir, key),
       picking: U.learn.pickingSummary(L.ir, L.lib, { instrument: L.p.instrument }),
       made: new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
-    }).replace(' (Learn → Changes…)', ' (Free Practice → Chord switching)').replace('(Learn → Picking…)', '(Learn → Picking in steps)');   // the web player's names
+    }).replace(' (Learn → Changes)', ' (Free Practice → Chord switching)').replace('(Picking → Tab in steps)', '(Learn → Picking in steps)');   // the web player's names
   }
   $('learnSheetBtn').addEventListener('click', () => {
     try { learnSheet = { html: learnSheetHtml(), name: `${view.song.title.replace(/[\\/:*?"<>|]+/g, '').trim() || 'song'} (learn${keyText().shift ? ` in ${keyText().name}` : ''}).html` }; }

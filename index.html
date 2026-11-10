@@ -2002,8 +2002,8 @@
             <div class="rib-group" data-feature="save">
               <div class="rib-items">
                 <button id="saveButton" class="rib-button" type="button" data-icon="save" title="Save this song (Ctrl+S)">Save</button>
-                <button id="saveAsButton" class="rib-button" type="button" data-icon="saveAs" title="Make a new song from this one: asks for the new song's name">Save new</button>
-                <button id="historyButton" data-feature="versions" class="rib-button" type="button" data-icon="history" title="Earlier versions of this song: every save keeps the one before (the last 20). Look at one and put it back.">Versions</button>
+                <button id="saveAsButton" class="rib-button" type="button" data-icon="saveAs" title="Make a new song from this one: asks for the new song's name">Save as new</button>
+                <button id="historyButton" data-feature="versions" class="rib-button" type="button" data-icon="history" title="Earlier versions of this song: every save keeps the one before (the last 20). Look at one and put it back.">Earlier versions</button>
               </div>
               <span class="rib-label">Save</span>
             </div>
@@ -2017,16 +2017,16 @@
             <div class="rib-group" data-feature="bringIn">
               <div class="rib-items">
                 <button id="importButton" class="rib-button" type="button" data-icon="import" title="Bring in a text or ChordPro (.cho) file from your computer as a new song">Import file</button>
-                <button id="pasteSheetButton" class="rib-button" type="button" data-icon="paste" title="Paste a song from a website (chords above the words, tab or ChordPro) and have it tidied (Ctrl+Shift+V)">Paste from web</button>
-                <button id="convertLinesButton" data-feature="tidy" class="rib-button" type="button" data-icon="convert" title="Tidy chords above words: songs copied from websites often have the chords on their own line above the words. This moves them into the words, as [C]hords, so the app can play, transpose and lay them out. Check the lines it marks afterwards.">Tidy chords</button>
+                <button id="pasteSheetButton" class="rib-button" type="button" data-icon="paste" title="Paste a song from a website (chords above the words, tab or ChordPro) and have it tidied (Ctrl+Shift+V)">Paste from a website</button>
+                <button id="convertLinesButton" data-feature="tidy" class="rib-button" type="button" data-icon="convert" title="Tidy the chords written above the words: songs copied from websites often have the chords on their own line above the words. This moves them into the words, as [C]hords, so the app can play, transpose and lay them out. Check the lines it marks afterwards.">Tidy chords</button>
               </div>
               <span class="rib-label">Bring in</span>
             </div>
             <div class="rib-group" data-feature="setlists">
               <div class="rib-items">
-                <button id="addToSetlistButton" class="rib-button" type="button" data-icon="setlist" title="Add this song to a setlist (for a gig, jam or club night). Setlists are in the library, where you can make a songbook PDF.">Setlist</button>
+                <button id="addToSetlistButton" class="rib-button" type="button" data-icon="setlist" title="Add this song to a setlist (for a gig, jam or club night). Setlists are in the library, where you can make a songbook PDF.">Add to setlist</button>
               </div>
-              <span class="rib-label">Organise</span>
+              <span class="rib-label">Setlists</span>
             </div>
           </div>
 
@@ -2034,9 +2034,9 @@
             <div class="rib-group" data-feature="writeAdd">
               <div class="rib-items">
                 <button id="insertTabButton" class="rib-button" type="button" data-icon="tab" title="Add an empty tab block for your instrument's strings below the cursor. In a tab block, typing writes over the dashes.">Insert tab</button>
-                <button id="shapesButton" class="rib-button" type="button" data-icon="shape" title="Choose another fingering for a chord in this song, or type your own. You can also click a chord diagram in the preview.">Chords</button>
+                <button id="shapesButton" class="rib-button" type="button" data-icon="shape" title="Choose another fingering for a chord in this song, or type your own. You can also click a chord diagram in the preview.">Chord shapes</button>
               </div>
-              <span class="rib-label">Add</span>
+              <span class="rib-label">Put in</span>
             </div>
             <div class="rib-group" data-feature="chordEdit">
               <div class="rib-items">
@@ -2061,7 +2061,7 @@
                 <button id="guessKeyButton" class="rib-button" type="button" data-icon="key" title="Suggest which key the song is in, from its chords: the likeliest keys, the reasons, and how sure it is (Ctrl+K)">Guess key</button>
                 <button id="patternsButton" class="rib-button" type="button" data-icon="patterns" title="The song's chords as numbers (I IV V…), the familiar progressions in it, and which sections share one: a way to remember the song">Patterns</button>
               </div>
-              <span class="rib-label">Check</span>
+              <span class="rib-label">Key and patterns</span>
             </div>
             <div class="rib-group" data-feature="writeEdit">
               <div class="rib-items">
@@ -2109,7 +2109,7 @@
                       <option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option>
                     </select>
                   </div>
-                  <button id="capoSuggestButton" data-feature="capoSuggest" class="rib-small" type="button" title="Find the capo position with the easiest shapes for this song on your instrument">Suggest…</button>
+                  <button id="capoSuggestButton" data-feature="capoSuggest" class="rib-small" type="button" title="Find the capo position with the easiest shapes for this song on your instrument">Suggest</button>
                 </div>
               </div>
               <span class="rib-label">Capo</span>
@@ -2178,7 +2178,7 @@
                     </select>
                   </div>
                 </div>
-                <button id="editStylesheetButton" class="rib-button" type="button" data-icon="brush" title="Edit the style set in use (CSS): colours, spacing, fonts. Or save it as a new set of your own">Edit style…</button>
+                <button id="editStylesheetButton" class="rib-button" type="button" data-icon="brush" title="Edit the style set in use (CSS): colours, spacing, fonts. Or save it as a new set of your own">Edit style</button>
               </div>
               <span class="rib-label">Style</span>
             </div>
@@ -2210,7 +2210,7 @@
                     <button id="viewTextBigger" class="rib-small" type="button" title="Bigger text">A+</button>
                   </div>
                   <div class="rib-row">
-                    <button id="viewTextReset" class="rib-small" type="button" title="Back to the usual size">Usual</button>
+                    <button id="viewTextReset" class="rib-small" type="button" title="Back to the usual size">Reset size</button>
                     <label class="rib-check" title="Song sheets and Stage copies in Atkinson Hyperlegible, a typeface made for readers with low vision: I, l and 1, O and 0, b and d are easy to tell apart. On screen and in print, for every song"><input id="viewEasyRead" type="checkbox" data-config-path="general.easy_read" /> Easy to read</label>
                   </div>
                 </div>
@@ -2401,7 +2401,7 @@
             <div class="rib-group">
               <div class="rib-items">
                 <button id="karaokeButton" data-feature="karaoke" class="rib-button" type="button" data-icon="karaoke" title="Karaoke: full screen, with big words lighting up as they're sung, the strum and the chord shapes">Karaoke</button>
-                <button id="sessionButton" data-feature="session" class="rib-button" type="button" data-icon="screen" title="Session screen: the whole song on one screen, as big as it will go, for a group to play from (on the TV or projector, if one is plugged in)">Group screen</button>
+                <button id="sessionButton" data-feature="session" class="rib-button" type="button" data-icon="screen" title="Session screen: the whole song on one screen, as big as it will go, for a group to play from (on the TV or projector, if one is plugged in)">Session screen</button>
               </div>
               <span class="rib-label" data-label-without="session:Karaoke">Full screen</span>
             </div>
@@ -2503,7 +2503,7 @@
               <div class="rib-items">
                 <div class="rib-col">
                   <div class="rib-field" title="How much chord help when you play from memory">
-                    <label for="learnStage">Help</label>
+                    <label for="learnStage">Show</label>
                     <select id="learnStage" title="Choose the chord help for learning: chords on the first pass, chord numbers, or no chords">
                       <option value="repeats">Chords first time</option>
                       <option value="numbers">Chord numbers</option>
@@ -2524,18 +2524,18 @@
             </div>
             <div class="rib-group" data-feature="learnFingers">
               <div class="rib-items">
-                <button id="learnChangesButton" class="rib-button" type="button" data-icon="convert" title="The song's chord changes, the hardest first, with what each finger does, and practice for each">Changes…</button>
+                <button id="learnChangesButton" class="rib-button" type="button" data-icon="convert" title="The song's chord changes, the hardest first, with what each finger does, and practice for each">Changes</button>
                 <button id="learnDrillButton" class="rib-button" type="button" data-icon="sliders" title="Free Practice's shapes drill, with this song's chords">Shapes</button>
               </div>
-              <span class="rib-label">Fingers</span>
+              <span class="rib-label">Chord changes</span>
             </div>
             <div class="rib-group" data-feature="learnNumbers">
               <div class="rib-items">
                 <div class="rib-col">
-                  <label class="rib-check" title="The chords on the sheet as numbers in the key: I is home, IV and V are away (the chord diagrams are hidden while the numbers show)"><input id="learnNumbers" type="checkbox" /> On the sheet</label>
+                  <label class="rib-check" title="The chords on the sheet as numbers in the key: I is home, IV and V are away (the chord diagrams are hidden while the numbers show)"><input id="learnNumbers" type="checkbox" /> Show</label>
                 </div>
               </div>
-              <span class="rib-label">Numbers</span>
+              <span class="rib-label">Chords as numbers</span>
             </div>
             <div class="rib-group" data-feature="learnKey">
               <div class="rib-items">
@@ -2552,7 +2552,7 @@
                 <button id="learnCircleButton" class="rib-button" type="button" data-icon="circle" title="The circle of fifths: the song's chords lit, the key's family shaded, and how it moves">Circle of fifths</button>
                 <button id="learnPatternsButton" class="rib-button" type="button" data-icon="patterns" title="The song's chords as numbers, the familiar progressions in it, and which parts share them">Patterns</button>
               </div>
-              <span class="rib-label">Understand it</span>
+              <span class="rib-label">How the song works</span>
             </div>
           </div>
 
@@ -2588,7 +2588,7 @@
             <div class="rib-group">
               <div class="rib-items">
                 <button id="pickSheetButton" class="rib-button" type="button" data-icon="export" title="The pick sheet: the pattern counted out, the chord shapes, and the song as tab with the chords over it and the words under it. A PDF and a web page in the song's learn folder (also in Export)">Pick sheet</button>
-                <button id="learnPickButton" class="rib-button" type="button" data-icon="tab" title="For a song with its own tab: learn the tab in steps (the chords under it, then the picking on open strings, then both)">Tab in steps…</button>
+                <button id="learnPickButton" class="rib-button" type="button" data-icon="tab" title="For a song with its own tab: learn the tab in steps (the chords under it, then the picking on open strings, then both)">Tab in steps</button>
               </div>
               <span class="rib-label">Sheet and tab</span>
             </div>
@@ -2620,7 +2620,7 @@
             <div class="rib-group">
               <div class="rib-items">
                 <button id="settingsToggleButton" class="rib-button" type="button" data-icon="gear" title="Open Settings: this song's own settings, and the defaults for all songs (Ctrl+,)">Settings</button>
-                <button id="songSettingsButton" data-feature="setSongCustom" class="rib-button" type="button" data-icon="sliders" title="This song's own settings: chord diagrams, layout, font and more">This song's settings…</button>
+                <button id="songSettingsButton" data-feature="setSongCustom" class="rib-button" type="button" data-icon="sliders" title="This song's own settings: chord diagrams, layout, font and more">This song's settings</button>
               </div>
               <span class="rib-label">Settings</span>
             </div>
@@ -2783,8 +2783,8 @@
                   <div id="songSettingsBody" class="settings-groups">
                     <section class="settings-group" id="set-song-about">
                       <h3>About this song</h3>
-                      <p class="help">The key the song is written in, artist, year, written by, album, source, tags and difficulty are on the song's <strong>Details</strong> tab, beside Song and Notes.</p>
-                      <p class="help">Tempo, time, strum, capo and instrument for this song are on the <strong>This song</strong> tab above the editor.</p>
+                      <p class="help">The key the song is written in, artist, year, written by, album, source, tags and difficulty are on the song's <strong>Details</strong> tab, beside Words &amp; chords and Notes.</p>
+                      <p class="help">Tempo, time, strum, capo and instrument for this song are on the <strong>Song</strong> tab of the ribbon.</p>
                     </section>
                     <section class="settings-group" id="set-song-custom" data-feature="setSongCustom" data-feature-grey>
                       <h3>Custom for this song</h3>
@@ -2827,7 +2827,7 @@
                           <option value="baritone">Baritone ukulele (DGBE)</option>
                           <option value="guitar">Guitar (EADGBE)</option>
                         </select>
-                        <p class="help">New songs are made for this instrument, and so is every song that hasn't been given one of its own (This song → Instrument, or the ribbon). It decides the chord diagrams, how tab is shown (tab written for another instrument is converted), the notes played back, and the code in export names: _uke, _bar or _gtr.</p>
+                        <p class="help">New songs are made for this instrument, and so is every song that hasn't been given one of its own (Song → Instrument, on the ribbon). It decides the chord diagrams, how tab is shown (tab written for another instrument is converted), the notes played back, and the code in export names: _uke, _bar or _gtr.</p>
                       </div>
                     </section>
 
@@ -2927,7 +2927,7 @@
                           <option value="lines">Over every line, like a printed songbook</option>
                           <option value="off">Hidden</option>
                         </select>
-                        <p class="help">The default for every song (a song can have its own: View → The tune). The strip shows the verse tune, the chorus tune and so on once each, so the sheet stays short. Over every line puts a staff above each line it's sung on: the most like a songbook, but about twice as long. Stage copies never show it.</p>
+                        <p class="help">The default for every song (a song can have its own: Display → The tune as notes). The strip shows the verse tune, the chorus tune and so on once each, so the sheet stays short. Over every line puts a staff above each line it's sung on: the most like a songbook, but about twice as long. Stage copies never show it.</p>
                       </div>
                       <div class="field">
                         <label for="rhythm-style">Strum patterns: style</label>
@@ -3007,7 +3007,7 @@
 
                     <section class="settings-group" id="set-stage" data-feature="setStage" data-feature-grey>
                       <h3>Stage copies</h3>
-                      <p class="help">The copy you play from, at a gig or practising at home: made with every export, in exports/Stage. A song can have its own format: Export → Stage.</p>
+                      <p class="help">The copy you play from, at a gig or practising at home: made with every export, in exports/Stage. A song can have its own format: Export → Stage copy.</p>
                       <div class="field">
                         <label for="export-stage_font">Font</label>
                         <input id="export-stage_font" type="text" placeholder="Consolas" title="--stage-font in style.css" />
@@ -3026,7 +3026,7 @@
                           <option value="raised">Chords raised in the words</option>
                           <option value="heavy">Heavy: all bold, white-on-black chords</option>
                         </select>
-                        <p class="help">How Stage copies (for a gig, or practising at home) look. Auto, the default, puts the chords above the words on screen, the easiest to read, and in the words when printed, the fewest pages. A song can have its own: Export → Stage.</p>
+                        <p class="help">How Stage copies (for a gig, or practising at home) look. Auto, the default, puts the chords above the words on screen, the easiest to read, and in the words when printed, the fewest pages. A song can have its own: Export → Stage copy.</p>
                       </div>
                       <div class="field">
                         <label for="export-stage_diagrams">Chord diagrams</label>
@@ -3041,7 +3041,7 @@
                           <option value="full">Print every chorus in full</option>
                           <option value="once">Don't repeat: print it once, then "Chorus — as before"</option>
                         </select>
-                        <p class="help">Only parts the song marks with a heading ([[Chorus]], [[Refrain]]…) and only when the words and chords are exactly the same: a chorus that changes is printed in full. A song with no headings is always printed in full (Write → Chord patterns → "Write the part names into the song" adds them).</p>
+                        <p class="help">Only parts the song marks with a heading ([[Chorus]], [[Refrain]]…) and only when the words and chords are exactly the same: a chorus that changes is printed in full. A song with no headings is always printed in full (Write → Patterns → "Write the part names into the song" adds them).</p>
                       </div>
                       <div class="field">
                         <span class="field-label">Two-page Stage PDF (also on the ribbon: Export → Two-page Stage)</span>
@@ -3264,7 +3264,7 @@
               <div class="setlist-howto">
                 <h3>Adding songs</h3>
                 <p>Go to <strong>Songs</strong> and press <strong>+</strong> at the end of a song's row (or a saved key's row). The setlist you added to last is at the top of the list, so adding several is one click each.</p>
-                <p>In a song: <strong>File → Add to setlist…</strong></p>
+                <p>In a song: <strong>File → Add to setlist</strong></p>
               </div>
             </div>
           </div>
@@ -3284,7 +3284,7 @@
 
     <dialog id="convertDialog" class="wide">
       <form id="convertForm" method="dialog">
-        <h2 id="convertHeading">Paste a chord sheet</h2>
+        <h2 id="convertHeading">Paste from a website</h2>
         <p class="dialog-note">Paste a song with the chords on the line above the words — from a website, a PDF or a scan. It's turned into ukemusic's <code>[C]hord</code> format as you go. Section names like "Verse 1:" or "[Chorus]" become headings.</p>
         <div class="convert-panes">
           <div class="convert-pane">
@@ -3322,7 +3322,7 @@
     <dialog id="cssDialog" class="css-dialog">
       <form method="dialog">
         <h2 id="cssTitle">Style set</h2>
-        <p class="dialog-note">The look of every song: colours, fonts and spacing (CSS). Save shows the change in the preview straight away. The View tab and Settings change the common things for you. Choose another set on View → Style set.</p>
+        <p class="dialog-note">The look of every song: colours, fonts and spacing (CSS). Save shows the change in the preview straight away. The Display tab and Settings change the common things for you. Choose another set on Display → Style set.</p>
         <textarea id="cssText" spellcheck="false" wrap="off" aria-label="Stylesheet"></textarea>
         <p id="cssWhere" class="dialog-note muted"></p>
         <div class="css-sets">
@@ -3408,7 +3408,7 @@
             <fieldset>
               <legend>To learn from</legend>
               <label title="The chords and how they feel, the song's parts with their words, the chord map with its patterns, the changes to practise, the circle of fifths and your trouble spots. In the song's learn folder"><input type="checkbox" name="format" value="learn_sheet" /> Learn sheet (PDF and web page)</label>
-              <label title="The song set out for fingerpicking: the pattern counted out, the chord shapes, and the song as tab with the chords over it and the words under it. Uses the song's picking pattern (Pick → Pattern), or One string a beat. In the song's learn folder"><input type="checkbox" name="format" value="pick_sheet" /> Pick sheet (PDF and web page)</label>
+              <label title="The song set out for fingerpicking: the pattern counted out, the chord shapes, and the song as tab with the chords over it and the words under it. Uses the song's picking pattern (Picking → Picking pattern), or One string a beat. In the song's learn folder"><input type="checkbox" name="format" value="pick_sheet" /> Pick sheet (PDF and web page)</label>
             </fieldset>
           </div>
         </details>
@@ -4119,12 +4119,12 @@
           <span id="karaokeTempo">100 bpm</span>
           <button id="karaokeFaster" type="button" title="5 bpm faster">+</button>
         </span>
-        <button id="karaokeShapesToggle" type="button" title="Show or hide the chord shapes: the chord now and the next two" aria-pressed="true">Shapes</button>
+        <button id="karaokeShapesToggle" type="button" title="Show or hide the chord diagrams: the chord now and the next two" aria-pressed="true">Diagrams</button>
         <button id="karaokeSmaller" type="button" title="Smaller text">A−</button>
         <button id="karaokeBigger" type="button" title="Bigger text">A+</button>
         <button id="karaokeFull" type="button" title="Full screen (F): the words as big as the screen allows; Esc to leave" aria-label="Full screen">⛶</button>
         <button id="karaokePlay" type="button" title="Play, pause or resume (Space)">▶ Play</button>
-        <button id="karaokeRestart" type="button" title="Back to the start (also while it's playing). Or click a line to play from there">⏮ From the start</button>
+        <button id="karaokeRestart" type="button" title="Back to the start (also while it's playing). Or click a line to play from there">⏮ Restart</button>
         <button id="karaokeStop" type="button" title="Stop playback">■ Stop</button>
         <button id="karaokeTrouble" type="button" title="Mark the line playing now as a trouble spot (T)" hidden>⚑ Trouble here</button>
         <button id="karaokeClose" type="button" title="Close (Esc)">Close</button>
@@ -4640,7 +4640,7 @@
             const stageLook = previewLook() === 'stage';
             const ir = window.ukemusic.parseSong(stageLook ? stageText(getEditorValue()) : getEditorValue(), getParserOptions());
             const transposedIr = window.ukemusic.transposeIR(ir, state.transpose - songCapo(), transposeOptions());
-            // View → Stage shows the Stage copy as it will print (4.29: in its Stage format)
+            // Display → Stage shows the Stage copy as it will print (4.29: in its Stage format)
             // 4.39: Learn → Numbers on the sheet: the chords as numbers in the key, no diagrams
             const numbers = state.learnNumbers && !stageLook;
             const shownIr = numbers ? window.ukemusic.learn.numberedIR(transposedIr, window.ukemusic.progressions.analyse(transposedIr, { key: learnKey(state.transpose - songCapo()) }).key) : transposedIr;
@@ -4667,7 +4667,7 @@
             warningLabel.title = chordLines.length ? 'Click to convert these chord lines' : '';
             if (chordLines.length) {
               const list = chordLines.length > 6 ? `${chordLines.slice(0, 6).join(', ')}…` : chordLines.join(', ');
-              warnings.unshift(`Line${chordLines.length > 1 ? 's' : ''} ${list} look${chordLines.length > 1 ? '' : 's'} like chords above lyrics — use File → Tidy chords above words`);
+              warnings.unshift(`Line${chordLines.length > 1 ? 's' : ''} ${list} look${chordLines.length > 1 ? '' : 's'} like chords above lyrics — use File → Tidy chords`);
             }
             setStatusMessage(warnings.length ? warnings.join(' | ') : (stickyNotice || 'No parser warnings.'));
             schedulePageCount();
@@ -4777,7 +4777,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
 
         function setDocumentContent(content, { markSaved = true } = {}) {
           state.docSerial = (state.docSerial || 0) + 1; // a different document is now open
-          if (!libraryEl.hidden && !state.starting) hideLibrary(); // e.g. File → New while on the library
+          if (!libraryEl.hidden && !state.starting) hideLibrary(); // e.g. New Song (the menu) while on the library
           setEditorValue(content || '', { fresh: true });
           state.savedContent = markSaved ? getEditorValue() : '';
           updateDirtyState();
@@ -5193,7 +5193,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             window.ukemusicLogError('Could not save', error);
             const moved = /isn't where it was|ENOENT/.test(message);
             showToast('Could not save the song', {
-              detail: moved ? 'This song\'s folder has been moved, renamed or deleted. Use File → Save as new song to keep what you have.' : message,
+              detail: moved ? 'This song\'s folder has been moved, renamed or deleted. Use File → Save as new to keep what you have.' : message,
               error: true,
               ...(moved ? { action: 'Save as new', onAction: () => saveFile(true) } : {})
             });
@@ -5496,7 +5496,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           if (instrument === 'baritone' && sound === 'sampled') return 'guitar';
           return sound;
         }
-        // 4.71: Easy to read text: song sheets and Stage copies in Atkinson Hyperlegible (View → Style)
+        // 4.71: Easy to read text: song sheets and Stage copies in Atkinson Hyperlegible (Display → Style)
         const easyRead = () => state.config?.general?.easy_read === true || state.config?.general?.easy_read === 'true';
         function docCss(stage, extra = '', { songFont = true } = {}) {
           const easy = easyRead() ? `\n${window.ukemusic.easyReadCss()}` : '';
@@ -6054,7 +6054,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         document.getElementById('aboutButton').addEventListener('click', openAbout);
         window.ukemusicAbout = openAbout;
 
-        // ── Style sets (View → Style set) ──
+        // ── Style sets (Display → Style set) ──
         async function refreshStyleSets() {
           let list = null;
           try { list = await window.ukemusic.stylesList(); } catch (_e) { return null; }
@@ -6689,7 +6689,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const insert = document.getElementById('convertInsert');
           const replace = document.getElementById('convertReplace');
           document.getElementById('convertHeading').textContent = {
-            paste: 'Paste a chord sheet',
+            paste: 'Paste from a website',
             convert: 'Move the chords into the words',
             import: window.ukemusic.looksLikeChordPro(text) ? 'This is a ChordPro file — convert it?' : 'This file has chords above the words — convert it?'
           }[mode];
@@ -7287,7 +7287,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         }
 
         // The look of a document comes from style.css; these attributes on <html> pick its
-        // sections: data-style="stage" (the Stage section), and View → Tab's data-tab-… options.
+        // sections: data-style="stage" (the Stage section), and Display → Tab's data-tab-… options.
         // Export → Section names: Show, Small, or Hidden (to print fewer pages)
         function sectionsAttr(config = effectiveConfig()) {
           const v = config?.export?.section_names;
@@ -8321,7 +8321,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             const needed = [...karaokeView.learn.needed.values()];
             if (needed.length && karaokeTroubleSpots) learnAddTrouble(needed.map((n) => ({ line: n.line, chord: n.chord, from: 'memory' })));
             showToast(needed.length ? `From memory: you looked at ${needed.length} chord${needed.length === 1 ? '' : 's'}` : 'From memory: you didn\'t need to look at a chord', {
-              detail: needed.length ? `${needed.map((n) => `${n.chord} (line ${n.line})`).join(', ')}: ${karaokeTroubleSpots ? 'they\'re in your trouble spots (Learn → Trouble). Loop them' : 'practise those'}, then try again.` : 'Next: try it with fewer chords shown, or in another key.'
+              detail: needed.length ? `${needed.map((n) => `${n.chord} (line ${n.line})`).join(', ')}: ${karaokeTroubleSpots ? 'they\'re in your trouble spots (Learn → Practise trouble spots). Loop them' : 'practise those'}, then try again.` : 'Next: try it with fewer chords shown, or in another key.'
             });
             karaokeView.learn = null;
           }
@@ -10763,7 +10763,7 @@ function showTab(tab) {
         function openPicking() {
           const L = learnSong();
           if (!/^\s*```\s*tab(?:\s+\d+\s*\/\s*\d+)?\s*$/im.test(getEditorValue())) {
-            setStatusMessage('This song has no tab of its own. To pick its chords, choose a pattern (Pick → Pattern); Tab in steps is for songs with a ```tab block.');
+            setStatusMessage('This song has no tab of its own. To pick its chords, choose a pattern (Picking → Picking pattern); Tab in steps is for songs with a ```tab block.');
             return;
           }
           const opts = { instrument: L.instrument.id };
@@ -11010,7 +11010,7 @@ function showTab(tab) {
           const chord = (entry.line.pieces || []).map((p) => (p.bar ? '' : p.chord)).find(Boolean) || '';
           await learnAddTrouble([{ line, chord, from: 'tap' }]);
           entry.el.classList.add('k-trouble');
-          showToast(`Line ${line} is a trouble spot`, { detail: 'Learn → Trouble to loop it.' });
+          showToast(`Line ${line} is a trouble spot`, { detail: 'Learn → Practise trouble spots loops it.' });
         }
         document.getElementById('karaokeTrouble').addEventListener('click', karaokeMarkTrouble);
 
@@ -11113,7 +11113,7 @@ function showTab(tab) {
         }
         document.getElementById('learnSheetButton').addEventListener('click', makeLearnSheet);
         // 4.44: the pick sheet: the song set out for fingerpicking (src/pick-sheet.js), beside the
-        // learn sheet; from Pick → Pick sheet, Export and Export every song
+        // learn sheet; from Picking → Pick sheet, Export and Export every song
         async function writePickSheet(patternId, transpose = state.transpose) {
           const L = learnSong(transpose);
           const cfg = L.config;
@@ -11173,13 +11173,13 @@ function showTab(tab) {
             } catch (_e) { text = pk.pattern(own).strings; }
           } else text = 'Choose one to pick the song';
           const tuned = window.ukemusic.melody.hasMelody(window.ukemusic.parseSong(getEditorValue(), getParserOptions()));
-          if (own === 'melody') text = tuned ? 'The tune on top, the chord under it' : 'Needs the tune: add {melody} lines (Pick → How it works)';
+          if (own === 'melody') text = tuned ? 'The tune on top, the chord under it' : 'Needs the tune: add {melody} lines (Picking → How it works)';
           if (own && /^\s*```\s*tab\s+\d+\s*\/\s*\d+\s*$/im.test(getEditorValue())) text = 'Tab plays as written; the pattern picks the chords';
           if (/^\s*\{\s*pick\b/im.test(getEditorValue())) text = `${own ? text.replace(/\.$/, '') + '; ' : ''}changes at its {pick} lines`;
           const tuneBox = document.getElementById('pickTune');
           tuneBox.checked = effectiveConfig()?.playback?.tune === true || effectiveConfig()?.playback?.tune === 'true';
           tuneBox.disabled = !state.song || !tuned;
-          tuneBox.parentElement.title = tuned ? 'Play the song\'s tune quietly over the chords, to learn how it goes. Saved with the song' : 'This song has no tune yet: add {melody} lines (Pick → How it works)';
+          tuneBox.parentElement.title = tuned ? 'Play the song\'s tune quietly over the chords, to learn how it goes. Saved with the song' : 'This song has no tune yet: add {melody} lines (Picking → How it works)';
           document.getElementById('pickPatternText').textContent = text;
           document.getElementById('learnPickButton').classList.toggle('dim', !/^\s*```\s*tab(?:\s+\d+\s*\/\s*\d+)?\s*$/im.test(getEditorValue()));
         }
@@ -11199,7 +11199,7 @@ function showTab(tab) {
         });
         const needPattern = () => {
           if (songPick()) return false;
-          setStatusMessage('Choose a picking pattern first (Pick → Pattern): start with 1, One string a beat.');
+          setStatusMessage('Choose a picking pattern first (Picking → Picking pattern): start with 1, One string a beat.');
           document.getElementById('pickPattern').focus();
           return true;
         };
@@ -11244,7 +11244,7 @@ function showTab(tab) {
           for (const r of document.querySelectorAll('input[name="pickWriteKey"]')) r.onchange = preview;
           document.getElementById('pickWriteTitle').value = `${state.song.title} (picked)`;
           const inst = songInstrument(effectiveConfig());
-          document.getElementById('pickWriteInstrument').textContent = `${inst.label}: the song's instrument (This song → Instrument). The tab's frets are for it.`;
+          document.getElementById('pickWriteInstrument').textContent = `${inst.label}: the song's instrument (Song → Instrument). The tab's frets are for it.`;
           const capo = songCapo(effectiveConfig());
           const played = keyAfter(state.transpose);
           const original = keyAfter(0);
@@ -11394,7 +11394,7 @@ function showTab(tab) {
           const playedHere = schedule.bars.filter((b) => b.line === lineNo);
           if (!playedHere.length) { setStatusMessage('Put the cursor on a line of chords to write it out.'); return; }
           if (!playedHere.every((b) => b.pickNotes && b.pickNotes.length)) {
-            setStatusMessage('This line is strummed (or has a stop or N.C.): choose a pattern first (Pick → Pattern, or Choose picking), then write it out.');
+            setStatusMessage('This line is strummed (or has a stop or N.C.): choose a pattern first (Picking → Picking pattern, or Choose picking), then write it out.');
             return;
           }
           const out = window.ukemusic.pickSong.writePickedSong(text, L.ir, schedule, { instrument: L.instrument.id, beats, compound: beats === 6, only: new Set([lineNo]) });
@@ -12420,7 +12420,7 @@ function showTab(tab) {
           const bits = [];
           if (paged.length) bits.push(`Need a page turn: ${paged.map((x) => `${x.title} (${x.pages} pages)`).join(', ')}.`);
           if (small.length) bits.push(`Fit, but only at the smallest text: ${small.map((x) => x.title).join(', ')}.`);
-          if (paged.length || small.length) bits.push('To help: "Chorus once" (This song → Stage copies), Hide common, or shorter strum lines.');
+          if (paged.length || small.length) bits.push('To help: "Chorus once" (Settings → This song), Hide common, or shorter strum lines.');
           showToast(paged.length ? `${r.songs.length - paged.length} of ${r.songs.length} songs fit one screen` : `All ${r.songs.length} songs fit one screen`, { detail: bits.join(' ') || 'Every song fits a 1920×1080 screen with readable text.' });
           state.sessionFit = Object.fromEntries(r.songs.map((x) => [x.folder, x]));
         }
@@ -13373,8 +13373,8 @@ function showTab(tab) {
             }
             items.push({ separator: true });
           }
-          items.push({ action: 'paste-chord-sheet', label: 'Paste from website…' });
-          items.push({ action: 'convert-chord-lines', label: 'Tidy chords above words' });
+          items.push({ action: 'paste-chord-sheet', label: 'Paste from a website…' });
+          items.push({ action: 'convert-chord-lines', label: 'Tidy chords' });
           items.push({ action: 'insert-tab', label: 'Insert tab block' });
           return items;
         };

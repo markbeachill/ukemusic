@@ -243,7 +243,7 @@ async function launch() {
     await win.waitForTimeout(1500);
     await app.evaluate(({ BrowserWindow }) => { for (const x of BrowserWindow.getAllWindows().slice(1)) { x.setFullScreen(false); x.setContentSize(1440, 810); } });
     await win.waitForTimeout(1500);
-    await shot('P4', 'The Group screen (Session): the whole song on one screen, for the TV', win);
+    await shot('P4', 'The Session screen: the whole song on one screen, for the TV', win);
     await win.close().catch(() => {}); await page.waitForTimeout(600);
   });
   await safe('P5', async () => {
