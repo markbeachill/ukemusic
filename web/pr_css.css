@@ -251,4 +251,218 @@
   .pr-grid { grid-template-columns: repeat(4, minmax(45px, 1fr)); max-width: 100%; width: 100%; }
   .pr-help-head h2 { font-size: 17px; }
 }
-@media (min-width: 761px) { .pr-mobile-go { display: none; } #prSettingsToggle { display: none; } }
+
+/* ── 4.87: Free Practice redesigned ─────────────────────────────────────────────────────────
+   A colour for each kind of exercise (--pr-cat, set on the card, the step or the whole screen),
+   pictures on the cards, today's practice and the first steps above the catalogue, slides for
+   the instructions, and one layout rule for the exercise screen at every width: the settings
+   are a panel you open, and Start is always at the bottom when they're shut. */
+.practice { --pr-cat: var(--accent); --pr-tint: color-mix(in srgb, var(--pr-cat) 11%, var(--panel-bg)); --pr-line: color-mix(in srgb, var(--pr-cat) 38%, var(--border)); }
+[data-theme="dark"] .practice { --pr-tint: color-mix(in srgb, var(--pr-cat) 22%, var(--panel-bg)); }
+.pr-chip, .pr-cat, .pr-card, .pr-path-step, .pr-today-steps li, .pr-home-main, .pr-help { --pr-tint: color-mix(in srgb, var(--pr-cat) 11%, var(--panel-bg)); --pr-line: color-mix(in srgb, var(--pr-cat) 38%, var(--border)); --pr-ink: color-mix(in srgb, var(--pr-cat) 78%, var(--text)); }
+[data-theme="dark"] .pr-chip, [data-theme="dark"] .pr-cat, [data-theme="dark"] .pr-card, [data-theme="dark"] .pr-path-step, [data-theme="dark"] .pr-today-steps li, [data-theme="dark"] .pr-home-main, [data-theme="dark"] .pr-help { --pr-tint: color-mix(in srgb, var(--pr-cat) 24%, var(--panel-bg)); --pr-ink: color-mix(in srgb, var(--pr-cat) 45%, #fff); }
+.pr-pic { display: block; width: 100%; height: auto; }
+
+/* the bar: one row at every width */
+.practice-bar { gap: 10px; padding: 10px 16px; border-bottom: 3px solid color-mix(in srgb, var(--pr-cat) 55%, var(--border)); flex-wrap: nowrap; }
+.practice-bar .pr-title { font-size: 19px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pr-heading { min-width: 0; flex: 0 1 auto; overflow: hidden; }
+.practice-bar > button, .practice-bar > .pr-timer, .practice-bar > .pr-today { flex: none; }
+.practice-bar .k-spacer { flex: 1 1 0; min-width: 0; }
+.pr-routine-bar button { white-space: nowrap; flex: none; }
+.practice-bar .pr-icon-button { display: inline-flex; align-items: center; gap: 4px; min-height: 40px; white-space: nowrap; }
+.practice[data-view="home"] #prTimer, .practice[data-view="home"] #prToday { display: none; }
+.pr-routine-bar { min-width: 0; flex: 0 100 auto; }
+.practice-bar:has(.pr-routine-bar:not([hidden])) #prToday { display: none; }
+.practice .practice-controls { padding-bottom: 0; }
+.practice .pr-go { padding: 10px 0 14px; margin-top: auto; }
+.pr-routine-bar #prRoutineText { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* home: one scrolling page */
+.pr-home { display: block; overflow-y: auto; min-height: 0; background: var(--toolbar-bg); }
+.pr-home-inner { max-width: 1180px; margin: 0 auto; padding: 18px 24px 40px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.pr-home h2 { font-size: 18px; margin: 0 0 8px; }
+.pr-kicker { font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+.pr-top { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: stretch; }
+.pr-today-card, .pr-week-card, .pr-path-section, .pr-catalogue, .pr-recent { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px 18px; }
+.pr-today-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 18px; align-items: center; border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); box-shadow: 0 2px 14px rgba(0, 0, 0, 0.06); }
+.pr-well-done { grid-column: 1 / -1; margin: 0; padding: 8px 12px; border-radius: 10px; background: #dcfce7; color: #14532d; font-weight: 700; }
+.pr-today-steps { list-style: none; margin: 8px 0 6px; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.pr-today-steps li { display: grid; grid-template-columns: 54px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; background: var(--pr-tint); border: 1px solid var(--pr-line); }
+.pr-today-pic { grid-row: 1 / 3; color: var(--pr-ink); }
+.pr-today-name { font-weight: 700; font-size: 14.5px; line-height: 1.25; align-self: end; }
+.pr-today-min { font-size: 12.5px; color: var(--muted); align-self: start; }
+.pr-today-why { margin: 0; font-size: 13.5px; color: var(--muted); }
+.practice .pr-today-start { font-size: 20px; font-weight: 800; padding: 16px 30px; border-radius: 14px; background: var(--accent); color: #fff; border-color: var(--accent); min-height: 60px; }
+.pr-week-card { display: grid; gap: 6px; align-content: start; }
+.pr-week-days { display: flex; justify-content: space-between; gap: 4px; margin: 4px 0; }
+.pr-day { display: grid; justify-items: center; gap: 3px; font-size: 11px; color: var(--muted); }
+.pr-day i { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); font-style: normal; font-weight: 800; font-size: 13px; color: #fff; }
+.pr-day.on i { background: var(--accent); border-color: var(--accent); }
+.pr-day.today i { outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 2px; }
+.pr-day.today b { color: var(--text); }
+.pr-week-line { margin: 0; font-size: 14px; }
+.pr-recent { padding: 12px 18px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.pr-recent h2 { margin: 0; font-size: 14px; color: var(--muted); font-weight: 700; }
+.practice .pr-chip { border: 1px solid var(--pr-line); background: var(--pr-tint); border-radius: 999px; padding: 8px 14px 8px 12px; font: inherit; font-weight: 600; min-height: 40px; display: inline-flex; align-items: center; gap: 8px; }
+.pr-chip::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--pr-cat); }
+
+/* first steps */
+.pr-path-section > summary { cursor: pointer; font-size: 18px; font-weight: 800; list-style-position: inside; }
+.pr-path-note { font-size: 13px; font-weight: 600; color: var(--muted); margin-left: 6px; }
+.pr-path-lead { margin: 6px 0 12px; font-size: 14px; }
+.pr-path { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.practice .pr-path-step { width: 100%; height: 100%; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; align-items: start; text-align: left; padding: 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--panel-bg); font: inherit; color: inherit; cursor: pointer; }
+.pr-path-num { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--pr-line); font-weight: 800; color: var(--pr-ink); }
+.pr-path-words { display: grid; gap: 2px; min-width: 0; }
+.pr-path-words strong { font-size: 14.5px; line-height: 1.25; }
+.pr-path-words span { font-size: 12.5px; color: var(--muted); line-height: 1.3; }
+.pr-path-step.done .pr-path-num { background: var(--pr-cat); border-color: var(--pr-cat); color: #fff; }
+.pr-path-step.done { background: var(--pr-tint); }
+.practice .pr-path-step.next { border: 2px solid var(--pr-cat); background: var(--pr-tint); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07); }
+.pr-path-step:hover { border-color: var(--pr-cat); }
+
+/* the catalogue */
+.pr-catalogue-title { margin-bottom: 10px; }
+.pr-cats { flex-direction: row; flex-wrap: wrap; gap: 8px; padding: 0; border: 0; overflow: visible; margin-bottom: 14px; }
+.practice .pr-cat { display: inline-flex; grid-template-columns: none; gap: 8px; align-items: center; border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; min-height: 40px; background: var(--panel-bg); font-size: 14.5px; white-space: nowrap; }
+.pr-cat-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--pr-cat); flex: none; }
+.pr-cat:hover { background: var(--pr-tint); border-color: var(--pr-line); }
+.practice .pr-cat.active { background: var(--pr-cat); border-color: var(--pr-cat); color: #fff; }
+.pr-cat.active .pr-cat-dot { background: #fff; }
+.pr-home-main { overflow: visible; padding: 0; }
+.pr-home-head h3 { margin: 0 0 2px; font-size: 17px; color: var(--pr-ink); }
+.pr-home-head p { margin: 0 0 12px; font-size: 14px; }
+.pr-cards { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+.practice .pr-card { padding: 0 0 12px; gap: 6px; overflow: hidden; border-radius: 14px; }
+.pr-card > :not(.pr-card-pic) { padding: 0 14px; }
+.pr-card-pic { position: relative; display: block; background: var(--pr-tint); color: var(--pr-ink); padding: 10px 28px 6px; border-bottom: 1px solid var(--pr-line); margin-bottom: 4px; }
+.pr-card-pic .pr-pic { max-height: 86px; width: auto; margin: 0 auto; }
+.pr-card:hover { border-color: var(--pr-cat); }
+.pr-card:hover .pr-card-pic { background: color-mix(in srgb, var(--pr-cat) 18%, var(--panel-bg)); }
+.pr-state { position: absolute; top: 8px; right: 8px; font-size: 11px; font-weight: 800; border-radius: 999px; padding: 2px 8px; background: var(--panel-bg); color: var(--muted); border: 1px solid var(--border); }
+.pr-state.tried { color: var(--pr-ink); border-color: var(--pr-line); }
+.pr-state.clean { background: var(--pr-cat); border-color: var(--pr-cat); color: #fff; }
+.pr-card-top { font-size: 15.5px; }
+.pr-card-aim { font-size: 13.5px; }
+[data-theme="dark"] .pr-badge.beginner { background: #14532d; color: #bbf7d0; }
+[data-theme="dark"] .pr-badge.improver { background: #713f12; color: #fde68a; }
+[data-theme="dark"] .pr-badge.intermediate { background: #7f1d1d; color: #fecaca; }
+.pr-foot { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; align-items: start; }
+.practice .pr-foot-card { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 12px; align-items: center; text-align: left; padding: 10px 14px; border: 1px solid var(--border); border-radius: 14px; background: var(--panel-bg); font: inherit; color: inherit; cursor: pointer; }
+.pr-foot-card > span:last-child { display: grid; gap: 2px; }
+.pr-foot-card .muted { font-size: 13px; }
+.pr-foot-pic { color: var(--accent); }
+.pr-safe { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; }
+.pr-safe summary { font-weight: 700; cursor: pointer; }
+.pr-safe button, .pr-import { padding: 9px 14px; font: inherit; }
+
+/* an exercise: the stage in the middle, the settings a panel at the side, Start at the bottom */
+.practice { grid-template-rows: auto minmax(0, 1fr) auto; grid-template-columns: minmax(0, 1fr); }
+.practice .practice-body { grid-template-columns: 320px minmax(0, 1fr); }
+.practice:not(.pr-settings-open) .practice-body { grid-template-columns: minmax(0, 1fr); }
+.practice:not(.pr-settings-open) #prControls { display: none; }
+.practice.pr-settings-open .pr-mobile-go { display: none; }
+.pr-controls-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 15px; }
+.pr-controls-head button { padding: 5px 12px; font: inherit; font-size: 13px; }
+.practice-stage { padding: 20px 24px 28px; gap: 16px; background: linear-gradient(var(--pr-tint), var(--panel-bg) 180px); }
+.pr-goal { font-size: 15.5px; font-weight: 600; padding: 8px 16px; border-radius: 999px; background: var(--panel-bg); border: 1px solid var(--pr-line); }
+.pr-chord { color: color-mix(in srgb, var(--pr-cat) 80%, var(--text)); }
+[data-theme="dark"] .pr-chord { color: color-mix(in srgb, var(--pr-cat) 45%, #fff); }
+.pr-chord.small { color: var(--muted); }
+.pr-diagram { --chord-color: color-mix(in srgb, var(--pr-cat) 80%, #111); }
+.pr-beats span.on, .pr-grid span.on { background: var(--pr-cat); border-color: var(--pr-cat); }
+.pr-big-main.one { color: var(--pr-cat); }
+.practice .k-step.on { background: var(--pr-cat); border-color: var(--pr-cat); }
+.practice .practice-stage .pr-clean { background: #15803d; color: #fff; border-color: #15803d; font: inherit; font-weight: 800; font-size: 17px; padding: 12px 26px; border-radius: 999px; min-height: 48px; }
+.practice .practice-stage .pr-clean:disabled { background: var(--panel-bg); color: var(--muted); border-color: var(--border); opacity: 1; }
+.pr-mobile-go { display: flex; gap: 10px; align-items: center; justify-content: center; padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); background: var(--panel-bg); border-top: 1px solid var(--border); position: static; flex-wrap: nowrap; }
+.pr-mobile-go button { min-height: 48px; padding: 8px 16px; font: inherit; font-size: 16px; font-weight: 700; border-radius: 12px; }
+.practice .pr-mobile-go .primary { flex: 0 1 280px; background: var(--accent); color: #fff; border-color: var(--accent); font-size: 18px; }
+.pr-mobile-tempo { display: flex; align-items: center; gap: 6px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.pr-mobile-tempo #prMobileTempo { min-width: 68px; text-align: center; }
+.practice[data-view="home"] .pr-mobile-go { display: none; }
+
+/* the slides */
+.pr-help { width: min(520px, calc(100vw - 24px)); border-radius: 18px; }
+.pr-help-head { padding: 10px 16px; }
+.pr-help-head h2 { font-size: 16px; color: var(--muted); }
+.pr-help-head button { min-width: 0; min-height: 40px; padding: 6px 14px; }
+#prHelpContent.pr-slide { padding: 0 22px 6px; text-align: center; min-height: 330px; }
+.pr-slide-pic { color: var(--pr-ink); background: var(--pr-tint); border-radius: 14px; padding: 14px 40px; margin: 14px 0 10px; }
+.pr-slide-pic .pr-pic { max-height: 170px; margin: 0 auto; }
+.pr-slide-count { margin: 0; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+.pr-slide h3 { font-size: 21px; margin: 4px 0 6px; }
+.pr-slide p { font-size: 16px; line-height: 1.5; margin: 0 auto; max-width: 42ch; }
+.pr-slide-nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; padding: 12px 16px 16px; }
+.pr-slide-nav button { min-height: 46px; padding: 8px 18px; font: inherit; font-weight: 700; border-radius: 12px; }
+.pr-slide-nav #prSlideBack { justify-self: start; }
+.pr-slide-nav #prSlideNext { justify-self: end; background: var(--accent); color: #fff; border-color: var(--accent); min-width: 110px; }
+.pr-slide-nav button:disabled { visibility: hidden; }
+.pr-slide-dots { display: flex; gap: 6px; }
+.pr-slide-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+.pr-slide-dots i.on { background: var(--pr-cat); width: 20px; border-radius: 4px; }
+
+/* room to spare: bigger chords and arrows when the settings are shut */
+@media (min-width: 761px) and (min-height: 700px) {
+  .practice:not(.pr-settings-open) .pr-now .pr-diagram .chord-diagram { --diagram-size: 190px; }
+  .practice:not(.pr-settings-open) .pr-next .pr-diagram .chord-diagram { --diagram-size: 120px; }
+  .practice:not(.pr-settings-open) .pr-chord { font-size: 84px; }
+  .practice:not(.pr-settings-open) .pr-chord.small { font-size: 46px; }
+  .practice:not(.pr-settings-open) .pr-shapes { gap: 64px; }
+  .practice:not(.pr-settings-open) .pr-steps { width: 100%; max-width: 100%; justify-content: center; }
+  .practice:not(.pr-settings-open) .pr-steps .k-step { flex: 0 1 64px; width: auto; min-width: 34px; height: 84px; }
+  .practice:not(.pr-settings-open) .pr-steps .k-step .sym { font-size: 36px; }
+  .practice:not(.pr-settings-open) .pr-fret { width: min(900px, 100%); }
+  .practice:not(.pr-settings-open) .pr-tips { font-size: 17px; }
+}
+/* a tablet upright, and a phone */
+@media (max-width: 1000px) {
+  .pr-top { grid-template-columns: minmax(0, 1fr); }
+  .pr-week-card { grid-template-columns: auto 1fr; column-gap: 18px; align-items: center; }
+  .pr-week-card .pr-kicker { grid-column: 1 / -1; }
+  .pr-week-days { grid-row: 2 / 4; justify-content: flex-start; gap: 8px; }
+  .pr-path { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .practice[data-view="player"] #prToday { display: none; }
+  #prBack .pr-wide-label, #practiceClose .pr-wide-label { display: none; }
+}
+@media (max-width: 760px) {
+  .practice-bar { padding: 8px 10px; gap: 6px; }
+  .practice-bar .pr-wide-label { display: none; }
+  .practice-bar .pr-icon-button { min-width: 44px; min-height: 44px; justify-content: center; padding: 6px 10px; font-size: 18px; }
+  .practice-bar .pr-title { font-size: 16px; }
+  .pr-heading { flex: 1 1 0; }
+  .practice-bar .k-spacer { display: none; }
+  .practice[data-view="player"] #prToday, .practice[data-view="player"] #prTimer { display: none; }
+  .practice .pr-level { display: none; }
+  .pr-routine-bar { order: 10; flex: 1 0 100%; }
+  .practice-bar:has(.pr-routine-bar:not([hidden])) { flex-wrap: wrap; }
+  .pr-home-inner { padding: 12px 12px 32px; gap: 12px; }
+  .pr-today-card, .pr-week-card, .pr-path-section, .pr-catalogue, .pr-recent { padding: 14px; border-radius: 14px; }
+  .pr-today-card { grid-template-columns: minmax(0, 1fr); }
+  .practice .pr-today-start { width: 100%; }
+  .pr-today-steps { grid-template-columns: minmax(0, 1fr); }
+  .pr-week-card { grid-template-columns: minmax(0, 1fr); }
+  .pr-week-days { grid-row: auto; justify-content: space-between; }
+  .pr-path { display: flex; overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: 6px; margin: 0 -14px; padding-left: 14px; padding-right: 14px; }
+  .pr-path li { flex: 0 0 200px; scroll-snap-align: start; }
+  .pr-cats { flex-wrap: nowrap; overflow-x: auto; margin: 0 -14px 12px; padding: 2px 14px 6px; border: 0; }
+  .pr-cards { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .practice .pr-card { display: grid; grid-template-columns: 104px minmax(0, 1fr); padding: 0; column-gap: 0; row-gap: 2px; align-items: start; }
+  .pr-card-pic { grid-row: 1 / 5; height: 100%; padding: 22px 8px 8px; border-bottom: 0; border-right: 1px solid var(--pr-line); margin: 0; display: grid; align-content: center; }
+  .pr-card > :not(.pr-card-pic) { padding: 0 12px; }
+  .pr-card .pr-card-top { padding-top: 10px; }
+  .pr-card .pr-card-meta { padding-bottom: 10px; }
+  .pr-state { top: 6px; left: 6px; right: auto; font-size: 10px; }
+  .practice .practice-body { display: block; overflow-y: auto; }
+  .practice.pr-settings-open .practice-stage { display: none; }
+  .practice .practice-stage { padding: 12px 12px 20px; }
+  .pr-goal { border-radius: 12px; font-size: 14.5px; }
+  .pr-mobile-go { padding-left: 10px; padding-right: 10px; gap: 8px; }
+  .practice .pr-mobile-go .primary { flex: 1; }
+  #prHelpContent.pr-slide { padding: 0 16px 6px; min-height: 300px; }
+  .pr-slide-pic { padding: 10px 24px; }
+  .pr-slide h3 { font-size: 19px; }
+  .pr-slide p { font-size: 15.5px; }
+}
+

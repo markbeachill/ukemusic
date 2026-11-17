@@ -742,6 +742,8 @@ const PRACTICE_PAGE = {
             `${n} practice exercises in ${cats.length} categories: ${cats.map((c) => c.name).join(', ')}`,
             'Metronome with tap tempo; tempo set per exercise',
             'Ready-made and your own practice routines',
+            'Today’s practice: three exercises chosen for the day, and a suggested order for beginners',
+            'Picture slides that show how each kind of exercise works, and a guide to print',
             'For ukulele (high or low G), baritone ukulele and guitar',
             'Chords by key: a two-page sheet to print, for your instrument',
             'Progress kept on your device: time practised, days in a row, best tempo, one-minute change scores',
@@ -779,9 +781,9 @@ const PRACTICE_PAGE = {
 </div></section>
 <section><div class="wrap">
   <div class="feature"><div class="text"><h2>Who it's for</h2>
-    <p>Beginners finding their way round the neck, self-taught players filling in gaps, and improvers who want a routine. Each exercise says what it's for and what to aim at, and <strong>Start here</strong> gives a beginner three short exercises: steady down-strums on C, the change from C to F, and a slow finger warm-up.</p>
+    <p>Beginners finding their way round the neck, self-taught players filling in gaps, and improvers who want a routine. Each exercise says what it's for and what to aim at, and <strong>Getting started</strong> suggests an order for a beginner, one new thing at a time: steady down-strums, the change from C to F, the up-strum, and on to a first scale and a first tune of your own. <strong>Today’s practice</strong> picks three exercises for about eight minutes. <a href="practice-guide.html">The Free Practice guide</a> shows how it all works, in pictures.</p>
     <p>Open an exercise and press Start: the notes or chords show on a fretboard as they come, in time with the metronome. Make it slower or faster, change the chords, key or pattern, and the exercise remembers your settings.</p></div>
-    <div class="shot"><img src="img/practice.webp" loading="lazy" width="1360" height="860" alt="ukemusic Free Practice: the categories down the side, and the warm-up exercises as cards, each marked beginner, improver or intermediate"></div></div>
+    <div class="shot"><img src="img/practice.webp" loading="lazy" width="1360" height="860" alt="ukemusic Free Practice: the exercises as cards, each marked beginner, improver or intermediate"></div></div>
 </div></section>
 <section><div class="wrap">
   <p class="eyebrow">The exercises</p>
@@ -866,6 +868,75 @@ ${p.course ? courseSection() : ''}
 </div></section>`;
 }
 
+// ── The Free Practice guide (4.87): how the exercises work, in pictures. The same words and drawings
+// as the slides in the app (src/practice-help.js), so the page can't drift from it. ──
+const PRACTICE_GUIDE_PAGE = {
+  file: 'practice-guide.html', image: 'practice.webp',
+  title: 'Free Practice guide',
+  seoTitle: 'Free Practice guide: how the ukulele exercises work · ukemusic',
+  blurb: 'How ukemusic’s Free Practice works, in pictures: where to start, which finger is which, what each kind of exercise shows, and a suggested order for beginners.',
+  body() {
+    const help = require('../src/practice-help');
+    const g = help.guideParts();
+    const n = require('../src/practice-catalog').EXERCISES.length;
+    const card = (s, colour) => `<li class="pg-card" style="color:${colour}"><div class="pg-pic">${s.picture.replace(' class="pr-pic"', '')}</div><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></li>`;
+    return `
+<style>
+.pg-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+.pg-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px 16px; }
+.pg-card h3 { margin: 10px 0 4px; font-size: 17px; color: var(--ink); }
+.pg-card p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
+.pg-pic { border-radius: 10px; padding: 10px 26px; background: color-mix(in srgb, currentColor 9%, var(--paper)); }
+.pg-pic svg { display: block; width: 100%; height: auto; max-height: 150px; }
+.pg-kind { margin-top: 34px; }
+.pg-kind h3.pg-name { font-size: 21px; margin: 0 0 4px; }
+.pg-kind .pg-count { color: var(--muted); margin: 0 0 12px; }
+.pg-path { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.pg-path li { display: grid; grid-template-columns: 40px 76px 1fr; gap: 12px; align-items: center; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; }
+.pg-path .num { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; border: 2px solid currentColor; font-weight: 800; }
+.pg-path svg { display: block; width: 100%; height: auto; }
+.pg-path strong { display: block; color: var(--ink); }
+.pg-path span.why { color: var(--muted); font-size: 14.5px; }
+</style>
+<div class="page-hero"><div class="wrap">
+  <p class="eyebrow">Free Practice</p>
+  <h1>The Free Practice guide</h1>
+  <p class="lede">How the ${n} practice exercises work, in pictures: where to start, which finger is which, and what each kind of exercise shows on the screen. The same slides are in the app: press “How it works” in any exercise.</p>
+  <div class="cta"><a class="btn primary" href="app/#practice">Start free practice</a><a class="btn" href="practice/">See all ${n} exercises</a></div>
+</div></div>
+<section><div class="wrap">
+  <h2>How it works</h2>
+  <ol class="pg-grid">${g.tour.map((s) => card(s, '#0f766e')).join('')}</ol>
+</div></section>
+<section><div class="wrap">
+  <h2>Your hands</h2>
+  <p class="intro">The exercises use numbers for the fingers that press the strings and letters for the fingers that pick them.</p>
+  <ul class="pg-grid">${g.hands.map((s) => card(s, '#0f766e')).join('')}</ul>
+</div></section>
+<section><div class="wrap">
+  <h2>Getting started: a suggested order</h2>
+  <p class="intro">New to the instrument? Ten steps, one new thing at a time. It’s only a suggestion: every exercise is open from the start, and the app ticks a step when you’ve played it cleanly.</p>
+  <ol class="pg-path">${g.path.map((s) => `<li style="color:${s.colour}"><span class="num">${s.number}</span>${s.picture.replace(' class="pr-pic"', '')}<span><strong>${esc(s.name)}</strong><span class="why">${esc(s.title)}. ${esc(s.why)}</span></span></li>`).join('')}</ol>
+</div></section>
+<section><div class="wrap">
+  <h2>The nine kinds of exercise</h2>
+  <p class="intro">Every exercise is one of these. Each has its own colour in the app, and its own slides the first time you open one.</p>
+  ${g.kinds.map((k) => `<div class="pg-kind"><h3 class="pg-name" style="color:${k.colour}">${esc(k.name)}</h3><p class="pg-count">${k.count} exercise${k.count === 1 ? '' : 's'}</p><ol class="pg-grid">${k.slides.map((s) => card(s, k.colour)).join('')}</ol></div>`).join('\n  ')}
+</div></section>
+<section><div class="wrap">
+  <h2>A few things worth knowing</h2>
+  <ul>
+    <li><strong>The app can’t hear you.</strong> You decide when a round was clean; “That was clean” records it with the speed, and the app remembers your best.</li>
+    <li><strong>Slow is good.</strong> Start below the speed you can manage, and add 5 bpm when several rounds feel easy.</li>
+    <li><strong>Settings are optional.</strong> Each exercise starts ready to play. The settings (chords, key, pattern, sound) are behind the cog, and it remembers your changes.</li>
+    <li><strong>A little, most days.</strong> Today’s practice picks three exercises for about eight minutes; the home screen shows your week.</li>
+    <li><strong>To print.</strong> In the app, “Free Practice guide, to print” makes this guide as pages, with every exercise listed.</li>
+  </ul>
+  <div class="cta"><a class="btn primary" href="app/#practice">Start free practice</a><a class="btn" href="practise.html">More about practising with ukemusic</a></div>
+</div></section>`;
+  }
+};
+
 function wrapPage(p, body, siteCss) {
   const url = SITE_URL + (p.path !== undefined ? p.path : p.file);
   const ld = p.jsonld ? `\n<script type="application/ld+json">\n${JSON.stringify(p.jsonld, null, 2).replace(/</g, '\\u003c')}\n</script>` : '';
@@ -921,11 +992,12 @@ function build() {
   fs.writeFileSync(path.join(SITE, FEATURES_PAGE.file), wrapPage(FEATURES_PAGE, FEATURES_PAGE.body(), siteCss));
   fs.writeFileSync(path.join(SITE, DROPBOX_PAGE.file), wrapPage(DROPBOX_PAGE, DROPBOX_PAGE.body(), siteCss));
   fs.writeFileSync(path.join(SITE, GALLERY_PAGE.file), wrapPage(GALLERY_PAGE, GALLERY_PAGE.body(), siteCss));
+  fs.writeFileSync(path.join(SITE, PRACTICE_GUIDE_PAGE.file), wrapPage(PRACTICE_GUIDE_PAGE, PRACTICE_GUIDE_PAGE.body(), siteCss));
   const practiceBody = PRACTICE_PAGE.body();   // (sets its description and structured data)
   fs.mkdirSync(path.join(SITE, PRACTICE_PAGE.dir), { recursive: true });
   fs.writeFileSync(path.join(SITE, PRACTICE_PAGE.file), wrapPage(PRACTICE_PAGE, practiceBody, siteCss));
   fs.writeFileSync(path.join(SITE, 'sitemap.xml'), sitemap());
-  return [...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, INSTRUMENTS_PAGE.file, FEATURES_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, PRACTICE_PAGE.file, 'sitemap.xml'];
+  return [...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, INSTRUMENTS_PAGE.file, FEATURES_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, PRACTICE_GUIDE_PAGE.file, PRACTICE_PAGE.file, 'sitemap.xml'];
 }
 
 /** A gallery song's web page (sheet.html, as the app exports it) with a title, a description and
@@ -946,7 +1018,7 @@ function sitemap() {
   // the gallery's song sheets are web pages too (4.58)
   let sheets = [];
   try { sheets = JSON.parse(fs.readFileSync(path.join(SITE, 'gallery', 'gallery.json'), 'utf8')).map((g) => `gallery/${g.slug}/sheet.html`).filter((f) => fs.existsSync(path.join(SITE, f))); } catch (_e) { sheets = []; }
-  const paths = ['', PRACTICE_PAGE.path, 'app/', ...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, INSTRUMENTS_PAGE.file, FEATURES_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, ...docs, ...sheets];
+  const paths = ['', PRACTICE_PAGE.path, 'app/', ...PAGES.map((p) => p.file), SONGS_PAGE.file, PHONE_PAGE.file, INSTRUMENTS_PAGE.file, FEATURES_PAGE.file, DROPBOX_PAGE.file, GALLERY_PAGE.file, PRACTICE_GUIDE_PAGE.file, ...docs, ...sheets];
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${paths.map((x) => `  <url><loc>${SITE_URL}${x}</loc></url>`).join('\n')}
@@ -954,5 +1026,5 @@ ${paths.map((x) => `  <url><loc>${SITE_URL}${x}</loc></url>`).join('\n')}
 `;
 }
 
-module.exports = { BEGINNER_COURSE, build, wrapPage, withFeatures, galleryPageHead, PRACTICE_PAGE, sitemap, SITE_URL, PAGES, SONGS_PAGE, PHONE_PAGE, INSTRUMENTS_PAGE, FEATURES_PAGE, DROPBOX_PAGE, GALLERY_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
+module.exports = { BEGINNER_COURSE, build, wrapPage, withFeatures, galleryPageHead, PRACTICE_PAGE, PRACTICE_GUIDE_PAGE, sitemap, SITE_URL, PAGES, SONGS_PAGE, PHONE_PAGE, INSTRUMENTS_PAGE, FEATURES_PAGE, DROPBOX_PAGE, GALLERY_PAGE, NAV, siteHeader, siteFooter, PAGE_CSS };
 if (require.main === module) console.log('pages:', build().join(', '));

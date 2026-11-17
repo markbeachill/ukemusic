@@ -11,6 +11,8 @@
         const NL = window.ukemusic.notesLib;
         const PL = window.ukemusic.practiceLib;
         const PP = window.ukemusic.practiceProgress;
+        const PLN = window.ukemusic.practicePlan;      // 4.87: the path, today's session, your week
+        const PIC = window.ukemusic.practicePictures;  // 4.87: the drawings on cards and slides
         const pr = { view: 'home', cat: 'warmup', mode: 'strum', exId: null, schedule: null, from: 0, raf: null, stopping: false, shown: {}, changesBase: 0, barBase: 0, tick: null, progress: null, session: null, routine: null };
         const $p = (id) => document.getElementById(id);
         const NOTE_NAMES = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
@@ -176,11 +178,13 @@
           pr.cleanReady = false;
           $p('prClean').disabled = true;
         }
+        const prColour = (cat) => PLN.COLOURS[cat] || 'var(--accent)';
         function prShortcut(id) {
           const e = PL.EXERCISES.find((x) => x.id === id);
           if (!e) return null;
           const b = document.createElement('button');
-          b.type = 'button'; b.textContent = e.title;
+          b.type = 'button'; b.className = 'pr-chip'; b.style.setProperty('--pr-cat', prColour(e.cat));
+          b.textContent = prExerciseFor(e).title;
           b.addEventListener('click', () => prOpen(id));
           return b;
         }
@@ -188,7 +192,49 @@
           const buttons = (pr.progress.recent || []).map(prShortcut).filter(Boolean);
           $p('prRecent').hidden = !buttons.length;
           $p('prRecentCards').replaceChildren(...buttons);
-          $p('prBeginnerCards').replaceChildren(...['downs', 'chord-change', 'spider-1234'].map(prShortcut));
+        }
+        // ── 4.87: the top of the home screen ──
+        // Today's practice: three exercises chosen for today (src/practice-plan.js), run like a routine
+        function prRenderToday() {
+          const today = todayKey();
+          const plan = PLN.suggest(pr.progress, today);
+          const card = $p('prTodayCard');
+          card.innerHTML = `<div class="pr-today-words"><span class="pr-kicker">Today’s practice · about ${plan.minutes} minutes</span>
+              <ol class="pr-today-steps">${plan.steps.map((st) => `<li style="--pr-cat:${prColour(st.cat)}"><span class="pr-today-pic">${PIC.forExercise(prExerciseFor(PL.EXERCISES.find((x) => x.id === st.id)), prFamily())}</span><span class="pr-today-name">${escapeHtmlText(prExerciseFor(PL.EXERCISES.find((x) => x.id === st.id)).title)}</span><span class="pr-today-min">${st.today ? '✓ done today' : st.minutes + ' min'}</span></li>`).join('')}</ol>
+              <p class="pr-today-why">${escapeHtmlText(plan.reason)}</p></div>
+            <button type="button" id="prTodayStart" class="primary pr-today-start">▶ Start</button>`;
+          card.querySelector('#prTodayStart').addEventListener('click', () => {
+            pr.routine = { routine: { name: plan.name, steps: plan.steps.map((st) => ({ id: st.id, minutes: st.minutes })) }, step: 0 };
+            prRoutineStep();
+          });
+        }
+        function prRenderWeek() {
+          const today = todayKey();
+          const days = PLN.week(pr.progress, today);
+          const streak = PP.streak(pr.progress, today);
+          const secs = PP.todaySeconds(pr.progress, today);
+          const tried = PLN.tried(pr.progress);
+          $p('prWeek').innerHTML = `<span class="pr-kicker">Your week</span>
+            <div class="pr-week-days">${days.map((d) => `<span class="pr-day${d.seconds ? ' on' : ''}${d.today ? ' today' : ''}" title="${d.seconds ? PP.formatMinutes(d.seconds) : 'No practice'}"><i>${d.seconds ? '✓' : ''}</i><b>${d.letter}</b></span>`).join('')}</div>
+            <p class="pr-week-line"><strong>${secs ? PP.formatMinutes(secs) + ' today' : 'Nothing yet today'}</strong>${streak > 1 ? ` · ${streak} days in a row` : ''}</p>
+            <p class="pr-week-line muted">${tried} of ${PL.EXERCISES.length} exercises tried</p>`;
+        }
+        // Getting started: a suggested order for a beginner (nothing is locked). The next step stands out; done steps are ticked.
+        function prRenderPath() {
+          const steps = PLN.pathState(pr.progress);
+          const doneCount = steps.filter((x) => x.state === 'done').length;
+          $p('prPathNote').textContent = doneCount === steps.length ? 'all done ✓' : `a suggested order · ${doneCount} of ${steps.length} done`;
+          if (pr.pathFor !== doneCount) { $p('prPathSection').open = doneCount < steps.length; pr.pathFor = doneCount; }
+          $p('prPath').replaceChildren(...steps.map((st) => {
+            const li = document.createElement('li');
+            const b = document.createElement('button');
+            b.type = 'button'; b.className = `pr-path-step ${st.state}`; b.dataset.ex = st.id; b.style.setProperty('--pr-cat', prColour(st.cat));
+            b.title = st.why;
+            b.innerHTML = `<span class="pr-path-num">${st.state === 'done' ? '✓' : st.number}</span><span class="pr-path-words"><strong>${escapeHtmlText(st.name)}</strong><span>${escapeHtmlText(st.state === 'next' ? st.why : prExerciseFor(PL.EXERCISES.find((x) => x.id === st.id)).title)}</span></span>`;
+            b.addEventListener('click', () => prOpen(st.id));
+            li.appendChild(b);
+            return li;
+          }));
         }
         function prUpdateMobile() {
           const visible = pr.view === 'player';
@@ -205,20 +251,27 @@
           prLoadProgress();
           prRefreshToday();
           prQuickLinks();
+          prRenderToday();
+          prRenderWeek();
+          prRenderPath();
+          for (const holder of practiceEl.querySelectorAll('.pr-foot-pic[data-pic]')) if (!holder.firstChild) holder.innerHTML = PIC.named(holder.dataset.pic);
           prUpdateMobile();
           $p('prCats').replaceChildren(...PL.CATEGORIES.map((c) => {
             const b = document.createElement('button');
             b.type = 'button';
             b.className = `pr-cat${c.id === pr.cat ? ' active' : ''}`;
             b.dataset.cat = c.id;
+            b.style.setProperty('--pr-cat', prColour(c.id));
+            b.setAttribute('aria-pressed', String(c.id === pr.cat));
             const count = c.id === 'routine' ? (pr.progress.routines || []).length : PL.EXERCISES.filter((e) => e.cat === c.id).length;
-            b.innerHTML = `<span class="pr-cat-icon">${c.icon}</span><span>${escapeHtmlText(c.name)}</span><span class="pr-cat-count">${count}</span>`;
+            b.innerHTML = `<span class="pr-cat-dot" aria-hidden="true"></span><span>${escapeHtmlText(c.name)}</span><span class="pr-cat-count">${count}</span>`;
             b.addEventListener('click', () => { pr.cat = c.id; prRenderHome(); });
             return b;
           }));
           const cat = PL.CATEGORIES.find((c) => c.id === pr.cat) || PL.CATEGORIES[0];
           $p('prCatTitle').textContent = cat.name;
           $p('prCatAim').textContent = cat.aim;
+          practiceEl.querySelector('.pr-home-main').style.setProperty('--pr-cat', prColour(cat.id));
           const routines = cat.id === 'routine';
           $p('prCards').hidden = routines;
           $p('prRoutines').hidden = !routines;
@@ -244,7 +297,10 @@
               if (best !== null) meta.push(`best ${best} changes${pair ? ' (' + pair.replace('>', ' → ') + ')' : ''}`);
             }
             if (p && p.seconds) meta.push(PP.formatMinutes(p.seconds));
-            card.innerHTML = `<span class="pr-card-top"><strong>${escapeHtmlText(e.title)}</strong><span class="pr-badge ${e.level.toLowerCase()}">${e.level}</span></span>
+            const state = PLN.cardState(pr.progress, e.id);
+            card.classList.add(`pr-${state}`);
+            card.innerHTML = `<span class="pr-card-pic">${PIC.forExercise(e, prFamily())}<span class="pr-state ${state}">${{ new: 'New', tried: 'Started', clean: '✓ Clean' }[state]}</span></span>
+              <span class="pr-card-top"><strong>${escapeHtmlText(e.title)}</strong><span class="pr-badge ${e.level.toLowerCase()}">${e.level}</span></span>
               <span class="pr-card-aim">${escapeHtmlText(e.aim)}</span>
               <span class="pr-card-meta">${meta.length ? escapeHtmlText(meta.join(' · ')) : 'Not tried yet'}</span>`;
             card.addEventListener('click', () => prOpen(e.id));
@@ -259,7 +315,7 @@
           card.className = 'pr-card pr-card-print';
           card.id = 'prChartPrint';
           const name = window.ukemusic.instrument(prInstrument()).name;
-          card.innerHTML = `<span class="pr-card-top"><strong>🖨 Chords by key, to print</strong><span class="pr-badge beginner">Sheet</span></span>
+          card.innerHTML = `<span class="pr-card-pic">${PIC.named('numerals')}<span class="pr-state new">To print</span></span><span class="pr-card-top"><strong>Chords by key, to print</strong><span class="pr-badge beginner">Sheet</span></span>
               <span class="pr-card-aim">Two pages for ${escapeHtmlText(name)}: the chords that belong together in each key, and the common progressions written out in every key, major and minor.</span>
               <span class="pr-card-meta">${window.ukemusic.isWeb ? 'Opens your browser\'s Print (save as PDF there)' : 'A PDF in your songs folder, in Practice sheets'}</span>`;
           card.addEventListener('click', prPrintChart);
@@ -299,8 +355,11 @@
           $p('prTimer').hidden = true;
           $p('prClean').hidden = true;
           $p('prTitle').textContent = 'Free Practice';
+          practiceEl.dataset.view = 'home';
+          practiceEl.style.removeProperty('--pr-cat');
           prRenderHome();
           $p('prHelpButton').focus();
+          prIntro('tour');
         }
 
         // Open an exercise: its trainer, with its preset (and your last tempo)
@@ -317,6 +376,8 @@
           pr.view = 'player';
           pr.exId = e.id;
           pr.exDef = e;
+          practiceEl.dataset.view = 'player';
+          practiceEl.style.setProperty('--pr-cat', prColour(e.cat));
           $p('prHome').hidden = true;
           practiceEl.querySelector('.practice-body').hidden = false;
           $p('prBack').hidden = false;
@@ -365,11 +426,25 @@
           $p('prClean').disabled = true;
           $p('prGoal').textContent = window.ukemusic.practiceHelp.forExercise(e.id).goal;
           $p('prSaveStatus').textContent = '';
-          practiceEl.classList.remove('pr-settings-open');
-          $p('prSettingsToggle').textContent = 'Edit settings';
-          $p('prSettingsToggle').setAttribute('aria-expanded', 'false');
+          // 4.87: the settings stay open beside the exercise where there's room, and out of the way where there isn't
+          prSettingsOpen(Boolean(window.matchMedia?.('(min-width: 1100px)').matches));
           prUpdateMobile();
-          $p('prSettingsToggle').focus();
+          $p('prHelpButton').focus();
+          prIntro(e.mode);
+        }
+        function prSettingsOpen(open) {
+          practiceEl.classList.toggle('pr-settings-open', open);
+          $p('prSettingsLabel').textContent = open ? ' Hide settings' : ' Settings';
+          $p('prSettingsToggle').setAttribute('aria-expanded', String(open));
+        }
+        // The first time Free Practice opens, and the first time each kind of exercise does: its slides
+        function prIntro(key) {
+          if (!pr.progress || pr.restoring) return;
+          pr.progress.seen = pr.progress.seen || {};
+          if (pr.progress.seen[key]) return;
+          pr.progress.seen[key] = true;
+          prSaveProgress();
+          prHelp();
         }
 
         // ── Routines ──
@@ -503,13 +578,14 @@
           $p('prRoutineBar').hidden = false;
           prRoutineTick();
           const stepIndex = r.step;
-          setTimeout(() => {
-            if (pr.routine === r && r.step === stepIndex && pr.view === 'player') {
-              r.started = true;
-              if (pr.mode === 'oneminute') prOneMinuteStart();
-              else prStart();
-            }
-          }, 600);
+          const go = () => {
+            if (!(pr.routine === r && r.step === stepIndex && pr.view === 'player')) return;
+            if ($p('prHelpDialog').open) { $p('prHelpDialog').addEventListener('close', () => setTimeout(go, 400), { once: true }); return; } // first time: read the slides first
+            r.started = true;
+            if (pr.mode === 'oneminute') prOneMinuteStart();
+            else prStart();
+          };
+          setTimeout(go, 600);
         }
         function prRoutineTick() {
           const r = pr.routine;
@@ -537,7 +613,7 @@
           $p('prRoutineBar').hidden = true;
           if (player && player.playing) prStop();
           prShowHome();
-          if (finished && r) $p('prCatAim').textContent = `Routine finished: ${r.routine.name}. Well done!`;
+          if (finished && r) { const done = document.createElement('p'); done.className = 'pr-well-done'; done.setAttribute('role', 'status'); done.textContent = `Finished: ${r.routine.name}. Well done!`; $p('prTodayCard').prepend(done); $p('prHome').scrollTop = 0; }
         }
 
         // ── Setup (once) ──
@@ -575,11 +651,15 @@
           // another instrument for this session: the exercise starts again for it (its chords, your changes for it)
           $p('prInstrument').addEventListener('change', () => { pr.sessionInstrument = $p('prInstrument').value; prPickNames(); if (pr.exId && pr.view === 'player') prOpen(pr.exId); });
           $p('prLeftHanded').checked = Boolean(effectiveConfig()?.diagrams?.left_handed);
-          $p('prSettingsToggle').addEventListener('click', () => {
-            const open = practiceEl.classList.toggle('pr-settings-open');
-            $p('prSettingsToggle').textContent = open ? 'Back to playing' : 'Edit settings';
-            $p('prSettingsToggle').setAttribute('aria-expanded', String(open));
+          $p('prSettingsToggle').addEventListener('click', () => prSettingsOpen(!practiceEl.classList.contains('pr-settings-open')));
+          $p('prSlideBack').addEventListener('click', () => prSlide(pr.slide - 1));
+          $p('prSlideNext').addEventListener('click', () => { if (pr.slide >= pr.slides.length - 1) $p('prHelpDialog').close(); else prSlide(pr.slide + 1); });
+          $p('prHelpDialog').addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight') { event.preventDefault(); prSlide(pr.slide + 1); }
+            else if (event.key === 'ArrowLeft') { event.preventDefault(); prSlide(pr.slide - 1); }
           });
+          $p('prTourButton').addEventListener('click', () => prHelp());
+          $p('prGuidePrint').addEventListener('click', prPrintGuide);
           $p('prReset').addEventListener('click', () => { const id = pr.exId; delete pr.progress.preferences?.[id]; prOpen(id, { reset: true }); prSaveSettings(); });
           for (const [mobile, original] of [['prMobileStart','prStart'],['prMobileStop','prStop'],['prMobileSlower','prSlower'],['prMobileFaster','prFaster']]) $p(mobile).addEventListener('click', () => { $p(original).click(); prUpdateMobile(); });
           $p('prHelpDialog').addEventListener('close', () => { $p('prHelpButton').focus(); });
@@ -598,7 +678,8 @@
               const backup = JSON.parse(await file.text());
               if (backup.format !== 'ukemusic-practice') throw new Error('Choose a ukemusic practice backup.');
               const restored = PP.normalise(backup.data);
-              if (!confirm('Replace practice progress, recent exercises and routines on this device with this backup? Songs are kept.')) return;
+              const question = 'Replace practice progress, recent exercises and routines on this device with this backup?\n\nSongs are kept.';
+              if (!(await window.ukemusicAskConfirm(question, { ok: 'Replace', danger: true }))) return; // the app's own question (4.87)
               pr.progress = restored;
               if (!prSaveProgress()) throw new Error('The backup could not be saved on this device.');
               prRenderHome();
@@ -675,11 +756,45 @@
 
         // ── Help ──
         function prHelp() {
-          const help = window.ukemusic.practiceHelp.forExercise(pr.view === 'player' ? pr.exId : null);
-          $p('prHelpTitle').textContent = help.title;
-          $p('prHelpContent').innerHTML = (help.aim ? '<p>' + escapeHtmlText(help.aim) + '</p>' : '') + '<ol>' + help.steps.map((x) => '<li>' + escapeHtmlText(x) + '</li>').join('') + '</ol><p><strong>Goal: </strong>' + escapeHtmlText(help.goal) + '</p>';
+          const id = pr.view === 'player' ? pr.exId : null;
+          pr.slides = window.ukemusic.practiceHelp.slides(id, prInstrument());
+          $p('prHelpTitle').textContent = id ? 'How it works' : 'How Free Practice works';
+          $p('prHelpDialog').style.setProperty('--pr-cat', id ? prColour(pr.exDef.cat) : 'var(--accent)');
           const dialog = $p('prHelpDialog');
           if (!dialog.open) dialog.showModal();
+          prSlide(0);
+        }
+        function prSlide(index) {
+          if (!pr.slides || index < 0 || index >= pr.slides.length) return;
+          pr.slide = index;
+          const slide = pr.slides[index];
+          const last = index === pr.slides.length - 1;
+          $p('prHelpContent').innerHTML = `<div class="pr-slide-pic">${slide.picture}</div><p class="pr-slide-count">${index + 1} of ${pr.slides.length}</p><h3>${escapeHtmlText(slide.title)}</h3><p>${escapeHtmlText(slide.text)}</p>`;
+          $p('prSlideDots').innerHTML = pr.slides.map((_, i) => `<i class="${i === index ? 'on' : ''}"></i>`).join('');
+          $p('prSlideBack').disabled = index === 0;
+          $p('prSlideNext').textContent = last ? (pr.view === 'player' ? 'Got it' : 'Let’s go') : 'Next →';
+          $p('prSlideNext').focus();
+        }
+        // The guide to print: the same pictures and words, and every exercise (src/practice-help.js)
+        async function prPrintGuide() {
+          const html = window.ukemusic.practiceHelp.guideHtml({ made: `ukemusic ${window.ukemusic.appVersion || ''}`.trim() });
+          const note = $p('prGuideNote');
+          if (window.ukemusic.isWeb) {
+            const frame = document.createElement('iframe');
+            frame.title = 'Print the Free Practice guide';
+            frame.style.cssText = 'position:fixed;width:1px;height:1px;left:-10000px';
+            frame.onload = () => { frame.contentWindow.addEventListener('afterprint', () => frame.remove(), { once: true }); frame.contentWindow.focus(); frame.contentWindow.print(); };
+            frame.srcdoc = html;
+            document.body.append(frame);
+            return;
+          }
+          note.textContent = 'Making the PDF…';
+          try {
+            const file = await window.ukemusic.practiceChartPdf({ songsFolder: songsFolder(), fileName: 'Free Practice guide.pdf', html });
+            note.textContent = file ? `Saved: ${file}` : 'Not saved';
+          } catch (error) {
+            note.textContent = `Couldn't make the PDF: ${String(error.message || error).replace(/^Error invoking remote method '[^']+': (Error: )?/, '')}`;
+          }
         }
 
         const STAGE = {
@@ -1696,7 +1811,7 @@
           if (!pr.opened && tempo) $p('prTempo').value = String(Math.max(50, Math.min(120, tempo)));
           pr.opened = true;
           pr.returnFocus = document.activeElement;
-          pr.inertElements = [...document.body.children].filter((el) => el !== practiceEl && el !== $p('prHelpDialog') && !['SCRIPT','STYLE'].includes(el.tagName) && !el.contains(practiceEl)).map((el) => ({ el, inert: el.inert }));
+          pr.inertElements = [...document.body.children].filter((el) => el !== practiceEl && el !== $p('prHelpDialog') && el.id !== 'askDialog' && !['SCRIPT','STYLE'].includes(el.tagName) && !el.contains(practiceEl)).map((el) => ({ el, inert: el.inert }));
           for (const item of pr.inertElements) item.el.inert = true;
           practiceEl.hidden = false;
           practiceEl.focus();
@@ -1717,6 +1832,7 @@
         }
         window.ukemusicPractice = openPractice;
         window.ukemusicPracticeState = pr;   // for the tests
+        pr.save = () => prSaveProgress();    // for the tests and the UI review
         document.getElementById('practiceButton')?.addEventListener('click', () => openPractice()); // 4.19: Practice is on the songs screen
         document.getElementById('libPractice').addEventListener('click', () => openPractice());
         window.addEventListener('keydown', (event) => {

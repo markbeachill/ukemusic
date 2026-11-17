@@ -19,6 +19,7 @@ site/instruments.html
 site/features.html
 site/dropbox.html
 site/gallery.html
+site/practice-guide.html
 *.AppImage
 *.dmg
 *.exe

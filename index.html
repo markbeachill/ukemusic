@@ -1748,7 +1748,220 @@
   .pr-grid { grid-template-columns: repeat(4, minmax(45px, 1fr)); max-width: 100%; width: 100%; }
   .pr-help-head h2 { font-size: 17px; }
 }
-@media (min-width: 761px) { .pr-mobile-go { display: none; } #prSettingsToggle { display: none; } }
+
+/* ── 4.87: Free Practice redesigned ─────────────────────────────────────────────────────────
+   A colour for each kind of exercise (--pr-cat, set on the card, the step or the whole screen),
+   pictures on the cards, today's practice and the first steps above the catalogue, slides for
+   the instructions, and one layout rule for the exercise screen at every width: the settings
+   are a panel you open, and Start is always at the bottom when they're shut. */
+.practice { --pr-cat: var(--accent); --pr-tint: color-mix(in srgb, var(--pr-cat) 11%, var(--panel-bg)); --pr-line: color-mix(in srgb, var(--pr-cat) 38%, var(--border)); }
+[data-theme="dark"] .practice { --pr-tint: color-mix(in srgb, var(--pr-cat) 22%, var(--panel-bg)); }
+.pr-chip, .pr-cat, .pr-card, .pr-path-step, .pr-today-steps li, .pr-home-main, .pr-help { --pr-tint: color-mix(in srgb, var(--pr-cat) 11%, var(--panel-bg)); --pr-line: color-mix(in srgb, var(--pr-cat) 38%, var(--border)); --pr-ink: color-mix(in srgb, var(--pr-cat) 78%, var(--text)); }
+[data-theme="dark"] .pr-chip, [data-theme="dark"] .pr-cat, [data-theme="dark"] .pr-card, [data-theme="dark"] .pr-path-step, [data-theme="dark"] .pr-today-steps li, [data-theme="dark"] .pr-home-main, [data-theme="dark"] .pr-help { --pr-tint: color-mix(in srgb, var(--pr-cat) 24%, var(--panel-bg)); --pr-ink: color-mix(in srgb, var(--pr-cat) 45%, #fff); }
+.pr-pic { display: block; width: 100%; height: auto; }
+
+/* the bar: one row at every width */
+.practice-bar { gap: 10px; padding: 10px 16px; border-bottom: 3px solid color-mix(in srgb, var(--pr-cat) 55%, var(--border)); flex-wrap: nowrap; }
+.practice-bar .pr-title { font-size: 19px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pr-heading { min-width: 0; flex: 0 1 auto; overflow: hidden; }
+.practice-bar > button, .practice-bar > .pr-timer, .practice-bar > .pr-today { flex: none; }
+.practice-bar .k-spacer { flex: 1 1 0; min-width: 0; }
+.pr-routine-bar button { white-space: nowrap; flex: none; }
+.practice-bar .pr-icon-button { display: inline-flex; align-items: center; gap: 4px; min-height: 40px; white-space: nowrap; }
+.practice[data-view="home"] #prTimer, .practice[data-view="home"] #prToday { display: none; }
+.pr-routine-bar { min-width: 0; flex: 0 100 auto; }
+.practice-bar:has(.pr-routine-bar:not([hidden])) #prToday { display: none; }
+.practice .practice-controls { padding-bottom: 0; }
+.practice .pr-go { padding: 10px 0 14px; margin-top: auto; }
+.pr-routine-bar #prRoutineText { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* home: one scrolling page */
+.pr-home { display: block; overflow-y: auto; min-height: 0; background: var(--toolbar-bg); }
+.pr-home-inner { max-width: 1180px; margin: 0 auto; padding: 18px 24px 40px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.pr-home h2 { font-size: 18px; margin: 0 0 8px; }
+.pr-kicker { font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+.pr-top { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: stretch; }
+.pr-today-card, .pr-week-card, .pr-path-section, .pr-catalogue, .pr-recent { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px 18px; }
+.pr-today-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 18px; align-items: center; border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); box-shadow: 0 2px 14px rgba(0, 0, 0, 0.06); }
+.pr-well-done { grid-column: 1 / -1; margin: 0; padding: 8px 12px; border-radius: 10px; background: #dcfce7; color: #14532d; font-weight: 700; }
+.pr-today-steps { list-style: none; margin: 8px 0 6px; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.pr-today-steps li { display: grid; grid-template-columns: 54px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; background: var(--pr-tint); border: 1px solid var(--pr-line); }
+.pr-today-pic { grid-row: 1 / 3; color: var(--pr-ink); }
+.pr-today-name { font-weight: 700; font-size: 14.5px; line-height: 1.25; align-self: end; }
+.pr-today-min { font-size: 12.5px; color: var(--muted); align-self: start; }
+.pr-today-why { margin: 0; font-size: 13.5px; color: var(--muted); }
+.practice .pr-today-start { font-size: 20px; font-weight: 800; padding: 16px 30px; border-radius: 14px; background: var(--accent); color: #fff; border-color: var(--accent); min-height: 60px; }
+.pr-week-card { display: grid; gap: 6px; align-content: start; }
+.pr-week-days { display: flex; justify-content: space-between; gap: 4px; margin: 4px 0; }
+.pr-day { display: grid; justify-items: center; gap: 3px; font-size: 11px; color: var(--muted); }
+.pr-day i { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); font-style: normal; font-weight: 800; font-size: 13px; color: #fff; }
+.pr-day.on i { background: var(--accent); border-color: var(--accent); }
+.pr-day.today i { outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 2px; }
+.pr-day.today b { color: var(--text); }
+.pr-week-line { margin: 0; font-size: 14px; }
+.pr-recent { padding: 12px 18px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.pr-recent h2 { margin: 0; font-size: 14px; color: var(--muted); font-weight: 700; }
+.practice .pr-chip { border: 1px solid var(--pr-line); background: var(--pr-tint); border-radius: 999px; padding: 8px 14px 8px 12px; font: inherit; font-weight: 600; min-height: 40px; display: inline-flex; align-items: center; gap: 8px; }
+.pr-chip::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--pr-cat); }
+
+/* first steps */
+.pr-path-section > summary { cursor: pointer; font-size: 18px; font-weight: 800; list-style-position: inside; }
+.pr-path-note { font-size: 13px; font-weight: 600; color: var(--muted); margin-left: 6px; }
+.pr-path-lead { margin: 6px 0 12px; font-size: 14px; }
+.pr-path { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.practice .pr-path-step { width: 100%; height: 100%; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; align-items: start; text-align: left; padding: 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--panel-bg); font: inherit; color: inherit; cursor: pointer; }
+.pr-path-num { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--pr-line); font-weight: 800; color: var(--pr-ink); }
+.pr-path-words { display: grid; gap: 2px; min-width: 0; }
+.pr-path-words strong { font-size: 14.5px; line-height: 1.25; }
+.pr-path-words span { font-size: 12.5px; color: var(--muted); line-height: 1.3; }
+.pr-path-step.done .pr-path-num { background: var(--pr-cat); border-color: var(--pr-cat); color: #fff; }
+.pr-path-step.done { background: var(--pr-tint); }
+.practice .pr-path-step.next { border: 2px solid var(--pr-cat); background: var(--pr-tint); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07); }
+.pr-path-step:hover { border-color: var(--pr-cat); }
+
+/* the catalogue */
+.pr-catalogue-title { margin-bottom: 10px; }
+.pr-cats { flex-direction: row; flex-wrap: wrap; gap: 8px; padding: 0; border: 0; overflow: visible; margin-bottom: 14px; }
+.practice .pr-cat { display: inline-flex; grid-template-columns: none; gap: 8px; align-items: center; border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; min-height: 40px; background: var(--panel-bg); font-size: 14.5px; white-space: nowrap; }
+.pr-cat-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--pr-cat); flex: none; }
+.pr-cat:hover { background: var(--pr-tint); border-color: var(--pr-line); }
+.practice .pr-cat.active { background: var(--pr-cat); border-color: var(--pr-cat); color: #fff; }
+.pr-cat.active .pr-cat-dot { background: #fff; }
+.pr-home-main { overflow: visible; padding: 0; }
+.pr-home-head h3 { margin: 0 0 2px; font-size: 17px; color: var(--pr-ink); }
+.pr-home-head p { margin: 0 0 12px; font-size: 14px; }
+.pr-cards { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+.practice .pr-card { padding: 0 0 12px; gap: 6px; overflow: hidden; border-radius: 14px; }
+.pr-card > :not(.pr-card-pic) { padding: 0 14px; }
+.pr-card-pic { position: relative; display: block; background: var(--pr-tint); color: var(--pr-ink); padding: 10px 28px 6px; border-bottom: 1px solid var(--pr-line); margin-bottom: 4px; }
+.pr-card-pic .pr-pic { max-height: 86px; width: auto; margin: 0 auto; }
+.pr-card:hover { border-color: var(--pr-cat); }
+.pr-card:hover .pr-card-pic { background: color-mix(in srgb, var(--pr-cat) 18%, var(--panel-bg)); }
+.pr-state { position: absolute; top: 8px; right: 8px; font-size: 11px; font-weight: 800; border-radius: 999px; padding: 2px 8px; background: var(--panel-bg); color: var(--muted); border: 1px solid var(--border); }
+.pr-state.tried { color: var(--pr-ink); border-color: var(--pr-line); }
+.pr-state.clean { background: var(--pr-cat); border-color: var(--pr-cat); color: #fff; }
+.pr-card-top { font-size: 15.5px; }
+.pr-card-aim { font-size: 13.5px; }
+[data-theme="dark"] .pr-badge.beginner { background: #14532d; color: #bbf7d0; }
+[data-theme="dark"] .pr-badge.improver { background: #713f12; color: #fde68a; }
+[data-theme="dark"] .pr-badge.intermediate { background: #7f1d1d; color: #fecaca; }
+.pr-foot { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; align-items: start; }
+.practice .pr-foot-card { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 12px; align-items: center; text-align: left; padding: 10px 14px; border: 1px solid var(--border); border-radius: 14px; background: var(--panel-bg); font: inherit; color: inherit; cursor: pointer; }
+.pr-foot-card > span:last-child { display: grid; gap: 2px; }
+.pr-foot-card .muted { font-size: 13px; }
+.pr-foot-pic { color: var(--accent); }
+.pr-safe { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; }
+.pr-safe summary { font-weight: 700; cursor: pointer; }
+.pr-safe button, .pr-import { padding: 9px 14px; font: inherit; }
+
+/* an exercise: the stage in the middle, the settings a panel at the side, Start at the bottom */
+.practice { grid-template-rows: auto minmax(0, 1fr) auto; grid-template-columns: minmax(0, 1fr); }
+.practice .practice-body { grid-template-columns: 320px minmax(0, 1fr); }
+.practice:not(.pr-settings-open) .practice-body { grid-template-columns: minmax(0, 1fr); }
+.practice:not(.pr-settings-open) #prControls { display: none; }
+.practice.pr-settings-open .pr-mobile-go { display: none; }
+.pr-controls-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 15px; }
+.pr-controls-head button { padding: 5px 12px; font: inherit; font-size: 13px; }
+.practice-stage { padding: 20px 24px 28px; gap: 16px; background: linear-gradient(var(--pr-tint), var(--panel-bg) 180px); }
+.pr-goal { font-size: 15.5px; font-weight: 600; padding: 8px 16px; border-radius: 999px; background: var(--panel-bg); border: 1px solid var(--pr-line); }
+.pr-chord { color: color-mix(in srgb, var(--pr-cat) 80%, var(--text)); }
+[data-theme="dark"] .pr-chord { color: color-mix(in srgb, var(--pr-cat) 45%, #fff); }
+.pr-chord.small { color: var(--muted); }
+.pr-diagram { --chord-color: color-mix(in srgb, var(--pr-cat) 80%, #111); }
+.pr-beats span.on, .pr-grid span.on { background: var(--pr-cat); border-color: var(--pr-cat); }
+.pr-big-main.one { color: var(--pr-cat); }
+.practice .k-step.on { background: var(--pr-cat); border-color: var(--pr-cat); }
+.practice .practice-stage .pr-clean { background: #15803d; color: #fff; border-color: #15803d; font: inherit; font-weight: 800; font-size: 17px; padding: 12px 26px; border-radius: 999px; min-height: 48px; }
+.practice .practice-stage .pr-clean:disabled { background: var(--panel-bg); color: var(--muted); border-color: var(--border); opacity: 1; }
+.pr-mobile-go { display: flex; gap: 10px; align-items: center; justify-content: center; padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); background: var(--panel-bg); border-top: 1px solid var(--border); position: static; flex-wrap: nowrap; }
+.pr-mobile-go button { min-height: 48px; padding: 8px 16px; font: inherit; font-size: 16px; font-weight: 700; border-radius: 12px; }
+.practice .pr-mobile-go .primary { flex: 0 1 280px; background: var(--accent); color: #fff; border-color: var(--accent); font-size: 18px; }
+.pr-mobile-tempo { display: flex; align-items: center; gap: 6px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.pr-mobile-tempo #prMobileTempo { min-width: 68px; text-align: center; }
+.practice[data-view="home"] .pr-mobile-go { display: none; }
+
+/* the slides */
+.pr-help { width: min(520px, calc(100vw - 24px)); border-radius: 18px; }
+.pr-help-head { padding: 10px 16px; }
+.pr-help-head h2 { font-size: 16px; color: var(--muted); }
+.pr-help-head button { min-width: 0; min-height: 40px; padding: 6px 14px; }
+#prHelpContent.pr-slide { padding: 0 22px 6px; text-align: center; min-height: 330px; }
+.pr-slide-pic { color: var(--pr-ink); background: var(--pr-tint); border-radius: 14px; padding: 14px 40px; margin: 14px 0 10px; }
+.pr-slide-pic .pr-pic { max-height: 170px; margin: 0 auto; }
+.pr-slide-count { margin: 0; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+.pr-slide h3 { font-size: 21px; margin: 4px 0 6px; }
+.pr-slide p { font-size: 16px; line-height: 1.5; margin: 0 auto; max-width: 42ch; }
+.pr-slide-nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; padding: 12px 16px 16px; }
+.pr-slide-nav button { min-height: 46px; padding: 8px 18px; font: inherit; font-weight: 700; border-radius: 12px; }
+.pr-slide-nav #prSlideBack { justify-self: start; }
+.pr-slide-nav #prSlideNext { justify-self: end; background: var(--accent); color: #fff; border-color: var(--accent); min-width: 110px; }
+.pr-slide-nav button:disabled { visibility: hidden; }
+.pr-slide-dots { display: flex; gap: 6px; }
+.pr-slide-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+.pr-slide-dots i.on { background: var(--pr-cat); width: 20px; border-radius: 4px; }
+
+/* room to spare: bigger chords and arrows when the settings are shut */
+@media (min-width: 761px) and (min-height: 700px) {
+  .practice:not(.pr-settings-open) .pr-now .pr-diagram .chord-diagram { --diagram-size: 190px; }
+  .practice:not(.pr-settings-open) .pr-next .pr-diagram .chord-diagram { --diagram-size: 120px; }
+  .practice:not(.pr-settings-open) .pr-chord { font-size: 84px; }
+  .practice:not(.pr-settings-open) .pr-chord.small { font-size: 46px; }
+  .practice:not(.pr-settings-open) .pr-shapes { gap: 64px; }
+  .practice:not(.pr-settings-open) .pr-steps { width: 100%; max-width: 100%; justify-content: center; }
+  .practice:not(.pr-settings-open) .pr-steps .k-step { flex: 0 1 64px; width: auto; min-width: 34px; height: 84px; }
+  .practice:not(.pr-settings-open) .pr-steps .k-step .sym { font-size: 36px; }
+  .practice:not(.pr-settings-open) .pr-fret { width: min(900px, 100%); }
+  .practice:not(.pr-settings-open) .pr-tips { font-size: 17px; }
+}
+/* a tablet upright, and a phone */
+@media (max-width: 1000px) {
+  .pr-top { grid-template-columns: minmax(0, 1fr); }
+  .pr-week-card { grid-template-columns: auto 1fr; column-gap: 18px; align-items: center; }
+  .pr-week-card .pr-kicker { grid-column: 1 / -1; }
+  .pr-week-days { grid-row: 2 / 4; justify-content: flex-start; gap: 8px; }
+  .pr-path { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .practice[data-view="player"] #prToday { display: none; }
+  #prBack .pr-wide-label, #practiceClose .pr-wide-label { display: none; }
+}
+@media (max-width: 760px) {
+  .practice-bar { padding: 8px 10px; gap: 6px; }
+  .practice-bar .pr-wide-label { display: none; }
+  .practice-bar .pr-icon-button { min-width: 44px; min-height: 44px; justify-content: center; padding: 6px 10px; font-size: 18px; }
+  .practice-bar .pr-title { font-size: 16px; }
+  .pr-heading { flex: 1 1 0; }
+  .practice-bar .k-spacer { display: none; }
+  .practice[data-view="player"] #prToday, .practice[data-view="player"] #prTimer { display: none; }
+  .practice .pr-level { display: none; }
+  .pr-routine-bar { order: 10; flex: 1 0 100%; }
+  .practice-bar:has(.pr-routine-bar:not([hidden])) { flex-wrap: wrap; }
+  .pr-home-inner { padding: 12px 12px 32px; gap: 12px; }
+  .pr-today-card, .pr-week-card, .pr-path-section, .pr-catalogue, .pr-recent { padding: 14px; border-radius: 14px; }
+  .pr-today-card { grid-template-columns: minmax(0, 1fr); }
+  .practice .pr-today-start { width: 100%; }
+  .pr-today-steps { grid-template-columns: minmax(0, 1fr); }
+  .pr-week-card { grid-template-columns: minmax(0, 1fr); }
+  .pr-week-days { grid-row: auto; justify-content: space-between; }
+  .pr-path { display: flex; overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: 6px; margin: 0 -14px; padding-left: 14px; padding-right: 14px; }
+  .pr-path li { flex: 0 0 200px; scroll-snap-align: start; }
+  .pr-cats { flex-wrap: nowrap; overflow-x: auto; margin: 0 -14px 12px; padding: 2px 14px 6px; border: 0; }
+  .pr-cards { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .practice .pr-card { display: grid; grid-template-columns: 104px minmax(0, 1fr); padding: 0; column-gap: 0; row-gap: 2px; align-items: start; }
+  .pr-card-pic { grid-row: 1 / 5; height: 100%; padding: 22px 8px 8px; border-bottom: 0; border-right: 1px solid var(--pr-line); margin: 0; display: grid; align-content: center; }
+  .pr-card > :not(.pr-card-pic) { padding: 0 12px; }
+  .pr-card .pr-card-top { padding-top: 10px; }
+  .pr-card .pr-card-meta { padding-bottom: 10px; }
+  .pr-state { top: 6px; left: 6px; right: auto; font-size: 10px; }
+  .practice .practice-body { display: block; overflow-y: auto; }
+  .practice.pr-settings-open .practice-stage { display: none; }
+  .practice .practice-stage { padding: 12px 12px 20px; }
+  .pr-goal { border-radius: 12px; font-size: 14.5px; }
+  .pr-mobile-go { padding-left: 10px; padding-right: 10px; gap: 8px; }
+  .practice .pr-mobile-go .primary { flex: 1; }
+  #prHelpContent.pr-slide { padding: 0 16px 6px; min-height: 300px; }
+  .pr-slide-pic { padding: 10px 24px; }
+  .pr-slide h3 { font-size: 19px; }
+  .pr-slide p { font-size: 15.5px; }
+}
       /* ── Karaoke view ─────────────────────────────────── */
       .karaoke {
         position: fixed;
@@ -3899,45 +4112,60 @@
 
         <div id="practice" class="practice" hidden role="dialog" aria-modal="true" tabindex="-1" aria-label="Free Practice">
       <div class="practice-bar">
-        <button id="prBack" type="button" title="Back to all the exercises (Esc)" hidden>← All exercises</button>
+        <button id="prBack" type="button" class="pr-icon-button" title="Back to all the exercises (Esc)" aria-label="Back to all the exercises" hidden><span aria-hidden="true">←</span><span class="pr-wide-label"> All exercises</span></button>
         <div class="pr-heading">
           <strong id="prTitle" class="pr-title">Free Practice</strong>
           <span id="prLevel" class="pr-level" hidden></span>
         </div>
         <div id="prRoutineBar" class="pr-routine-bar" hidden>
           <span id="prRoutineText"></span>
-          <button id="prRoutineSkip" type="button" title="Go on to the next exercise in the routine">Next ▶</button>
-          <button id="prRoutineEnd" type="button" title="Stop the routine">End routine</button>
+          <button id="prRoutineSkip" type="button" title="Go on to the next exercise">Next ▶</button>
+          <button id="prRoutineEnd" type="button" title="Stop here and go back to the exercises">End</button>
         </div>
-        <button id="prSettingsToggle" type="button" hidden aria-expanded="false">Edit settings</button>
-        <button id="prReset" type="button" hidden>Reset exercise</button>
         <span class="k-spacer"></span>
         <span id="prToday" class="pr-today" title="Practice today, and how many days in a row"></span>
         <span id="prTimer" class="pr-timer" title="Time on this exercise" hidden>⏱ 0:00</span>
-        <button id="prClean" type="button" class="pr-clean" title="Record a completed clean round for this setup" hidden>✓ That was clean</button>
-        <button id="prHelpButton" type="button" title="Optional instructions for this exercise">? Help</button>
-        <button id="practiceClose" type="button" title="Close Practice">Close</button>
+        <button id="prHelpButton" type="button" class="pr-icon-button" title="How this works, in pictures" aria-label="How this works"><span aria-hidden="true">?</span><span class="pr-wide-label"> How it works</span></button>
+        <button id="prSettingsToggle" type="button" class="pr-icon-button" title="Chords, speed, sound and the other settings for this exercise" hidden aria-expanded="false" aria-controls="prControls"><span aria-hidden="true">⚙</span><span class="pr-wide-label" id="prSettingsLabel"> Settings</span></button>
+        <button id="practiceClose" type="button" class="pr-icon-button" title="Close Free Practice" aria-label="Close Free Practice"><span aria-hidden="true">✕</span><span class="pr-wide-label"> Close</span></button>
       </div>
 
-      <!-- The menu: categories on the left, exercises on the right -->
+      <!-- The home screen (4.87): today's practice and your week, a suggested order to get started, then every exercise by category -->
       <div id="prHome" class="pr-home">
-        <div class="pr-quick"><section id="prRecent" hidden><h2>Recent exercises</h2><div id="prRecentCards" class="pr-shortcuts"></div></section>
-          <details class="pr-beginner"><summary>Start here: three short beginner exercises</summary><p>Try steady down-strums on C, then C to F, then a slow finger warm-up. Use Help for the goal of each exercise.</p><div id="prBeginnerCards" class="pr-shortcuts"></div></details>
-          <details><summary>Keep your practice safe</summary><p id="prStorageNote">Progress and routines are saved on this device. Export a practice backup before clearing app data or changing devices.</p><button type="button" id="prExport">Export practice backup</button> <label class="pr-import">Restore practice backup<input id="prImport" type="file" accept="application/json,.json"></label><p id="prStorageStatus" role="status"></p></details>
-        </div>
-        <nav id="prCats" class="pr-cats" aria-label="Practice categories"></nav>
-        <div class="pr-home-main">
-          <div class="pr-home-head">
-            <h2 id="prCatTitle"></h2>
-            <p id="prCatAim" class="muted"></p>
+        <div class="pr-home-inner">
+          <div class="pr-top">
+            <section id="prTodayCard" class="pr-today-card" aria-label="Today’s practice"></section>
+            <section id="prWeek" class="pr-week-card" aria-label="Your week"></section>
           </div>
-          <div id="prCards" class="pr-cards"></div>
-          <div id="prRoutines" class="pr-routines" hidden></div>
+          <section id="prRecent" class="pr-recent" hidden><h2>Carry on with</h2><div id="prRecentCards" class="pr-shortcuts"></div></section>
+          <details id="prPathSection" class="pr-path-section" open>
+            <summary><span class="pr-path-title">Getting started</span> <span id="prPathNote" class="pr-path-note"></span></summary>
+            <p class="muted pr-path-lead">New to the instrument? Here’s a suggested order, one new thing at a time. Nothing is locked: play any exercise you like. A step is ticked when you’ve played it cleanly.</p>
+            <ol id="prPath" class="pr-path"></ol>
+          </details>
+          <section class="pr-catalogue">
+            <h2 class="pr-catalogue-title">All exercises</h2>
+            <nav id="prCats" class="pr-cats" aria-label="Kinds of exercise"></nav>
+            <div class="pr-home-main">
+              <div class="pr-home-head">
+                <h3 id="prCatTitle"></h3>
+                <p id="prCatAim" class="muted"></p>
+              </div>
+              <div id="prCards" class="pr-cards"></div>
+              <div id="prRoutines" class="pr-routines" hidden></div>
+            </div>
+          </section>
+          <section class="pr-foot">
+            <button type="button" id="prTourButton" class="pr-foot-card"><span class="pr-foot-pic" data-pic="kinds"></span><span><strong>How Free Practice works</strong><span class="muted">Six pictures: where to start, what the buttons do.</span></span></button>
+            <button type="button" id="prGuidePrint" class="pr-foot-card"><span class="pr-foot-pic" data-pic="write"></span><span><strong>Free Practice guide, to print</strong><span class="muted" id="prGuideNote">How each kind of exercise works, and all of them listed.</span></span></button>
+            <details class="pr-safe"><summary>Keep your practice safe</summary><p id="prStorageNote">Progress and routines are saved on this device. Export a practice backup before clearing app data or changing devices.</p><button type="button" id="prExport">Export practice backup</button> <label class="pr-import">Restore practice backup<input id="prImport" type="file" accept="application/json,.json"></label><p id="prStorageStatus" role="status"></p></details>
+          </section>
         </div>
       </div>
 
       <div class="practice-body" hidden>
         <aside class="practice-controls" id="prControls">
+          <div class="pr-controls-head"><strong>Settings for this exercise</strong><button id="prReset" type="button" title="Put this exercise back to how it started" hidden>Reset</button></div>
           <label class="pr-field">Instrument / tuning<select id="prInstrument"></select></label>
           <label class="pr-check"><input id="prLeftHanded" type="checkbox"> Left-handed diagrams and fretboard</label>
           <label class="pr-check" data-not="oneminute metronome noodle"><input id="prAutoFaster" type="checkbox"> Add 5 bpm after a clean round</label>
@@ -4157,13 +4385,14 @@
             <span data-legend="noodle"><i class="lg-safe"></i> notes that fit</span>
             <span data-legend="noodle"><i class="lg-tone"></i> the chord's own notes</span>
             <span data-legend="noodle"><i class="lg-root"></i> the key note</span>
-            <button id="prHelpButton2" type="button" class="link-button">Help for this exercise</button>
+            <button id="prHelpButton2" type="button" class="link-button">How it works</button>
           </div>
           <div id="prFingerNow" class="pr-finger-now" hidden></div>
           <pre id="prTab" class="pr-tab" hidden></pre>
           <div id="prSteps" class="k-steps pr-steps" aria-hidden="true"></div>
           <div id="prBeats" class="pr-beats" aria-hidden="true"></div>
           <div id="prWhere" class="pr-where">Press Start.</div>
+          <button id="prClean" type="button" class="pr-clean" title="Record a clean round at this speed. The app can’t hear you: you decide." hidden>✓ That was clean</button>
           <div id="prGrid" class="pr-grid" hidden></div>
           <div id="prTips" class="pr-tips"></div>
         </main>
@@ -4171,8 +4400,22 @@
 <div id="prMobileGo" class="pr-mobile-go" hidden><span class="pr-mobile-tempo"><button id="prMobileSlower" type="button" aria-label="5 bpm slower">−</button><span id="prMobileTempo"></span><button id="prMobileFaster" type="button" aria-label="5 bpm faster">+</button></span><button id="prMobileStart" type="button" class="primary">▶ Start</button><button id="prMobileStop" type="button">■ Stop</button></div>
     </div>
     <dialog id="prHelpDialog" class="pr-help" aria-labelledby="prHelpTitle">
-      <form method="dialog"><div class="pr-help-head"><h2 id="prHelpTitle">Exercise help</h2><button type="submit" autofocus>Close help</button></div><div id="prHelpContent"></div></form>
+      <form method="dialog"><div class="pr-help-head"><h2 id="prHelpTitle">How it works</h2><button type="submit" id="prHelpClose">Close</button></div>
+        <div id="prHelpContent" class="pr-slide" aria-live="polite"></div>
+        <div class="pr-slide-nav"><button type="button" id="prSlideBack">← Back</button><span id="prSlideDots" class="pr-slide-dots" aria-hidden="true"></span><button type="button" id="prSlideNext" class="primary" autofocus>Next →</button></div>
+      </form>
     </dialog>
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4468,6 +4711,7 @@
 
         // 4.86: a yes-or-no question, in the app's own dialog with the button named for what it does
         // (not the browser's "OK / Cancel" box). Resolves true or false.
+        window.ukemusicAskConfirm = (message, options) => askConfirm(message, options); // for Free Practice, which is shared code (4.87)
         function askConfirm(message, { ok = 'OK', danger = false } = {}) {
           return new Promise((resolve) => {
             const dialog = document.getElementById('askDialog');
@@ -7278,7 +7522,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             const back = Number(b.dataset.back) || 0;
             if (state.usingCodeMirror) window.ukemusic.editorInsert(text, back);
             else {
-              const ta = document.getElementById('editor');
+              const ta = document.getElementById('editorFallback');
               const from = ta.selectionStart;
               ta.setRangeText(text, from, ta.selectionEnd, 'end');
               ta.selectionStart = ta.selectionEnd = from + text.length - back;
@@ -8575,6 +8819,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         const NL = window.ukemusic.notesLib;
         const PL = window.ukemusic.practiceLib;
         const PP = window.ukemusic.practiceProgress;
+        const PLN = window.ukemusic.practicePlan;      // 4.87: the path, today's session, your week
+        const PIC = window.ukemusic.practicePictures;  // 4.87: the drawings on cards and slides
         const pr = { view: 'home', cat: 'warmup', mode: 'strum', exId: null, schedule: null, from: 0, raf: null, stopping: false, shown: {}, changesBase: 0, barBase: 0, tick: null, progress: null, session: null, routine: null };
         const $p = (id) => document.getElementById(id);
         const NOTE_NAMES = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
@@ -8740,11 +8986,13 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           pr.cleanReady = false;
           $p('prClean').disabled = true;
         }
+        const prColour = (cat) => PLN.COLOURS[cat] || 'var(--accent)';
         function prShortcut(id) {
           const e = PL.EXERCISES.find((x) => x.id === id);
           if (!e) return null;
           const b = document.createElement('button');
-          b.type = 'button'; b.textContent = e.title;
+          b.type = 'button'; b.className = 'pr-chip'; b.style.setProperty('--pr-cat', prColour(e.cat));
+          b.textContent = prExerciseFor(e).title;
           b.addEventListener('click', () => prOpen(id));
           return b;
         }
@@ -8752,7 +9000,49 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const buttons = (pr.progress.recent || []).map(prShortcut).filter(Boolean);
           $p('prRecent').hidden = !buttons.length;
           $p('prRecentCards').replaceChildren(...buttons);
-          $p('prBeginnerCards').replaceChildren(...['downs', 'chord-change', 'spider-1234'].map(prShortcut));
+        }
+        // ── 4.87: the top of the home screen ──
+        // Today's practice: three exercises chosen for today (src/practice-plan.js), run like a routine
+        function prRenderToday() {
+          const today = todayKey();
+          const plan = PLN.suggest(pr.progress, today);
+          const card = $p('prTodayCard');
+          card.innerHTML = `<div class="pr-today-words"><span class="pr-kicker">Today’s practice · about ${plan.minutes} minutes</span>
+              <ol class="pr-today-steps">${plan.steps.map((st) => `<li style="--pr-cat:${prColour(st.cat)}"><span class="pr-today-pic">${PIC.forExercise(prExerciseFor(PL.EXERCISES.find((x) => x.id === st.id)), prFamily())}</span><span class="pr-today-name">${escapeHtmlText(prExerciseFor(PL.EXERCISES.find((x) => x.id === st.id)).title)}</span><span class="pr-today-min">${st.today ? '✓ done today' : st.minutes + ' min'}</span></li>`).join('')}</ol>
+              <p class="pr-today-why">${escapeHtmlText(plan.reason)}</p></div>
+            <button type="button" id="prTodayStart" class="primary pr-today-start">▶ Start</button>`;
+          card.querySelector('#prTodayStart').addEventListener('click', () => {
+            pr.routine = { routine: { name: plan.name, steps: plan.steps.map((st) => ({ id: st.id, minutes: st.minutes })) }, step: 0 };
+            prRoutineStep();
+          });
+        }
+        function prRenderWeek() {
+          const today = todayKey();
+          const days = PLN.week(pr.progress, today);
+          const streak = PP.streak(pr.progress, today);
+          const secs = PP.todaySeconds(pr.progress, today);
+          const tried = PLN.tried(pr.progress);
+          $p('prWeek').innerHTML = `<span class="pr-kicker">Your week</span>
+            <div class="pr-week-days">${days.map((d) => `<span class="pr-day${d.seconds ? ' on' : ''}${d.today ? ' today' : ''}" title="${d.seconds ? PP.formatMinutes(d.seconds) : 'No practice'}"><i>${d.seconds ? '✓' : ''}</i><b>${d.letter}</b></span>`).join('')}</div>
+            <p class="pr-week-line"><strong>${secs ? PP.formatMinutes(secs) + ' today' : 'Nothing yet today'}</strong>${streak > 1 ? ` · ${streak} days in a row` : ''}</p>
+            <p class="pr-week-line muted">${tried} of ${PL.EXERCISES.length} exercises tried</p>`;
+        }
+        // Getting started: a suggested order for a beginner (nothing is locked). The next step stands out; done steps are ticked.
+        function prRenderPath() {
+          const steps = PLN.pathState(pr.progress);
+          const doneCount = steps.filter((x) => x.state === 'done').length;
+          $p('prPathNote').textContent = doneCount === steps.length ? 'all done ✓' : `a suggested order · ${doneCount} of ${steps.length} done`;
+          if (pr.pathFor !== doneCount) { $p('prPathSection').open = doneCount < steps.length; pr.pathFor = doneCount; }
+          $p('prPath').replaceChildren(...steps.map((st) => {
+            const li = document.createElement('li');
+            const b = document.createElement('button');
+            b.type = 'button'; b.className = `pr-path-step ${st.state}`; b.dataset.ex = st.id; b.style.setProperty('--pr-cat', prColour(st.cat));
+            b.title = st.why;
+            b.innerHTML = `<span class="pr-path-num">${st.state === 'done' ? '✓' : st.number}</span><span class="pr-path-words"><strong>${escapeHtmlText(st.name)}</strong><span>${escapeHtmlText(st.state === 'next' ? st.why : prExerciseFor(PL.EXERCISES.find((x) => x.id === st.id)).title)}</span></span>`;
+            b.addEventListener('click', () => prOpen(st.id));
+            li.appendChild(b);
+            return li;
+          }));
         }
         function prUpdateMobile() {
           const visible = pr.view === 'player';
@@ -8769,20 +9059,27 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           prLoadProgress();
           prRefreshToday();
           prQuickLinks();
+          prRenderToday();
+          prRenderWeek();
+          prRenderPath();
+          for (const holder of practiceEl.querySelectorAll('.pr-foot-pic[data-pic]')) if (!holder.firstChild) holder.innerHTML = PIC.named(holder.dataset.pic);
           prUpdateMobile();
           $p('prCats').replaceChildren(...PL.CATEGORIES.map((c) => {
             const b = document.createElement('button');
             b.type = 'button';
             b.className = `pr-cat${c.id === pr.cat ? ' active' : ''}`;
             b.dataset.cat = c.id;
+            b.style.setProperty('--pr-cat', prColour(c.id));
+            b.setAttribute('aria-pressed', String(c.id === pr.cat));
             const count = c.id === 'routine' ? (pr.progress.routines || []).length : PL.EXERCISES.filter((e) => e.cat === c.id).length;
-            b.innerHTML = `<span class="pr-cat-icon">${c.icon}</span><span>${escapeHtmlText(c.name)}</span><span class="pr-cat-count">${count}</span>`;
+            b.innerHTML = `<span class="pr-cat-dot" aria-hidden="true"></span><span>${escapeHtmlText(c.name)}</span><span class="pr-cat-count">${count}</span>`;
             b.addEventListener('click', () => { pr.cat = c.id; prRenderHome(); });
             return b;
           }));
           const cat = PL.CATEGORIES.find((c) => c.id === pr.cat) || PL.CATEGORIES[0];
           $p('prCatTitle').textContent = cat.name;
           $p('prCatAim').textContent = cat.aim;
+          practiceEl.querySelector('.pr-home-main').style.setProperty('--pr-cat', prColour(cat.id));
           const routines = cat.id === 'routine';
           $p('prCards').hidden = routines;
           $p('prRoutines').hidden = !routines;
@@ -8808,7 +9105,10 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               if (best !== null) meta.push(`best ${best} changes${pair ? ' (' + pair.replace('>', ' → ') + ')' : ''}`);
             }
             if (p && p.seconds) meta.push(PP.formatMinutes(p.seconds));
-            card.innerHTML = `<span class="pr-card-top"><strong>${escapeHtmlText(e.title)}</strong><span class="pr-badge ${e.level.toLowerCase()}">${e.level}</span></span>
+            const state = PLN.cardState(pr.progress, e.id);
+            card.classList.add(`pr-${state}`);
+            card.innerHTML = `<span class="pr-card-pic">${PIC.forExercise(e, prFamily())}<span class="pr-state ${state}">${{ new: 'New', tried: 'Started', clean: '✓ Clean' }[state]}</span></span>
+              <span class="pr-card-top"><strong>${escapeHtmlText(e.title)}</strong><span class="pr-badge ${e.level.toLowerCase()}">${e.level}</span></span>
               <span class="pr-card-aim">${escapeHtmlText(e.aim)}</span>
               <span class="pr-card-meta">${meta.length ? escapeHtmlText(meta.join(' · ')) : 'Not tried yet'}</span>`;
             card.addEventListener('click', () => prOpen(e.id));
@@ -8823,7 +9123,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           card.className = 'pr-card pr-card-print';
           card.id = 'prChartPrint';
           const name = window.ukemusic.instrument(prInstrument()).name;
-          card.innerHTML = `<span class="pr-card-top"><strong>🖨 Chords by key, to print</strong><span class="pr-badge beginner">Sheet</span></span>
+          card.innerHTML = `<span class="pr-card-pic">${PIC.named('numerals')}<span class="pr-state new">To print</span></span><span class="pr-card-top"><strong>Chords by key, to print</strong><span class="pr-badge beginner">Sheet</span></span>
               <span class="pr-card-aim">Two pages for ${escapeHtmlText(name)}: the chords that belong together in each key, and the common progressions written out in every key, major and minor.</span>
               <span class="pr-card-meta">${window.ukemusic.isWeb ? 'Opens your browser\'s Print (save as PDF there)' : 'A PDF in your songs folder, in Practice sheets'}</span>`;
           card.addEventListener('click', prPrintChart);
@@ -8863,8 +9163,11 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           $p('prTimer').hidden = true;
           $p('prClean').hidden = true;
           $p('prTitle').textContent = 'Free Practice';
+          practiceEl.dataset.view = 'home';
+          practiceEl.style.removeProperty('--pr-cat');
           prRenderHome();
           $p('prHelpButton').focus();
+          prIntro('tour');
         }
 
         // Open an exercise: its trainer, with its preset (and your last tempo)
@@ -8881,6 +9184,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           pr.view = 'player';
           pr.exId = e.id;
           pr.exDef = e;
+          practiceEl.dataset.view = 'player';
+          practiceEl.style.setProperty('--pr-cat', prColour(e.cat));
           $p('prHome').hidden = true;
           practiceEl.querySelector('.practice-body').hidden = false;
           $p('prBack').hidden = false;
@@ -8929,11 +9234,25 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           $p('prClean').disabled = true;
           $p('prGoal').textContent = window.ukemusic.practiceHelp.forExercise(e.id).goal;
           $p('prSaveStatus').textContent = '';
-          practiceEl.classList.remove('pr-settings-open');
-          $p('prSettingsToggle').textContent = 'Edit settings';
-          $p('prSettingsToggle').setAttribute('aria-expanded', 'false');
+          // 4.87: the settings stay open beside the exercise where there's room, and out of the way where there isn't
+          prSettingsOpen(Boolean(window.matchMedia?.('(min-width: 1100px)').matches));
           prUpdateMobile();
-          $p('prSettingsToggle').focus();
+          $p('prHelpButton').focus();
+          prIntro(e.mode);
+        }
+        function prSettingsOpen(open) {
+          practiceEl.classList.toggle('pr-settings-open', open);
+          $p('prSettingsLabel').textContent = open ? ' Hide settings' : ' Settings';
+          $p('prSettingsToggle').setAttribute('aria-expanded', String(open));
+        }
+        // The first time Free Practice opens, and the first time each kind of exercise does: its slides
+        function prIntro(key) {
+          if (!pr.progress || pr.restoring) return;
+          pr.progress.seen = pr.progress.seen || {};
+          if (pr.progress.seen[key]) return;
+          pr.progress.seen[key] = true;
+          prSaveProgress();
+          prHelp();
         }
 
         // ── Routines ──
@@ -9067,13 +9386,14 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           $p('prRoutineBar').hidden = false;
           prRoutineTick();
           const stepIndex = r.step;
-          setTimeout(() => {
-            if (pr.routine === r && r.step === stepIndex && pr.view === 'player') {
-              r.started = true;
-              if (pr.mode === 'oneminute') prOneMinuteStart();
-              else prStart();
-            }
-          }, 600);
+          const go = () => {
+            if (!(pr.routine === r && r.step === stepIndex && pr.view === 'player')) return;
+            if ($p('prHelpDialog').open) { $p('prHelpDialog').addEventListener('close', () => setTimeout(go, 400), { once: true }); return; } // first time: read the slides first
+            r.started = true;
+            if (pr.mode === 'oneminute') prOneMinuteStart();
+            else prStart();
+          };
+          setTimeout(go, 600);
         }
         function prRoutineTick() {
           const r = pr.routine;
@@ -9101,7 +9421,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           $p('prRoutineBar').hidden = true;
           if (player && player.playing) prStop();
           prShowHome();
-          if (finished && r) $p('prCatAim').textContent = `Routine finished: ${r.routine.name}. Well done!`;
+          if (finished && r) { const done = document.createElement('p'); done.className = 'pr-well-done'; done.setAttribute('role', 'status'); done.textContent = `Finished: ${r.routine.name}. Well done!`; $p('prTodayCard').prepend(done); $p('prHome').scrollTop = 0; }
         }
 
         // ── Setup (once) ──
@@ -9139,11 +9459,15 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           // another instrument for this session: the exercise starts again for it (its chords, your changes for it)
           $p('prInstrument').addEventListener('change', () => { pr.sessionInstrument = $p('prInstrument').value; prPickNames(); if (pr.exId && pr.view === 'player') prOpen(pr.exId); });
           $p('prLeftHanded').checked = Boolean(effectiveConfig()?.diagrams?.left_handed);
-          $p('prSettingsToggle').addEventListener('click', () => {
-            const open = practiceEl.classList.toggle('pr-settings-open');
-            $p('prSettingsToggle').textContent = open ? 'Back to playing' : 'Edit settings';
-            $p('prSettingsToggle').setAttribute('aria-expanded', String(open));
+          $p('prSettingsToggle').addEventListener('click', () => prSettingsOpen(!practiceEl.classList.contains('pr-settings-open')));
+          $p('prSlideBack').addEventListener('click', () => prSlide(pr.slide - 1));
+          $p('prSlideNext').addEventListener('click', () => { if (pr.slide >= pr.slides.length - 1) $p('prHelpDialog').close(); else prSlide(pr.slide + 1); });
+          $p('prHelpDialog').addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight') { event.preventDefault(); prSlide(pr.slide + 1); }
+            else if (event.key === 'ArrowLeft') { event.preventDefault(); prSlide(pr.slide - 1); }
           });
+          $p('prTourButton').addEventListener('click', () => prHelp());
+          $p('prGuidePrint').addEventListener('click', prPrintGuide);
           $p('prReset').addEventListener('click', () => { const id = pr.exId; delete pr.progress.preferences?.[id]; prOpen(id, { reset: true }); prSaveSettings(); });
           for (const [mobile, original] of [['prMobileStart','prStart'],['prMobileStop','prStop'],['prMobileSlower','prSlower'],['prMobileFaster','prFaster']]) $p(mobile).addEventListener('click', () => { $p(original).click(); prUpdateMobile(); });
           $p('prHelpDialog').addEventListener('close', () => { $p('prHelpButton').focus(); });
@@ -9162,7 +9486,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               const backup = JSON.parse(await file.text());
               if (backup.format !== 'ukemusic-practice') throw new Error('Choose a ukemusic practice backup.');
               const restored = PP.normalise(backup.data);
-              if (!confirm('Replace practice progress, recent exercises and routines on this device with this backup? Songs are kept.')) return;
+              const question = 'Replace practice progress, recent exercises and routines on this device with this backup?\n\nSongs are kept.';
+              if (!(await window.ukemusicAskConfirm(question, { ok: 'Replace', danger: true }))) return; // the app's own question (4.87)
               pr.progress = restored;
               if (!prSaveProgress()) throw new Error('The backup could not be saved on this device.');
               prRenderHome();
@@ -9239,11 +9564,45 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
 
         // ── Help ──
         function prHelp() {
-          const help = window.ukemusic.practiceHelp.forExercise(pr.view === 'player' ? pr.exId : null);
-          $p('prHelpTitle').textContent = help.title;
-          $p('prHelpContent').innerHTML = (help.aim ? '<p>' + escapeHtmlText(help.aim) + '</p>' : '') + '<ol>' + help.steps.map((x) => '<li>' + escapeHtmlText(x) + '</li>').join('') + '</ol><p><strong>Goal: </strong>' + escapeHtmlText(help.goal) + '</p>';
+          const id = pr.view === 'player' ? pr.exId : null;
+          pr.slides = window.ukemusic.practiceHelp.slides(id, prInstrument());
+          $p('prHelpTitle').textContent = id ? 'How it works' : 'How Free Practice works';
+          $p('prHelpDialog').style.setProperty('--pr-cat', id ? prColour(pr.exDef.cat) : 'var(--accent)');
           const dialog = $p('prHelpDialog');
           if (!dialog.open) dialog.showModal();
+          prSlide(0);
+        }
+        function prSlide(index) {
+          if (!pr.slides || index < 0 || index >= pr.slides.length) return;
+          pr.slide = index;
+          const slide = pr.slides[index];
+          const last = index === pr.slides.length - 1;
+          $p('prHelpContent').innerHTML = `<div class="pr-slide-pic">${slide.picture}</div><p class="pr-slide-count">${index + 1} of ${pr.slides.length}</p><h3>${escapeHtmlText(slide.title)}</h3><p>${escapeHtmlText(slide.text)}</p>`;
+          $p('prSlideDots').innerHTML = pr.slides.map((_, i) => `<i class="${i === index ? 'on' : ''}"></i>`).join('');
+          $p('prSlideBack').disabled = index === 0;
+          $p('prSlideNext').textContent = last ? (pr.view === 'player' ? 'Got it' : 'Let’s go') : 'Next →';
+          $p('prSlideNext').focus();
+        }
+        // The guide to print: the same pictures and words, and every exercise (src/practice-help.js)
+        async function prPrintGuide() {
+          const html = window.ukemusic.practiceHelp.guideHtml({ made: `ukemusic ${window.ukemusic.appVersion || ''}`.trim() });
+          const note = $p('prGuideNote');
+          if (window.ukemusic.isWeb) {
+            const frame = document.createElement('iframe');
+            frame.title = 'Print the Free Practice guide';
+            frame.style.cssText = 'position:fixed;width:1px;height:1px;left:-10000px';
+            frame.onload = () => { frame.contentWindow.addEventListener('afterprint', () => frame.remove(), { once: true }); frame.contentWindow.focus(); frame.contentWindow.print(); };
+            frame.srcdoc = html;
+            document.body.append(frame);
+            return;
+          }
+          note.textContent = 'Making the PDF…';
+          try {
+            const file = await window.ukemusic.practiceChartPdf({ songsFolder: songsFolder(), fileName: 'Free Practice guide.pdf', html });
+            note.textContent = file ? `Saved: ${file}` : 'Not saved';
+          } catch (error) {
+            note.textContent = `Couldn't make the PDF: ${String(error.message || error).replace(/^Error invoking remote method '[^']+': (Error: )?/, '')}`;
+          }
         }
 
         const STAGE = {
@@ -10260,7 +10619,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           if (!pr.opened && tempo) $p('prTempo').value = String(Math.max(50, Math.min(120, tempo)));
           pr.opened = true;
           pr.returnFocus = document.activeElement;
-          pr.inertElements = [...document.body.children].filter((el) => el !== practiceEl && el !== $p('prHelpDialog') && !['SCRIPT','STYLE'].includes(el.tagName) && !el.contains(practiceEl)).map((el) => ({ el, inert: el.inert }));
+          pr.inertElements = [...document.body.children].filter((el) => el !== practiceEl && el !== $p('prHelpDialog') && el.id !== 'askDialog' && !['SCRIPT','STYLE'].includes(el.tagName) && !el.contains(practiceEl)).map((el) => ({ el, inert: el.inert }));
           for (const item of pr.inertElements) item.el.inert = true;
           practiceEl.hidden = false;
           practiceEl.focus();
@@ -10299,6 +10658,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         window.ukemusicPractiseChange = practiseChange;
         window.ukemusicPractiseShapes = practiseShapes;
         window.ukemusicPracticeState = pr;   // for the tests
+        pr.save = () => prSaveProgress();    // for the tests and the UI review
         document.getElementById('practiceButton')?.addEventListener('click', () => openPractice()); // 4.19: Practice is on the songs screen
         document.getElementById('libPractice').addEventListener('click', () => openPractice());
         window.addEventListener('keydown', (event) => {
@@ -13191,7 +13551,7 @@ function showTab(tab) {
             return;
           }
           if (!plan) return;
-          const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+          const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
           const offered = plan.add.length + plan.update.length;
           const bits = [];
           if (plan.add.length) bits.push(`${plan.add.length} new`);

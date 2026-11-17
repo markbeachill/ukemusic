@@ -357,6 +357,9 @@ contextBridge.exposeInMainWorld('ukemusic', {
     defaults: () => practiceProgress.emptyProgress().routines
   },
   practiceHelp: require('./practice-help'),
+  // 4.87: the home screen's path, today's session and week; the drawings on cards and slides
+  practicePlan: require('./practice-plan'),
+  practicePictures: { forExercise: (e, family) => require('./practice-pictures').forExercise(e, family), forCategory: (id) => require('./practice-pictures').forCategory(id), named: (name, ...args) => require('./practice-pictures').named(name, ...args) },
   fingers: {
     PATTERNS: fingerExercises.PATTERNS,
     FINGER_NAMES: fingerExercises.FINGER_NAMES,

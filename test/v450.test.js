@@ -90,7 +90,7 @@ function practiceUI() {
   function element(id) {
     if (!elements.has(id)) elements.set(id, { id, value:'', type:'text', tagName:'INPUT', hidden:false, disabled:false, checked:false,
       options:[], dataset:{}, className:'', classList:{add(){},remove(){},toggle(){}},
-      addEventListener(){}, setAttribute(){}, focus(){}, querySelector(selector){return selector === '.practice-body' ? element('practice-body') : null;},
+      style:{setProperty(){},removeProperty(){}}, addEventListener(){}, setAttribute(){}, focus(){}, querySelector(selector){return selector === '.practice-body' ? element('practice-body') : null;},
       querySelectorAll(selector){return selector.includes('.practice-controls') ? controlIds.map(element) : [];},
       closest(selector){return selector === '.practice-controls' ? element('prControls') : null;} });
     return elements.get(id);
@@ -98,11 +98,11 @@ function practiceUI() {
   const pp = { ...progress, read:()=>progress.emptyProgress(), write:()=>true, logSession:progress.logSession,
     logClean:(d,id,o)=>({data:d,next:progress.logClean(d,id,o)}), defaults:()=>progress.emptyProgress().routines };
   const context = { console, document:{ getElementById:element, querySelector:()=>null, body:{children:[]} },
-    window:{ukemusic:{ training:{}, fingers:{}, notesLib:{}, practiceLib:catalog, practiceProgress:pp,practiceHelp:help }, addEventListener(){}},
+    window:{ukemusic:{ training:{}, fingers:{}, notesLib:{}, practiceLib:catalog, practiceProgress:pp,practiceHelp:help, practicePlan:require('../src/practice-plan'), practicePictures:require('../src/practice-pictures') }, addEventListener(){}},
     player:null, songsFolder:()=>'/songs', songInstrument:()=>({id:'soprano'}), effectiveConfig:()=>({}), setInterval(){}, setTimeout(){}, clearTimeout(){}, cancelAnimationFrame(){}, performance:{now:()=>1000} };
   vm.createContext(context);
   vm.runInContext(fs.readFileSync(path.join(root,'web/pr_js.js'),'utf8') + '\nthis.api={pr,prOpen,prShowHome,prMarkClean,prSaveEnteredScore};', context);
-  vm.runInContext("prSetup=()=>{}; prShowMode=(mode)=>{pr.mode=mode;}; prPreview=()=>{}; prKindRows=()=>{}; prRenderHome=()=>{}; prUpdateMobile=()=>{}; pr.progress=PP.read();",context);
+  vm.runInContext("prSetup=()=>{}; prIntro=()=>{}; prSettingsOpen=()=>{}; prShowMode=(mode)=>{pr.mode=mode;}; prPreview=()=>{}; prKindRows=()=>{}; prRenderHome=()=>{}; prUpdateMobile=()=>{}; pr.progress=PP.read();",context);
   element('prTempo').value='80';
   element('prDynamics').type='checkbox';
   context.api.pr.defaults = { prTempo:'80',prDynamics:false,prChords:'C Am F G',prStrum:'D-DU-UDU',prProgression:'',prProgKey:'C' };

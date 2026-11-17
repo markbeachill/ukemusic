@@ -91,7 +91,7 @@ Each of these has its own rules about promotion: read them before posting, say p
 | **Your own ukulele club or teacher** | Real users, who might write about it | The Teach page and the Session screen |
 | **Hacker News "Show HN"** | Open-source projects get read and linked | "Show HN: ukemusic, an open-source ukulele practice and chord-sheet app" |
 | **Awesome lists on GitHub** (search GitHub for awesome-music and awesome-music-education) | Curated lists that crawlers trust | A one-line pull request in each list's format |
-| **A short video or blog walkthrough** | Shows the free practice as it really is | Five minutes: Start here → one-minute changes → a routine → a song with karaoke |
+| **A short video or blog walkthrough** | Shows the free practice as it really is | Five minutes: Today’s practice → one-minute changes → a routine → a song with karaoke |
 
 A factual description to adapt:
 

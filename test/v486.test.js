@@ -13,8 +13,8 @@ const DESKTOP = read('index.html');
 const WEB = read('web/app.html');
 
 test('C5: questions are asked in the app\'s own dialog, the button named for what it does', () => {
-  // Free Practice's restore-a-backup question is shared code with its own sync check: it keeps the browser's box
-  const strip = (s) => s.replace(/askConfirm\(/g, '').replace(/if \(!confirm\('Replace practice progress[^\n]*/, '');
+  // (Free Practice's restore-a-backup question kept the browser's box until 4.87)
+  const strip = (s) => s.replace(/askConfirm\(/g, '');
   assert.ok(!/\bconfirm\(/.test(strip(DESKTOP)), 'desktop');
   assert.ok(!/\bconfirm\(/.test(strip(WEB)), 'web');
   assert.match(DESKTOP, /await askConfirm\(`Remove the saved key "\$\{version\.name\}"\?[^`]*`, \{ ok: 'Remove', danger: true \}\)/);
@@ -77,6 +77,23 @@ test('4.86.2: the desktop preview splits long lines to fit (Chords above, In col
   const { renderHtml } = require('../src/renderer-html');
   const long = parse('--START MUSIC--\n[C]Amazing grace, how [F]sweet the [C]sound that saved a wretch like [G7]me. I [C]once was [C7]lost but [F]now am [C]found\n--END MUSIC--\n');
   for (const layout of ['lines', 'table']) assert.ok((renderHtml(long, { layout, maxLineChars: 40 }).match(/class="line-group/g) || []).length > 1, layout);
+});
+
+// 4.86.3: from the code review
+test('4.86.3: a window stays on the app\'s page; programs and scripts are never opened', () => {
+  const MAIN = read('main.js');
+  assert.match(MAIN, /app\.on\('web-contents-created', \(_event, contents\) => \{\n\s*contents\.on\('will-navigate', \(event, url\) => \{\n\s*if \(url === contents\.getURL\(\)\) return;[^\n]*\n\s*event\.preventDefault\(\);/);
+  assert.match(MAIN, /contents\.setWindowOpenHandler\(\(\{ url \}\) => \{\n\s*if \(\/\^https\?:/);
+  const never = new RegExp(/const NEVER_OPENED = \/(.+)\/i;/.exec(MAIN)[1], 'i');
+  for (const f of ['a.exe', 'A.BAT', 'x.ps1', 'run.sh', 'link.lnk', 'site.url', 'tool.js']) assert.ok(never.test(f), f);
+  for (const f of ['Song.pdf', 'Song.html', 'Song.txt', 'Song.cho', 'Song.mid', 'Song.musicxml', 'style.css', 'C:\\Songs\\Amazing Grace', '/home/me/Songs']) assert.ok(!never.test(f), f);
+  for (const channel of ['exports:open', 'shell:openFolder']) assert.match(MAIN, new RegExp(`handle\\('${channel}', async \\(_event, \\w+\\) => openInItsProgram\\(`));
+  assert.match(MAIN, /return openInItsProgram\(openPath\);/);
+});
+test('4.86.3: titles from a web player file are escaped for an attribute; the plain editor\'s buttons find it', () => {
+  assert.match(DESKTOP, /const esc = \(t\) => String\(t\)\.replace\(\/&\/g, '&amp;'\)\.replace\(\/<\/g, '&lt;'\)\.replace\(\/>\/g, '&gt;'\)\.replace\(\/"\/g, '&quot;'\);\n\s*const offered/);
+  assert.ok(!/getElementById\('editor'\)/.test(DESKTOP), 'the plain editor is #editorFallback');
+  assert.match(DESKTOP, /id="editorFallback"/);
 });
 
 console.log('v4.86 tests passed');

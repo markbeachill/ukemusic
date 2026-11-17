@@ -569,6 +569,34 @@ function createWindow() {
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 }
 
+// 4.86.3: a file dropped on a window, or a link inside a page, must never take the window off
+// the app's own page (the new page would lose your unsaved song, and would be handed the app's
+// file access). Web links go to the browser; anything else is ignored.
+app.on('web-contents-created', (_event, contents) => {
+  contents.on('will-navigate', (event, url) => {
+    if (url === contents.getURL()) return; // the same page again (a reload)
+    event.preventDefault();
+    if (/^https?:\/\//.test(url)) shell.openExternal(url);
+    else log.warn('window', `Kept the window on its page (not opened: ${String(url).slice(0, 200)})`);
+  });
+  contents.setWindowOpenHandler(({ url }) => {
+    if (/^https?:\/\//.test(url)) shell.openExternal(url);
+    return { action: 'deny' };
+  });
+});
+
+// 4.86.3: the app opens songs' folders and the files it makes (PDFs, web pages, text, music
+// files) in their usual programs. It never starts a program or a script.
+const NEVER_OPENED = /\.(exe|com|bat|cmd|msi|msix|msp|scr|pif|cpl|hta|jar|js|jse|vbs|vbe|wsf|wsh|ps1|psm1|reg|lnk|url|scf|inf|appref-ms|application|gadget|sh|bash|command|app|desktop|appimage|deb|rpm|dmg|pkg|py|pl|rb)$/i;
+function openInItsProgram(target) {
+  const file = String(target || '');
+  if (!file || NEVER_OPENED.test(file.trim().replace(/[. ]+$/, ''))) {
+    log.warn('main', `Not opened (a program or script): ${file.slice(0, 200)}`);
+    return Promise.resolve('ukemusic doesn’t open programs or scripts.');
+  }
+  return shell.openPath(file);
+}
+
 function handle(channel, fn) {
   ipcMain.handle(channel, async (...args) => {
     try {
@@ -912,7 +940,7 @@ function registerIpc() {
     ensureDirectory(dir);
     const target = path.join(dir, String(fileName || 'Chords by key.pdf').replace(/[<>:"/\\|?*]/g, ''));
     await fsp.writeFile(target, pdf);
-    log.info('practice', `Chords by key written: ${target}`);
+    log.info('practice', `Practice sheet written: ${target}`);
     shell.openPath(target);
     return target;
   });
@@ -998,7 +1026,7 @@ function registerIpc() {
     return { deleted: files.length };
   });
   handle('exports:readText', async (_event, filePath) => (await fsp.readFile(filePath, 'utf8')).slice(0, 200000));
-  handle('exports:open', async (_event, filePath) => shell.openPath(filePath));
+  handle('exports:open', async (_event, filePath) => openInItsProgram(filePath));
   handle('exports:show', async (_event, filePath) => { shell.showItemInFolder(filePath); return true; });
   // Copy a file into a folder (the gig folder); the folder is made if it's missing
   handle('exports:copyTo', async (_event, { from, folder, name } = {}) => {
@@ -1066,7 +1094,7 @@ function registerIpc() {
     await fsp.writeFile(target, pdf);
     return target;
   });
-  handle('shell:openFolder', async (_event, folder) => shell.openPath(folder));
+  handle('shell:openFolder', async (_event, folder) => openInItsProgram(folder));
 
   // Archive a song (4.21): out of the list, into "Archived songs"; it can come back
   handle('song:archive', async (_event, { folder } = {}) => {
@@ -1285,7 +1313,7 @@ function registerIpc() {
 
   handle('shell:openExternal', async (_event, targetPath) => {
     const openPath = targetPath || await activeStylePath();
-    return shell.openPath(openPath);
+    return openInItsProgram(openPath);
   });
 }
 

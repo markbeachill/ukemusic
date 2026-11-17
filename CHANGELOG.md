@@ -1,5 +1,31 @@
 # Changelog
 
+## v4.87.0
+
+Free Practice has a new home screen, a cleaner exercise screen and instructions in pictures. The 40 exercises, your progress, your routines and your settings are unchanged. Desktop and web player alike.
+
+- **Today's practice.** A card at the top picks three exercises for today, about eight minutes, with one Start button that takes you through them. For a beginner it's the next steps of Getting started; after that it's a warm-up, something for chords or rhythm and something for the tune, the ones you've left longest. It's the same all day and different tomorrow.
+- **Getting started: a suggested order.** Ten steps for a beginner, one new thing at a time, from a first strum to a first tune of your own. It's a suggestion: nothing is locked. A step is ticked when you've played it cleanly (a score for One-minute changes, a minute of it for noodling). It replaces "Start here".
+- **Your week.** The last seven days, today's minutes, days in a row, and how many of the exercises you've tried.
+- **A colour and a picture for each kind of exercise.** Warm-ups, chords, strumming, fingerpicking, scales and noodling each have a colour, on their cards, their steps and their exercise screen (the buttons stay the app's own colour). Every card has a small drawing of what the exercise is (the strum as arrows, the two chords, the fretboard, the picking fingers) and says New, Started or Clean. The category buttons are a row of coloured chips; the emoji are gone.
+- **"How it works": slides with pictures.** Help is now five or six slides for each exercise, one idea to a slide, each with a drawing: what Start and Show me do, what the dots mean, which finger is which (the fretting hand's 1 to 4, the picking hand's p i m a, the strumming hand), and the goal. They show the first time you open each kind of exercise, and from "How it works" after that. The first time Free Practice opens, six slides say what it is and where to start. Arrow keys turn the slides.
+- **A guide to print, and on the website.** "Free Practice guide, to print" makes the same slides as pages, with the suggested order and every exercise listed (a PDF in Practice sheets on the desktop; your browser's Print on the web). The website has it as a page, `practice-guide.html`, linked from the Free Practice page.
+- **One exercise screen for desktop, iPad and phone.** The bar is one row at every width (on a phone it was three). The settings are a panel that opens from the cog: open beside the exercise on a wide window, shut on an iPad held upright or a phone, where the chords and arrows are now larger. Start, Stop and the speed are always at the bottom when the settings are shut. "That was clean" has moved from the bar to under the exercise, and "Reset" into the settings.
+- **Fixed on the phone:** the category buttons overlapped the heading, and a long title pushed the screen wider than the phone.
+- **Restoring a practice backup** asks in the app's own box ("Replace"), not the browser's.
+- **For the UI review:** the Free Practice pictures follow the new screens (the tour is F18).
+
+The website's Free Practice picture (`site/img/practice.webp`) shows the old screen until `npm run site-pictures` is run.
+
+## v4.86.3
+
+From a review of the code. Nothing changes in how the app looks.
+
+- **Desktop: a file dropped on the window can't replace the app.** Dropping a file (a PDF, a web page) on the window, or a link inside a page, could take the window off the app's own page: an unsaved song would have gone, and the new page would have had the app's access to your files. Windows now stay on the app's pages; web links open in the browser.
+- **Desktop: the app never starts a program or a script.** "Open" and "Open folder" open folders and the files the app makes (PDFs, web pages, text, music files) in their usual programs. A program or script (.exe, .bat, .ps1, .sh and the like) is refused.
+- **Desktop: "Get songs from the web player" escapes titles fully.** A title with a quote mark in the web player's file could break out of the tick-box list.
+- **Desktop: the Write tab's Chord, Heading, Strum and Bar line buttons work in the plain editor** (the one used if the main editor can't start); they looked for the wrong box and did nothing.
+
 ## v4.86.2
 
 - **Desktop: the preview breaks long lines to fit it**, in "Chords above" and "In columns". A song written with a verse on one long line ran off the right of the preview, so it scrolled sideways. The preview now fits the lines again when you resize it or change the text size. PDFs and printing are unchanged: they already split lines to fit the page.

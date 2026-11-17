@@ -1,44 +1,59 @@
         <div id="practice" class="practice" hidden role="dialog" aria-modal="true" tabindex="-1" aria-label="Free Practice">
       <div class="practice-bar">
-        <button id="prBack" type="button" title="Back to all the exercises (Esc)" hidden>← All exercises</button>
+        <button id="prBack" type="button" class="pr-icon-button" title="Back to all the exercises (Esc)" aria-label="Back to all the exercises" hidden><span aria-hidden="true">←</span><span class="pr-wide-label"> All exercises</span></button>
         <div class="pr-heading">
           <strong id="prTitle" class="pr-title">Free Practice</strong>
           <span id="prLevel" class="pr-level" hidden></span>
         </div>
         <div id="prRoutineBar" class="pr-routine-bar" hidden>
           <span id="prRoutineText"></span>
-          <button id="prRoutineSkip" type="button" title="Go on to the next exercise in the routine">Next ▶</button>
-          <button id="prRoutineEnd" type="button" title="Stop the routine">End routine</button>
+          <button id="prRoutineSkip" type="button" title="Go on to the next exercise">Next ▶</button>
+          <button id="prRoutineEnd" type="button" title="Stop here and go back to the exercises">End</button>
         </div>
-        <button id="prSettingsToggle" type="button" hidden aria-expanded="false">Edit settings</button>
-        <button id="prReset" type="button" hidden>Reset exercise</button>
         <span class="k-spacer"></span>
         <span id="prToday" class="pr-today" title="Practice today, and how many days in a row"></span>
         <span id="prTimer" class="pr-timer" title="Time on this exercise" hidden>⏱ 0:00</span>
-        <button id="prClean" type="button" class="pr-clean" title="Record a completed clean round for this setup" hidden>✓ That was clean</button>
-        <button id="prHelpButton" type="button" title="Optional instructions for this exercise">? Help</button>
-        <button id="practiceClose" type="button" title="Close Practice">Close</button>
+        <button id="prHelpButton" type="button" class="pr-icon-button" title="How this works, in pictures" aria-label="How this works"><span aria-hidden="true">?</span><span class="pr-wide-label"> How it works</span></button>
+        <button id="prSettingsToggle" type="button" class="pr-icon-button" title="Chords, speed, sound and the other settings for this exercise" hidden aria-expanded="false" aria-controls="prControls"><span aria-hidden="true">⚙</span><span class="pr-wide-label" id="prSettingsLabel"> Settings</span></button>
+        <button id="practiceClose" type="button" class="pr-icon-button" title="Close Free Practice" aria-label="Close Free Practice"><span aria-hidden="true">✕</span><span class="pr-wide-label"> Close</span></button>
       </div>
 
-      <!-- The menu: categories on the left, exercises on the right -->
+      <!-- The home screen (4.87): today's practice and your week, a suggested order to get started, then every exercise by category -->
       <div id="prHome" class="pr-home">
-        <div class="pr-quick"><section id="prRecent" hidden><h2>Recent exercises</h2><div id="prRecentCards" class="pr-shortcuts"></div></section>
-          <details class="pr-beginner"><summary>Start here: three short beginner exercises</summary><p>Try steady down-strums on C, then C to F, then a slow finger warm-up. Use Help for the goal of each exercise.</p><div id="prBeginnerCards" class="pr-shortcuts"></div></details>
-          <details><summary>Keep your practice safe</summary><p id="prStorageNote">Progress and routines are saved on this device. Export a practice backup before clearing app data or changing devices.</p><button type="button" id="prExport">Export practice backup</button> <label class="pr-import">Restore practice backup<input id="prImport" type="file" accept="application/json,.json"></label><p id="prStorageStatus" role="status"></p></details>
-        </div>
-        <nav id="prCats" class="pr-cats" aria-label="Practice categories"></nav>
-        <div class="pr-home-main">
-          <div class="pr-home-head">
-            <h2 id="prCatTitle"></h2>
-            <p id="prCatAim" class="muted"></p>
+        <div class="pr-home-inner">
+          <div class="pr-top">
+            <section id="prTodayCard" class="pr-today-card" aria-label="Today’s practice"></section>
+            <section id="prWeek" class="pr-week-card" aria-label="Your week"></section>
           </div>
-          <div id="prCards" class="pr-cards"></div>
-          <div id="prRoutines" class="pr-routines" hidden></div>
+          <section id="prRecent" class="pr-recent" hidden><h2>Carry on with</h2><div id="prRecentCards" class="pr-shortcuts"></div></section>
+          <details id="prPathSection" class="pr-path-section" open>
+            <summary><span class="pr-path-title">Getting started</span> <span id="prPathNote" class="pr-path-note"></span></summary>
+            <p class="muted pr-path-lead">New to the instrument? Here’s a suggested order, one new thing at a time. Nothing is locked: play any exercise you like. A step is ticked when you’ve played it cleanly.</p>
+            <ol id="prPath" class="pr-path"></ol>
+          </details>
+          <section class="pr-catalogue">
+            <h2 class="pr-catalogue-title">All exercises</h2>
+            <nav id="prCats" class="pr-cats" aria-label="Kinds of exercise"></nav>
+            <div class="pr-home-main">
+              <div class="pr-home-head">
+                <h3 id="prCatTitle"></h3>
+                <p id="prCatAim" class="muted"></p>
+              </div>
+              <div id="prCards" class="pr-cards"></div>
+              <div id="prRoutines" class="pr-routines" hidden></div>
+            </div>
+          </section>
+          <section class="pr-foot">
+            <button type="button" id="prTourButton" class="pr-foot-card"><span class="pr-foot-pic" data-pic="kinds"></span><span><strong>How Free Practice works</strong><span class="muted">Six pictures: where to start, what the buttons do.</span></span></button>
+            <button type="button" id="prGuidePrint" class="pr-foot-card"><span class="pr-foot-pic" data-pic="write"></span><span><strong>Free Practice guide, to print</strong><span class="muted" id="prGuideNote">How each kind of exercise works, and all of them listed.</span></span></button>
+            <details class="pr-safe"><summary>Keep your practice safe</summary><p id="prStorageNote">Progress and routines are saved on this device. Export a practice backup before clearing app data or changing devices.</p><button type="button" id="prExport">Export practice backup</button> <label class="pr-import">Restore practice backup<input id="prImport" type="file" accept="application/json,.json"></label><p id="prStorageStatus" role="status"></p></details>
+          </section>
         </div>
       </div>
 
       <div class="practice-body" hidden>
         <aside class="practice-controls" id="prControls">
+          <div class="pr-controls-head"><strong>Settings for this exercise</strong><button id="prReset" type="button" title="Put this exercise back to how it started" hidden>Reset</button></div>
           <label class="pr-field">Instrument / tuning<select id="prInstrument"></select></label>
           <label class="pr-check"><input id="prLeftHanded" type="checkbox"> Left-handed diagrams and fretboard</label>
           <label class="pr-check" data-not="oneminute metronome noodle"><input id="prAutoFaster" type="checkbox"> Add 5 bpm after a clean round</label>
@@ -258,13 +273,14 @@
             <span data-legend="noodle"><i class="lg-safe"></i> notes that fit</span>
             <span data-legend="noodle"><i class="lg-tone"></i> the chord's own notes</span>
             <span data-legend="noodle"><i class="lg-root"></i> the key note</span>
-            <button id="prHelpButton2" type="button" class="link-button">Help for this exercise</button>
+            <button id="prHelpButton2" type="button" class="link-button">How it works</button>
           </div>
           <div id="prFingerNow" class="pr-finger-now" hidden></div>
           <pre id="prTab" class="pr-tab" hidden></pre>
           <div id="prSteps" class="k-steps pr-steps" aria-hidden="true"></div>
           <div id="prBeats" class="pr-beats" aria-hidden="true"></div>
           <div id="prWhere" class="pr-where">Press Start.</div>
+          <button id="prClean" type="button" class="pr-clean" title="Record a clean round at this speed. The app can’t hear you: you decide." hidden>✓ That was clean</button>
           <div id="prGrid" class="pr-grid" hidden></div>
           <div id="prTips" class="pr-tips"></div>
         </main>
@@ -272,5 +288,8 @@
 <div id="prMobileGo" class="pr-mobile-go" hidden><span class="pr-mobile-tempo"><button id="prMobileSlower" type="button" aria-label="5 bpm slower">−</button><span id="prMobileTempo"></span><button id="prMobileFaster" type="button" aria-label="5 bpm faster">+</button></span><button id="prMobileStart" type="button" class="primary">▶ Start</button><button id="prMobileStop" type="button">■ Stop</button></div>
     </div>
     <dialog id="prHelpDialog" class="pr-help" aria-labelledby="prHelpTitle">
-      <form method="dialog"><div class="pr-help-head"><h2 id="prHelpTitle">Exercise help</h2><button type="submit" autofocus>Close help</button></div><div id="prHelpContent"></div></form>
+      <form method="dialog"><div class="pr-help-head"><h2 id="prHelpTitle">How it works</h2><button type="submit" id="prHelpClose">Close</button></div>
+        <div id="prHelpContent" class="pr-slide" aria-live="polite"></div>
+        <div class="pr-slide-nav"><button type="button" id="prSlideBack">← Back</button><span id="prSlideDots" class="pr-slide-dots" aria-hidden="true"></span><button type="button" id="prSlideNext" class="primary" autofocus>Next →</button></div>
+      </form>
     </dialog>

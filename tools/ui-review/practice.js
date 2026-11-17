@@ -12,7 +12,7 @@ module.exports = async function practiceShots(p, shot, log, { phone = false } = 
     }
   };
   const pick = (sel, text) => ({ click: () => p.evaluate(([sel, text]) => { const e = [...document.querySelectorAll(sel)].find((x) => x.textContent.includes(text)); if (!e) throw new Error('no ' + text); e.scrollIntoView({ block: 'center' }); e.click(); }, [sel, text]) });
-  const card = (title) => pick('#prCards .pr-card, #prBeginnerCards button, #prRecentCards button', title);
+  const card = (title) => pick('#prCards .pr-card, #prRecentCards button', title);
   const cat = (name) => pick('#prCats .pr-cat', name);
   const jsClick = (id) => p.evaluate((id) => { const e = document.getElementById(id); if (e && !e.disabled) e.click(); }, id);
   const back = async () => {
@@ -35,12 +35,16 @@ module.exports = async function practiceShots(p, shot, log, { phone = false } = 
       await back();
     });
   };
-  await safe('home', async () => { await shot('F1', 'Free Practice: the menu, opened on Warm-ups'); });
+  // 4.87: the first visit shows the tour; an exercise's slides show the first time each kind opens
+  await safe('tour', async () => {
+    if (await p.evaluate(() => document.getElementById('prHelpDialog').open)) { await shot('F18', 'First visit: how Free Practice works, in six slides'); await p.evaluate(() => document.getElementById('prHelpDialog').close()); }
+    await p.evaluate(() => { const s = window.ukemusicPracticeState; s.progress.seen = Object.fromEntries(['tour', 'spider', 'change', 'oneminute', 'drill', 'strum', 'blues', 'notes', 'noodle', 'metronome'].map((k) => [k, true])); s.save(); });
+    await p.waitForTimeout(300);
+  });
+  await safe('home', async () => { await shot('F1', 'Free Practice: today’s practice, your week and the first steps'); });
   await safe('start', async () => {
-    const s = p.locator('#prHome summary', { hasText: 'Start here' }).first();
-    await s.click(); await p.waitForTimeout(500);
-    await shot('F2', 'Start here: three beginner exercises');
-    await s.click(); await p.waitForTimeout(300);
+    await p.evaluate(() => document.querySelector('.pr-catalogue').scrollIntoView()); await p.waitForTimeout(400);
+    await shot('F2', 'All exercises: a colour and a picture for each kind');
   });
   await safe('cat', async () => { await cat('Strumming').click(); await p.waitForTimeout(500); await shot('F3', 'A category: Strumming & rhythm'); });
   await exercise('Warm-ups', 'Spider walk (1-2-3-4)', 'F4', 'Spider walk, playing: the fretboard, the finger and the tab');
@@ -57,11 +61,11 @@ module.exports = async function practiceShots(p, shot, log, { phone = false } = 
     await cat('Warm-ups').click(); await p.waitForTimeout(400);
     await card('Spider walk (1-2-3-4)').click(); await p.waitForTimeout(800);
     await jsClick('prHelpButton'); await p.waitForTimeout(700);
-    await shot('F14', 'Help for one exercise (Spider walk)');
+    await shot('F14', 'How it works: slides for one exercise (Spider walk)');
     await p.evaluate(() => document.getElementById('prHelpDialog')?.close());
     await p.waitForTimeout(300);
-    if (phone) { await jsClick('prSettingsToggle'); await p.waitForTimeout(600); await shot('F15', 'An exercise\'s settings (on a phone: Edit settings)'); await jsClick('prSettingsToggle'); }
-    else await shot('F15', 'An exercise\'s settings (beside the exercise)');
+    await p.evaluate(() => { if (!document.getElementById('practice').classList.contains('pr-settings-open')) document.getElementById('prSettingsToggle').click(); }); await p.waitForTimeout(600);
+    await shot('F15', phone ? 'An exercise\'s settings (on a phone they take the screen)' : 'An exercise\'s settings (a panel beside the exercise)');
     await back();
   });
   await safe('routine', async () => { await cat('My routine').click(); await p.waitForTimeout(500); await shot('F16', 'My routine: ready-made routines and your own'); });

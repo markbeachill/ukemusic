@@ -349,7 +349,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 /* ── Practice (the desktop app's practice window) ── */
 /*PRACTICE_CSS*/
 .practice { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
-.practice-bar { flex-wrap: wrap; padding-left: max(16px, env(safe-area-inset-left, 0px)) !important; padding-right: max(16px, env(safe-area-inset-right, 0px)) !important; }
+.practice-bar { padding-left: max(16px, env(safe-area-inset-left, 0px)) !important; padding-right: max(16px, env(safe-area-inset-right, 0px)) !important; }
 .practice .primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .practice button { border: 1px solid var(--line); background: var(--surface); border-radius: 9px; }
 .practice select, .practice input { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
@@ -846,6 +846,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   // 4.86: a yes-or-no question in the app's own dialog, the button named for what it does
   // (not the browser's "OK / Cancel" box). Resolves true or false.
+  window.ukemusicAskConfirm = (message, options) => askConfirm(message, options); // for Free Practice, which is shared code (4.87)
   function askConfirm(message, { ok = 'OK', cancel = 'Cancel', danger = false } = {}) {
     return new Promise((resolve) => {
       const dialog = $('askDialog');
