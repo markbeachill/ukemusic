@@ -984,7 +984,7 @@ function galleryPageHead(html, title, slug) {
 /** sitemap.xml: every page of the website, for search engines (submit it in Google Search Console and
  *  Bing Webmaster Tools; the host's robots.txt isn't ours, so it can't point to it) */
 function sitemap() {
-  const docs = ['guide.html', 'chordpro.html', 'changes.html', 'how-learn-works.html', 'user-guide.html'];
+  const docs = ['guide.html', 'chordpro.html', 'changes.html', 'how-learn-works.html', 'user-guide.html', 'user-guide-phone.html'];
   // the gallery's song sheets are web pages too (4.58)
   let sheets = [];
   try { sheets = JSON.parse(fs.readFileSync(path.join(SITE, 'gallery', 'gallery.json'), 'utf8')).map((g) => `gallery/${g.slug}/sheet.html`).filter((f) => fs.existsSync(path.join(SITE, f))); } catch (_e) { sheets = []; }

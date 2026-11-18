@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// The user guide's pictures from the UI review (4.95). The guide (docs/user-guide.md) uses the
+// The user guides' pictures from the UI review (4.95). The guides (docs/user-guide.md, and 4.97's
+// docs/user-guide-phone.md for the web player on a phone) use the
 // website's own pictures (site/img/*.webp, from npm run site-pictures) and, for the many screens
 // those don't show, pictures from the UI review, copied into site/img/guide/ by this script.
 //
@@ -15,7 +16,7 @@ const fs = require('fs');
 const path = require('path');
 
 const REPO = path.resolve(__dirname, '..');
-const GUIDE = path.join(REPO, 'docs', 'user-guide.md');
+const GUIDES = ['user-guide.md', 'user-guide-phone.md'].map((f) => path.join(REPO, 'docs', f));   // 4.97: and the phone guide
 const OUT = path.join(REPO, 'site', 'img', 'guide');
 
 /** The review pictures the guide uses: [{ file: 'desktop-L4.jpg', app: 'desktop', id: 'L4' }] */
@@ -26,7 +27,7 @@ function wanted(markdown) {
 }
 
 function copy({ from = path.join(REPO, 'UI review') } = {}) {
-  const list = wanted(fs.readFileSync(GUIDE, 'utf8'));
+  const list = wanted(GUIDES.filter((f) => fs.existsSync(f)).map((f) => fs.readFileSync(f, 'utf8')).join('\n'));
   fs.mkdirSync(OUT, { recursive: true });
   const missing = [];
   let copied = 0;

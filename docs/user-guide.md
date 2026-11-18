@@ -1,5 +1,7 @@
 # The ukemusic user guide
 
+**On a phone or tablet?** See [the guide for phones and tablets](user-guide-phone.md): the web player, step by step, with pictures from a phone.
+
 How to use ukemusic, step by step. It covers the desktop app (Windows, Mac and Linux) and the web player (any browser, on a phone, tablet or computer); where they differ, it says so. How to *write* a song (chords in square brackets, strums, tab) is in the [song guide](../WRITING.md).
 
 ## Getting started
@@ -247,7 +249,7 @@ Then **Songs folder**, **Chord diagrams** (including **Left-handed**), **How the
 
 ## On a phone or tablet
 
-The web player is ukemusic in the browser. It has the songs, playing along, karaoke, Learn, Picking, the Music stand, the Session screen, setlists and Free Practice.
+The [guide for phones and tablets](user-guide-phone.md) covers this step by step. In short: the web player is ukemusic in the browser. It has the songs, playing along, karaoke, Learn, Picking, the Music stand, the Session screen, setlists and Free Practice.
 
 ![The web player on a phone: your songs, with Songs and Free Practice at the top](../site/img/phone-library.webp)
 

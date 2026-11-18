@@ -20,6 +20,7 @@ const PAGES = [
   { md: 'CHANGELOG.md', html: 'changes.html', seoTitle: "What's new in ukemusic: the changes in every version", title: "What's new", nav: "What's new", blurb: 'What changed in each version of ukemusic, the free ukulele app: new features, fixes and improvements, newest first.' },
   // 4.95: the user guide, with the website's pictures; read straight through (no folding)
   { md: 'docs/user-guide.md', html: 'user-guide.html', seoTitle: 'ukemusic user guide: how to use the ukulele app, step by step', title: 'User guide', nav: 'User guide', blurb: 'How to use ukemusic, step by step and with pictures: songs, reading and editing, playing along, learning, Free Practice, gigs and printing.', ownIntro: true, fold: false },
+  { md: 'docs/user-guide-phone.md', html: 'user-guide-phone.html', seoTitle: 'ukemusic on a phone or tablet: the user guide for the web player', title: 'User guide: phone and tablet', nav: 'User guide', blurb: 'How to use ukemusic on an iPhone, iPad or Android phone or tablet, step by step and with pictures from a phone.', ownIntro: true, fold: false },
   { md: 'docs/explanation/how-learn-works.md', html: 'how-learn-works.html', seoTitle: "How Learn works: learning a ukulele song by heart · ukemusic", title: 'How Learn works', nav: 'How Learn works', blurb: 'What the Learn tab works out from a song, how it helps you practise, and how far to trust it.' }
 ];
 const BY_MD = Object.fromEntries(PAGES.map((p) => [p.md, p.html]));

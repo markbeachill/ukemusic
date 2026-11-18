@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.97.0
+
+- New: **a user guide for phones and tablets** (`user-guide-phone.html`, from `docs/user-guide-phone.md`). It covers the web player step by step, with 17 pictures from an iPhone:
+  - putting it on the Home Screen, your songs, adding a song;
+  - a song's tools, playing along, learning, changing a song;
+  - Free Practice, setlists, the Music stand on a tablet;
+  - downloading and printing, and keeping your songs safe.
+- The main user guide links to it at the top, and its phone section points there.
+- `npm run guide-pictures` copies the pictures both guides use from the UI review.
+
 ## v4.96.0
 
 - **The simple view, reviewed.** Comparing the two views tab by tab, some hidden items made little difference, so they're now in the simple view:
