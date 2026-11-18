@@ -34,7 +34,7 @@ test('columns only when no line wraps in them; pages, never smaller text', () =>
   assert.match(SCREEN, /maxCols: book\(\) \? \(rect\.width > rect\.height \* 1\.05 \? 3 : 2\) : 3, noWrap: book\(\)/);
   assert.match(SCREEN, /const bookModes = s\.mode === 'auto' \? \['over'\] : \[s\.mode\];/, 'chords above the words, unless M');
   assert.match(FIT, /return !noWrap \|\| c === 1 \|\| widestAt\(px\) <= column;/);
-  assert.match(FIT, /for \(let c = 1; c <= maxCols; c \+= 1\) \{/);
+  assert.match(FIT, /for \(let c = fewestCols; c <= maxCols; c \+= 1\) \{/); // 4.92.1: fewestCols, 1 but for wrapped columns
 });
 
 test('taps: the right half on, the left half back, the top the bar (which hides at the next turn)', () => {

@@ -104,6 +104,7 @@
 .ss-screen .ss-foot { display: none; position: absolute; left: 18px; right: 18px; bottom: 3px; font-size: 12px; line-height: 16px; color: var(--ss-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
 .ss-screen.ss-book .ss-foot { display: block; }
 .ss-screen.ss-book .ss-dots { bottom: 6px; left: auto; right: 18px; transform: none; }
+.ss-screen.ss-book .ss-hint { bottom: 22px; right: 18px; } /* 4.92.1: above the page dots */
 /* 4.91: the music stand: a menu button always in the corner (the way out is never hidden), the
    songs to jump to, help, and a guide the first time */
 .ss-screen .ss-menubtn { display: none; position: absolute; top: 8px; right: 10px; z-index: 3; min-width: 48px; min-height: 48px; border-radius: 12px; border: 1px solid var(--ss-faint);
@@ -200,7 +201,7 @@
       if (hintEl) hintEl.textContent = book() ? BOOK_HINT : HINT;
       // the music stand: chords above the words (unless M); another column only when no line wraps in it
       const bookModes = s.mode === 'auto' ? ['over'] : [s.mode];
-      s.result = Fit.fit({ box: els.box, lyrics: els.lyrics, strip: els.strip, html: (mode) => song.html[mode], minPx, maxPx, modes: book() ? bookModes : modes(), diagramPx: s.size === 'same' ? Math.round(samePx * 0.4) : book() ? Math.round(s.bookPx * 0.6) : null, maxCols: book() ? (rect.width > rect.height * 1.05 ? 3 : 2) : 3, noWrap: book(), stripTop: book() });
+      s.result = Fit.fit({ box: els.box, lyrics: els.lyrics, strip: els.strip, html: (mode) => song.html[mode], minPx, maxPx, modes: book() ? bookModes : modes(), diagramPx: s.size === 'same' ? Math.round(samePx * 0.4) : book() ? Math.round(s.bookPx * 0.6) : null, maxCols: book() ? (rect.width > rect.height * 1.05 ? 3 : 2) : 3, noWrap: book(), wrapToColumns: book() && rect.width > rect.height * 1.05, stripTop: book() });
       s.pages = s.result.pages;
       if (s.page >= s.pages) s.page = s.pages - 1;
       s.sections = [...els.lyrics.querySelectorAll('.blk')].map((el, k) => ({ label: blockLabel(el, k), page: pageOf(el) }));

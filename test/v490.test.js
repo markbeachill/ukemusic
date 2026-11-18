@@ -98,7 +98,7 @@ test('web player: setlists go with Dropbox (one listing for songs and setlists);
 
 // 4.90.1
 test('4.90.1: the Music stand puts the chord shapes across the top, so the words have the whole width', () => {
-  assert.match(read('src/session-screen.js'), /noWrap: book\(\), stripTop: book\(\) \}\);/);
+  assert.match(read('src/session-screen.js'), /noWrap: book\(\), wrapToColumns: [^,]*, stripTop: book\(\) \}\);/);
   assert.match(read('src/session-fit.js'), /const tall = top \|\| r\.height > r\.width \* 1\.05;/);
 });
 test('4.90.1: the website\'s pictures: Free Practice without its first-visit slides, one-minute changes, the Music stand', () => {

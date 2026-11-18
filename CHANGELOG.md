@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.92.1
+
+- Music stand on a laptop, or an iPad on its side: a song with a long line or two was shown in one column over more pages, with half the screen empty. Now it uses two columns and wraps only those long lines (the chords stay over their words), on no more pages than one column would need. On an upright iPad it is still one column of whole lines.
+- Music stand: the tap hint no longer sits on top of the page dots.
+
 ## v4.92.0
 
 - The feature list gives the Music stand its own section, "Read from a tablet", instead of mixing it with printing and playing together. Printing is now "Stage copies to print".

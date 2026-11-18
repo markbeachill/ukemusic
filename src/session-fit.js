@@ -10,7 +10,9 @@
 //     maxPx   the largest worth having
 //     modes   which to try, in order (chords above first; chords in the words if it can't fit)
 //     maxCols the most columns (3)
-//     noWrap  4.89 (the music stand view): another column only if no line has to wrap in it
+//     noWrap  4.89 (the music stand view): another column only if no line has to wrap in it;
+//     wrapToColumns 4.92.1 (the music stand on a wide screen): with noWrap, when one column would
+//             need more pages than columns, the columns win and a long line wraps
 //     stripTop 4.90.1 (the music stand view): the chord shapes in a row across the top, on a wide
 //             screen too, so the words have the whole width for their columns
 //   -> { mode, px, cols, pages, fits }   and lyrics is left laid out that way
@@ -27,10 +29,23 @@
     return { W: Math.floor(r.width), H: Math.floor(r.height) };
   }
 
-  function fit({ box, lyrics, strip = null, html, minPx = 18, maxPx = 48, modes = ['over', 'inline'], diagramPx = null, maxCols = 3, noWrap = false, stripTop = false }) {
+  function fit({ box, lyrics, strip = null, html, minPx = 18, maxPx = 48, modes = ['over', 'inline'], diagramPx = null, maxCols = 3, noWrap = false, wrapToColumns = false, stripTop = false }) {
     // the diagrams first: they take a strip down the side (or across the top on a tall screen)
     if (strip) sizeStrip(box, strip, diagramPx || minPx, stripTop);
     const { W, H } = measure(box);
+    const args = { box, lyrics, html, minPx, maxPx, modes, maxCols, W, H };
+    if (!noWrap) return layoutSong({ ...args, noWrap: false });
+    // 4.92.1, the music stand: columns where no line wraps. But when a long line or two would leave
+    // the song in one column, over more pages than columns need (the other half of a laptop's
+    // screen empty), the columns win and those lines wrap.
+    const strict = layoutSong({ ...args, noWrap: true });
+    if (!wrapToColumns || strict.cols > 1 || maxCols < 2 || strict.pages < 2) return strict;
+    const loose = layoutSong({ ...args, noWrap: false, fewestCols: 2 });
+    if (loose.cols > 1 && loose.pages <= strict.pages) return loose;
+    return layoutSong({ ...args, noWrap: true });
+  }
+
+  function layoutSong({ lyrics, html, minPx, maxPx, modes, maxCols, W, H, noWrap, fewestCols = 1 }) {
     const gapFor = (px) => Math.round(px * 1.6);
     let widest = null; // { px, width }: the longest line, unwrapped, at that size (for noWrap)
     const widestAt = (px) => {
@@ -46,6 +61,8 @@
     const colsOk = (c, px) => {
       const column = (W - (c - 1) * gapFor(px)) / c;
       if (column < px * MIN_COLUMN_EM * 0.55) return false;
+      // the music stand's wrapped columns: most lines still whole (a column at least 60% of the longest)
+      if (fewestCols > 1 && column < widestAt(px) * 0.6) return false;
       return !noWrap || c === 1 || widestAt(px) <= column;
     };
     const apply = (px, c) => {
@@ -78,7 +95,7 @@
       lyrics.innerHTML = html(mode);
       widest = null;
       const found = [];
-      for (let c = 1; c <= maxCols; c += 1) {
+      for (let c = fewestCols; c <= maxCols; c += 1) {
         const px = best(c);
         if (px != null) found.push({ mode, px, cols: c });
       }
@@ -95,11 +112,22 @@
       lyrics.className = `ss-lyrics ${mode}`;
       lyrics.innerHTML = html(mode);
       widest = null;
+      const pagesAt = (c) => { const gap = apply(minPx, c); return Math.max(1, Math.round((lyrics.scrollWidth + gap) / (W + gap))); };
       let cols = 1;
-      for (let c = maxCols; c >= 1; c -= 1) if (colsOk(c, minPx)) { cols = c; break; }
+      if (fewestCols > 1) {
+        // the music stand's wrapped columns: the fewest columns for the fewest pages
+        pages = Infinity;
+        for (let c = fewestCols; c <= maxCols; c += 1) {
+          if (!colsOk(c, minPx)) continue;
+          const n = pagesAt(c);
+          if (n < pages) { pages = n; cols = c; }
+        }
+        if (pages === Infinity) cols = 1;
+      } else {
+        for (let c = maxCols; c >= 1; c -= 1) if (colsOk(c, minPx)) { cols = c; break; }
+      }
       chosen = { mode, px: minPx, cols };
-      const gap = apply(minPx, cols);
-      pages = Math.max(1, Math.round((lyrics.scrollWidth + gap) / (W + gap)));
+      pages = pagesAt(cols);
     } else {
       apply(chosen.px, chosen.cols);
     }
