@@ -11,7 +11,7 @@ const WEB = fs.readFileSync(path.join(__dirname, '..', 'web', 'app.html'), 'utf8
 
 test('C7: Paste and New song are above the list; the rest behind More', () => {
   const lib = WEB.slice(WEB.indexOf('<section id="libraryView"'), WEB.indexOf('<section id="songView"'));
-  assert.ok(lib.indexOf('id="pasteSongBtn"') < lib.indexOf('id="search"'), 'above the search box and the list');
+  assert.ok(lib.indexOf('id="newSongBtn"') < lib.indexOf('id="search"'), 'above the search box and the list'); // 4.94: Paste is one of New song's choices
   assert.ok(lib.indexOf('id="newSongBtn"') < lib.indexOf('id="songList"'));
   const more = lib.match(/<details id="libMore" class="lib-more">[\s\S]*?<\/details>/)[0];
   for (const id of ['for="updateInput"', 'id="cloudBtn"', 'id="backupBtn"']) assert.ok(more.includes(id), id);

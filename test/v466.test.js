@@ -78,17 +78,17 @@ test('songs page: paste from a website first, then the other ways in', () => {
   assert.ok(order.every((n, k) => n > 0 && (k === 0 || n > order[k - 1])), order.join(','));
 });
 
-test('web player: Paste from a website, before New song, makes a song in your instrument', () => {
-  assert.ok(app.indexOf('id="pasteSongBtn"') > 0 && app.indexOf('id="pasteSongBtn"') < app.indexOf('id="newSongBtn"'));
+test('web player: Paste from a website (4.94: the first of New song\'s choices) makes a song in your instrument', () => {
+  assert.ok(app.indexOf('id="pasteSongBtn"') > app.indexOf('<dialog id="newWayDialog"') && app.indexOf('id="pasteSongBtn"') < app.indexOf('id="writeSongBtn"'));
   assert.match(app, /<dialog id="pasteSongDialog">/);
   assert.match(app, /U\.songFiles\.songFromText\(`\$\{title\}\.txt`, raw\)/);
   assert.match(app, /instrument: myInstrument\(\)/);
 });
 
-test('desktop library: Paste from a website, before New song', () => {
-  assert.ok(html.indexOf('id="libPaste"') > 0 && html.indexOf('id="libPaste"') < html.indexOf('id="libNew"'));
-  assert.match(html, /id="libNew" class="library-new secondary"/);
-  assert.match(html, /getElementById\('libPaste'\)\?\.addEventListener\('click', \(\) => fromLibrary\(pasteNewSong\)\)/);
+test('desktop library: Paste from a website, the first of New song\'s choices (4.94)', () => {
+  assert.ok(html.indexOf('id="libPaste"') > html.indexOf('<dialog id="newSongDialog"') && html.indexOf('id="libPaste"') < html.indexOf('id="libWrite"'));
+  assert.match(html, /id="libNew" class="library-new" type="button" aria-haspopup="dialog"/);
+  assert.match(html, /getElementById\('libPaste'\)\?\.addEventListener\('click', \(\) => \{ newSongDialog\.close\(\); fromLibrary\(pasteNewSong\); \}\)/);
 });
 
 console.log('v4.66 tests passed');

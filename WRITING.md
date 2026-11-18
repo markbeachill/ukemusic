@@ -381,7 +381,7 @@ When some lines are a harmony part sung with (or over) the main line, put `{harm
 
 ## Pasting songs from websites
 
-- **File → Paste from a website** takes a song copied from a chord website and turns it into ukemusic's format.
+- **New song → Paste from a website** (on Songs; while editing a song, also **File → Paste from a website**) takes a song copied from a chord website and turns it into ukemusic's format.
 - **A difficult sheet** (a PDF or scan where the chords have lost their places, or the timing written in words): **Copy AI prompt** in the same window copies a prompt that tells an AI chat (Claude, ChatGPT, Gemini…) ukemusic's format. The window's **open an AI chat** link opens one. Paste the prompt into the chat with the chord sheet, paste the answer back into Paste from a website, and check the timing when you play it.
 - **To get a song ready to practise**, **Copy AI prompt: ready to practise** asks for more: each chord's length (so playback follows the recording), the parts named the same way each time, strums for your level, what to check by ear, and practice notes. It takes the sheet pasted in the window or, if that's empty, the song that's open. In the web player both prompts are under **Edit → Help from an AI chat**.
 - Many websites put the chords **on a line above the words**. **File → Tidy chords** moves them into the words as `[chords]`. Check lines it marks: where a website has lost the spacing, it has to guess.

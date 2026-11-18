@@ -183,7 +183,7 @@ async function launch() {
     await page.keyboard.press('Escape'); await page.mouse.click(5, 5);
   });
   await safe('L4', async () => {
-    await library(); await page.click('#libNew'); await page.waitForSelector('#titleDialog[open]'); await page.waitForTimeout(400);
+    await library(); await page.click('#libNew'); await page.click('#libWrite'); await page.waitForSelector('#titleDialog[open]'); await page.waitForTimeout(400);
     await shot('L4', 'New song: choosing a title'); await closeDialogs();
   });
   await safe('L5', async () => {

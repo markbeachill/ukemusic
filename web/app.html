@@ -81,6 +81,21 @@ button { cursor: pointer; }
 /* Free Practice: its own colour, first on the songs screen, so it isn't missed */
 .lib-head { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: flex-start; }
 .lib-head > div { flex: 1 1 260px; min-width: 0; }
+/* 4.94: Songs | Free Practice in the top bar; New song's choices */
+.home-tabs { display: flex; gap: 2px; align-self: stretch; }
+.home-tab { display: inline-flex; align-items: center; gap: 6px; border: 0; border-bottom: 3px solid transparent; background: none; font: inherit; font-size: 15px; font-weight: 700; color: var(--muted); padding: 0 12px; cursor: pointer; min-height: 44px; }
+.home-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.home-tab.practice-tab.active { color: #c2410c; border-bottom-color: #c2410c; }
+.home-tab svg { width: 18px; height: 18px; }
+@media (max-width: 560px) { #libraryView .bar-row { flex-wrap: wrap; row-gap: 0; } #libraryView .home-tabs { order: 10; width: 100%; } .home-tab { flex: 1; justify-content: center; } #libraryView .bar-row > .sync { display: none; } }
+.home-tab { white-space: nowrap; }
+#practice.pr-under-home { top: var(--home-bar-h, 56px); }
+.new-way-dialog { width: min(520px, 94vw); }
+.new-ways { display: grid; gap: 10px; margin: 10px 0 14px; }
+.new-way { display: grid; gap: 2px; text-align: left; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+.new-way:hover, .new-way:focus-visible { border-color: var(--accent); }
+.new-way strong { font-size: 16px; }
+.new-way span { font-size: 13.5px; color: var(--muted); }
 .practice-cta { flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 18px; border: 0; border-radius: 12px; background: #c2410c; color: #fff; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
 .practice-cta:hover { background: #9a3412; }
 .practice-cta:focus-visible { outline: 3px solid #fdba74; outline-offset: 2px; }
@@ -453,7 +468,9 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
   <!-- Library -->
   <section id="libraryView">
     <header class="bar"><div class="bar-row gutter">
-      <div class="brand"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="15.5" r="4.5"/><circle cx="8.5" cy="15.5" r="1.2" fill="currentColor"/><path d="M11.7 12.3 19 5"/><path d="m17.5 3.5 3 3"/></svg>ukemusic</div>
+      <div class="brand"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="15.5" r="4.5"/><circle cx="8.5" cy="15.5" r="1.2" fill="currentColor"/><path d="M11.7 12.3 19 5"/><path d="m17.5 3.5 3 3"/></svg><span class="brand-name">ukemusic</span></div>
+      <!-- 4.94: the two places: your songs, and Free Practice (no song needed) -->
+      <nav class="home-tabs" role="tablist" aria-label="ukemusic"><button id="homeTabSongs" class="home-tab active" type="button" role="tab" aria-selected="true">Songs</button><button id="libPractice" class="home-tab practice-tab" type="button" role="tab" aria-selected="false" title="Warm-ups, chords, strumming, picking, scales and routines: no song needed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l4 18H5z"/><path d="m12 15 5-9"/><path d="M7.5 15h9"/></svg>Free Practice</button></nav>
       <span class="spacer"></span>
       <span id="syncState" class="sync"></span>
       <span id="cloudState" class="sync" hidden></span>
@@ -463,7 +480,6 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
     </div></header>
     <main class="library gutter">
       <div class="lib-head">
-        <button id="libPractice" class="practice-cta" type="button" title="Warm-ups, chords, strumming, picking, scales and routines: no song needed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l4 18H5z"/><path d="m12 15 5-9"/><path d="M7.5 15h9"/></svg>Free Practice</button>
         <div>
         <h2 id="libTitle">Your songs</h2>
         <p id="libSub" class="sub">Play along, practise, and write your own. Your songs are kept on this device: add them from files, and back them up.</p>
@@ -474,8 +490,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div id="instrumentAskButtons" class="add-row" style="margin-top:8px"></div><label class="check-row" style="margin-top:6px"><input id="askAllFeatures" type="checkbox"> Show all features: for running a club, Stage copies, the Session screen and more. You can change it any time in Settings.</label></div>
       <div id="storeBanner" class="banner" hidden></div>
       <div class="add-row lib-add">
-        <button id="pasteSongBtn" class="btn primary" type="button" title="Copy a chord sheet from a website, then paste it here: the chords go into the words for you">Paste from a website</button>
-        <button id="newSongBtn" class="btn" type="button" title="Write a new song: words with the chords in square brackets">+ New song</button>
+        <button id="newSongBtn" class="btn primary" type="button" aria-haspopup="dialog" title="Add a song: paste one from a website, write your own, or add song files">+ New song</button>
         <details id="libMore" class="lib-more"><summary class="btn">More <span aria-hidden="true">▾</span></summary><div class="lib-more-items">
           <label class="btn" for="updateInput" title="Song files (ukemusic, ChordPro, or chords above the words), a zipped songs folder, or a backup">Add songs from files…</label>
           <button id="cloudBtn" class="btn" type="button" hidden title="Keep your songs in Dropbox, in the desktop app's songs folder: changes here go there, and changes there come here">Dropbox…</button>
@@ -654,6 +669,16 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
   </form>
 </dialog>
 
+<!-- 4.94: New song: the ways a song comes in -->
+<dialog id="newWayDialog" class="new-way-dialog">
+  <h2>New song</h2>
+  <div class="new-ways">
+    <button id="pasteSongBtn" class="new-way" type="button"><strong>Paste from a website</strong><span>Copy a chord sheet from any website, then paste it here: the chords go into the words for you.</span></button>
+    <button id="writeSongBtn" class="new-way" type="button"><strong>Write your own</strong><span>Type the words, with the chords in square brackets.</span></button>
+    <label class="new-way" for="updateInput" id="filesSongBtn"><strong>Add songs from files</strong><span>Song files (ukemusic, ChordPro, or chords above the words), a zipped songs folder, or a backup.</span></label>
+  </div>
+  <div class="dialog-actions"><button id="newWayCancel" class="btn" type="button">Cancel</button></div>
+</dialog>
 <dialog id="newSongDialog">
   <h2>New song</h2>
   <form id="newSongForm" method="dialog" class="fields">
@@ -1118,7 +1143,12 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   }
   // Practice → Keep as a song (a melody you made): a new song here
   window.ukemusicNewSong = (title, text) => createSong(title || 'My melody', text);
-  $('newSongBtn').addEventListener('click', () => {
+  $('newSongBtn').addEventListener('click', () => $('newWayDialog').showModal());
+  $('newWayCancel').addEventListener('click', () => $('newWayDialog').close());
+  $('filesSongBtn').addEventListener('click', () => $('newWayDialog').close());
+  $('newWayDialog').addEventListener('click', (event) => { if (event.target === $('newWayDialog')) $('newWayDialog').close(); });
+  $('writeSongBtn').addEventListener('click', () => {
+    $('newWayDialog').close();
     $('newTitle').value = '';
     $('newSongError').textContent = '';
     $('newSongDialog').showModal();
@@ -1128,6 +1158,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   // 4.66: Paste from a website: the same conversion as files (src/song-files.js: chords above the
   // words moved into them; ChordPro converted), then the song opens to look over
   $('pasteSongBtn').addEventListener('click', () => {
+    $('newWayDialog').close();
     $('pasteText').value = ''; $('pasteTitle').value = ''; $('pasteSongError').textContent = '';
     $('pasteSongDialog').showModal();
     setTimeout(() => $('pasteText').focus(), 50);
@@ -2878,7 +2909,34 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
   $('karaokeButton').addEventListener('click', () => { if (play.schedule) stop(); }, true);
 
   // Practice stops the song first
-  $('libPractice').addEventListener('click', () => { stop(); state.config.song.instrument = myInstrument(); }, true); // 4.62: from here, Free Practice is for your instrument
+  $('libPractice').addEventListener('click', () => { stop(); state.config.song.instrument = myInstrument(); }, true);
+  // 4.94: Free Practice from the top bar's tab opens under the bar, so Songs takes you back
+  {
+    const practiceEl = document.getElementById('practice');
+    const nav = document.querySelector('#libraryView .home-tabs');
+    let freed = [];
+    const setHomeTab = (which) => { for (const [id, name] of [['homeTabSongs', 'songs'], ['libPractice', 'practice']]) { $(id).classList.toggle('active', which === name); $(id).setAttribute('aria-selected', String(which === name)); } };
+    $('libPractice').addEventListener('click', () => {
+      if (!practiceEl || practiceEl.hidden) return;
+      // free the tabs (and only them) from the practice screen's inert page
+      freed = [];
+      for (let el = nav; el && el !== document.body; el = el.parentElement) {
+        if (el.inert) { el.inert = false; freed.push(el); }
+        for (const sib of el.parentElement ? el.parentElement.children : []) if (sib !== el && sib !== practiceEl && !sib.inert && !['SCRIPT', 'STYLE'].includes(sib.tagName) && !sib.contains(practiceEl)) { sib.inert = true; freed.push(sib); }
+      }
+      practiceEl.style.setProperty('--home-bar-h', `${document.querySelector('#libraryView .bar').getBoundingClientRect().bottom}px`);
+      practiceEl.classList.add('pr-under-home');
+      setHomeTab('practice');
+    });
+    if (practiceEl) new MutationObserver(() => {
+      if (!practiceEl.hidden || !practiceEl.classList.contains('pr-under-home')) return;
+      practiceEl.classList.remove('pr-under-home');
+      for (const el of freed) el.inert = false;
+      freed = [];
+      setHomeTab('songs');
+    }).observe(practiceEl, { attributes: true, attributeFilter: ['hidden'] });
+    $('homeTabSongs').addEventListener('click', () => { if (practiceEl && !practiceEl.hidden) $('practiceClose').click(); });
+  } // 4.62: from here, Free Practice is for your instrument
 
   // ── Learn (as the desktop app's Learn tab, src/learn.js) ──
   /** The song as it's played now (in the key shown, as shapes under a capo), its key and analysis */

@@ -123,6 +123,10 @@
       html:not([data-editing]) .workspace > .editor-panel, html:not([data-editing]) .workspace > #splitter { display: none; }
       html:not([data-editing]) [data-edit-only] { display: none !important; }
       html:not([data-editing]) .preview-head, html:not([data-editing]) #cursorLabel { display: none; }
+      /* 4.94: reading, a firm line between the tools and the song */
+      html:not([data-editing]) .workspace > .preview-panel { border-top: 3px solid var(--tabs-blue, #1d4ed8); }
+      .appbar-close { border: 1px solid var(--border); background: var(--panel-bg, #fff); color: var(--text); border-radius: 8px; width: 34px; height: 34px; font: inherit; font-size: 20px; line-height: 1; cursor: pointer; flex: none; }
+      .appbar-close:hover { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
 
       .now-playing {
         min-width: 40px;
@@ -383,6 +387,42 @@
       .phone-plan-list label { display: flex; gap: 8px; align-items: baseline; }
       .phone-plan-list .what { color: var(--muted-text, #666); }
       .library-heading { display: flex; align-items: center; gap: 18px; }
+      /* 4.94: Songs | Free Practice, in the top bar */
+      .home-tabs { display: flex; gap: 4px; align-self: stretch; margin: -12px 0; }
+      .home-tab { display: inline-flex; align-items: center; gap: 7px; border: 0; border-bottom: 3px solid transparent; background: none; font: inherit; font-size: 16px; font-weight: 700; color: var(--muted); padding: 0 16px; cursor: pointer; }
+      .home-tab:hover { color: var(--text); background: var(--accent-soft); }
+      .home-tab.active { color: var(--tabs-blue); border-bottom-color: var(--tabs-blue); }
+      .home-tab.practice-tab.active { color: #c2410c; border-bottom-color: #c2410c; }
+      .home-tab svg { width: 18px; height: 18px; }
+      .practice.pr-under-home { top: var(--home-bar-h, 60px); }
+      .new-song-dialog { width: min(560px, 94vw); }
+      .new-song-ways { display: grid; gap: 10px; margin: 12px 0 16px; }
+      .new-way { display: grid; grid-template-columns: 28px 1fr; gap: 2px 12px; align-items: center; text-align: left; padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--panel-bg); color: var(--text); font: inherit; cursor: pointer; }
+      .new-way:hover, .new-way:focus-visible { border-color: var(--accent); background: var(--accent-soft); outline: none; }
+      .new-way [data-icon] { grid-row: 1 / 3; color: var(--accent); }
+      .new-way strong { font-size: 16px; }
+      .new-way > span:last-child { grid-column: 2; font-size: 13.5px; color: var(--muted); }
+      /* 4.94: the songs as tiles (or the list); the choice is kept */
+      .lib-view { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+      .lib-view button { border: 0; background: var(--panel-bg); font: inherit; font-size: 13px; padding: 5px 10px; cursor: pointer; color: var(--muted); }
+      .lib-view button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent-dark); font-weight: 700; }
+      #libTileSort { font: inherit; font-size: 13px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel-bg); color: var(--text); }
+      .library-songs:not(.tiles) #libTileSortWrap { display: none; }
+      .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+      .library-songs.tiles .library-table { background: transparent; border: 0; border-radius: 0; overflow: visible; }
+      .library-songs.tiles .library-row-head, .library-songs.tiles .library-row.key-row { display: none; }
+      .library-songs.tiles #libList { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+      .library-songs.tiles .library-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto auto 1fr; gap: 6px 8px; align-items: start; align-content: start; min-height: 150px; padding: 14px 14px 12px 16px; border: 1px solid var(--border); border-radius: 14px; background: var(--panel-bg); box-shadow: inset 0 4px 0 var(--accent-soft); }
+      .library-songs.tiles .library-row:hover, .library-songs.tiles .library-row:focus-visible { border-color: var(--accent); box-shadow: inset 0 4px 0 var(--accent); }
+      .library-songs.tiles .library-row.current { box-shadow: inset 0 4px 0 var(--accent); }
+      .library-songs.tiles .library-row > :nth-child(1) { grid-column: 1; grid-row: 1; font-size: 17px; }
+      .library-songs.tiles .library-row > :nth-child(1) .title-main span:first-child { white-space: normal; }
+      .library-songs.tiles .library-row > :nth-child(2) { grid-column: 1 / 3; grid-row: 2; color: var(--muted); font-size: 14px; }
+      .library-songs.tiles .library-row > :nth-child(3) { grid-column: 1 / 3; grid-row: 3; font-size: 13px; font-weight: 700; color: var(--accent-dark); }
+      .library-songs.tiles .library-row > :nth-child(4), .library-songs.tiles .library-row > :nth-child(6) { display: none; }
+      .library-songs.tiles .library-row > :nth-child(5) { grid-column: 1 / 3; grid-row: 4; align-self: end; }
+      .library-songs.tiles .library-row > :nth-child(7) { grid-column: 2; grid-row: 1; }
+      .library-songs.tiles .library-empty { grid-column: 1 / -1; }
       /* Session screen (4.35) */
       .session-cta { border-color: #0e6b64; color: #0e6b64; }
       .session-bar { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 900; display: flex; align-items: center; gap: 12px; padding: 8px 10px 8px 16px; border-radius: 14px; background: #0e6b64; color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.25); font-size: 14px; max-width: 92vw; }
@@ -494,6 +534,7 @@
       .library-songs-head h2 { margin: 0; font-size: 19px; }
       .library-songs-head .muted { color: var(--muted); font-weight: 400; }
       .library-songs-head label { font-size: 13px; color: var(--muted); }
+      .lib-head-right { display: inline-flex; align-items: center; gap: 10px; margin-left: auto; } /* 4.94: sort, tiles or list, and Find keep together */
       #libSearch {
         width: 260px;
         max-width: 100%;
@@ -2233,6 +2274,7 @@
           <button id="quickStop" type="button">Stop</button>
           <select id="songSections" aria-label="Jump to section"><option value="">Jump to section</option></select>
           <span id="nowPlaying" class="now-playing" aria-live="polite"></span>
+          <button id="closeSongX" class="appbar-close" type="button" title="Close the song (Ctrl+W)" aria-label="Close the song">×</button>
         </div>
         <nav class="ribbon" aria-label="Tools">
           <div class="ribbon-tabs" role="tablist">
@@ -2271,7 +2313,7 @@
               </div>
               <span class="rib-label">Song file</span>
             </div>
-            <div class="rib-group" data-feature="bringIn">
+            <div class="rib-group" data-feature="bringIn" data-edit-only>
               <div class="rib-items">
                 <button id="importButton" class="rib-button" type="button" data-icon="import" title="Bring in a text or ChordPro (.cho) file from your computer as a new song">Import file</button>
                 <button id="pasteSheetButton" class="rib-button" type="button" data-icon="paste" title="Paste a song from a website (chords above the words, tab or ChordPro) and have it tidied (Ctrl+Shift+V)">Paste from a website</button>
@@ -3475,6 +3517,11 @@
     <section id="library" class="library" aria-label="Your songs">
       <header class="library-bar">
         <div class="library-brand"><span data-icon="uke" aria-hidden="true"></span><strong>ukemusic</strong></div>
+        <!-- 4.94: the two places: your songs, and Free Practice (no song needed) -->
+        <nav class="home-tabs" role="tablist" aria-label="ukemusic">
+          <button id="homeTabSongs" class="home-tab active" type="button" role="tab" aria-selected="true" title="Your songs and setlists">Songs</button>
+          <button id="libPractice" class="home-tab practice-tab" type="button" role="tab" aria-selected="false" title="Warm-ups, chords, strumming, picking, scales and routines: no song needed"><span data-icon="metronome" aria-hidden="true"></span>Free Practice</button>
+        </nav>
         <button id="libSwitch" data-feature="libraries" class="lib-switch" type="button" title="Your libraries: switch to another, start a new one, share one as a library pack or open a pack"><span data-icon="folder" aria-hidden="true"></span><span id="libSwitchName">Songs</span><span class="caret" aria-hidden="true">▾</span></button>
         <span class="library-folder" id="libFolder"></span>
         <span class="appbar-spacer"></span>
@@ -3483,11 +3530,9 @@
       </header>
       <main class="library-main">
         <div class="library-heading">
-          <button id="libPractice" class="practice-cta" type="button" title="Warm-ups, chords, strumming, picking, scales and routines: no song needed"><span data-icon="metronome" aria-hidden="true"></span>Free Practice</button>
           <div class="library-title"><h1 id="libHeading">Your songs</h1><p id="libAbout" class="library-about" hidden></p></div>
-          <!-- 4.66: the usual way in first -->
-          <button id="libPaste" class="library-new" type="button" title="Copy a chord sheet from a website, then paste it here: the chords go into the words for you"><span data-icon="paste" aria-hidden="true"></span>Paste from a website</button>
-          <button id="libNew" class="library-new secondary" type="button" title="Write a song of your own: words with the chords in square brackets"><span data-icon="plus" aria-hidden="true"></span>New song</button>
+          <!-- 4.94: one button; pasting from a website, writing your own and importing a file are its choices -->
+          <button id="libNew" class="library-new" type="button" aria-haspopup="dialog" title="Add a song: paste one from a website, write your own, or import a file"><span data-icon="plus" aria-hidden="true"></span>New song</button>
         </div>
         <div class="library-tabs" role="tablist">
           <button id="libTabSongs" class="library-tab active" type="button" role="tab">Songs</button>
@@ -3500,8 +3545,12 @@
             <button id="libExportAll" data-feature="libraryTools" class="lib-folder-button" type="button" title="Export every song again: PDFs, web pages, lyrics… (after you change a style, say)"><span data-icon="export" aria-hidden="true"></span>Export every song…</button>
             <button id="libPhone" data-feature="phone" class="lib-folder-button" type="button" title="Your songs on a phone or tablet (the web player): send them there in one file, and bring back the songs you write or change there"><span data-icon="screen" aria-hidden="true"></span>Phone and tablet…</button>
             <span class="appbar-spacer"></span>
+            <span class="lib-head-right">
+            <span id="libTileSortWrap"><label class="sr-only" for="libTileSort">Sort by</label><select id="libTileSort" title="Sort the songs"><option value="title">A to Z</option><option value="artist">Artist</option><option value="key">Key</option><option value="modified">Last changed</option></select></span>
+            <span class="lib-view" role="group" aria-label="Show the songs as"><button id="libViewTiles" type="button" aria-pressed="true" title="The songs as tiles">▦ Tiles</button><button id="libViewList" type="button" aria-pressed="false" title="The songs as a list, with every detail">☰ List</button></span>
             <label for="libSearch">Find</label>
             <input id="libSearch" type="search" placeholder="Title, artist, tag or key…" autocomplete="off" />
+            </span>
           </div>
           <div class="library-table" role="table" aria-label="Songs">
             <div class="library-row library-row-head" role="row">
@@ -4111,6 +4160,16 @@
       </form>
     </dialog>
 
+    <!-- 4.94: New song: the ways a song comes in -->
+    <dialog id="newSongDialog" class="new-song-dialog" aria-labelledby="newSongHeading">
+      <h2 id="newSongHeading">New song</h2>
+      <div class="new-song-ways">
+        <button id="libPaste" class="new-way" type="button"><span data-icon="paste" aria-hidden="true"></span><strong>Paste from a website</strong><span>Copy a chord sheet from any website, then paste it here: the chords go into the words for you.</span></button>
+        <button id="libWrite" class="new-way" type="button"><span data-icon="plus" aria-hidden="true"></span><strong>Write your own</strong><span>Type the words, with the chords in square brackets.</span></button>
+        <button id="libImport" class="new-way" type="button"><span data-icon="import" aria-hidden="true"></span><strong>Import a file</strong><span>A text or ChordPro (.cho) file from your computer.</span></button>
+      </div>
+      <div class="dialog-actions"><span></span><div class="right"><button id="newSongCancel" type="button">Cancel</button></div></div>
+    </dialog>
     <dialog id="titleDialog">
       <form id="titleForm" method="dialog">
         <h2 id="titleDialogHeading">New song</h2>
@@ -12416,6 +12475,7 @@ function showTab(tab) {
           button.setAttribute('aria-label', hide ? 'Show the tools' : 'Hide the tools');
         });
         document.getElementById('backToSongs').addEventListener('click', () => document.getElementById('closeSongButton').click());
+        document.getElementById('closeSongX').addEventListener('click', () => document.getElementById('closeSongButton').click()); // 4.94
         try { if (localStorage.getItem(RIBBON_HIDDEN_KEY) === '1') setRibbonHidden(true); } catch (_err) { /* shown */ }
         function showRibbon(name) {
           if (document.querySelector('nav.ribbon.collapsed')) setRibbonHidden(false);
@@ -12750,6 +12810,25 @@ function showTab(tab) {
           });
           return librarySort.desc ? out.reverse() : out;
         }
+        // 4.94: tiles or the list (kept on this computer); tiles sort from a menu, as they have no headings
+        const LIB_VIEW_KEY = 'ukemusic.libraryView';
+        function setLibraryView(view) {
+          const tiles = view !== 'list';
+          document.getElementById('libSongsView').classList.toggle('tiles', tiles);
+          document.getElementById('libViewTiles').setAttribute('aria-pressed', String(tiles));
+          document.getElementById('libViewList').setAttribute('aria-pressed', String(!tiles));
+          try { localStorage.setItem(LIB_VIEW_KEY, tiles ? 'tiles' : 'list'); } catch (_err) { /* not kept */ }
+        }
+        try { setLibraryView(localStorage.getItem(LIB_VIEW_KEY) || 'tiles'); } catch (_err) { setLibraryView('tiles'); }
+        document.getElementById('libViewTiles').addEventListener('click', () => setLibraryView('tiles'));
+        document.getElementById('libViewList').addEventListener('click', () => setLibraryView('list'));
+        const tileSort = document.getElementById('libTileSort');
+        tileSort.value = ['title', 'artist', 'key', 'modified'].includes(librarySort.by) ? librarySort.by : 'title';
+        tileSort.addEventListener('change', () => {
+          librarySort = { by: tileSort.value, desc: tileSort.value === 'modified' };
+          try { localStorage.setItem(LIB_SORT_KEY, JSON.stringify(librarySort)); } catch (_err) { /* not kept */ }
+          renderLibraryList();
+        });
         for (const head of document.querySelectorAll('.library-row-head [data-sort]')) {
           head.addEventListener('click', () => {
             librarySort = { by: head.dataset.sort, desc: librarySort.by === head.dataset.sort ? !librarySort.desc : false };
@@ -13734,10 +13813,42 @@ function showTab(tab) {
           toggleSettingsPanel(true);
           showSettingsTab('all');
         });
-        document.getElementById('libNew').addEventListener('click', () => fromLibrary(newFile));
+        // 4.94: New song asks how: paste, write or import
+        const newSongDialog = document.getElementById('newSongDialog');
+        document.getElementById('libNew').addEventListener('click', () => newSongDialog.showModal());
+        document.getElementById('newSongCancel').addEventListener('click', () => newSongDialog.close());
+        newSongDialog.addEventListener('click', (event) => { if (event.target === newSongDialog) newSongDialog.close(); });
+        document.getElementById('libWrite').addEventListener('click', () => { newSongDialog.close(); fromLibrary(newFile); });
+        // 4.94: Free Practice from the home screen's tab: under the top bar, so Songs takes you back
+        document.getElementById('libPractice').addEventListener('click', () => {
+          const library = document.getElementById('library');
+          const bar = library.querySelector('.library-bar');
+          if (library.hidden || practiceEl.hidden) return;
+          library.inert = false;
+          for (const child of library.children) if (child !== bar) child.inert = true;
+          for (const child of bar.children) if (!child.classList.contains('home-tabs')) child.inert = true;
+          practiceEl.style.setProperty('--home-bar-h', `${bar.getBoundingClientRect().height}px`);
+          practiceEl.classList.add('pr-under-home');
+          setHomeTab('practice');
+        });
+        function setHomeTab(which) {
+          for (const [id, name] of [['homeTabSongs', 'songs'], ['libPractice', 'practice']]) {
+            const tab = document.getElementById(id);
+            tab.classList.toggle('active', which === name);
+            tab.setAttribute('aria-selected', String(which === name));
+          }
+        }
+        new MutationObserver(() => {
+          if (!practiceEl.hidden || !practiceEl.classList.contains('pr-under-home')) return;
+          practiceEl.classList.remove('pr-under-home');
+          const library = document.getElementById('library');
+          for (const el of library.querySelectorAll(':scope > *, .library-bar > *')) el.inert = false;
+          setHomeTab('songs');
+        }).observe(practiceEl, { attributes: true, attributeFilter: ['hidden'] });
+        document.getElementById('homeTabSongs').addEventListener('click', () => { if (!practiceEl.hidden) document.getElementById('practiceClose').click(); });
         document.getElementById('libExportAll').addEventListener('click', () => openExportDialog({ everySong: true }));
-        document.getElementById('libPaste')?.addEventListener('click', () => fromLibrary(pasteNewSong));
-        document.getElementById('libImport')?.addEventListener('click', () => fromLibrary(() => importTextFile()));
+        document.getElementById('libPaste')?.addEventListener('click', () => { newSongDialog.close(); fromLibrary(pasteNewSong); });
+        document.getElementById('libImport')?.addEventListener('click', () => { newSongDialog.close(); fromLibrary(() => importTextFile()); });
         // 4.45: Phone and tablet: songs to the web player in one file, and back from it
         const phoneDialog = document.getElementById('phoneDialog');
         document.getElementById('libPhone').addEventListener('click', async () => {

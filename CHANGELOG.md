@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.94.0
+
+- Home screen: **Songs** and **Free Practice** are tabs at the top. Free Practice opens under them, so Songs takes you straight back. The orange Free Practice button has gone.
+- The songs show as **tiles** (title, artist, key, tags), or as the **list** with every detail. Tiles sort A to Z, by artist, by key or by last changed. The choice is kept.
+- **New song** asks how: **Paste from a website**, **Write your own** or **Import a file**. The separate Paste button has gone.
+- In a song: **×** at the top right closes it. While reading (not editing), a firm line sits between the tools and the song, and File's Bring in (import, paste) is only there while editing.
+- **Practice speed** (Play tab) is in the simple view: play slower without changing the song's saved tempo.
+- Web player: the same Songs and Free Practice tabs (on a phone, under the top bar), and New song asks how (paste, write, or add song files).
+- Website pictures retaken for the new home screen and song screen.
+
 ## v4.93.0
 
 - A song now opens as the sheet to play from, the whole width of the window, without the editor. **✎ Edit words & chords** (at the top, or F2, or Edit → Edit Words and Chords) shows the words and chords beside the sheet, and **Done** puts them away. The Write tab, Tidy chords and Edit chords on the sheet come with editing.

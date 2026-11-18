@@ -299,7 +299,7 @@ const SONGS_PAGE = {
   <p class="intro">The usual way in. Chord sheets with the chords on their own line above the words, or in the words, or in ChordPro, all work.</p>
   <ol class="steps">
     <li><span><strong>Copy the song</strong> from the website: select from the title to the last chord, and copy (Ctrl+C, or Copy on a phone).</span></li>
-    <li><span><strong>Paste it into ukemusic.</strong> Web player: <b>Paste from a website</b>, under Your songs. Desktop: <b>Paste from a website</b> in Your songs (or File → Paste from a website).</span></li>
+    <li><span><strong>Paste it into ukemusic.</strong> <b>New song → Paste from a website</b>, on the Songs page of the web player or the desktop app (in a song you're editing, also File → Paste from a website).</span></li>
     <li><span><strong>Give it a title</strong> and look it over: the chords sit in the words, and the parts have headings.</span></li>
     <li><span><strong>Press Play</strong> and listen alongside the recording. If the timing needs work, the <a href="#ai">ready-to-practise AI prompt</a> sorts it out.</span></li>
   </ol>
@@ -321,7 +321,7 @@ const SONGS_PAGE = {
   <ol class="steps">
     <li><span><strong><a href="${AI_CHAT_URL}" target="_blank" rel="noopener">Open an AI chat</a></strong> (Claude, or ChatGPT, Gemini…) and paste the chord sheet in (or attach the PDF).</span></li>
     <li><span><strong>Copy one of the prompts below</strong> into the same message, so the AI knows ukemusic's format. (They're in the apps too: in the desktop app <b>File → Paste from a website</b>, in the web player <b>Edit → Help from an AI chat</b>.)</span></li>
-    <li><span><strong>Copy its answer into ukemusic</strong> with <b>File → Paste from a website</b>, and save.</span></li>
+    <li><span><strong>Copy its answer into ukemusic</strong> with <b>New song → Paste from a website</b>, and save.</span></li>
     <li><span><strong>Press Play and check it</strong> against the original. The chords are usually right; the timing (how many bars each chord lasts) is the part to listen for.</span></li>
   </ol>
   <h3 id="ai-prompts" style="margin-top:32px">The prompts, to copy</h3>

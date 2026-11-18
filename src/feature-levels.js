@@ -60,7 +60,7 @@
     { id: 'session', app: 'both', where: 'Play; web: the player', name: 'Session screen', level: 'all' },
     { id: 'musicStand', app: 'both', where: 'Play, and Setlists; web: the player', name: 'Music stand (read a song, or a setlist, page by page)', level: 'simple' },
     { id: 'tempo', app: 'both', where: 'Play; web: the player', name: 'Tempo: slower, faster, tap', level: 'simple' },
-    { id: 'practice', app: 'desktop', where: 'Play', name: 'Practice speed', level: 'all' },
+    { id: 'practice', app: 'desktop', where: 'Play', name: 'Practice speed', level: 'simple' }, // 4.94: simple (a tempo change is saved with the song; this isn't)
     { id: 'sound', app: 'both', where: 'Play; web: Settings', name: 'Sound and feel', level: 'all' },
     { id: 'countIn', app: 'desktop', where: 'Play', name: 'Count in and voice', level: 'all' },
     { id: 'accompaniment', app: 'web', where: 'the song page and player', name: 'Strum or pick: what it plays', level: 'all' },

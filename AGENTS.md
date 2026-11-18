@@ -95,6 +95,7 @@ One name for each thing, in both apps, the menu, the guide and the website (4.82
 | Bring a sheet in from the web | Paste from a website | Paste from web, Paste a chord sheet |
 | Chords above the words, moved into them | Tidy chords | Tidy chords above words |
 | Showing the words and chords to change them (a song opens as the sheet) | Edit words & chords; Done goes back | Edit mode, Edit lyrics, the editor (in the app's words) |
+| The home screen's two tabs; the songs shown as cards or rows | Songs, Free Practice; Tiles, List | Library tab, Practice tab; Cards, Grid |
 | Files out of the desktop app | Export | |
 | Files out of the web player | Download | |
 
