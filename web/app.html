@@ -421,7 +421,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
  #songMeta {font-size:13px;margin:7px 0}
 }
 /* 4.86: while it plays on a narrow screen, the player is Pause and Stop: more of the song shows */
-@media (max-width: 640px) { .player.active #restartBtn, .player.active #accompanimentBtn, .player.active #karaokeButton, .player.active #learnBtn, .player.active #sessionBtn, .player.active #standBtn { display: none; } .player.active .now-shapes { zoom: 0.72; } .player.active .now-shapes > :nth-child(n+3) { display: none; } .player.active .tempo { margin-left: auto; } .player.active .player-row { flex-wrap: nowrap; } .player.active .now { min-width: 0; flex: 1 1 auto; overflow: hidden; } .player.active .tempo .val { display: none; } }
+@media (max-width: 640px) { .player.active #restartBtn, .player.active #accompanimentBtn, .player.active #karaokeButton, .player.active #learnBtn, .player.active #sessionBtn, .player.active #standBtn, .player.active #addToSetlistBtn { display: none; } .player.active .now-shapes { zoom: 0.72; } .player.active .now-shapes > :nth-child(n+3) { display: none; } .player.active .tempo { margin-left: auto; } .player.active .player-row { flex-wrap: nowrap; } .player.active .now { min-width: 0; flex: 1 1 auto; overflow: hidden; } .player.active .tempo .val { display: none; } }
 /* 4.83: on a touch screen, nothing to tap is under 44px and nothing to read under 13px */
 @media (pointer: coarse), (max-width: 640px) {
   .tool button, .tool select { min-width: 44px; min-height: 44px; }
@@ -553,6 +553,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
           <button id="restartBtn" data-feature="restart" class="btn" type="button">Restart</button><button id="stopBtn" class="btn" type="button" hidden>Stop</button><button id="accompanimentBtn" data-feature="accompaniment" class="btn" type="button">Strum or pick</button><button id="karaokeButton" data-feature="karaoke" class="btn" type="button" title="Full screen, big words that light up as you sing, with the chord shapes">Karaoke</button>
           <button id="learnBtn" data-feature="learn" class="btn" type="button" title="Learn the song by heart: play from memory, a quiz on the changes, the learn sheet, its chord patterns and the circle of fifths">Learn</button>
           <button id="standBtn" data-feature="musicStand" class="btn" type="button" title="Music stand: the song full screen at one steady size, for reading from an iPad on a stand. Tap the right half for the next page or song, the left half to go back, the top for the menu. It goes through the songs as listed in your library.">Music stand</button>
+          <button id="addToSetlistBtn" data-feature="setlists" class="btn" type="button" title="Put this song in a setlist (the songs for a gig, in order): then Music stand goes through them">+ Setlist</button>
           <button id="sessionBtn" data-feature="session" class="btn" type="button" title="Session screen: the whole song on one screen for a group to play from (a TV or projector). Arrow keys, a clicker or a tap go to the next song in the list">Session screen</button>
           <div class="now"><div id="nowChord" class="now-chord"></div><div id="nowShapes" class="now-shapes"></div></div>
           <div class="tempo" data-feature="tempo"><button id="slower" type="button" aria-label="Slower">−</button><span id="tempoVal" class="val"></span><button id="faster" type="button" aria-label="Faster">+</button></div>
@@ -677,6 +678,12 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
   <label class="setlist-find">Add songs <input id="setlistFind" type="search" placeholder="Find a song…" autocomplete="off"></label>
   <div id="setlistFound" class="setlist-found"></div>
   <div class="dialog-actions"><button id="setlistDelete" class="btn danger" type="button">Delete</button><span class="spacer"></span><button id="setlistCancel" class="btn" type="button">Cancel</button><button id="setlistSave" class="btn primary" type="button">Save</button></div>
+</dialog>
+<dialog id="addToSetlistDialog" class="setlist-dialog" aria-labelledby="addToSetlistTitle">
+  <h2 id="addToSetlistTitle">Put this song in a setlist</h2>
+  <p id="addToSetlistSong" class="note"></p>
+  <div id="addToSetlistRows" class="setlist-found"></div>
+  <div class="dialog-actions"><button id="addToSetlistNew" class="btn" type="button">+ New setlist with this song</button><span class="spacer"></span><button id="addToSetlistClose" class="btn primary" type="button">Done</button></div>
 </dialog>
 <dialog id="askDialog" class="ask-dialog">
   <p id="askText"></p>
@@ -2532,6 +2539,25 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     $('setlistFound').innerHTML = list.map((x) => `<button type="button" data-add="${esc(x.id)}">+ ${esc(x.title)}</button>`).join('') || `<p class="note">${q ? 'No songs match.' : 'Every song is in it.'}</p>`;
     for (const b of $('setlistFound').querySelectorAll('[data-add]')) b.addEventListener('click', () => { const x = getSong(b.dataset.add); if (x) slEdit.lines.push({ title: x.title, shift: 0 }); drawSetlistSongs(); drawSetlistFound(); });
   }
+  // 4.91: from a song: put it in a setlist (or take it out), or start a new one with it
+  function drawAddToSetlist() {
+    const song = view.song;
+    if (!song) return;
+    $('addToSetlistSong').textContent = song.title;
+    const inIt = (sl) => setlistLines(sl).some((l) => U.webSongs.id(l.title) === U.webSongs.id(song.title));
+    $('addToSetlistRows').innerHTML = setlists.map((sl, i) => `<button type="button" data-sl="${i}" aria-pressed="${inIt(sl)}">${inIt(sl) ? '✓ In' : '+ Add to'} ${esc(sl.name)} <small class="note">(${count(setlistLines(sl).length, 'song')})</small></button>`).join('') || '<p class="note">No setlists yet: start one with this song.</p>';
+    for (const b of $('addToSetlistRows').querySelectorAll('[data-sl]')) b.addEventListener('click', () => {
+      const sl = setlists[Number(b.dataset.sl)];
+      const lines = setlistLines(sl);
+      const k = lines.findIndex((l) => U.webSongs.id(l.title) === U.webSongs.id(song.title));
+      if (k >= 0) lines.splice(k, 1); else lines.push({ title: song.title, shift: 0 });
+      sl.text = ST.formatSetlist(lines);
+      saveSetlists(); renderSetlists(); drawAddToSetlist(); cloudSoon(4000);
+    });
+  }
+  $('addToSetlistBtn').addEventListener('click', () => { drawAddToSetlist(); $('addToSetlistDialog').showModal(); });
+  $('addToSetlistClose').addEventListener('click', () => $('addToSetlistDialog').close());
+  $('addToSetlistNew').addEventListener('click', () => { $('addToSetlistDialog').close(); editSetlist(null); slEdit.lines = [{ title: view.song.title, shift: 0 }]; drawSetlistSongs(); drawSetlistFound(); });
   $('setlistFind').addEventListener('input', drawSetlistFound);
   $('setlistName').addEventListener('input', () => { $('setlistNameError').textContent = ''; });
   $('newSetlistBtn').addEventListener('click', () => editSetlist(null));

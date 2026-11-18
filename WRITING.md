@@ -443,6 +443,17 @@ The same choice is in **Settings → How the chord sheet looks**, and it applies
 
 **Library → Check songs fit one screen…** tells you which songs need a page turn before the night.
 
+### On a tablet on a music stand: the Music stand
+
+**Music stand** (Play → Music stand on the desktop; beside Play in the web player; and on a setlist) shows your songs a page at a time, for you to read from an iPad or a laptop on a stand:
+
+- **One steady size** for every song (A− and A+ change it, and it's remembered), the chords above the words. A song that doesn't fit turns a page instead of getting smaller; a second column is used only where no line has to wrap.
+- **Tap the right half** of the screen for the next page, and after the last page the next song. **Tap the left half** to go back.
+- **Tap the top** of the screen, or **☰ Menu** in the corner, for the menu: **Close**, the songs (to jump to any of them), a verse or chorus to go to, the text size, and **?** for how it works. It hides again at the next page turn.
+- The song and the page are along the bottom; at the end of a song it says which comes next.
+- A **setlist** goes through its songs in its order and its keys. In the web player, **+ Setlist** on a song puts it in one (or starts one), and **Setlists** in the songs list has them all, each with **Music stand** and **Edit**. With Dropbox, the setlists are shared with the desktop app.
+- A Bluetooth page-turner pedal, or the arrow keys, turn the pages too. Esc closes it.
+
 ### On a music stand: the Stage copy on two pages
 
 **Export → Two-page Stage** fits the song onto one page if it will go, or two, so you never turn a page mid-song. It makes the text as big as will fit (but no smaller than the smallest size you choose), then closes up the gaps, then uses two columns a page, then prints a repeated chorus once. On the ribbon's Export tab (Two-page Stage) you choose the chords above or in the words, and the smallest text it may use (12 pt to start with). The same habits help: a blank line or a heading between parts, since parts are kept together.
@@ -478,6 +489,7 @@ The web player (ukemusic in the browser) keeps its own songs on the device, and 
 
 - **Add songs from files…** brings in song files, ChordPro files, chord sheets, a zipped songs folder, or a backup.
 - **Back up all songs** saves every song in one file. Keep it somewhere safe.
+- **Setlists** (in the songs list) and **+ Setlist** (on a song) put songs in order for a gig; **Music stand** reads them a page at a time, a tap to turn (see "On a tablet on a music stand").
 - In the desktop app, **Phone and tablet…** (in the library) sends your songs to the web player, and brings back the ones you wrote or changed there.
 
 ## Tips

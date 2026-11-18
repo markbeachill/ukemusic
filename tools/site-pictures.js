@@ -311,11 +311,14 @@ async function musicStand(base) {
   const ctx = await b.newContext({ viewport: { width: 1360, height: 1020 }, hasTouch: true, deviceScaleFactor: 1 });
   const p = await ctx.newPage();
   p.on('dialog', (d) => d.dismiss());
-  await p.addInitScript(() => { try { localStorage.setItem('ukeweb.instrument', '"soprano"'); localStorage.setItem('ukeweb.look', JSON.stringify({ allFeatures: false, standSeen: true })); } catch (_e) { /* fine */ } });
+  // 4.91: a setlist of three, opened from the songs list: the guide the first time, then the first song
+  const setlist = '# ukemusic setlist: one song title per line, in playing order\nDanny Boy\nThe Wild Rover\nAmazing Grace\n';
+  await p.addInitScript((text) => { try { if (sessionStorage.getItem('seeded')) return; sessionStorage.setItem('seeded', '1'); localStorage.setItem('ukeweb.instrument', '"soprano"'); localStorage.setItem('ukeweb.look', JSON.stringify({ allFeatures: false })); localStorage.setItem('ukeweb.setlists', JSON.stringify([{ name: 'Club night', text, rev: '', synced: '' }])); } catch (_e) { /* fine */ } }, setlist);
   await p.goto(`${base}/app/index.html`); await p.waitForTimeout(2000);
-  await p.locator('.song-row', { hasText: 'Danny Boy' }).first().click(); await p.waitForTimeout(1500);
-  await p.click('#standBtn'); await p.waitForTimeout(1800);
-  await p.screenshot({ path: path.join(RAW, 'music-stand.png') }); log('took music-stand');
+  await p.evaluate(() => { document.getElementById('setlistsBox').open = true; document.querySelector('#setlistRows [data-stand="0"]').click(); }); await p.waitForTimeout(1800);
+  if (want('music-stand-guide')) { await p.screenshot({ path: path.join(RAW, 'music-stand-guide.png') }); log('took music-stand-guide'); }
+  await p.click('.ss-guide-ok'); await p.waitForTimeout(800);
+  if (want('music-stand')) { await p.screenshot({ path: path.join(RAW, 'music-stand.png') }); log('took music-stand'); }
   await b.close();
 }
 
@@ -467,7 +470,7 @@ async function finish(base) {
   const server = await serve();
   const base = `http://127.0.0.1:${server.address().port}`;
   if (doImg && (want('phone-library') || want('phone-song'))) await phone(base);
-  if (doImg && want('music-stand')) await musicStand(base);
+  if (doImg && (want('music-stand') || want('music-stand-guide'))) await musicStand(base);
   await finish(base);
   server.close();
   log('done. Look at site/img and site/gallery (git diff shows what changed), then build the site: node web/make.js');

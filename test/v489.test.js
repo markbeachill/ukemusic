@@ -38,10 +38,10 @@ test('columns only when no line wraps in them; pages, never smaller text', () =>
 });
 
 test('taps: the right half on, the left half back, the top the bar (which hides at the next turn)', () => {
-  assert.match(SCREEN, /if \(e\.clientY - r\.top < Math\.max\(60, r\.height \* 0\.14\)\) \{ rootEl\.classList\.remove\('ss-show-taps'\); setBar\(!rootEl\.classList\.contains\('ss-bar-on'\)\); return; \}\n\s*go\(e\.clientX - r\.left > r\.width \/ 2 \? 1 : -1\);/);
+  assert.match(SCREEN, /if \(e\.clientY - r\.top < Math\.max\(60, r\.height \* 0\.14\)\) \{ setBar\(!rootEl\.classList\.contains\('ss-bar-on'\)\); return; \}\n\s*go\(e\.clientX - r\.left > r\.width \/ 2 \? 1 : -1\);/);
   assert.match(SCREEN, /function go\(dir\) \{\n\s*setBar\(false\);/);
   assert.match(SCREEN, /<button class="ss-bookbtn ss-smaller" type="button" title="Smaller text \(−\)" aria-label="Smaller text">A−<\/button><button class="ss-bookbtn ss-bigger"/);
-  assert.match(SCREEN, /<span class="top">Tap here for the menu<\/span><span>← Back<\/span><span>Next →<\/span>/, 'shown the first time');
+  assert.match(SCREEN, /<b>← Tap the left half<\/b>/, 'shown the first time (4.91: a guide, not a few seconds of zones)');
   assert.match(SCREEN, /\.ss-screen\.ss-book \.ss-foot \{ display: block; \}/, 'the title and page along the bottom');
   // the Session screen on a TV is as it was: a third back, two thirds on
   assert.match(SCREEN, /go\(e\.clientX - r\.left > r\.width \/ 3 \? 1 : -1\);/);

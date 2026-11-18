@@ -1,5 +1,17 @@
 # Changelog
 
+## v4.91.0
+
+The Music stand made easier to find your way in and out of, and to use with setlists. Web player and desktop.
+
+- **A guide the first time it opens** (and from **?** in its menu). It shows the three places to tap: the top or ☰ Menu for the menu, the left half to go back, the right half for the next page and then the next song. It also mentions the pedal, Esc and setlists. **Start reading**, a tap outside the card, or Enter closes it, and that tap never turns a page. It replaces the few seconds of tap zones.
+- **☰ Menu is always in the corner**, so the way out is never hidden. On an iPad there's no Esc key, and a tap at the top was easy to miss.
+- **The menu:** **× Close** says what it does, there's a list of **the songs** (jump to any of them in a setlist), Go to a verse or chorus, A− A+, and **?**.
+- **At the end of a song**, the line along the bottom says what comes next ("next: The Wild Rover →").
+- **Setlists in the simple view** (desktop and web), since the Music stand goes through them.
+- **Web player: + Setlist** beside Music stand on a song puts it in a setlist, takes it out again, or starts a new one with it.
+- **The website:** the home page has a Music stand section. The Perform page describes it and how to use it, with two new pictures: the Music stand on an iPad going through a setlist, and its first-time guide (`site/img/music-stand.webp`, `site/img/music-stand-guide.webp`). The guide (How to Write Songs) has "On a tablet on a music stand", and the README's table lists it.
+
 ## v4.90.1
 
 - **Website pictures.** The Free Practice picture had been taken with the first-visit slides open in front of it: the picture script now closes them. New pictures, on the Practise and Perform pages:

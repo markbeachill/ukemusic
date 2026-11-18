@@ -105,7 +105,7 @@ test('4.90.1: the website\'s pictures: Free Practice without its first-visit sli
   const SP = read('tools/site-pictures.js');
   assert.match(SP, /const d = document\.getElementById\('prHelpDialog'\); if \(d && d\.open\) d\.close\(\);/);
   assert.match(SP, /await scene\('one-minute', async \(\) => \{/);
-  assert.match(SP, /if \(doImg && want\('music-stand'\)\) await musicStand\(base\);/);
+  assert.match(SP, /if \(doImg && \(want\('music-stand'\) \|\| want\('music-stand-guide'\)\)\) await musicStand\(base\);/); // 4.91: and its guide
   const PAGES = read('web/pages.js');
   assert.match(PAGES, /img: 'one-minute\.webp', alt: 'One-minute changes from C to F, with Count by listening on' \}/);
   assert.match(PAGES, /\{ h3: 'Music stand', p: \[[^\]]*\], img: 'music-stand\.webp', h: 1020,/);

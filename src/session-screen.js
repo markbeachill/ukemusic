@@ -104,10 +104,30 @@
 .ss-screen .ss-foot { display: none; position: absolute; left: 18px; right: 18px; bottom: 3px; font-size: 12px; line-height: 16px; color: var(--ss-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
 .ss-screen.ss-book .ss-foot { display: block; }
 .ss-screen.ss-book .ss-dots { bottom: 6px; left: auto; right: 18px; transform: none; }
-.ss-screen .ss-taphelp { display: none; position: absolute; inset: 0; z-index: 3; pointer-events: none; }
-.ss-screen.ss-book.ss-show-taps .ss-taphelp { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 14% 1fr; }
-.ss-screen .ss-taphelp span { display: grid; place-items: center; background: color-mix(in srgb, var(--ss-bg) 82%, transparent); border: 3px dashed var(--ss-label); color: var(--ss-label); font-weight: 800; font-size: 28px; margin: 8px; border-radius: 16px; }
-.ss-screen .ss-taphelp .top { grid-column: 1 / -1; font-size: 20px; }
+/* 4.91: the music stand: a menu button always in the corner (the way out is never hidden), the
+   songs to jump to, help, and a guide the first time */
+.ss-screen .ss-menubtn { display: none; position: absolute; top: 8px; right: 10px; z-index: 3; min-width: 48px; min-height: 48px; border-radius: 12px; border: 1px solid var(--ss-faint);
+  background: color-mix(in srgb, var(--ss-bg) 85%, transparent); color: var(--ss-ink); font: inherit; font-size: 15px; font-weight: 700; padding: 0 12px; cursor: pointer; opacity: 0.8; }
+.ss-screen.ss-book .ss-menubtn { display: block; }
+.ss-screen.ss-book.ss-bar-on .ss-menubtn { display: none; }
+.ss-screen .ss-songs { display: none; border: 1px solid var(--ss-faint); border-radius: 10px; background: var(--ss-bg); color: var(--ss-ink); font: inherit; font-size: 15px; min-height: 44px; max-width: 16em; }
+.ss-screen.ss-book .ss-songs:not([hidden]) { display: inline-block; }
+.ss-screen.ss-book .ss-x { font-size: 17px; font-weight: 700; border: 1px solid var(--ss-faint); border-radius: 10px; padding: 0 14px; color: var(--ss-ink); }
+.ss-screen .ss-guide { display: none; position: absolute; inset: 0; z-index: 6; place-items: center; padding: 16px; background: rgba(0, 0, 0, 0.45); }
+.ss-screen.ss-guiding .ss-guide { display: grid; }
+.ss-screen .ss-guide-card { background: var(--ss-bg); color: var(--ss-ink); border-radius: 18px; padding: 22px 24px; width: min(560px, 100%); max-height: 100%; overflow-y: auto; box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35); font-size: 17px; line-height: 1.45; }
+.ss-screen .ss-guide-card h2 { margin: 0 0 4px; font-size: 24px; }
+.ss-screen .ss-guide-card p { margin: 0 0 12px; color: var(--ss-muted); }
+.ss-screen .ss-guide-zones { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 8px; margin: 0 0 14px; }
+.ss-screen .ss-guide-zones div { border: 2px dashed var(--ss-label); border-radius: 12px; padding: 10px 12px; color: var(--ss-ink); font-size: 15.5px; }
+.ss-screen .ss-guide-zones b { display: block; color: var(--ss-label); font-size: 18px; }
+.ss-screen .ss-guide-zones .top { grid-column: 1 / -1; }
+.ss-screen .ss-guide-card ul { margin: 0 0 16px; padding-left: 1.2em; font-size: 15.5px; }
+.ss-screen .ss-guide-card button { font: inherit; font-weight: 800; font-size: 18px; min-height: 48px; padding: 0 22px; border-radius: 12px; border: 0; background: var(--ss-label); color: #fff; cursor: pointer; }
+.ss-screen .ss-helpbtn { display: none; }
+.ss-screen .ss-xlabel { display: none; }
+.ss-screen.ss-book .ss-xlabel { display: inline; }
+.ss-screen.ss-book .ss-helpbtn { display: inline-block; }
 `;
   const BOOK_HINT = 'Click or tap the right half: next · the left half: back · the top: menu · + − text size · Esc end';
   const HINT = '→ / Space next · ← back · 1–9 go to a verse or chorus · + − text size · S fit each song / same size · M chords above / in the words · D colours · B blank · C common chords · Esc end';
@@ -146,9 +166,14 @@
     const doc = rootEl.ownerDocument;
     addStyles(doc, css);
     rootEl.classList.add('ss-screen');
-    rootEl.innerHTML = `<header class="ss-bar"><span class="ss-title"></span><span class="ss-sub"></span><span class="ss-play" aria-live="off"><span class="now"></span><span class="nx"></span></span><span class="ss-where"></span>${onPlay ? '<button class="ss-playbtn" type="button" title="Play this song, its line lit as it goes">▶ Play</button>' : ''}${closeButton ? '<select class="ss-goto" aria-label="Go to a verse or chorus" title="Go to a verse or chorus (1–9)"></select><button class="ss-size" type="button" title="Text: each song as big as fits, or every song the same size (S)"></button><button class="ss-bookbtn ss-smaller" type="button" title="Smaller text (−)" aria-label="Smaller text">A−</button><button class="ss-bookbtn ss-bigger" type="button" title="Bigger text (+)" aria-label="Bigger text">A+</button><button class="ss-x" type="button" title="End (Esc)" aria-label="End the Session screen">×</button>' : ''}</header>
+    rootEl.innerHTML = `<header class="ss-bar"><span class="ss-title"></span><span class="ss-sub"></span><span class="ss-play" aria-live="off"><span class="now"></span><span class="nx"></span></span><span class="ss-where"></span>${onPlay ? '<button class="ss-playbtn" type="button" title="Play this song, its line lit as it goes">▶ Play</button>' : ''}${closeButton ? '<select class="ss-goto" aria-label="Go to a verse or chorus" title="Go to a verse or chorus (1–9)"></select><button class="ss-size" type="button" title="Text: each song as big as fits, or every song the same size (S)"></button><select class="ss-songs" aria-label="Go to a song" title="Go to a song" hidden></select><button class="ss-bookbtn ss-smaller" type="button" title="Smaller text (−)" aria-label="Smaller text">A−</button><button class="ss-bookbtn ss-bigger" type="button" title="Bigger text (+)" aria-label="Bigger text">A+</button><button class="ss-bookbtn ss-helpbtn" type="button" title="How the Music stand works" aria-label="How the Music stand works">?</button><button class="ss-x" type="button" title="End (Esc)" aria-label="Close">×<span class="ss-xlabel"> Close</span></button>' : ''}</header>
 <main class="ss-stage"><div class="ss-box"><div class="ss-lyrics"></div></div><aside class="ss-strip" aria-label="Chord shapes"></aside></main>
-<div class="ss-dots" aria-hidden="true"></div><div class="ss-hint">${HINT}</div><div class="ss-foot" aria-live="polite"></div><div class="ss-taphelp" aria-hidden="true"><span class="top">Tap here for the menu</span><span>← Back</span><span>Next →</span></div>
+<div class="ss-dots" aria-hidden="true"></div><div class="ss-hint">${HINT}</div><div class="ss-foot" aria-live="polite"></div><button class="ss-menubtn" type="button" aria-label="Menu: close, songs, text size">☰ Menu</button>
+<div class="ss-guide" role="dialog" aria-modal="true" aria-label="How the Music stand works"><div class="ss-guide-card">
+<h2>Music stand</h2><p>Your songs, a page at a time, at one size. No scrolling: you tap to turn the page.</p>
+<div class="ss-guide-zones"><div class="top"><b>Tap the top, or ☰ Menu</b>The menu: <b style="display:inline">Close</b>, the songs to go to, a verse or chorus, the text size (A− A+)</div><div><b>← Tap the left half</b>Back a page (or to the song before)</div><div><b>Tap the right half →</b>The next page, then the next song</div></div>
+<ul><li>The song and the page are along the bottom; at the end of a song, it says which comes next.</li><li>A Bluetooth page-turner pedal, or the arrow keys, turn the pages too. Esc closes it.</li><li>A setlist goes through its songs in its order: make one in Setlists.</li></ul>
+<button type="button" class="ss-guide-ok">Start reading</button></div></div>
 <div class="ss-progress"></div><div class="ss-blank"></div>`;
     const q = (c) => rootEl.querySelector(c);
     const els = { title: q('.ss-title'), sub: q('.ss-sub'), where: q('.ss-where'), box: q('.ss-box'), lyrics: q('.ss-lyrics'), strip: q('.ss-strip'), dots: q('.ss-dots'), goto: q('.ss-goto'), play: q('.ss-play'), progress: q('.ss-progress') };
@@ -253,7 +278,15 @@
       if (s.pages > 1) parts.push(`page ${s.page + 1} of ${s.pages}`);
       els.where.textContent = parts.join(' · ');
       const foot = rootEl.querySelector('.ss-foot');
-      if (foot) foot.textContent = [s.songs[s.i]?.title || '', ...parts].filter(Boolean).join(' · ');
+      const nextUp = s.songs[s.i + 1] && s.page >= s.pages - 1 ? `next: ${s.songs[s.i + 1].title} →` : '';
+      if (foot) foot.textContent = [s.songs[s.i]?.title || '', ...parts, nextUp].filter(Boolean).join(' · ');
+      const songsEl = rootEl.querySelector('.ss-songs');
+      if (songsEl) {
+        songsEl.hidden = s.songs.length < 2;
+        const options = s.songs.map((x, k) => `<option value="${k}">${k + 1}. ${esc(x.title)}</option>`).join('');
+        if (songsEl.dataset.list !== String(s.songs.length) || songsEl.options.length !== s.songs.length) { songsEl.innerHTML = options; songsEl.dataset.list = String(s.songs.length); }
+        songsEl.value = String(s.i);
+      }
       els.dots.innerHTML = s.pages > 1 ? Array.from({ length: s.pages }, (_, k) => `<i class="${k === s.page ? 'on' : ''}"></i>`).join('') : '';
       const next = s.songs[s.i + 1];
       const sizeButton = rootEl.querySelector('.ss-size');
@@ -267,7 +300,6 @@
     }
     function go(dir) {
       setBar(false);
-      rootEl.classList.remove('ss-show-taps');
       if (dir > 0) {
         if (s.page < s.pages - 1) { s.page += 1; Fit.page(els.lyrics, s.page); status(); return; }
         if (s.i < s.songs.length - 1) { s.i += 1; s.page = 0; layout(); }
@@ -277,6 +309,7 @@
       }
     }
     function key(k) {
+      if (rootEl.classList.contains('ss-guiding')) { if (['Enter', ' ', 'Escape', 'ArrowRight'].includes(k)) guide(false); return true; }
       if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter', 'n', 'N'].includes(k)) go(1);
       else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace', 'p', 'P'].includes(k)) go(-1);
       else if (k === 'Home') { s.i = 0; s.page = 0; layout(); }
@@ -300,7 +333,10 @@
     // click or tap: the right two-thirds go on, the left third goes back
     const onClick = (e) => {
       if (s.blank) { setBlank(false); status(); return; } // a tap brings the words back
-      if (e.target.closest && e.target.closest('.ss-goto')) return;
+      if (e.target.closest && (e.target.closest('.ss-goto') || e.target.closest('.ss-songs'))) return;
+      if (e.target.closest && e.target.closest('.ss-guide')) { if (e.target.closest('.ss-guide-ok') || !e.target.closest('.ss-guide-card')) guide(false); return; }
+      if (e.target.closest && e.target.closest('.ss-menubtn')) { setBar(true); return; }
+      if (e.target.closest && e.target.closest('.ss-helpbtn')) { setBar(false); guide(true); return; }
       if (e.target.closest && e.target.closest('.ss-playbtn')) { onPlay({ index: s.i, playing: Boolean(s.now && sameSong(s.songs[s.i], s.now)) }); return; }
       if (e.target.closest && e.target.closest('.ss-x')) { onClose(); return; }
       if (e.target.closest && e.target.closest('.ss-size')) { key('S'); return; }
@@ -311,13 +347,20 @@
         // 4.89: the music stand: the bar's own taps stay in it; the top of the screen shows or hides
         // the bar; otherwise the right half goes on and the left half back
         if (e.target.closest && e.target.closest('.ss-bar')) return;
-        if (e.clientY - r.top < Math.max(60, r.height * 0.14)) { rootEl.classList.remove('ss-show-taps'); setBar(!rootEl.classList.contains('ss-bar-on')); return; }
+        if (e.clientY - r.top < Math.max(60, r.height * 0.14)) { setBar(!rootEl.classList.contains('ss-bar-on')); return; }
         go(e.clientX - r.left > r.width / 2 ? 1 : -1);
         return;
       }
       go(e.clientX - r.left > r.width / 3 ? 1 : -1);
     };
     rootEl.addEventListener('click', onClick);
+    const songsSelect = rootEl.querySelector('.ss-songs');
+    if (songsSelect) songsSelect.addEventListener('change', () => { const k = Number(songsSelect.value); if (k >= 0 && k < s.songs.length && k !== s.i) { s.i = k; s.page = 0; setBar(false); layout(); } });
+    // 4.91: the guide to the music stand (the first time, and from ? in the menu)
+    function guide(on) {
+      rootEl.classList.toggle('ss-guiding', Boolean(on));
+      if (on) { setTimeout(() => rootEl.querySelector('.ss-guide-ok')?.focus(), 50); }
+    }
     if (els.goto) els.goto.addEventListener('change', () => { if (els.goto.value !== '') toSection(Number(els.goto.value)); });
     // 4.74: keep the screen awake while it's up (no screen saver mid-song); asked again when the
     // page comes back into view, as the browser lets it go when hidden
@@ -351,7 +394,8 @@
       keepAwake();
       hint(4000);
       // the music stand, the first time: where to tap (gone at the first tap)
-      if (book() && data.showTaps) { rootEl.classList.add('ss-show-taps'); setTimeout(() => rootEl.classList.remove('ss-show-taps'), 6000); }
+      if (book() && data.showTaps) guide(true);
+      else guide(false);
     }
     function check() {
       const report = [];

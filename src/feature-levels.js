@@ -20,7 +20,7 @@
     { id: 'songFile', app: 'desktop', where: 'File', name: 'Rename, Close', level: 'simple' },
     { id: 'bringIn', app: 'desktop', where: 'File', name: 'Bring in: import, paste a chord sheet', level: 'simple' },
     { id: 'tidy', app: 'desktop', where: 'File', name: 'Tidy chords above the words', level: 'all' },
-    { id: 'setlists', app: 'both', where: 'File, and the Setlists tab; web: the songs list', name: 'Setlists and songbooks', level: 'all' },
+    { id: 'setlists', app: 'both', where: 'File, and the Setlists tab; web: the songs list, and + Setlist on a song', name: 'Setlists and songbooks', level: 'simple' }, // 4.91: simple (the Music stand goes through them)
     // ── Desktop: Write ──
     { id: 'writeAdd', app: 'desktop', where: 'Write', name: 'Put in: tab, chord shapes', level: 'simple' },
     { id: 'formatWords', app: 'desktop', where: 'Write', name: 'Bold, italic, underline', level: 'all' },
