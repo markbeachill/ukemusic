@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.90.0
+
+**Setlists in the web player**, so an iPad can read a set in your own order with Music stand. Same format and folder as the desktop app.
+
+- **In the songs list:** a Setlists section (with "Show all features", as on the desktop). Each setlist has **Music stand** (song after song, a tap to turn the page), **Session screen** and **Edit**.
+- **The editor:** a name, the songs in order (↑ ↓ to move, ✕ to take one out), and a search to add songs. A song's key in the setlist ("| +2", as the desktop writes it) is kept and played in that key.
+- **With Dropbox,** setlists sync with the songs, in the songs folder's Setlists folder, so the desktop app and the web player share them. One changed in both places is kept twice (the second as "… (changed on this device)"). One deleted in either place goes from the other unless it was changed there first. A song renamed in the web player is renamed in its setlists, as on the desktop.
+- Without Dropbox, setlists stay on the device.
+- **Desktop:** nothing changes; its setlist files are written as before (the format is now one shared file, `src/setlist-text.js`).
+
 ## v4.89.0
 
 **Music stand**: a new way to read songs yourself, from an iPad (or a laptop) on a music stand. It uses the Session screen's machinery, which was made for a TV across a room: there, each song is made as big as fits, so the text changed size from song to song (18 to 46px on an iPad) and long songs were squeezed into three narrow columns.

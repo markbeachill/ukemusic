@@ -72,7 +72,7 @@ const SECTIONS = [
     title: 'Play together', link: 'perform.html',
     tone: 'coral', icon: 'group', card: { h: 'Play together', p: "The Session screen puts the song on the TV for the whole room, and goes through the night's setlist." },
     rows: [
-      { f: 'Setlists', web: false, desktop: true },
+      { f: 'Setlists', web: true, desktop: true },
       { f: 'The Session screen: big words and chords for a group', web: 'On this device', desktop: 'On a second screen or TV' },
       { f: 'Music stand: read song after song on an iPad or laptop, a tap to turn the page', web: true, desktop: true },
       { f: 'Songs from the desktop to a phone or tablet, in one file', web: 'Takes it in', desktop: true }

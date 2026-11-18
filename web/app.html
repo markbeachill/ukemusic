@@ -169,6 +169,29 @@ button { cursor: pointer; }
 @media (max-width: 640px) { .edit-main > *, #editWordsPanel > * { min-width: 0; max-width: 100%; } .edit-tools { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; } .edit-tools > * { flex: none; } }
 .features-dialog .dialog-actions { position: sticky; bottom: -20px; background: var(--surface); padding: 10px 0 20px; margin-bottom: -20px; justify-content: space-between; }
 .ask-dialog #askText { white-space: pre-line; margin: 0 0 6px; line-height: 1.5; }
+/* 4.90: setlists */
+.setlists-box { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); padding: 10px 14px; display: grid; gap: 8px; }
+.setlists-box > summary { cursor: pointer; font-weight: 700; padding: 4px 0; }
+.setlists-box:not([open]) { padding-bottom: 10px; }
+.setlist-rows { display: grid; gap: 6px; }
+.setlist-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 8px 0; border-top: 1px solid var(--line); }
+.setlist-row .nm { font-weight: 700; flex: 1 1 10em; min-width: 0; }
+.setlist-row .nm small { display: block; font-weight: 400; color: var(--muted); }
+.setlist-dialog { width: min(560px, 94vw); }
+.setlist-dialog label { display: grid; gap: 4px; font-weight: 600; }
+.setlist-dialog input[type=text], .setlist-dialog input[type=search] { font: inherit; padding: 9px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+.warn-text { color: var(--danger); min-height: 1em; }
+.setlist-songs { list-style: none; margin: 6px 0; padding: 0; display: grid; gap: 4px; max-height: 42vh; overflow-y: auto; counter-reset: sl; }
+.setlist-songs li { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 10px; counter-increment: sl; }
+.setlist-songs li::before { content: counter(sl) "."; color: var(--muted); min-width: 1.6em; }
+.setlist-songs li .t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.setlist-songs li .t small { color: var(--muted); }
+.setlist-songs li.missing .t { color: var(--muted); text-decoration: line-through; }
+.setlist-songs li button { min-width: 36px; min-height: 36px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; }
+.setlist-songs:empty::after { content: "No songs yet: find them below and press +."; color: var(--muted); font-size: 14px; }
+.setlist-found { display: grid; gap: 4px; max-height: 26vh; overflow-y: auto; margin-top: 6px; }
+.setlist-found button { text-align: left; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); font: inherit; }
+.setlist-dialog .dialog-actions .spacer { flex: 1; }
 .btn.danger-fill { background: var(--danger); border-color: var(--danger); color: #fff; }
 .import-list { display: grid; gap: 2px; max-height: 40vh; overflow: auto; font-size: 14px; }
 .import-list .grp { font-weight: 700; margin-top: 6px; }
@@ -466,6 +489,13 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <label id="updateRemoveRow" class="check-row" hidden><input id="updateRemove" type="checkbox"> <span id="updateRemoveText"></span></label>
         <div class="add-row"><button id="updateGo" class="btn primary" type="button">Bring them in</button><button id="updateCancel" class="btn" type="button">Cancel</button></div>
       </div>
+      <!-- 4.90: setlists, as in the desktop app (and, with Dropbox, the same ones) -->
+      <details id="setlistsBox" class="setlists-box" data-feature="setlists">
+        <summary><span class="setlists-title">Setlists</span> <span id="setlistCount" class="note"></span></summary>
+        <p class="note">The songs for a gig, a jam or a club night, in order. <strong>Music stand</strong> reads them song after song, a tap to turn the page.<span id="setlistCloudNote"></span></p>
+        <div id="setlistRows" class="setlist-rows"></div>
+        <button id="newSetlistBtn" class="btn" type="button">+ New setlist</button>
+      </details>
       <input id="search" class="search" type="search" placeholder="Find a song, artist, tag or key…" autocomplete="off" aria-label="Find a song">
       <div id="songList" class="songs"><div class="empty">Loading your songs…</div></div>
       <p class="note">The songs here stay on this device: <strong>Back up all songs</strong> now and then, and keep the file somewhere safe. To take songs you've changed here back to the desktop app, open the backup there with <strong>Phone and tablet → Bring in songs from the web player</strong>.</p>
@@ -638,6 +668,15 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
   <div id="appDisplaySlot"></div>
   <p class="add-row"><button id="appTheme" class="btn" type="button">Light or dark</button><button id="appBackup" class="btn" type="button">Back up all songs</button><button id="appAbout" class="btn" type="button">About ukemusic</button></p>
   <div class="dialog-actions"><button id="appSettingsClose" class="btn" type="button">Close</button></div>
+</dialog>
+<dialog id="setlistDialog" class="setlist-dialog" aria-labelledby="setlistDialogTitle">
+  <h2 id="setlistDialogTitle">Setlist</h2>
+  <label class="setlist-name">Name <input id="setlistName" type="text" maxlength="80" autocomplete="off"></label>
+  <p id="setlistNameError" class="note warn-text" role="alert"></p>
+  <ol id="setlistSongs" class="setlist-songs"></ol>
+  <label class="setlist-find">Add songs <input id="setlistFind" type="search" placeholder="Find a song…" autocomplete="off"></label>
+  <div id="setlistFound" class="setlist-found"></div>
+  <div class="dialog-actions"><button id="setlistDelete" class="btn danger" type="button">Delete</button><span class="spacer"></span><button id="setlistCancel" class="btn" type="button">Cancel</button><button id="setlistSave" class="btn primary" type="button">Save</button></div>
 </dialog>
 <dialog id="askDialog" class="ask-dialog">
   <p id="askText"></p>
@@ -1040,6 +1079,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     for (const row of $('songList').querySelectorAll('.song-row')) row.addEventListener('click', () => openSong(row.dataset.id));
     const hide = $('hideBuiltIn'); if (hide) hide.addEventListener('click', () => setShowBuiltIn(false));
     const show = $('showBuiltIn'); if (show) show.addEventListener('click', () => setShowBuiltIn(true));
+    try { renderSetlists(); } catch (_e) { /* not set up yet: it draws itself when it is */ }
   }
   function setShowBuiltIn(on) { showBuiltIn = on; local.set('showBuiltIn', on); renderLibrary(); }
   $('search').addEventListener('input', renderLibrary);
@@ -1418,7 +1458,8 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     const done = { in: 0, out: 0, both: 0, archived: 0, removed: 0, failed: [] };
     try {
       if (typeof flushEdit === 'function') await flushEdit();
-      const remote = CS.songFolders(await dbxList(cloudConf.root), cloudConf.root);
+      const listing = await dbxList(cloudConf.root);
+      const remote = CS.songFolders(listing, cloudConf.root);
       const plan = CS.planSync({ local: [...songs.values()], remote, deleted: cloudConf.deleted || [] });
       const editing = () => (edit.open && view.song ? view.song.id : '');
       const attempt = async (title, fn) => { try { await fn(); } catch (error) { if (error.signIn) throw error; done.failed.push(`${title} (${error.message})`); } };
@@ -1462,6 +1503,8 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
       for (const t of plan.archive) {
         await attempt(CS.baseName(t.folder), async () => { await dbxMove(t.folder, CS.archivePath(cloudConf.root, t.folder)); done.archived += 1; });
       }
+      // 4.90: and the setlists
+      await attempt('Setlists', async () => { done.setlists = await syncSetlists(listing); });
       // deleted here: done with (archived, gone, or come back because changed there)
       cloudConf.deleted = [];
       cloudConf.lastSync = new Date().toISOString();
@@ -1871,6 +1914,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     stop();
     edit.open = true;
     edit.dirty = false;
+    edit.titleAtOpen = view.song.title;
     $('songView').hidden = true;
     $('editView').hidden = false;
     $('editTitleShown').textContent = view.song.title;
@@ -1899,6 +1943,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   async function closeEditor() {
     if (!await flushEdit()) return;
     edit.open = false;
+    if (view.song && edit.titleAtOpen && edit.titleAtOpen !== view.song.title) renameInSetlists(edit.titleAtOpen, view.song.title); // 4.90
     $('editView').hidden = true;
     if (!view.song) return;
     $('songTitle').textContent = view.song.title;
@@ -2343,13 +2388,13 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
 
   // ── Session screen (4.35): the whole song on one screen for a group (src/session-screen.js) ──
   // 4.75: made by src/session-view.js sessionSongFromText (one copy, with the desktop app)
-  function sessionSong(song) {
+  function sessionSong(song, shift = 0) {
     const saved = view.song;
     view.song = song;   // prefs() and played() go by the song shown
     try {
       const p = prefs();
       return U.sessionSongFromText(played(song.text), {
-        parserOptions, chorusOnce: p.stageChorus === 'once', key: songKey(song), semitones: p.transpose, capo: p.capo, instrument: p.instrument,
+        parserOptions, chorusOnce: p.stageChorus === 'once', key: songKey(song), semitones: shift || p.transpose,   // 4.90: a setlist's key for it, if it has one capo: p.capo, instrument: p.instrument,
         title: song.title, credit: [song.settings?.song?.artist, song.settings?.song?.year].filter(Boolean).join(', '), folder: song.id,
         library: library(), common: song.settings?.diagrams?.common_chords, leftHanded: look.leftHanded === true
       });
@@ -2374,13 +2419,16 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
   }
   // 4.89: { stand: true }: the music stand view (one player with an iPad on a stand): one steady text
   // size, pages turned with a tap on the right or left half, the bar from a tap at the top
-  function openSession({ stand = false } = {}) {
-    if (!view.song) return;
+  // 4.90: { list: [{ id, shift }] }: a setlist's songs, in its order and keys, from its first song
+  function openSession({ stand = false, list = null } = {}) {
+    if (!view.song && !list) return;
     stop();
-    const ids = listedIds();
-    if (!ids.includes(view.song.id)) ids.unshift(view.song.id);
+    const ids = list ? list.map((x) => x.id) : listedIds();
+    if (!list && !ids.includes(view.song.id)) ids.unshift(view.song.id);
+    const shifts = list ? list.map((x) => x.shift || 0) : ids.map(() => 0);
     // songs are laid out as they're reached (a big library would be slow to do all at once)
     const songsList = ids.map((id) => getSong(id)).filter(Boolean);
+    if (!songsList.length) return;
     const box = $('sessionView');
     box.hidden = false;
     try { if (box.requestFullscreen) box.requestFullscreen().catch(() => {}); } catch (_e) { /* not here (iPhone) */ }
@@ -2393,15 +2441,15 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       if (playing) { stop(); return; }
       const song = songsList[index];
       if (!song) return;
-      if (!view.song || view.song.id !== song.id) openSong(song.id);
+      if (!view.song || view.song.id !== song.id) { openSong(song.id); $('sessionView').hidden = false; }
       start(0);
     } });
-    const lazy = songsList.map((song) => {
+    const lazy = songsList.map((song, k) => {
       let made = null;
-      const get = () => (made = made || sessionSong(song));
+      const get = () => (made = made || sessionSong(song, shifts[k]));
       return { title: song.title, folder: song.id, get sub() { return get().sub; }, get diagrams() { return get().diagrams; }, get html() { return get().html; } };
     });
-    session.show({ songs: lazy, start: Math.max(0, ids.indexOf(view.song.id)), hideCommon: look.hideCommon === true, theme: look.sessionTheme || (isDark() ? 'dark' : 'light'), minPx: Math.round(Math.max(13, Math.min(18, Math.min(innerWidth, innerHeight) / 45))), size: stand ? 'book' : (look.sessionSize || 'fit'), same: look.sessionSame || 4.5, bookPx: look.standPx || 0, showTaps: stand && !look.standSeen });
+    session.show({ songs: lazy, start: list ? 0 : Math.max(0, ids.indexOf(view.song.id)), hideCommon: look.hideCommon === true, theme: look.sessionTheme || (isDark() ? 'dark' : 'light'), minPx: Math.round(Math.max(13, Math.min(18, Math.min(innerWidth, innerHeight) / 45))), size: stand ? 'book' : (look.sessionSize || 'fit'), same: look.sessionSame || 4.5, bookPx: look.standPx || 0, showTaps: stand && !look.standSeen });
     if (stand && !look.standSeen) { look.standSeen = true; local.set('look', look); }
     box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', stand ? 'Music stand' : 'Session screen');
     releaseSessionFocus = UkeSongUI.enterOverlay(box);
@@ -2418,6 +2466,149 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     queueDialog.querySelector('ol').replaceChildren(...ids.map(id => Object.assign(document.createElement('li'), {textContent:getSong(id)?.title || id})));
     queueDialog.showModal();
   });
+
+  // ── Setlists (4.90): as in the desktop app, in the same file format (src/setlist-text.js), kept
+  // on this device and, with Dropbox, in the songs folder's "Setlists" folder (synced with the songs).
+  // Each: { name, text, rev (Dropbox's, at the last sync), synced (the text's hash then) }
+  const ST = U.setlistText;
+  let setlists = local.get('setlists', []);
+  const saveSetlists = () => local.set('setlists', setlists);
+  const setlistLines = (sl) => ST.parseSetlist(sl.text).map(ST.parseEntry);
+  const songByTitle = (title) => [...songs.values(), ...builtins.values()].find((x) => U.webSongs.id(x.title) === U.webSongs.id(title)) || null;
+  function renderSetlists() {
+    const box = $('setlistsBox');
+    if (!box) return;
+    setlists.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
+    $('setlistCount').textContent = setlists.length ? `(${setlists.length})` : '';
+    $('setlistCloudNote').textContent = cloudOn() ? ' They’re kept in Dropbox with your songs, so the desktop app has them too.' : '';
+    $('setlistRows').innerHTML = setlists.map((sl, i) => {
+      const lines = setlistLines(sl);
+      const missing = lines.filter((l) => !songByTitle(l.title)).length;
+      return `<div class="setlist-row"><span class="nm">${esc(sl.name)}<small>${count(lines.length, 'song')}${missing ? ` · ${missing} not on this device` : ''}</small></span>
+        <button class="btn primary" type="button" data-stand="${i}" ${lines.length - missing ? '' : 'disabled'}>Music stand</button>
+        <button class="btn" type="button" data-feature="session" data-session="${i}" ${lines.length - missing ? '' : 'disabled'}>Session screen</button>
+        <button class="btn" type="button" data-edit="${i}">Edit</button></div>`;
+    }).join('') || '<p class="note">No setlists yet.</p>';
+    for (const b of $('setlistRows').querySelectorAll('[data-stand]')) b.addEventListener('click', () => playSetlist(setlists[Number(b.dataset.stand)], { stand: true }));
+    for (const b of $('setlistRows').querySelectorAll('[data-session]')) b.addEventListener('click', () => playSetlist(setlists[Number(b.dataset.session)], { stand: false }));
+    for (const b of $('setlistRows').querySelectorAll('[data-edit]')) b.addEventListener('click', () => editSetlist(setlists[Number(b.dataset.edit)]));
+  }
+  function playSetlist(sl, { stand }) {
+    if (!sl) return;
+    const list = setlistLines(sl).map((l) => ({ song: songByTitle(l.title), shift: l.shift })).filter((x) => x.song).map((x) => ({ id: x.song.id, shift: x.shift }));
+    if (list.length) openSession({ stand, list });
+  }
+  // the setlist being edited: its name, and its lines [{ title, shift }]
+  const slEdit = { sl: null, lines: [] };
+  function editSetlist(sl) {
+    slEdit.sl = sl;
+    slEdit.lines = sl ? setlistLines(sl) : [];
+    $('setlistDialogTitle').textContent = sl ? 'Setlist' : 'New setlist';
+    $('setlistName').value = sl ? sl.name : '';
+    $('setlistNameError').textContent = '';
+    $('setlistDelete').hidden = !sl;
+    $('setlistFind').value = '';
+    drawSetlistSongs();
+    drawSetlistFound();
+    $('setlistDialog').showModal();
+    if (!sl) $('setlistName').focus();
+  }
+  function drawSetlistSongs() {
+    $('setlistSongs').innerHTML = slEdit.lines.map((l, i) => {
+      const there = songByTitle(l.title);
+      return `<li class="${there ? '' : 'missing'}"><span class="t">${esc(l.title)}${l.shift ? ` <small>${l.shift > 0 ? '+' : ''}${l.shift}</small>` : ''}${there ? '' : ' <small>(not on this device)</small>'}</span>
+        <button type="button" data-up="${i}" aria-label="Earlier" ${i ? '' : 'disabled'}>↑</button><button type="button" data-down="${i}" aria-label="Later" ${i < slEdit.lines.length - 1 ? '' : 'disabled'}>↓</button><button type="button" data-out="${i}" aria-label="Take it out of the setlist">✕</button></li>`;
+    }).join('');
+    const move = (i, j) => { const [x] = slEdit.lines.splice(i, 1); slEdit.lines.splice(j, 0, x); drawSetlistSongs(); };
+    for (const b of $('setlistSongs').querySelectorAll('[data-up]')) b.addEventListener('click', () => move(Number(b.dataset.up), Number(b.dataset.up) - 1));
+    for (const b of $('setlistSongs').querySelectorAll('[data-down]')) b.addEventListener('click', () => move(Number(b.dataset.down), Number(b.dataset.down) + 1));
+    for (const b of $('setlistSongs').querySelectorAll('[data-out]')) b.addEventListener('click', () => { slEdit.lines.splice(Number(b.dataset.out), 1); drawSetlistSongs(); drawSetlistFound(); });
+  }
+  function drawSetlistFound() {
+    const q = $('setlistFind').value.trim().toLowerCase();
+    const inIt = new Set(slEdit.lines.map((l) => U.webSongs.id(l.title)));
+    const { mine, built } = libraryList();
+    const list = [...mine, ...built].filter((x) => !inIt.has(U.webSongs.id(x.title)) && songMatches(x, q)).sort((a, b) => a.title.localeCompare(b.title)).slice(0, q ? 40 : 12);
+    $('setlistFound').innerHTML = list.map((x) => `<button type="button" data-add="${esc(x.id)}">+ ${esc(x.title)}</button>`).join('') || `<p class="note">${q ? 'No songs match.' : 'Every song is in it.'}</p>`;
+    for (const b of $('setlistFound').querySelectorAll('[data-add]')) b.addEventListener('click', () => { const x = getSong(b.dataset.add); if (x) slEdit.lines.push({ title: x.title, shift: 0 }); drawSetlistSongs(); drawSetlistFound(); });
+  }
+  $('setlistFind').addEventListener('input', drawSetlistFound);
+  $('setlistName').addEventListener('input', () => { $('setlistNameError').textContent = ''; });
+  $('newSetlistBtn').addEventListener('click', () => editSetlist(null));
+  $('setlistCancel').addEventListener('click', () => $('setlistDialog').close());
+  $('setlistSave').addEventListener('click', () => {
+    const old = slEdit.sl;
+    const check = ST.checkName($('setlistName').value, setlists.filter((x) => x !== old).map((x) => x.name));
+    if (!check.ok) { $('setlistNameError').textContent = check.error; $('setlistName').focus(); return; }
+    const text = ST.formatSetlist(slEdit.lines);
+    if (old && old.name !== check.name) {
+      // renamed: in Dropbox, the old file goes and a new one comes (as the desktop app does)
+      if (old.rev) { const gone = local.get('setlistsDeleted', []); gone.push({ name: old.name, rev: old.rev }); local.set('setlistsDeleted', gone); }
+      setlists = setlists.filter((x) => x !== old);
+      setlists.push({ name: check.name, text, rev: '', synced: '' });
+    } else if (old) old.text = text;
+    else setlists.push({ name: check.name, text, rev: '', synced: '' });
+    saveSetlists();
+    $('setlistDialog').close();
+    renderSetlists();
+    cloudSoon(1500);
+  });
+  $('setlistDelete').addEventListener('click', async () => {
+    const old = slEdit.sl;
+    if (!old) return;
+    if (!(await askConfirm(`Delete the setlist “${old.name}”? The songs stay in your library.`, { ok: 'Delete setlist', danger: true }))) return;
+    if (old.rev) { const gone = local.get('setlistsDeleted', []); gone.push({ name: old.name, rev: old.rev }); local.set('setlistsDeleted', gone); }
+    setlists = setlists.filter((x) => x !== old);
+    saveSetlists();
+    $('setlistDialog').close();
+    renderSetlists();
+    cloudSoon(1500);
+  });
+  // a song renamed here: its title changes in the setlists too (as the desktop app's Rename does)
+  function renameInSetlists(oldTitle, newTitle) {
+    let changed = false;
+    for (const sl of setlists) {
+      const lines = ST.renameInLines(ST.parseSetlist(sl.text), oldTitle, newTitle);
+      if (lines) { sl.text = ST.formatSetlist(lines); changed = true; }
+    }
+    if (changed) { saveSetlists(); renderSetlists(); }
+  }
+  // With Dropbox: the setlists go both ways, in the songs folder's Setlists folder (called by cloudSync)
+  async function syncSetlists(listing) {
+    const root = cloudConf.root;
+    const plan = ST.planSetlistSync({ local: setlists, remote: ST.setlistFiles(listing, root), deleted: local.get('setlistsDeleted', []) });
+    const pathOf = (name) => CS.joinPath(root, ST.SETLIST_DIR, `${name}${ST.EXTENSION}`);
+    let moved = 0;
+    for (const p of plan.pull) {
+      const d = await dbxDownload(p.remote.path);
+      const there = { name: p.remote.name, text: d.text, rev: d.rev || p.remote.rev, synced: ST.hashText(d.text) };
+      if (p.local) Object.assign(p.local, there); else setlists.push(there);
+      moved += 1;
+    }
+    for (const c of plan.conflict) {
+      // changed in both: Dropbox's comes in, this device's is kept beside it (and goes there too)
+      const names = setlists.map((x) => x.name);
+      let name = `${c.local.name} (changed on this device)`;
+      for (let n = 2; names.some((x) => x.toLowerCase() === name.toLowerCase()); n += 1) name = `${c.local.name} (changed on this device ${n})`;
+      setlists.push({ name, text: c.local.text, rev: '', synced: '' });
+      const d = await dbxDownload(c.remote.path);
+      Object.assign(c.local, { text: d.text, rev: d.rev || c.remote.rev, synced: ST.hashText(d.text) });
+      plan.push.push({ local: setlists[setlists.length - 1], remote: null });
+      moved += 1;
+    }
+    for (const p of plan.push) {
+      const rev = await dbxUpload(pathOf(p.local.name), p.local.text, { rev: p.remote ? p.remote.rev : '', overwrite: !p.remote && Boolean(p.local.rev) });
+      Object.assign(p.local, { rev, synced: ST.hashText(p.local.text) });
+      moved += 1;
+    }
+    for (const l of plan.removeLocal) { setlists = setlists.filter((x) => x !== l); moved += 1; }
+    for (const r of plan.removeRemote) { await dbxApi('files/delete_v2', { path: r.path }).catch(() => {}); moved += 1; }
+    local.set('setlistsDeleted', []);
+    saveSetlists();
+    renderSetlists();
+    return moved;
+  }
+  renderSetlists();
 
   // ── Play along ──
   const play = { schedule: null, raf: null, line: null, barKey: null, wake: null, userStopped: false };

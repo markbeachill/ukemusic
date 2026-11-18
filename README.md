@@ -84,7 +84,7 @@
 | Your club's logo and an "Updated" date on sheets | ✓ | ✓ |
 | Export every song at once | — | ✓ |
 | **[Play together](https://markbeachill.github.io/ukemusic/perform.html)** | | |
-| Setlists | — | ✓ |
+| Setlists | ✓ | ✓ |
 | The Session screen: big words and chords for a group | ✓ On this device | ✓ On a second screen or TV |
 | Music stand: read song after song on an iPad or laptop, a tap to turn the page | ✓ | ✓ |
 | Songs from the desktop to a phone or tablet, in one file | ✓ Takes it in | ✓ |

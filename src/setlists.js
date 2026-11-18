@@ -15,49 +15,16 @@
 const fs = require('fs');
 const path = require('path');
 
-const SETLIST_DIR = 'Setlists';
-const EXTENSION = '.txt';
-const HEADER = '# ukemusic setlist: one song title per line, in playing order';
-const ILLEGAL = /[<>:"/\\|?*\u0000-\u001f]/;
+// 4.90: the format itself (shared with the web player) is src/setlist-text.js
+const { SETLIST_DIR, EXTENSION, cleanName, checkName, parseEntry, formatEntry, parseSetlist, formatSetlist } = require('./setlist-text');
 
 function setlistFolder(songsFolder) {
   return path.join(songsFolder, SETLIST_DIR);
 }
 
-function cleanName(name) {
-  return String(name || '').replace(/\s+/g, ' ').trim().replace(/[. ]+$/, '');
-}
-
 /** { ok, name } or { ok: false, error } */
 function validateName(rawName, songsFolder, { except = '' } = {}) {
-  const name = cleanName(rawName);
-  if (!name) return { ok: false, error: 'Please give the setlist a name.' };
-  if (ILLEGAL.test(name)) return { ok: false, error: 'Names can\'t contain any of these characters: < > : " / \\ | ? *' };
-  if (name.length > 80) return { ok: false, error: 'Names can be at most 80 characters.' };
-  if (songsFolder && name.toLowerCase() !== except.toLowerCase()
-    && listSetlists(songsFolder).some((s) => s.name.toLowerCase() === name.toLowerCase())) {
-    return { ok: false, error: `There's already a setlist called "${name}".` };
-  }
-  return { ok: true, name };
-}
-
-/** "Amazing Grace | +5" -> { title: 'Amazing Grace', shift: 5 }; no key -> shift 0 */
-function parseEntry(line) {
-  const [title, key] = String(line || '').split('|');
-  const shift = Math.trunc(Number(String(key || '').trim())) || 0;
-  return { title: cleanName(title), shift: shift >= -11 && shift <= 11 ? shift : 0 };
-}
-
-function formatEntry({ title, shift = 0 }) {
-  return shift ? `${cleanName(title)} | ${shift > 0 ? '+' : ''}${shift}` : cleanName(title);
-}
-
-function parseSetlist(text) {
-  return String(text || '').split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith('#'));
-}
-
-function formatSetlist(songs) {
-  return `${HEADER}\n${(songs || []).map((s) => formatEntry(typeof s === 'string' ? parseEntry(s) : s)).filter(Boolean).join('\n')}\n`;
+  return checkName(rawName, songsFolder ? listSetlists(songsFolder).map((s) => s.name) : [], { except });
 }
 
 /** All setlists, by name: [{ name, file, songs, modified }] */

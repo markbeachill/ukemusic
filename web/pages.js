@@ -429,7 +429,7 @@ const PHONE_PAGE = {
   <div class="grid two" style="margin-top:16px">
     <div class="card"><h3>How it behaves</h3><ul>
       <li>The songs are kept on the device too, so it works offline; changes go when the connection's back</li>
-      <li>Only the song folders are touched (the song, its song.ini and notes); exports, history and setlists are left alone</li>
+      <li>Only the song folders (the song, its song.ini and notes) and the setlists are touched; exports and history are left alone</li>
       <li>A new song becomes a new folder; renaming a song renames its folder; deleting one moves it to <strong>Archived songs</strong></li>
       <li>Changed in both places between syncs? Both are kept: the computer's, and "… (changed on this device)"</li>
       <li>If a song is open in the desktop app while you change it on the iPad, open it again on the computer to see the change</li>
@@ -510,7 +510,7 @@ const DROPBOX_PAGE = {
       <li><span>Press <strong>Sync now</strong> and check it finishes. If asked to upload songs already on your device, only agree if they belong in the group's collection.</span></li>
     </ol><p>This connection syncs both ways and needs edit access. For view-only use, download song files or a ZIP of the songs folder from Dropbox, then import them into the web player instead.</p></div>
   </div>
-  <p>The web player keeps songs on the device for offline use and syncs when it opens, shortly after a change, or with <strong>Sync now</strong>. Its Dropbox sync handles song text, song settings and notes; it leaves exports, history and setlists alone. Practice progress stays on each device.</p>
+  <p>The web player keeps songs on the device for offline use and syncs when it opens, shortly after a change, or with <strong>Sync now</strong>. Its Dropbox sync handles song text, song settings and notes, and the setlists; it leaves exports and history alone. Practice progress stays on each device.</p>
 </div></section>
 <section><div class="wrap">
   <h2>3. A routine for rehearsals and edits</h2>
@@ -668,7 +668,7 @@ const FEATURES_PAGE = {
 <div class="page-hero"><div class="wrap">
   <p class="eyebrow">Features</p>
   <h1>What ukemusic does, in the browser and on your computer</h1>
-  <p class="lede">The web player runs on phones, tablets and any computer; the desktop app adds setlists, songbooks and every kind of printing. Both are free, work offline and need no account. Each heading links to more about it.</p>
+  <p class="lede">The web player runs on phones, tablets and any computer; the desktop app adds songbooks and every kind of printing. Both are free, work offline and need no account. Each heading links to more about it.</p>
   <div class="cta"><a class="btn primary" href="app/">Try it in your browser</a><a class="btn" href="./#get">Download the desktop app</a></div>
 </div></div>
 <section><div class="wrap">

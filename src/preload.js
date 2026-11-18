@@ -255,6 +255,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
   picking: require('./picking'),
   melody: require('./melody'),
   songFiles: require('./song-files'),
+  setlistText: require('./setlist-text'),   // 4.90: setlists as text (the web player keeps them too)
   cloudSync: require('./cloud-sync'),   // 4.47: songs in a cloud drive (the web player)   // 4.45: songs from files (the web player), and import plans
   webSongs: { build: (songs, o) => require('./web-songs').buildWebSongs(songs, o), read: (t) => require('./web-songs').readWebSongs(t), id: (t) => require('./web-songs').songId(t) },
   pickSheet: require('./pick-sheet'),
