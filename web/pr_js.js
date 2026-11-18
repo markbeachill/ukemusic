@@ -342,7 +342,25 @@
             if (meta) meta.textContent = `Couldn't make the PDF: ${String(error.message || error).replace(/^Error invoking remote method '[^']+': (Error: )?/, '')}`;
           }
         }
+        // 4.88: the screen stays on in an exercise (an iPad or a phone dims while your hands are on the strings)
+        async function prKeepAwake(on) {
+          pr.wantAwake = on;
+          try {
+            if (on && !pr.wake && navigator.wakeLock && document.visibilityState === 'visible') {
+              const wake = await navigator.wakeLock.request('screen');
+              if (!pr.wantAwake) { wake.release(); return; }
+              pr.wake = wake;
+              wake.addEventListener('release', () => { if (pr.wake === wake) pr.wake = null; });
+            } else if (!on && pr.wake) {
+              const wake = pr.wake;
+              pr.wake = null;
+              await wake.release();
+            }
+          } catch (_error) { /* the screen may dim: nothing else to do */ }
+        }
+        document.addEventListener?.('visibilitychange', () => { if (document.visibilityState === 'visible' && pr.wantAwake) prKeepAwake(true); });
         function prShowHome() {
+          prKeepAwake(false);
           prSaveSettings();
           prCancelAttempt();
           prSessionEnd();
@@ -376,6 +394,7 @@
           pr.view = 'player';
           pr.exId = e.id;
           pr.exDef = e;
+          prKeepAwake(true);
           practiceEl.dataset.view = 'player';
           practiceEl.style.setProperty('--pr-cat', prColour(e.cat));
           $p('prHome').hidden = true;
@@ -575,6 +594,9 @@
           if (!PL.EXERCISES.some((e) => e.id === step.id)) { r.step += 1; prRoutineStep(); return; }
           prOpen(step.id, { keepGoing: true, settings: step.settings || {} });
           r.started = false;
+          r.finishRound = false;
+          // 4.88: a few seconds to read the new exercise and move your hand before it starts
+          if (r.step > 0) $p('prWhere').textContent = `Next: ${prExerciseFor(PL.EXERCISES.find((x) => x.id === step.id)).title}. It starts in a moment.`;
           $p('prRoutineBar').hidden = false;
           prRoutineTick();
           const stepIndex = r.step;
@@ -585,7 +607,7 @@
             if (pr.mode === 'oneminute') prOneMinuteStart();
             else prStart();
           };
-          setTimeout(go, 600);
+          setTimeout(go, r.step > 0 ? 3000 : 600);
         }
         function prRoutineTick() {
           const r = pr.routine;
@@ -595,9 +617,14 @@
           }
           const step = r.routine.steps[r.step];
           if (!step) return;
-          const left = Math.max(0, step.minutes * 60 - prSessionSeconds());
-          $p('prRoutineText').textContent = `${r.routine.name} · ${r.step + 1} of ${r.routine.steps.length} · ${fmtClock(left)} left`;
-          if (r.started && left <= 0 && pr.mode !== 'oneminute') prRoutineNext();
+          const over = step.minutes * 60 - prSessionSeconds(); // below 0: time's up, finishing the round
+          const left = Math.max(0, over);
+          $p('prRoutineText').textContent = `${r.routine.name} · ${r.step + 1} of ${r.routine.steps.length} · ${r.finishRound ? 'last round' : `${fmtClock(left)} left`}`;
+          // 4.88: time's up: finish the round you're in (up to half a minute more), then go on
+          if (r.started && left <= 0 && pr.mode !== 'oneminute') {
+            if (player?.playing && pr.schedule && over > -30 && !r.finishRound) r.finishRound = true;
+            else if (!player?.playing || over <= -30) prRoutineNext();
+          }
         }
         function prRoutineNext() {
           const r = pr.routine;
@@ -706,6 +733,8 @@
           $p('prStart').addEventListener('click', () => (pr.mode === 'oneminute' ? prOneMinuteStart() : prStart()));
           $p('prStop').addEventListener('click', () => (pr.mode === 'oneminute' ? prOneMinuteStop(false) : prStop()));
           $p('prCount').addEventListener('click', () => prOneMinuteCount());
+          $p('prListenToggle').addEventListener('click', () => { if (pr.oneMinute?.running) return; $p('prListen').checked = !$p('prListen').checked; prListenShow(); prChanged(); });
+          $p('prListen').addEventListener('change', () => prListenShow());
           $p('prBack').addEventListener('click', () => { if (pr.routine) prRoutineEnd(); else prShowHome(); });
           $p('practiceClose').addEventListener('click', closePractice);
           $p('prHelpButton').addEventListener('click', () => prHelp());
@@ -826,6 +855,7 @@
           $p('prGrid').hidden = !parts.includes('grid');
           $p('prBig').hidden = !parts.includes('big');
           $p('prCount').hidden = mode !== 'oneminute';
+          prListenShow();
           for (const span of practiceEl.querySelectorAll('[data-legend]')) span.hidden = span.dataset.legend !== (mode === 'noodle' ? 'noodle' : 'notes');
           $p('prNowCaption').textContent = mode === 'oneminute' ? 'From' : 'Now';
           $p('prNextCaption').textContent = mode === 'oneminute' ? 'To' : 'Next';
@@ -1003,8 +1033,11 @@
           if (ex.kind === 'oneminute') {
             prShowChords(ex, ex.from, ex.to);
             $p('prBigMain').textContent = '1:00';
-            $p('prBigSub').textContent = `${ex.from} → ${ex.to}: press Start, then tap Space (or the button) on every clean change`;
+            $p('prBigSub').textContent = $p('prListen').checked
+              ? `${ex.from} → ${ex.to}: press Start, then strum once on each chord. The app listens and counts.`
+              : `${ex.from} → ${ex.to}: press Start, then strum once on each chord and count the changes in your head.`;
             $p('prCount').disabled = true;
+            prListenShow();
             prDrawScores(ex);
             $p('prWhere').textContent = '';
             prTips(ex);
@@ -1506,6 +1539,7 @@
             onEnd: () => {
               if (pr.stopping) return;            // restarting at a new tempo
               cancelAnimationFrame(pr.raf);
+              if (pr.routine?.finishRound && !pr.userStopped && !demo) { prRoutineNext(); return; }
               if ((ex.endless || pr.routine) && !pr.userStopped && !demo) {
                 if (ex.kind === 'chords') pr.barBase += ex.barList.length - fromBar;
                 prStart({ fromBar: 0, countIn: false });
@@ -1713,7 +1747,64 @@
         }
 
         // ── One-minute changes ──
-        function prOneMinuteStart() {
+        // 4.88: your hands are on the instrument for the whole minute, so nothing needs pressing in it.
+        // Three beeps to get the first chord ready, a higher one for go, one at ten seconds to go and
+        // three at the end; and, if you like, the microphone counts your strums (one strum a chord).
+        function prCue(beeps) {
+          if (!player) return;
+          const events = beeps.map(([time, accent, level = 1.6]) => ({ time, kind: 'click', accent, level }));
+          player.play({ events, bars: [], duration: Math.max(...beeps.map((b) => b[0])) + 0.15 }).catch(() => {});
+          const ear = pr.ear;
+          if (ear) ear.quietUntil = performance.now() + Math.max(...beeps.map((b) => b[0])) * 1000 + 350; // not its own beeps
+        }
+        // Count strums: a sudden rise in loudness, at most one every 0.28 s, well above the room's hum
+        async function prEarStart() {
+          prEarStop();
+          if (!navigator.mediaDevices?.getUserMedia) throw new Error('This browser can’t use the microphone.');
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+          const Ctx = window.AudioContext || window.webkitAudioContext;
+          const ctx = new Ctx();
+          const analyser = ctx.createAnalyser();
+          analyser.fftSize = 1024;
+          ctx.createMediaStreamSource(stream).connect(analyser);
+          const data = new Float32Array(analyser.fftSize);
+          const ear = { stream, ctx, strums: 0, floor: 0.004, prev: 0, last: 0, quietUntil: 0, onStrum: null };
+          ear.timer = setInterval(() => {
+            analyser.getFloatTimeDomainData(data);
+            let sum = 0;
+            for (let i = 0; i < data.length; i += 1) sum += data[i] * data[i];
+            const level = Math.sqrt(sum / data.length);
+            const now = performance.now();
+            if (now >= ear.quietUntil && level > Math.max(0.02, ear.floor * 5) && level > ear.prev * 1.8 && now - ear.last > 280) {
+              ear.last = now;
+              ear.strums += 1;
+              ear.onStrum?.(ear.strums);
+            }
+            if (level < ear.floor * 3) ear.floor = ear.floor * 0.97 + level * 0.03; // the room, between strums
+            ear.prev = level;
+          }, 20);
+          pr.ear = ear;
+          return ear;
+        }
+        function prEarStop() {
+          const ear = pr.ear;
+          if (!ear) return;
+          pr.ear = null;
+          clearInterval(ear.timer);
+          for (const track of ear.stream.getTracks()) track.stop();
+          ear.ctx.close().catch(() => {});
+        }
+        function prListenShow() {
+          const on = $p('prListen').checked;
+          $p('prListenToggle').hidden = pr.mode !== 'oneminute';
+          $p('prListenToggle').setAttribute('aria-pressed', String(on));
+          $p('prListenText').textContent = `Count by listening: ${on ? 'on' : 'off'}`;
+          $p('prCount').hidden = pr.mode !== 'oneminute' || on;
+        }
+        const prOneMinuteText = (om) => (om.ear
+          ? `Heard ${om.ear.strums} strum${om.ear.strums === 1 ? '' : 's'}: ${Math.max(0, om.ear.strums - 1)} change${om.ear.strums === 2 ? '' : 's'}`
+          : `${om.count} change${om.count === 1 ? '' : 's'}${om.count ? '' : ' (count in your head)'}`);
+        async function prOneMinuteStart() {
           const ex = prExercise();
           prCancelAttempt();
           if (!window.ukemusic.chordDefinition(prLibrary(), ex.to)) {
@@ -1722,19 +1813,43 @@
           }
           pr.ex = ex;
           prSaveSettings(); pr.progress = PP.markStarted(pr.progress, pr.exId); prSaveProgress();
-          pr.oneMinute = { exId: pr.exId, from: ex.from, to: ex.to, routine: pr.routine, step: pr.routine?.step, running: true, count: 0, ends: performance.now() + (pr.minuteMs || 60000), label: `${ex.from}>${ex.to}${prFamily() === 'uke' ? '' : ` (${prFamily()})`}` };
+          const token = {};
+          pr.oneMinuteToken = token;
+          let ear = null;
+          if ($p('prListen').checked) {
+            $p('prBigSub').textContent = 'Asking for the microphone…';
+            try { ear = await prEarStart(); }
+            catch (error) {
+              $p('prWhere').textContent = `The microphone isn’t available (${String(error.message || error.name || error).slice(0, 90)}): count in your head instead.`;
+            }
+            if (pr.oneMinuteToken !== token || pr.view !== 'player') { prEarStop(); return; }
+          }
+          const lead = pr.leadMs ?? 3000; // the beeps before go
+          pr.oneMinute = { exId: pr.exId, from: ex.from, to: ex.to, routine: pr.routine, step: pr.routine?.step, running: true, count: 0, ear, starts: performance.now() + lead, ends: performance.now() + lead + (pr.minuteMs || 60000), warned: false, label: `${ex.from}>${ex.to}${prFamily() === 'uke' ? '' : ` (${prFamily()})`}` };
           prSessionStart();
           $p('prStart').disabled = true;
           $p('prStop').disabled = false;
           $p('prCount').disabled = false;
-          $p('prCount').focus();
+          $p('prListenToggle').disabled = true;
+          $p('prStop').focus();
+          if (ear) ear.onStrum = () => { if (pr.oneMinute?.running && performance.now() >= pr.oneMinute.starts) $p('prBigSub').textContent = prOneMinuteText(pr.oneMinute); else if (ear.strums) ear.strums -= 1; };
+          if (lead > 0) prCue([[0, false], [lead / 3000, false], [2 * lead / 3000, false], [lead / 1000, true, 2.4]]);
           const tick = () => {
             const om = pr.oneMinute;
             if (!om || !om.running) return;
-            const left = Math.max(0, om.ends - performance.now());
+            const now = performance.now();
+            if (now < om.starts) {
+              $p('prBigMain').textContent = String(Math.ceil((om.starts - now) / 1000));
+              $p('prBigSub').textContent = `Get your hand on ${om.from}…`;
+              om.raf = requestAnimationFrame(tick);
+              return;
+            }
+            const left = Math.max(0, om.ends - now);
+            if (!om.warned && left <= 10000 && (pr.minuteMs || 60000) > 20000) { om.warned = true; prCue([[0, true, 1.4]]); }
             $p('prBigMain').textContent = fmtClock(Math.ceil(left / 1000));
-            $p('prBigSub').textContent = `${om.count} change${om.count === 1 ? '' : 's'}`;
+            $p('prBigSub').textContent = prOneMinuteText(om);
             if (left <= 0) {
+              prCue([[0, true, 2.4], [0.25, true, 2.4], [0.5, true, 2.4]]);
               prOneMinuteStop(true);
               return;
             }
@@ -1744,19 +1859,24 @@
         }
         function prOneMinuteCount() {
           const om = pr.oneMinute;
-          if (!om || !om.running) return;
+          if (!om || !om.running || performance.now() < om.starts) return;
           om.count += 1;
-          $p('prBigSub').textContent = `${om.count} change${om.count === 1 ? '' : 's'}`;
+          $p('prBigSub').textContent = prOneMinuteText(om);
           const b = $p('prCount');
           b.classList.remove('bump');
           void b.offsetWidth;
           b.classList.add('bump');
         }
         function prOneMinuteStop(finished) {
+          pr.oneMinuteToken = null;
           const om = pr.oneMinute;
-          if (!om || !om.running) return;
+          if (!om || !om.running) { prEarStop(); return; }
           om.running = false;
           cancelAnimationFrame(om.raf);
+          const heard = om.ear ? Math.max(0, om.ear.strums - 1) : null;
+          prEarStop();
+          $p('prListenToggle').disabled = false;
+          if (!finished && player?.playing) player.stop(); // the beeps
           prSessionPause();
           if (!pr.routine) {
             pr.finishedSeconds = prSessionSeconds();
@@ -1768,8 +1888,10 @@
           if (finished) {
             pr.pendingScore = { exId: om.exId, label: om.label, from: om.from, to: om.to, routine: om.routine, step: om.step };
             $p('prBigMain').textContent = 'Done';
-            $p('prBigSub').textContent = 'Enter your clean changes below, or use the live counter total.';
-            $p('prScoreTotal').value = String(om.count);
+            $p('prBigSub').textContent = heard !== null
+              ? `Heard ${heard + (om.ear?.strums ? 1 : 0)} strums: ${heard} changes. Take off any that weren’t clean, then save.`
+              : 'How many clean changes? Enter them below and save.';
+            $p('prScoreTotal').value = String(heard !== null ? heard + om.count : om.count);
             $p('prScoreEntry').hidden = false;
             $p('prScoreTotal').focus();
           } else {
@@ -1819,6 +1941,7 @@
           else prShowHome();
         }
         function closePractice() {
+          prKeepAwake(false);
           prSaveSettings();
           pr.sessionInstrument = null; // next time: your instrument again
           prCancelAttempt();
@@ -1835,6 +1958,8 @@
         pr.save = () => prSaveProgress();    // for the tests and the UI review
         document.getElementById('practiceButton')?.addEventListener('click', () => openPractice()); // 4.19: Practice is on the songs screen
         document.getElementById('libPractice').addEventListener('click', () => openPractice());
+        // 4.88: a page-turner pedal (it sends one of these keys) works like Space: Start and Stop, or +1 change
+        const PEDAL_KEYS = ['PageDown', 'PageUp', 'ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'];
         window.addEventListener('keydown', (event) => {
           if (practiceEl.hidden || document.querySelector('dialog[open]')) return;
           if (event.key === 'Tab') {
@@ -1850,7 +1975,7 @@
             } else {
               closePractice();
             }
-          } else if ((event.key === ' ' || event.code === 'Space') && pr.view === 'player' && !/INPUT|SELECT|TEXTAREA/.test(event.target.tagName)) {
+          } else if ((event.key === ' ' || event.code === 'Space' || (PEDAL_KEYS.includes(event.key) && !event.target.closest?.('#prControls'))) && pr.view === 'player' && !/INPUT|SELECT|TEXTAREA/.test(event.target.tagName)) {
             event.preventDefault();
             if (pr.mode === 'oneminute') {
               if (pr.oneMinute && pr.oneMinute.running) prOneMinuteCount();

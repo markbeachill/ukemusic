@@ -47,7 +47,7 @@ test('every exercise has its own named help and a concrete practice goal', () =>
     assert.ok(instructions.steps.length >= 3);
     assert.ok(instructions.goal.length > 15);
   }
-  assert.ok(help.forExercise('one-minute').steps.join(' ').includes('Each transition counts once'));
+  assert.ok(help.forExercise('one-minute').steps.join(' ').includes('Each change counts once')) // 4.88: 'transition' became 'change';
   assert.ok(help.forExercise('noodle-create').steps.join(' ').includes('does not record'));
 });
 

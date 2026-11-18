@@ -1,5 +1,21 @@
 # Changelog
 
+## v4.88.0
+
+Free Practice reviewed for practising with your hands on the instrument, where you can't press anything. Desktop and web player alike.
+
+- **One-minute changes: nothing to press during the minute.** Before, the minute started the moment you pressed Start, and counting meant tapping a button between chord changes, which nobody can do with both hands on the instrument. Now:
+  - Three beeps give you time to get your hand on the first chord; a higher fourth beep is go. A beep says ten seconds to go, and three beeps say stop.
+  - **Count by listening** (the 🎤 button, or the tick box in the settings): strum once on each chord and the microphone counts the strums. The first strum is the first chord, so 12 strums are 11 changes. Its own beeps aren't counted. Nothing is recorded, and the microphone is let go at the end of the minute. At the end the total is filled in: take off any changes that weren't clean, then save.
+  - Without it, count in your head and enter the total at the end, as before. The button is now **+1 change**, for a friend counting for you.
+  - If the microphone isn't allowed or there isn't one, it says so and you count in your head.
+- **A page-turner pedal works like Space.** Pedals send Page Down/Up or the arrow keys: in an exercise they Start and Stop, and in one-minute changes they count +1.
+- **The screen stays on in an exercise.** An iPad or a phone dimmed after a minute or two while your hands were on the strings.
+- **Routines and Today's practice:**
+  - When a step's time is up, the round you're in finishes (up to half a minute more) instead of stopping mid-bar; the routine bar says "last round".
+  - Then the next exercise shows for three seconds ("Next: Chord switching. It starts in a moment.") before its count-in, so there's time to read it and move your hand.
+- **Mac:** the app says why it asks for the microphone (Count by listening).
+
 ## v4.87.0
 
 Free Practice has a new home screen, a cleaner exercise screen and instructions in pictures. The 40 exercises, your progress, your routines and your settings are unchanged. Desktop and web player alike.

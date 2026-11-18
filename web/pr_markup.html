@@ -102,6 +102,7 @@
               <span class="pr-pair"><select id="prFromRoot"></select><select id="prFromType" aria-label="Coming from: type"></select></span>
             </div>
             <div class="pr-chips" id="prPartners"></div>
+            <label class="pr-check" data-not="change"><input id="prListen" type="checkbox"> Count my changes by listening (the microphone hears each strum)</label>
             <label class="pr-field" data-not="oneminute">Change
               <select id="prEvery">
                 <option value="bar">every bar</option>
@@ -253,7 +254,7 @@
         <main class="practice-stage">
           <p id="prGoal" class="pr-goal"></p>
           <p id="prSaveStatus" class="pr-save-status" role="status"></p>
-          <div id="prScoreEntry" hidden><label>Your clean changes <input id="prScoreTotal" type="number" min="0" max="999" value="0"></label><button type="button" id="prScoreSave">Save score</button><p>Each transition counts once; a return trip is two.</p></div>
+          <div id="prScoreEntry" hidden><label>Your clean changes <input id="prScoreTotal" type="number" min="0" max="999" value="0"></label><button type="button" id="prScoreSave">Save score</button><p>Each change counts once: C to F is one, back to C is another.</p></div>
           <div class="pr-shapes">
             <figure class="pr-now"><figcaption id="prNowCaption">Now</figcaption><div id="prNowName" class="pr-chord">–</div><div id="prNowDiagram" class="pr-diagram"></div><div id="prNowNote" class="pr-note"></div></figure>
             <figure class="pr-next"><figcaption id="prNextCaption">Next</figcaption><div id="prNextName" class="pr-chord small">–</div><div id="prNextDiagram" class="pr-diagram"></div></figure>
@@ -261,7 +262,8 @@
           <div id="prBig" class="pr-big" hidden>
             <div id="prBigMain" class="pr-big-main"></div>
             <div id="prBigSub" class="pr-big-sub"></div>
-            <button id="prCount" type="button" class="pr-count-button" hidden>Changed ✓ <small>(Space)</small></button>
+            <button id="prListenToggle" type="button" class="pr-listen" hidden aria-pressed="false" title="The app counts your strums with the microphone: strum once on each chord">🎤 <span id="prListenText">Count by listening: off</span></button>
+            <button id="prCount" type="button" class="pr-count-button" hidden title="For a friend counting for you, or Space, or a page-turner pedal">+1 change <small>(friend, Space or pedal)</small></button>
             <div id="prScores" class="pr-scores"></div>
           </div>
           <div id="prFret" class="pr-fret" hidden></div>

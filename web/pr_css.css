@@ -466,3 +466,8 @@
   .pr-slide p { font-size: 15.5px; }
 }
 
+
+/* 4.88: one-minute changes: count by listening */
+.practice .pr-listen { font: inherit; font-weight: 700; font-size: 15px; padding: 8px 16px; border-radius: 999px; min-height: 44px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text); }
+.practice .pr-listen[aria-pressed="true"] { background: var(--pr-cat); border-color: var(--pr-cat); color: #fff; }
+.pr-count-button small { display: block; font-size: 12px; font-weight: 600; opacity: 0.85; }
