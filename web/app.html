@@ -2450,9 +2450,12 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       $('status').textContent = schedule.bars.length ? `${schedule.bars.length} bars · Play to hear it and follow along` : 'No chords to play yet.';
     } catch (_e) { /* the sheet shows the problem */ }
   }
-  async function start(fromLine = 0) {
+  // 4.89: a count-in wherever it starts, as on the desktop: Play played from a line you'd tapped
+  // (often the first line of words) with no count-in. Only a restart mid-song (a setting changed
+  // while it plays) carries straight on.
+  async function start(fromLine = 0, { countIn = true } = {}) {
     if (!player) { $('status').textContent = 'Sound isn’t available in this browser.'; return; }
-    const schedule = U.buildSchedule(currentIr(), { ...scheduleOptions(fromLine === 0), startLine: fromLine });
+    const schedule = U.buildSchedule(currentIr(), { ...scheduleOptions(countIn), startLine: fromLine });
     if (!schedule.bars.length) { $('status').textContent = 'Nothing to play: the song has no chords.'; return; }
     play.schedule = schedule;
     // 4.45: the words' timing (as karaoke has it), to colour them as they're sung
@@ -2502,7 +2505,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     play.userStopped = true;
     player.stop();
     renderSong();
-    setTimeout(() => start(line), 80);
+    setTimeout(() => start(line, { countIn: false }), 80);
   }
   $('playBtn').addEventListener('click', async () => {
     try {
@@ -2621,7 +2624,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     const text = played(view.song.text);
     const ir = currentIr(st && st.transform ? st.transform(text) : text);
     const tempo = st && st.speed ? Math.max(30, Math.round(p.tempo * st.speed / 100)) : p.tempo;
-    const schedule = U.buildSchedule(ir, { ...scheduleOptions(fromLine === 0), tempo, startLine: fromLine });
+    const schedule = U.buildSchedule(ir, { ...scheduleOptions(true), tempo, startLine: fromLine }); // 4.88.1: a count-in from any line, as on the desktop
     if (!schedule.bars.length) { toast('Nothing to play: the song has no chords.'); return; }
     $('karaokeTempo').textContent = `${tempo} bpm`;
     // from memory (Learn): asked for, or kept when a line is tapped or the tempo changes

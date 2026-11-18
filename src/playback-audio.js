@@ -396,6 +396,12 @@
         }
       }
       if (soundOf(this.sound).sampled) this.samples = await this.loadSamples(soundOf(this.sound).sampled);
+      // 4.89: the scheduler below plays events in order, so they must be in time order. The sung
+      // first note (time 0) came after the count-in's clicks, so it sounded on the last click.
+      const events = schedule.events || [];
+      if (events.some((e, i) => i && e.time < events[i - 1].time)) {
+        schedule = { ...schedule, events: events.map((e, i) => [e, i]).sort((a, b) => a[0].time - b[0].time || a[1] - b[1]).map(([e]) => e) };
+      }
       this.schedule = schedule;
       this.callbacks = callbacks;
       this.startTime = ctx.currentTime + 0.12;

@@ -66,4 +66,24 @@ test('the desktop copy of Free Practice matches the web one', () => {
   assert.ok(read('index.html').includes('function prEarStart()'));
 });
 
+// 4.88.1
+test('4.88.1: the web player counts in wherever Play starts (a tapped line too), but not on a restart mid-song', () => {
+  const WEB = read('web/app.html');
+  assert.match(WEB, /async function start\(fromLine = 0, \{ countIn = true \} = \{\}\) \{\n[^\n]*\n\s*const schedule = U\.buildSchedule\(currentIr\(\), \{ \.\.\.scheduleOptions\(countIn\), startLine: fromLine \}\);/);
+  assert.match(WEB, /setTimeout\(\(\) => start\(line, \{ countIn: false \}\), 80\);/);
+  assert.ok(!/scheduleOptions\(fromLine === 0\)/.test(WEB));
+  // the desktop counts in from any line already
+  assert.match(read('index.html'), /countIn: config\?\.playback\?\.count_in !== false && !options\.resume,/);
+});
+test('4.88.1: the player plays events in time order (the sung first note is on the first click of the count-in)', () => {
+  const AUDIO = read('src/playback-audio.js');
+  assert.match(AUDIO, /if \(events\.some\(\(e, i\) => i && e\.time < events\[i - 1\]\.time\)\) \{\n\s*schedule = \{ \.\.\.schedule, events: events\.map\(\(e, i\) => \[e, i\]\)\.sort\(\(a, b\) => a\[0\]\.time - b\[0\]\.time \|\| a\[1\] - b\[1\]\)\.map\(\(\[e\]\) => e\) \};/);
+  // the schedule still puts it after the clicks: the player is what sorts it
+  const { buildSchedule } = require('../src/playback-schedule');
+  const parseSong = require('../src/parser');
+  const s = buildSchedule(parseSong('[C]Amazing [G]grace', { useDelimiters: false }), { tempo: 90, beatsPerBar: 3, firstNote: 60 });
+  const cue = s.events.findIndex((e) => e.cue);
+  assert.ok(cue > 0 && s.events[cue].time === 0 && s.events[cue - 1].time > 0, 'out of order in the schedule');
+});
+
 console.log('v4.88 tests passed');

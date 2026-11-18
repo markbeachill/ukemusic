@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.88.1
+
+Web player and desktop: two count-in faults.
+
+- **Web player: Play had no count-in when you'd tapped a line.** Play plays from the line you last tapped, and tapping the sheet (to scroll, or the first line of words) selects a line, so Play then started straight in with no count-in. Starting again from the top had one, which is why it seemed to come and go. Play now always counts in, from any line, as the desktop app does, and karaoke started from a line does too. A restart in the middle of a song (changing a setting while it plays) still carries straight on.
+- **Desktop and web: the sung first note was late.** A song's first note to sing (`first_note`) is meant to sound with the first click of the count-in; it sounded with the last one. The player now plays everything in time order.
+
 ## v4.88.0
 
 Free Practice reviewed for practising with your hands on the instrument, where you can't press anything. Desktop and web player alike.
