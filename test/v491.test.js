@@ -43,8 +43,8 @@ test('setlists: in the simple view, and + Setlist on a song in the web player', 
 
 test('the website, the README and the guide describe the Music stand, with pictures', () => {
   const HOME = read('site/index.html');
-  assert.match(HOME, /<h3>The Music stand, for reading on a tablet<\/h3>/);
-  assert.match(HOME, /<img src="img\/music-stand\.webp" loading="lazy" width="1360" height="1020"/);
+  assert.match(HOME, /<h3>The Music stand, for reading from a tablet<\/h3>/);
+  assert.match(HOME, /<img class="shot" src="img\/music-stand\.webp" loading="lazy" width="1360" height="1020"/);
   const PAGES = read('web/pages.js');
   assert.match(PAGES, /\{ h3: 'How to use the Music stand', p: \[[^\]]*\], img: 'music-stand-guide\.webp', h: 1020,/);
   assert.match(read('WRITING.md'), /### On a tablet on a music stand: the Music stand/);

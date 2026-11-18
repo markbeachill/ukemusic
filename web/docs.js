@@ -18,6 +18,8 @@ const PAGES = [
   { md: 'WRITING.md', html: 'guide.html', seoTitle: "How to write a song in ukemusic: the song guide", title: 'How to write songs', nav: 'Song guide', blurb: 'Everything you can type in a ukemusic song, with examples. The same guide is in the app: Write → How to write.', ownIntro: true },
   { md: 'CHORDPRO.md', html: 'chordpro.html', seoTitle: "ukemusic and ChordPro: what it reads and writes", title: 'ukemusic and ChordPro', nav: 'ChordPro', blurb: 'What ukemusic does with ChordPro files, what it writes, and what it adds.' },
   { md: 'CHANGELOG.md', html: 'changes.html', seoTitle: "What's new in ukemusic: the changes in every version", title: "What's new", nav: "What's new", blurb: 'What changed in each version of ukemusic, the free ukulele app: new features, fixes and improvements, newest first.' },
+  // 4.95: the user guide, with the website's pictures; read straight through (no folding)
+  { md: 'docs/user-guide.md', html: 'user-guide.html', seoTitle: 'ukemusic user guide: how to use the ukulele app, step by step', title: 'User guide', nav: 'User guide', blurb: 'How to use ukemusic, step by step and with pictures: songs, reading and editing, playing along, learning, Free Practice, gigs and printing.', ownIntro: true, fold: false },
   { md: 'docs/explanation/how-learn-works.md', html: 'how-learn-works.html', seoTitle: "How Learn works: learning a ukulele song by heart · ukemusic", title: 'How Learn works', nav: 'How Learn works', blurb: 'What the Learn tab works out from a song, how it helps you practise, and how far to trust it.' }
 ];
 const BY_MD = Object.fromEntries(PAGES.map((p) => [p.md, p.html]));
@@ -25,6 +27,7 @@ const BY_MD = Object.fromEntries(PAGES.map((p) => [p.md, p.html]));
 /** A link in a document: the other documents' pages, the rest of the repository on GitHub.
  *  base: the folder of the document the link is in (a link is relative to it, as on GitHub) */
 function href(url, base = '') {
+  if (/^#[\w-]+$/.test(url)) return `#guide-${url.slice(1)}`;   // 4.95: a section of the same page (its id here)
   if (/^(https?:|mailto:|#)/.test(url)) return url;
   const [rel, hash] = url.split('#');
   const file = base ? path.posix.normalize(path.posix.join(base, rel)) : rel;
@@ -41,7 +44,7 @@ function page(p, html, sections, siteCss) {
   // the menu and footer every page shares (web/pages.js)
   const { siteHeader, siteFooter } = require('./pages');
   // the changelog's contents list is its versions; the others, their sections
-  const toc = sections.length > 2 ? `<nav class="toc" aria-label="On this page"><p>On this page</p>${sections.map((s) => `<a href="#guide-${s.id}">${esc(s.title)}</a>`).join('')}</nav>` : '';
+  const toc = sections.length > 2 ? `<nav class="toc${p.fold === false ? ' always' : ''}" aria-label="On this page"><p>On this page</p>${sections.map((s) => `<a href="#guide-${s.id}">${esc(s.title)}</a>`).join('')}</nav>` : '';
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -51,51 +54,45 @@ function page(p, html, sections, siteCss) {
 <meta name="description" content="${esc(p.blurb)}">
 <link rel="canonical" href="https://markbeachill.github.io/ukemusic/${esc(p.html)}">
 <link rel="icon" href="img/icon-64.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Figtree:wght@400;500;600;700;800&display=swap">
 <style>
 ${siteCss}
-/* documents */
-.doc-wrap { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; padding: 40px 0 72px; }
-@media (max-width: 900px) { .doc-wrap { grid-template-columns: 1fr; gap: 0; padding-top: 24px; } .toc { display: none; } }
-@media (max-width: 720px) { nav.links { font-size: 14px; } }
-.toc { position: sticky; top: 84px; align-self: start; max-height: calc(100vh - 110px); overflow-y: auto; display: grid; gap: 2px; font-size: 14px; }
-.toc p { margin: 0 0 6px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.toc a { color: var(--muted); text-decoration: none; padding: 3px 0; line-height: 1.35; }
-.toc a:hover { color: var(--teal); }
-.doc { min-width: 0; max-width: 820px; }
-.doc .lede { color: var(--muted); margin: 0 0 28px; }
-.doc h1 { font-size: clamp(32px, 4vw, 44px); line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 8px; }
-.doc h2 { font-size: 26px; letter-spacing: -0.01em; margin: 48px 0 12px; padding-top: 12px; border-top: 1px solid var(--line); scroll-margin-top: 80px; }
-.doc h3 { font-size: 19px; margin: 30px 0 8px; scroll-margin-top: 80px; }
-.doc h4 { font-size: 16px; margin: 22px 0 6px; }
-.doc p, .doc li { line-height: 1.65; }
-.doc ul { padding-left: 22px; }
+/* documents (4.95: in the website's style, AGENTS.md) */
+.doc-wrap { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 40px; padding: 32px 0 64px; }
+.toc { position: sticky; top: 16px; align-self: start; max-height: calc(100vh - 32px); overflow-y: auto; display: grid; gap: 2px; font-size: 14px; }
+.toc p { margin: 0 0 6px; font-weight: 700; color: var(--muted); }
+.toc a { color: var(--muted); text-decoration: none; padding: 2px 0; line-height: 1.35; }
+.toc a:hover { color: var(--teal-ink); text-decoration: underline; }
+/* a phone: no contents beside the page; the user guide (read straight through) has them at the top */
+@media (max-width: 900px) { .doc-wrap { grid-template-columns: 1fr; gap: 0; padding-top: 24px; } .toc { display: none; } .toc.always { display: grid; position: static; max-height: none; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--line); } }
+.doc { min-width: 0; max-width: 760px; }
+.doc .lede { color: var(--muted); margin: 0 0 24px; }
+.doc h1 { margin: 0 0 8px; }
+.doc h2 { margin: 40px 0 10px; padding-top: 12px; border-top: 1px solid var(--line); scroll-margin-top: 16px; }
+.doc h3 { margin: 24px 0 6px; scroll-margin-top: 16px; }
+.doc h4 { margin: 18px 0 4px; }
+.doc ul, .doc ol { padding-left: 22px; }
 .doc li { margin: 4px 0; }
-.doc a { color: var(--teal); }
-.doc code { font: 0.92em var(--mono); background: var(--teal-soft); color: var(--ink); padding: 1px 5px; border-radius: 5px; overflow-wrap: anywhere; }
-.doc pre { font: 15px/1.5 var(--mono); background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; overflow-x: auto; }
-.doc table { border-collapse: collapse; width: 100%; margin: 14px 0 20px; font-size: 15.5px; display: block; overflow-x: auto; }
-.doc th, .doc td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--line); }
-.doc th { font-weight: 700; background: var(--paper); }
-nav.links a[aria-current] { color: var(--ink); }
-.source { margin-top: 48px; font-size: 14px; color: var(--muted); }
+.doc code { font-family: var(--mono); background: var(--paper); padding: 0 4px; overflow-wrap: anywhere; }
+.doc pre { font: 14px/1.5 var(--mono); border: 1px solid var(--line); padding: 12px 14px; overflow-x: auto; }
+.doc table { border-collapse: collapse; width: 100%; margin: 12px 0 18px; display: block; overflow-x: auto; }
+.doc th, .doc td { text-align: left; vertical-align: top; padding: 6px 10px; border-bottom: 1px solid var(--line); }
+.doc th { font-weight: 700; }
+.doc figure { margin: 12px 0 20px; }
+.doc figure img { border: 1px solid var(--line); }
+.doc figure.narrow img { max-width: 360px; }
+.source { margin-top: 40px; font-size: 14px; color: var(--muted); }
 /* 4.69: sections fold away (an accordion) */
-.doc details.fold { border-top: 1px solid var(--line); scroll-margin-top: 80px; }
+.doc details.fold { border-top: 1px solid var(--line); scroll-margin-top: 16px; }
 .doc details.fold:last-of-type { border-bottom: 1px solid var(--line); }
-.doc details.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 14px 2px; }
+.doc details.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 12px 2px; }
 .doc details.fold > summary::-webkit-details-marker { display: none; }
-.doc details.fold > summary::after { content: ""; margin-left: auto; flex: none; width: 10px; height: 10px; border-right: 2.5px solid var(--teal); border-bottom: 2.5px solid var(--teal); transform: rotate(45deg); transition: transform .15s ease; }
-.doc details.fold[open] > summary::after { transform: rotate(225deg); }
-.doc details.fold > summary h2 { margin: 0; padding: 0; border: 0; font-size: 22px; }
-.doc details.fold > summary:hover h2 { color: var(--teal); }
-.doc .fold-body { padding: 0 0 18px; }
+.doc details.fold > summary::after { content: "+"; margin-left: auto; flex: none; color: var(--teal-ink); font-weight: 700; }
+.doc details.fold[open] > summary::after { content: "−"; }
+.doc details.fold > summary h2 { margin: 0; padding: 0; border: 0; }
+.doc details.fold > summary:hover h2 { color: var(--teal-ink); }
+.doc .fold-body { padding: 0 0 16px; }
 .doc .fold-all { margin: 0 0 10px; text-align: right; }
-.doc .fold-all button { font: inherit; font-size: 14px; color: var(--teal); background: none; border: 0; cursor: pointer; padding: 4px 0; text-decoration: underline; }
-footer .ref a { color: var(--muted); }
-@media (max-width: 900px) { .toc { display: none; } }
-@media (min-width: 861px) and (max-width: 980px) { nav.links { gap: 14px; } }
+.doc .fold-all button { font: inherit; font-size: 14px; color: var(--teal-ink); background: none; border: 0; cursor: pointer; padding: 4px 0; text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -149,9 +146,11 @@ function build() {
   for (const p of PAGES) {
     const md = fs.readFileSync(path.join(APP, p.md), 'utf8');
     const base = path.posix.dirname(p.md) === '.' ? '' : path.posix.dirname(p.md);
-    const made = markdownToHtml(md, { href: (u) => href(u, base), nested: true });
-    // the newest changes start open; the guides start as a list of their sections
-    const html = made.sections.length >= FOLD_FROM ? foldSections(made.html, { open: p.html === 'changes.html' ? 1 : 0 }) : made.html;
+    // 4.95: pictures from the website's own (../site/img/x.webp in the .md, as GitHub shows it, is img/x.webp here)
+    const image = (u) => { const file = base ? path.posix.normalize(path.posix.join(base, u)) : u; return file.startsWith('site/') ? file.slice(5) : href(u, base); };
+    const made = markdownToHtml(md, { href: (u) => href(u, base), nested: true, image, ordered: true });
+    // the newest changes start open; the guides start as a list of their sections (the user guide reads straight through)
+    const html = p.fold !== false && made.sections.length >= FOLD_FROM ? foldSections(made.html, { open: p.html === 'changes.html' ? 1 : 0 }) : made.html;
     fs.writeFileSync(path.join(SITE, p.html), page(p, html, made.sections, siteCss));
   }
   return PAGES.map((p) => p.html);

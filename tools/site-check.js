@@ -15,6 +15,9 @@
 //   - every picture has alt text
 //   - every link and file on the site that the page points to is there
 // and that the sitemap lists every page, and only pages that are there.
+// 4.95: and the website's own pages (not the web player in app/, nor the gallery's exported sheets)
+// keep to the website's style (AGENTS.md, "The website's style"): four text sizes, the system font,
+// no shadows, gradients, capital labels, eyebrows, feature cards or door tiles.
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -75,6 +78,33 @@ function target(root, file, href) {
   return full;
 }
 
+// 4.95: the website's style (AGENTS.md): what a page's styles may use
+const FONT_SIZES = new Set(['14px', '16px', '20px', '28px', 'inherit']);
+function styleProblems(html) {
+  const out = [];
+  const css = [...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1])
+    .concat([...html.matchAll(/\sstyle\s*=\s*"([^"]*)"/gi)].map((m) => m[1])).join('\n');
+  const sizes = new Set();
+  for (const m of css.matchAll(/font-size\s*:\s*([^;}"]+)/gi)) sizes.add(m[1].trim().replace(/\s*!important$/, ''));
+  for (const m of css.matchAll(/(?:^|[;{\s])font\s*:\s*([^;}"]+)/gi)) {
+    const size = m[1].match(/(?:^|\s)(\d+(?:\.\d+)?(?:px|em|rem|%)|clamp\([^)]*\))(?=[\s/])/);
+    if (size) sizes.add(size[1]);
+  }
+  for (const size of sizes) if (!FONT_SIZES.has(size)) out.push(`a text size the website doesn't use: ${size} (14px, 16px, 20px or 28px)`);
+  const banned = [
+    [/clamp\(/i, 'a size that grows with the window (clamp)'],
+    [/box-shadow\s*:\s*(?!none\b)[^;}"]+/i, 'a shadow (box-shadow)'],
+    [/(?:linear|radial|conic)-gradient\(/i, 'a gradient'],
+    [/text-transform\s*:\s*uppercase/i, 'capital letters made by the styles (text-transform: uppercase)'],
+    [/fonts\.googleapis\.com/i, 'a web font (the website uses the system font)']
+  ];
+  for (const [re, what] of banned) if (re.test(css) || (what.startsWith('a web font') && re.test(html))) out.push(`${what}: see AGENTS.md, "The website's style"`);
+  for (const [re, what] of [[/class="eyebrow"/, 'a small label above a heading (class="eyebrow")'], [/class="f-card\b/, 'a feature card (f-card)'], [/class="door\b/, 'a door tile']]) {
+    if (re.test(html)) out.push(`${what}: see AGENTS.md, "The website's style"`);
+  }
+  return out;
+}
+
 function checkSite(root) {
   const problems = [];
   const add = (file, text) => problems.push(`${file ? path.relative(root, file).split(path.sep).join('/') : 'the site'}: ${text}`);
@@ -115,6 +145,10 @@ function checkSite(root) {
     for (const m of page.matchAll(/<img\b[^>]*>/gi)) {
       if (attr(m[0], 'alt') === null) add(file, `a picture with no alt text: ${attr(m[0], 'src') || m[0].slice(0, 80)}`);
     }
+
+    // 4.95: the website's style, on the website's own pages
+    const rel = path.relative(root, file).split(path.sep).join('/');
+    if (!/^(app|gallery)\//.test(rel)) for (const problem of styleProblems(html)) add(file, problem);
 
     const refs = new Set();
     for (const m of page.matchAll(/<(a|link|img|source|iframe|embed)\b[^>]*>/gi)) {
@@ -183,4 +217,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { checkSite, pageUrl, visible, LIMITS, SITE_URL };
+module.exports = { checkSite, pageUrl, visible, LIMITS, SITE_URL, styleProblems, FONT_SIZES };

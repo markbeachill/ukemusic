@@ -56,11 +56,11 @@ test('the website: a page for each purpose and Your songs, built with the doc pa
   assert.ok(header.includes('href="teach.html" aria-current="page"') && header.includes('href="./#get"'));
 });
 
-test('the front page: the doors, browser or computer, and every link goes somewhere', () => {
+test('the front page: what it does, browser or computer, and every link goes somewhere', () => {
   const site = fs.readFileSync(path.join(ROOT, 'site', 'index.html'), 'utf8');
-  assert.ok(site.includes('id="doors"') && site.includes('id="choose"') && site.includes('<section id="get">') && site.includes('id="download"'));
+  assert.ok(site.includes('id="what-it-does"') && site.includes('id="choose"') && site.includes('<section id="get">') && site.includes('id="download"'));
   const local = [...site.matchAll(/href="([a-z-]+\.html)(#[^"]*)?"/g)].map((m) => m[1]);
-  const made = [...require('../web/pages').PAGES.map((p) => p.file), 'songs.html', require('../web/pages').PHONE_PAGE.file, require('../web/pages').INSTRUMENTS_PAGE.file, require('../web/pages').FEATURES_PAGE.file, require('../web/pages').DROPBOX_PAGE.file, require('../web/pages').GALLERY_PAGE.file, ...require('../web/docs').PAGES.map((p) => p.html)];
+  const made = [...require('../web/pages').PAGES.map((p) => p.file), 'songs.html', require('../web/pages').PHONE_PAGE.file, require('../web/pages').INSTRUMENTS_PAGE.file, require('../web/pages').FEATURES_PAGE.file, require('../web/pages').DROPBOX_PAGE.file, require('../web/pages').GALLERY_PAGE.file, require('../web/pages').PRACTICE_GUIDE_PAGE.file, ...require('../web/docs').PAGES.map((p) => p.html)];
   for (const f of new Set(local)) assert.ok(made.includes(f), `${f} is linked but not made`);
   for (const img of [...site.matchAll(/src="img\/([^"]+)"/g)].map((m) => m[1])) assert.ok(fs.existsSync(path.join(ROOT, 'site', 'img', img)), img);
 });

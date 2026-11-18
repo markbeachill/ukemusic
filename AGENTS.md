@@ -68,6 +68,20 @@ The **UI review** (`tools/ui-review/`) takes a picture of every screen of the de
 
 `tools/ui-review/README.md` says how.
 
+## The website's style
+
+The website (`site/`, made by `web/pages.js` and `web/docs.js`) is a manual and a download page, so it looks like one: functional, not decorative. `npm run site-check` fails a page that breaks the first four rules.
+
+- **Four text sizes:** 28px (the page's heading), 20px (headings in it), 16px (everything else) and 14px (captions, notes, the footer). Nothing that grows with the window (`clamp()`, `vw`).
+- **The system font** (`system-ui`, and `ui-monospace` for song text and code); no web fonts.
+- **No decoration:** no shadows, gradients, small capital labels above headings, icon tiles, tinted cards or hover lifts. Lines and space separate things.
+- **No `<p class="eyebrow">`**, no `f-card`, no `door`.
+- **Colour means something:** the teal for links and buttons; a section's colour for its heading or a thin rule; the red for chords. Light and dark both.
+- **One column** of text about 70 characters wide; pictures may be wider. A section is a heading, a short paragraph or list, then a picture with a one-line caption.
+- **Plain words:** headings say what the section is ("Reading at a gig"), not a slogan. Say what the app does and where to press, as the user guide does.
+
+The **user guide** (`docs/user-guide.md`, the page `user-guide.html`) uses the website's pictures (`site/img/`, made by `npm run site-pictures`). When a screen changes, retake its picture and check the guide's words still match.
+
 ## Running the tasks
 
 `docs/how-to/maintenance-tasks.md` says how to run each task (tests, the web build, the website check and pictures, the UI review, the chord library, releases) and when. Keep it up to date when you add or change one.

@@ -70,223 +70,187 @@
 </script>
 <link rel="icon" href="img/icon-64.png">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Figtree:wght@400;500;600;700;800&display=swap">
 <style>
+/* 4.95: the website's style (AGENTS.md, "The website's style"): a manual and a download page.
+   Four text sizes (28, 20, 16, 14px), the system font, lines and space instead of decoration. */
 :root {
-  --bg: #f6f3ec;
-  --paper: #fffdf8;
-  --ink: #1d2422;
-  --muted: #5b6662;
-  --line: #e2ddd1;
+  --bg: #ffffff;
+  --paper: #f6f7f6;
+  --ink: #1f2523;
+  --muted: #56615d;
+  --line: #d8dedb;
   --teal: #0e6b64;
   --teal-ink: #0a524c;
-  --teal-soft: #dcefeb;
+  --teal-soft: #e4f1ee;
   --chord: #b22222;
-  --shadow: 0 1px 2px rgba(29, 36, 34, 0.06), 0 12px 32px -12px rgba(29, 36, 34, 0.22);
-  --radius: 14px;
-  --sans: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: "Courier Prime", "Courier New", monospace;
+  --head: #1a5276;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #131816; --paper: #1b2220; --ink: #e9efec; --muted: #a2b0ab; --line: #2c3633;
-    --teal: #3fb3a7; --teal-ink: #7fd3c9; --teal-soft: #17302c; --chord: #ff7b6b;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px -12px rgba(0, 0, 0, 0.6);
+    --bg: #141917; --paper: #1b2220; --ink: #e9efec; --muted: #a2b0ab; --line: #2f3a37;
+    --teal: #3fb3a7; --teal-ink: #7fd3c9; --teal-soft: #17302c; --chord: #ff7b6b; --head: #7fb4dd;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #131816; --paper: #1b2220; --ink: #e9efec; --muted: #a2b0ab; --line: #2c3633;
-  --teal: #3fb3a7; --teal-ink: #7fd3c9; --teal-soft: #17302c; --chord: #ff7b6b;
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px -12px rgba(0, 0, 0, 0.6);
+  --bg: #141917; --paper: #1b2220; --ink: #e9efec; --muted: #a2b0ab; --line: #2f3a37;
+  --teal: #3fb3a7; --teal-ink: #7fd3c9; --teal-soft: #17302c; --chord: #ff7b6b; --head: #7fb4dd;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
-a { color: var(--teal-ink); text-underline-offset: 3px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 var(--sans); }
+a { color: var(--teal-ink); text-underline-offset: 2px; }
 img { max-width: 100%; height: auto; display: block; }
-.wrap { width: min(1120px, 100% - 32px); margin-inline: auto; }
+code { font-family: var(--mono); }
+.wrap { width: min(1000px, 100% - 32px); margin-inline: auto; }
+main p, main li { max-width: 70ch; }
+h1 { font-size: 28px; line-height: 1.25; margin: 0 0 12px; }
+h2 { font-size: 20px; line-height: 1.3; margin: 0 0 8px; }
+h3 { font-size: 16px; line-height: 1.4; margin: 20px 0 4px; }
+.muted, .intro { color: var(--muted); }
+.intro { margin: 0 0 16px; }
 
-/* Header */
-header.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
-.top .wrap { display: flex; align-items: center; gap: 16px; height: 60px; }
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
-.brand img { width: 30px; height: 30px; border-radius: 7px; }
-nav.links { margin-left: auto; display: flex; gap: 22px; font-size: 15px; font-weight: 600; }
-nav.links a { color: var(--muted); text-decoration: none; }
-nav.links a:hover { color: var(--ink); }
-/* a phone: the menu is a row of its own under the name, scrolling sideways if it must */
+/* The top of every page */
+header.top { border-bottom: 1px solid var(--line); background: var(--bg); }
+.top .wrap { display: flex; align-items: center; gap: 16px; min-height: 52px; }
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 20px; color: var(--ink); text-decoration: none; }
+.brand img { width: 24px; height: 24px; }
+nav.links { margin-left: auto; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+nav.links a { color: var(--ink); text-decoration: none; }
+nav.links a:hover { text-decoration: underline; }
+nav.links a[aria-current] { color: var(--teal-ink); font-weight: 700; }
 @media (max-width: 860px) {
-  .top .wrap { flex-wrap: wrap; height: auto; padding: 10px 0 0; row-gap: 6px; }
-  nav.links { margin-left: 0; width: 100%; overflow-x: auto; gap: 18px; padding-bottom: 10px; scrollbar-width: none; white-space: nowrap; }
-  nav.links::-webkit-scrollbar { display: none; }
+  .top .wrap { flex-wrap: wrap; padding: 8px 0; row-gap: 4px; }
+  nav.links { margin-left: 0; width: 100%; }
 }
 
 /* Buttons */
-.btn { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 20px; border-radius: 12px; font-weight: 700; font-size: 16px; text-decoration: none; border: 1px solid var(--line); background: var(--paper); color: var(--ink); cursor: pointer; }
+.btn { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: 6px; font-weight: 600; text-decoration: none; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; font-size: 16px; }
 .btn:hover { border-color: var(--teal); }
 .btn.primary { background: var(--teal); border-color: var(--teal); color: #fff; }
 :root[data-theme="dark"] .btn.primary { color: #08201d; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.primary { color: #08201d; } }
-.btn.primary:hover { filter: brightness(1.08); }
-.btn small { font-weight: 500; opacity: 0.85; }
-
-/* Hero */
-.hero { padding: 64px 0 24px; }
-.hero h1 { font-size: clamp(34px, 5.4vw, 58px); line-height: 1.18; letter-spacing: -0.03em; margin: 0 0 18px; max-width: 19ch; }
-.hero .for-who { margin: -6px 0 16px; font-size: clamp(16px, 1.9vw, 19px); font-weight: 600; }
-.hero .for-who a { color: var(--teal-ink); text-decoration: none; border-bottom: 2px solid currentColor; }
-.hero p.lede { font-size: clamp(18px, 2.2vw, 21px); color: var(--muted); max-width: 46ch; margin: 0 0 28px; }
-.cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.btn small { font-weight: 400; font-size: 14px; }
+.cta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 16px 0 0; }
 .cta .note { font-size: 14px; color: var(--muted); }
-.shot { border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--line); background: var(--paper); }
-.hero .shot { margin-top: 48px; }
+.next-pages { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* The start of a page */
+.hero, .page-hero { padding: 32px 0 8px; }
+.lede { margin: 0; }
+figure { margin: 0; }
+.shot { border: 1px solid var(--line); background: var(--paper); }
+.hero .shot { margin-top: 24px; }
+figcaption, .caption { font-size: 14px; color: var(--muted); margin: 6px 0 0; }
 
 /* Sections */
-section { padding: 72px 0; }
-section + section { border-top: 1px solid var(--line); }
-.eyebrow { font-size: 13px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal-ink); margin: 0 0 10px; }
-h2 { font-size: clamp(28px, 4vw, 40px); line-height: 1.12; letter-spacing: -0.02em; margin: 0 0 14px; }
-h3 { font-size: 21px; margin: 0 0 6px; letter-spacing: -0.01em; }
-.intro { color: var(--muted); max-width: 60ch; margin: 0 0 36px; }
+section { padding: 32px 0; border-top: 1px solid var(--line); }
 
-/* How a song is written */
-.write { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; }
-@media (max-width: 860px) { .write { grid-template-columns: 1fr; } }
-.pane { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; overflow-x: auto; }
-.pane .label { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 10px; display: block; }
-.typed { font: 16px/1.7 var(--mono); white-space: pre; margin: 0; }
-.typed .ch { color: var(--chord); font-weight: 700; }
-.typed .hd { color: #1a5276; font-weight: 700; }
-.typed .st { color: var(--muted); }
-:root[data-theme="dark"] .typed .hd { color: #7fb4dd; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .typed .hd { color: #7fb4dd; } }
-.sheet { font: 16px/1.25 var(--mono); white-space: pre; margin: 0; }
-.sheet .ch { color: var(--chord); font-weight: 700; }
-.sheet .sec { font-family: var(--sans); font-weight: 800; font-size: 19px; color: #1a5276; display: block; margin: 4px 0 8px; white-space: normal; }
-:root[data-theme="dark"] .sheet .sec { color: #7fb4dd; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sheet .sec { color: #7fb4dd; } }
-.shapes { display: flex; gap: 18px; margin-bottom: 14px; }
-.shapes svg { width: 54px; height: auto; color: var(--ink); }
-.shapes figure { margin: 0; text-align: center; font: 700 14px var(--sans); color: var(--chord); }
-.legend { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 20px; }
-@media (max-width: 860px) { .legend { grid-template-columns: 1fr; } }
-.legend div { font-size: 15px; color: var(--muted); }
-.legend code { font: 700 15px var(--mono); color: var(--ink); background: var(--teal-soft); padding: 1px 6px; border-radius: 6px; }
-
-/* Feature rows */
-.feature { display: grid; grid-template-columns: 5fr 7fr; gap: 44px; align-items: center; margin-bottom: 72px; }
+/* A feature: the heading and words, then the picture under them */
+.feature { margin: 0 0 40px; }
 .feature:last-child { margin-bottom: 0; }
-.feature.flip { grid-template-columns: 7fr 5fr; }
-.feature.flip .text { order: 2; }
-@media (max-width: 860px) { .feature, .feature.flip { grid-template-columns: 1fr; gap: 20px; } .feature.flip .text { order: 0; } }
-.feature .text p { color: var(--muted); margin: 0 0 12px; }
-.feature ul { margin: 0; padding-left: 20px; color: var(--muted); }
-.feature li { margin: 4px 0; }
-.phones { display: flex; gap: 16px; justify-content: center; }
-.phones .shot { width: min(46%, 260px); border-radius: 26px; }
+.feature .text p { margin: 0 0 10px; }
+.feature ul { margin: 0 0 10px; padding-left: 20px; }
+.feature li { margin: 2px 0; }
+.feature .text h3 { margin-top: 0; font-size: 20px; }
+.feature figure, .feature > .shot { margin-top: 12px; }
+.feature.text-only ul { columns: 2; column-gap: 40px; }
+@media (max-width: 760px) { .feature.text-only ul { columns: 1; } }
+.phones { display: flex; gap: 16px; }
+.phones .shot { width: min(46%, 260px); }
 
-/* Grid of smaller features */
-.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-@media (max-width: 860px) { .grid { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
-.card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
-.card h3 { font-size: 17px; }
-.card p { margin: 0; color: var(--muted); font-size: 15px; }
-.grid.two { grid-template-columns: repeat(2, 1fr); }
-@media (max-width: 560px) { .grid.two { grid-template-columns: 1fr; } }
+/* How a song is written: what you type, and what you get */
+.write { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 760px) { .write { grid-template-columns: 1fr; } }
+.pane { border: 1px solid var(--line); padding: 14px 16px; overflow-x: auto; }
+.pane .label { font-size: 14px; color: var(--muted); margin-bottom: 8px; display: block; }
+.typed { font: 16px/1.6 var(--mono); white-space: pre; margin: 0; }
+.typed .ch, .sheet .ch { color: var(--chord); font-weight: 700; }
+.typed .hd { color: var(--head); font-weight: 700; }
+.typed .st { color: var(--muted); }
+.sheet { font: 16px/1.3 var(--mono); white-space: pre; margin: 0; }
+.sheet .sec { font-family: var(--sans); font-weight: 700; color: var(--head); display: block; margin: 4px 0 6px; white-space: normal; }
+.shapes { display: flex; gap: 16px; margin-bottom: 12px; }
+.shapes svg { width: 48px; height: auto; color: var(--ink); }
+.shapes figure { text-align: center; font-weight: 700; font-size: 14px; color: var(--chord); }
+.legend { margin: 12px 0 0; padding-left: 20px; }
+.legend li { margin: 2px 0; }
+
+/* Text in two columns (lists side by side), and plain lists */
+.grid, .who, .versions, .choose { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 40px; }
+.grid.three { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 760px) { .grid, .grid.three, .who, .versions, .choose { grid-template-columns: 1fr; } }
+.card h3 { margin: 12px 0 4px; }
+.card p { margin: 0 0 8px; }
+.card ul, .card ol { margin: 0 0 8px; padding-left: 20px; }
+.versions .tag { font-size: 14px; color: var(--teal-ink); font-weight: 600; }
+.versions .card .btn, .choose .card .btn { margin-top: 4px; }
+.facts { margin: 0; padding-left: 20px; }
+.facts li { margin: 0 0 6px; }
+.facts li strong { margin-right: 4px; }
+.steps { margin: 0; padding-left: 22px; }
+.steps li { margin: 0 0 6px; }
+.note-box, .callout { border-left: 3px solid var(--teal); padding: 2px 0 2px 14px; margin: 16px 0 0; }
+.note-box p, .callout p { margin: 0 0 8px; }
+.callout { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
 
 /* Download */
-.dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
-@media (max-width: 860px) { .dl { grid-template-columns: 1fr; } }
-.dl .card { display: flex; flex-direction: column; gap: 10px; }
-.dl .card.here { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-soft); }
-.dl .os { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; }
-.dl .os svg { width: 26px; height: 26px; }
-.dl .files { display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
-.dl .files .btn { justify-content: space-between; min-height: 44px; font-size: 15px; }
+.version { color: var(--muted); margin: 0 0 12px; }
+.dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 32px; margin-bottom: 16px; }
+@media (max-width: 760px) { .dl { grid-template-columns: 1fr; } }
+.dl .card { display: flex; flex-direction: column; gap: 8px; }
+.dl .os { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 20px; margin-top: 12px; }
+.dl .os svg { width: 20px; height: 20px; }
+.dl .card.here .os { color: var(--teal-ink); }
+.dl .files { display: flex; flex-direction: column; gap: 8px; }
+.dl .files .btn { justify-content: space-between; }
 .dl .tip { font-size: 14px; color: var(--muted); margin: 0; }
-.version { font-size: 15px; color: var(--muted); margin: 0 0 18px; }
-.callout { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; justify-content: space-between; background: var(--teal-soft); border-radius: var(--radius); padding: 22px 24px; }
-.callout p { margin: 0; max-width: 60ch; }
-pre.cmd { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; font: 14px/1.6 ui-monospace, Consolas, monospace; overflow-x: auto; margin: 10px 0 0; }
-details { margin-top: 18px; }
-summary { cursor: pointer; font-weight: 700; }
+pre.cmd { border: 1px solid var(--line); padding: 12px 14px; font: 14px/1.6 var(--mono); overflow-x: auto; margin: 10px 0 0; }
+details { margin-top: 12px; }
+summary { cursor: pointer; font-weight: 600; }
 
-/* What do you want to do? */
-.doors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-@media (max-width: 900px) { .doors { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 560px) { .doors { grid-template-columns: 1fr; } }
-.door { display: flex; flex-direction: column; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; text-decoration: none; color: var(--muted); font-size: 15px; transition: border-color .15s, transform .15s; }
-.door:hover { border-color: var(--teal); transform: translateY(-2px); }
-.door img { aspect-ratio: 16 / 9; object-fit: cover; object-position: top left; border-bottom: 1px solid var(--line); }
-.door > span { padding: 14px 16px 16px; display: grid; gap: 4px; }
-.door strong { color: var(--ink); font-size: 19px; }
-.door-songs { justify-content: space-between; background: var(--teal-soft); border-color: transparent; }
-.door-songs .go { color: var(--teal-ink); font-weight: 700; }
-.choose { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-@media (max-width: 760px) { .choose { grid-template-columns: 1fr; } }
-.choose .card { display: flex; flex-direction: column; gap: 10px; }
-.choose .card ul { margin: 0; padding-left: 20px; color: var(--muted); font-size: 15.5px; }
-.choose .card .btn { align-self: flex-start; margin-top: auto; }
-footer .ref a { color: var(--muted); }
-nav.links a[aria-current] { color: var(--ink); }
-@media (min-width: 861px) and (max-width: 980px) { nav.links { gap: 14px; } }
-
-/* Footer */
-footer { border-top: 1px solid var(--line); padding: 36px 0 48px; color: var(--muted); font-size: 15px; }
-footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; }
+/* The footer */
+footer { border-top: 1px solid var(--line); padding: 24px 0 40px; color: var(--muted); font-size: 14px; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
 footer a { color: var(--muted); }
-.theme { background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 999px; padding: 4px 12px; font: inherit; font-size: 14px; cursor: pointer; }
+.theme { background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 2px 10px; font: inherit; font-size: 14px; cursor: pointer; }
 /* features-css:start (made by web/pages.js from web/features.js: change it there) */
-.tone-teal { --tone: var(--teal); --tone-ink: var(--teal-ink); --tone-soft: var(--teal-soft); }
-.tone-coral { --tone: #c2452d; --tone-ink: #9c3420; --tone-soft: #fbe5de; }
-.tone-amber { --tone: #b7790f; --tone-ink: #8a5a06; --tone-soft: #f8ebcf; }
-.tone-blue { --tone: #2f64a8; --tone-ink: #234d84; --tone-soft: #e1eaf6; }
-:root[data-theme="dark"] .tone-coral { --tone: #ff8a70; --tone-ink: #ffb19f; --tone-soft: #3a211b; }
-:root[data-theme="dark"] .tone-amber { --tone: #e8b04a; --tone-ink: #f2cd85; --tone-soft: #33291a; }
-:root[data-theme="dark"] .tone-blue { --tone: #7fa9e6; --tone-ink: #a9c6f0; --tone-soft: #1c2738; }
+.tone-teal { --tone: var(--teal-ink); }
+.tone-coral { --tone: #a83a24; }
+.tone-amber { --tone: #8a5a06; }
+.tone-blue { --tone: #234d84; }
+:root[data-theme="dark"] .tone-coral { --tone: #ffb19f; }
+:root[data-theme="dark"] .tone-amber { --tone: #f2cd85; }
+:root[data-theme="dark"] .tone-blue { --tone: #a9c6f0; }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .tone-coral { --tone: #ff8a70; --tone-ink: #ffb19f; --tone-soft: #3a211b; }
-  :root:not([data-theme="light"]) .tone-amber { --tone: #e8b04a; --tone-ink: #f2cd85; --tone-soft: #33291a; }
-  :root:not([data-theme="light"]) .tone-blue { --tone: #7fa9e6; --tone-ink: #a9c6f0; --tone-soft: #1c2738; }
+  :root:not([data-theme="light"]) .tone-coral { --tone: #ffb19f; }
+  :root:not([data-theme="light"]) .tone-amber { --tone: #f2cd85; }
+  :root:not([data-theme="light"]) .tone-blue { --tone: #a9c6f0; }
 }
-.f-icon { width: 24px; height: 24px; flex: none; }
-.f-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 8px 0 22px; }
-@media (max-width: 980px) { .f-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.f-card { display: block; padding: 20px 20px 18px; border-radius: var(--radius, 14px); background: var(--paper); border: 1px solid var(--line); border-top: 4px solid var(--tone); color: var(--ink); text-decoration: none; box-shadow: var(--shadow); transition: transform .15s ease, box-shadow .15s ease; }
-.f-card:hover { transform: translateY(-2px); }
-.f-card .f-icon { width: 44px; height: 44px; padding: 10px; border-radius: 12px; background: var(--tone-soft); color: var(--tone-ink); box-sizing: border-box; }
-.f-card h3 { margin: 14px 0 6px; font-size: 18px; line-height: 1.25; }
-.f-card p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.45; }
-@media (max-width: 520px) {
-  .f-cards { grid-template-columns: 1fr; gap: 12px; }
-  .f-card { display: grid; grid-template-columns: 44px 1fr; gap: 2px 14px; padding: 16px; }
-  .f-card .f-icon { grid-row: span 2; }
-  .f-card h3 { margin: 2px 0 2px; }
-}
-.f-both { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; margin: 0 0 20px; color: var(--muted); font-size: 15px; }
+.f-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 40px; margin: 0 0 16px; }
+@media (max-width: 700px) { .f-list { grid-template-columns: 1fr; } }
+.f-list h3 { margin: 12px 0 2px; }
+.f-list h3 a { color: var(--tone); }
+.f-list p { margin: 0; color: var(--muted); }
+.f-both { margin: 0 0 16px; color: var(--muted); }
 .f-both b { color: var(--ink); }
-table.features { width: 100%; border-collapse: separate; border-spacing: 0; margin: 8px 0 18px; font-size: 15px; }
-table.features th, table.features td { padding: 9px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+table.features { width: 100%; border-collapse: collapse; margin: 8px 0 16px; }
+table.features th, table.features td { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
 table.features thead th { font-size: 14px; position: sticky; top: 0; z-index: 1; background: var(--bg); border-bottom: 2px solid var(--ink); }
-table.features thead th small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+table.features thead th small { display: block; font-weight: 400; color: var(--muted); }
 table.features td { text-align: center; width: 24%; }
-table.features .mark { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; font-size: 14px; font-weight: 800; line-height: 1; }
-table.features td.yes .mark { background: var(--tone, var(--teal)); color: #fff; }
-:root[data-theme="dark"] table.features td.yes .mark { color: #10201d; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) table.features td.yes .mark { color: #10201d; } }
-table.features td.no .mark { background: var(--line); color: var(--muted); }
-table.features td small { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.3; }
-table.features tbody th { font-weight: 500; }
-table.features tr.section th { padding: 22px 12px 10px; border-bottom: 0; }
-table.features tr.section a { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 10px; background: var(--tone-soft); color: var(--tone-ink); font-size: 17px; font-weight: 800; text-decoration: none; }
+table.features .mark { font-weight: 700; }
+table.features td.yes .mark { color: var(--tone, var(--teal-ink)); }
+table.features td.no .mark { color: var(--muted); }
+table.features td small { display: block; color: var(--muted); font-size: 14px; line-height: 1.35; }
+table.features tbody th { font-weight: 400; }
+table.features tr.section th { padding: 24px 10px 6px; border-bottom: 2px solid var(--tone, var(--line)); }
+table.features tr.section a { color: var(--tone, var(--ink)); font-size: 20px; font-weight: 700; text-decoration: none; }
 table.features tr.section a:hover { text-decoration: underline; }
-@media (max-width: 600px) { table.features { font-size: 14px; } table.features th, table.features td { padding: 8px 5px; } table.features td { width: 25%; } table.features tr.section th { padding: 16px 0 8px; } }
+@media (max-width: 600px) { table.features { font-size: 14px; } table.features th, table.features td { padding: 6px 4px; } table.features td { width: 25%; } }
 /* features-css:end */
 </style>
 </head>
@@ -303,6 +267,7 @@ table.features tr.section a:hover { text-decoration: underline; }
       <a class="opt" href="teach.html">Teach</a>
       <a class="opt" href="chord-sheets.html">Chord sheets</a>
       <a class="opt" href="songs.html">Add songs</a>
+      <a class="opt" href="user-guide.html">User guide</a>
       <a href="#get">Get it</a>
     </nav>
   </div>
@@ -311,72 +276,54 @@ table.features tr.section a:hover { text-decoration: underline; }
 <main>
   <div class="hero">
     <div class="wrap">
-      <h1>Any chord sheet from the web, ready to play along, learn and practise.</h1>
+      <h1>ukemusic: chord sheets, play-along and practice for the ukulele</h1>
       <p class="for-who"><a href="instruments.html">For ukulele, baritone ukulele and guitar, left- or right-handed</a></p>
-      <p class="lede">Paste a chord sheet from any website (or import your club's songbook) and ukemusic sorts out the chords, shapes and strum, plays it with you, helps you learn it by heart and prints it for the gig.</p>
+      <p class="lede">Paste a chord sheet from a website, or import your club's songbook. ukemusic puts the chords into the words, shows the chord shapes and the strum, plays the song with you, helps you learn it by heart and prints it for the gig.</p>
       <div class="cta">
         <a class="btn primary" href="app/">Try it in your browser</a>
         <a id="heroDownload" class="btn" href="#get">Download for free</a>
-        <span class="note"><b>Free and open source · Works offline · No account, no adverts</b><br>Windows, Mac, Linux, phones and tablets</span>
+        <a class="btn" href="user-guide.html">User guide</a>
+        <span class="note">Free and open source. Works offline. No account and no adverts.<br>Windows, Mac, Linux, phones and tablets.</span>
       </div>
-      <div class="shot"><img src="img/editor.webp" width="1360" height="860" alt="ukemusic: the song typed on the left, the finished chord sheet with chord shapes and the strum pattern on the right"></div>
+      <figure><img class="shot" src="img/editor.webp" width="1360" height="860" alt="ukemusic: the song typed on the left, the finished chord sheet with chord shapes and the strum pattern on the right"><figcaption>Editing a song: the words and chords on the left, the chord sheet on the right.</figcaption></figure>
     </div>
   </div>
 
-  <section id="doors">
-    <div class="wrap">
-      <p class="eyebrow">What do you want to do?</p>
-      <h2>One app for the whole life of a song</h2>
-      <p class="intro">On your own or with a group, from the first strum to the club night.</p>
-      <div class="doors">
-        <a class="door" href="learn.html"><img src="img/learn-memory.webp" loading="lazy" width="1360" height="860" alt=""><span><strong>Learn</strong>Get a song by heart: the chords fade as you play, a quiz on what comes next, and a learn sheet.</span></a>
-        <a class="door" href="practise.html"><img src="img/practice.webp" loading="lazy" width="1360" height="860" alt=""><span><strong>Practise</strong>Warm-ups, chord changes, strumming and picking, and your songs slowed down and looped.</span></a>
-        <a class="door" href="perform.html"><img src="img/session-setlist.webp" loading="lazy" width="1360" height="765" alt=""><span><strong>Perform</strong>Stage copies, setlists, and the Session screen on the TV for a club night.</span></a>
-        <a class="door" href="teach.html"><img src="img/changes.webp" loading="lazy" width="1360" height="860" alt=""><span><strong>Teach</strong>Run a club or a class: the screen at the front, handouts and learn sheets from one song file.</span></a>
-        <a class="door" href="chord-sheets.html"><img src="img/editor.webp" loading="lazy" width="1360" height="860" alt=""><span><strong>Chord sheets</strong>Clear sheets with shapes and the strum, in any key, capo or instrument.</span></a>
-        <a class="door door-songs" href="songs.html"><span><strong>Add songs from the web</strong>Paste a chord sheet from any website, or import your club's songbook. AI prompts for the difficult ones.</span><span class="go">How to add them →</span></a>
-      </div>
-    </div>
-  </section>
-
   <section id="what-it-does">
     <div class="wrap">
-      <p class="eyebrow">What it does</p>
-      <h2>Everything around a song</h2>
+      <h2>What it does</h2>
       <!-- features:start (made by web/pages.js from web/features.js: change it there) -->
-      <div class="f-cards">
-<a class="f-card tone-teal" href="songs.html"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4.5V3h6v1.5M9 10h6M9 14h6M9 18h3"/></svg><h3>Any chord sheet from the web</h3><p>Paste it from any website, or bring in your club's songbook. The chords go into the words for you.</p></a>
-<a class="f-card tone-coral" href="practise.html"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></svg><h3>Play along, with karaoke</h3><p>It plays the chords and the strum while the words light up. Any key, slower or faster.</p></a>
-<a class="f-card tone-amber" href="learn.html"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><h3>Learn it by heart</h3><p>Fewer chords on the sheet each time you play, quizzes on the changes, and a learn sheet.</p></a>
-<a class="f-card tone-blue" href="practice/"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l4 18H5zM12 17l5-10M8 17h8"/></svg><h3>Free Practice</h3><p>40 exercises: warm-ups, chord switching, strumming, picking, scales and improvising, with routines.</p></a>
-<a class="f-card tone-teal" href="chord-sheets.html"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9V3h10v6M7 17H4v-7h16v7h-3"/><rect x="7" y="14" width="10" height="7"/></svg><h3>Chord sheets to print</h3><p>The chord shapes beside the words, in any key. Stage copies big enough to read at a gig.</p></a>
-<a class="f-card tone-blue" href="perform.html#music-stand"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M8 7h8M8 10.5h8M8 14h5M11 18.5h2"/></svg><h3>Music stand: no paper</h3><p>Your songs a page at a time on an iPad or laptop on your stand. A tap turns the page; a setlist goes song by song.</p></a>
-<a class="f-card tone-coral" href="perform.html"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c3 0 6 2 6 5.5"/></svg><h3>Play together</h3><p>The Session screen puts the song on the TV for the whole room, and goes through the night's setlist.</p></a>
-<a class="f-card tone-amber" href="instruments.html"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg><h3>Ukulele, baritone or guitar</h3><p>High or low G, baritone or guitar, each with its own chord shapes. Left-handed too.</p></a>
-<a class="f-card tone-blue" href="phone.html"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><h3>Free, offline, no account</h3><p>Open source, no adverts, works without the internet, and your songs stay on your device.</p></a>
+      <div class="f-list">
+<div class="tone-teal"><h3><a href="songs.html">Adding songs</a></h3><p>Paste it from any website, or bring in your club's songbook. The chords go into the words for you.</p></div>
+<div class="tone-coral"><h3><a href="practise.html">Playing along</a></h3><p>It plays the chords and the strum while the words light up. Any key, slower or faster.</p></div>
+<div class="tone-amber"><h3><a href="learn.html">Learning a song by heart</a></h3><p>Fewer chords on the sheet each time you play, quizzes on the changes, and a learn sheet.</p></div>
+<div class="tone-blue"><h3><a href="practice/">Free Practice</a></h3><p>40 exercises: warm-ups, chord switching, strumming, picking, scales and improvising, with routines.</p></div>
+<div class="tone-teal"><h3><a href="chord-sheets.html">Printing chord sheets</a></h3><p>The chord shapes beside the words, in any key. Stage copies big enough to read at a gig.</p></div>
+<div class="tone-blue"><h3><a href="perform.html#music-stand">Reading from a tablet</a></h3><p>Your songs a page at a time on an iPad or laptop on your stand. A tap turns the page; a setlist goes song by song.</p></div>
+<div class="tone-coral"><h3><a href="perform.html">Playing together</a></h3><p>The Session screen puts the song on the TV for the whole room, and goes through the night's setlist.</p></div>
+<div class="tone-amber"><h3><a href="instruments.html">Your instrument</a></h3><p>High or low G, baritone or guitar, each with its own chord shapes. Left-handed too.</p></div>
+<div class="tone-blue"><h3><a href="phone.html">Free and private</a></h3><p>Open source, no adverts, works without the internet, and your songs stay on your device.</p></div>
 </div>
       <!-- features:end -->
-      <p class="f-both"><span><b>In your browser and on your computer.</b> The desktop app adds setlists, songbooks, looping a part and every kind of print.</span><a class="btn" href="features.html">Compare them, feature by feature →</a></p>
+      <p class="f-both"><b>In your browser and on your computer.</b> The desktop app adds setlists, songbooks, looping a part and every kind of print. <a href="features.html">Compare the two, feature by feature</a>.</p>
     </div>
   </section>
 
   <section id="choose">
     <div class="wrap">
-      <p class="eyebrow">Two ways to use it</p>
-      <h2>In your browser, or on your computer</h2>
-      <p class="intro">Start in the browser: nothing to install, songs ready to play. Move to the desktop app for setlists, songbooks and every kind of printing. Both are free. <a href="features.html">Compare them, feature by feature</a>.</p>
+      <h2>The web player and the desktop app</h2>
+      <p class="intro">Both are free. Start in the browser: there's nothing to install, and there are songs ready to play. The desktop app adds setlists, songbooks and every kind of printing.</p>
       <div class="choose">
-        <div class="card"><h3>The web player</h3><ul><li>Runs in any browser, on a phone, tablet or computer</li><li>Paste a chord sheet from any website, or try the public-domain songs</li><li>Play along, karaoke, learn by heart, the Session screen, Free Practice</li><li>Works offline once opened; no account</li></ul><a class="btn primary" href="app/">Try it in your browser</a></div>
-        <div class="card"><h3>The desktop app</h3><ul><li>Windows, Mac and Linux; works offline</li><li>Paste and import songs, kept as files you own</li><li>Setlists, songbooks, Stage copies, learn sheets, every export</li><li>Everything the web player does, and more</li></ul><a class="btn" href="#get">Download for free</a></div>
+        <div class="card"><h3>The web player</h3><ul><li>Runs in any browser, on a phone, tablet or computer</li><li>Paste a chord sheet from any website, or play the public-domain songs</li><li>Play along, karaoke, learn by heart, the Music stand, the Session screen, Free Practice</li><li>Works offline once opened; no account</li></ul><a class="btn primary" href="app/">Try it in your browser</a></div>
+        <div class="card"><h3>The desktop app</h3><ul><li>Windows, Mac and Linux; works offline</li><li>Your songs are files in a folder you choose</li><li>Setlists, songbooks, Stage copies, learn sheets and every export</li><li>Everything the web player does, and more</li></ul><a class="btn" href="#get">Download for free</a></div>
       </div>
     </div>
   </section>
 
   <section id="how">
     <div class="wrap">
-      <p class="eyebrow">How it works</p>
-      <h2>Bring it in once. ukemusic does the rest.</h2>
-      <p class="intro">Paste a chord sheet from a website, import ChordPro files, or type it. However it comes in, a song is a plain text file you can read and change anywhere, with each chord in square brackets just before the word where it changes. Everything else follows from that: the sheet, the shapes, the playback, the learning and the printing. <a href="songs.html">All the ways to add songs, and an AI prompt for difficult sheets</a>.</p>
+      <h2>How a song is written</h2>
+      <p class="intro">However it comes in, a song is a plain text file you can read and change anywhere, with each chord in square brackets just before the word where it changes. The sheet, the shapes, the playback, the learning and the printing all come from that. <a href="songs.html">All the ways to add songs</a>.</p>
       <div class="write">
         <div class="pane">
           <span class="label">What you type</span>
@@ -406,164 +353,156 @@ Oh! Susanna,
 oh don't you cry for me</pre>
         </div>
       </div>
-      <div class="legend">
-        <div><code>[C]word</code> the chord changes on that word</div>
-        <div><code>{D-DU-UDU}</code> the strum: down, up, and a gap</div>
-        <div><code>[[Chorus]]</code> a part of the song, by name</div>
-      </div>
+      <ul class="legend">
+        <li><code>[C]word</code>: the chord changes on that word</li>
+        <li><code>{D-DU-UDU}</code>: the strum (down, up, and a gap)</li>
+        <li><code>[[Chorus]]</code>: a part of the song, by name</li>
+      </ul>
+      <p>Everything you can type is in <a href="guide.html">the song guide</a>.</p>
     </div>
   </section>
 
   <section id="features">
     <div class="wrap">
-      <p class="eyebrow">A closer look</p>
-      <h2>From the first strum to the gig</h2>
-      <p class="intro">Everything a ukulele player needs around a song, in one place.</p>
+      <h2>The main features</h2>
+      <p class="intro">Each is described step by step in the <a href="user-guide.html">user guide</a>.</p>
 
       <div class="feature">
         <div class="text">
-          <h3>The Session screen, for playing together</h3>
-          <p>For a club night or a jam: the whole song on one screen, on the TV or projector, as big as it will go. ukemusic lays it out for you, so nobody has to scroll. (Reading on your own, from a tablet? The Music stand, below.)</p>
+          <h3>Playing along</h3>
+          <p>Press Play to hear the song on a real ukulele, strummed the way it's written. The sheet follows the words, with the chord now, the strum and the next shapes above it.</p>
           <ul>
-            <li>Verses and choruses arranged in columns, never split, with the chord shapes down the side</li>
-            <li>A setlist goes song by song: arrow keys, a presentation clicker or a tap for the next</li>
-            <li>With a TV plugged in, the song goes full screen there while the laptop shows what's next</li>
-            <li>Check the whole library fits one screen before the night</li>
-          </ul>
-        </div>
-        <div class="shot"><img src="img/session.webp" loading="lazy" width="1360" height="765" alt="The Session screen: Danny Boy in two columns of big chords and words, with the chord shapes down the right"></div>
-      </div>
-
-      <div class="feature">
-        <div class="text">
-          <h3>The Music stand, for reading on a tablet</h3>
-          <p>Your songs on an iPad (or a laptop) on your own music stand, instead of paper: a page at a time, one after another. Free in the web player and the desktop app. (For the whole room, the Session screen above; to print, a Stage copy: <a href="perform.html">which one?</a>)</p>
-          <ul>
-            <li>One steady size for every song, chords above the words: pages, never smaller text</li>
-            <li>Tap the right half of the screen for the next page or song, the left half to go back</li>
-            <li>Tap the top (or ☰ Menu) to close it, jump to a song, or change the text size</li>
-            <li>A setlist goes song by song in your order, in its keys; a Bluetooth page-turner pedal works too</li>
-          </ul>
-        </div>
-        <div class="shot"><img src="img/music-stand.webp" loading="lazy" width="1360" height="1020" alt="The Music stand on an iPad on its side: Danny Boy, the first song of a setlist, both verses side by side with the chord shapes across the top"></div>
-      </div>
-
-      <div class="feature flip">
-        <div class="text">
-          <h3>Play it, and play along</h3>
-          <p>Press Play and hear the song on a real ukulele, strummed the way you wrote it. The sheet follows the words, with the chord now, the next shapes and the strum lit up above.</p>
-          <ul>
-            <li>Slow it down, loop the part you're learning, or speed up a little each time round</li>
-            <li>Waltzes, swing and shuffle feel, picked out from the strum</li>
+            <li>Slow it down without changing the song (Practice speed), loop the part you're learning, or speed up a little each time round</li>
+            <li>Waltzes, swing and shuffle feel, taken from the strum</li>
             <li>Tap the tempo, or count yourself in</li>
           </ul>
         </div>
-        <div class="shot"><img src="img/playing.webp" loading="lazy" width="1360" height="860" alt="The Wild Rover playing: the current line highlighted, the chord C and its strum lit, with the next chord shapes"></div>
+        <figure><img class="shot" src="img/playing.webp" loading="lazy" width="1360" height="860" alt="The Wild Rover playing: the current line highlighted, the chord C and its strum lit, with the next chord shapes"><figcaption>The Wild Rover playing: the line, the chord and the strum lit as they come.</figcaption></figure>
       </div>
 
       <div class="feature">
         <div class="text">
-          <h3>Karaoke for the whole room</h3>
-          <p>Full screen, big words that light up as you sing, with the chord above each word and the shapes down the side. Tap any line to start from there.</p>
+          <h3>Karaoke</h3>
+          <p>Full screen, with big words that light up as you sing, the chord above each word and the chord shapes down the side. Tap any line to start from there.</p>
         </div>
-        <div class="shot"><img src="img/karaoke.webp" loading="lazy" width="1360" height="860" alt="Karaoke view: large words with chords above, the line being sung lit, and chord shapes for now, next and then"></div>
-      </div>
-
-      <div class="feature flip">
-        <div class="text">
-          <h3>Stage copies you can read at a glance</h3>
-          <p>Print the song sheet for practice and a Stage copy for the gig: big, bold and easy to scan, in the format that suits you.</p>
-          <ul>
-            <li>Compact (the default), Clear, Brackets or Heavy</li>
-            <li>Choruses printed every time, or once and then "as before"</li>
-            <li>PDF, web page, words only, Markdown or ChordPro; a songbook from a setlist</li>
-          </ul>
-        </div>
-        <div class="shot"><img src="img/stage.webp" loading="lazy" width="1360" height="765" alt="A Stage copy of The Wild Rover on two pages: plain words with the chords in them, and clear section names"></div>
-      </div>
-
-      <div class="feature">
-        <div class="text">
-          <h3>Free Practice, no song needed</h3>
-          <p>Warm-ups, chord changes, strumming, fingerpicking, scales and noodling, each with a moving fretboard and a metronome, plus your progress and daily routines.</p>
-          <p><a href="practice/">All 40 exercises, free in your browser</a></p>
-        </div>
-        <div class="shot"><img src="img/practice.webp" loading="lazy" width="1360" height="860" alt="Free Practice: today's practice and your week at the top, then the exercises as coloured cards, each marked beginner, improver or intermediate"></div>
-      </div>
-
-      <div class="feature flip">
-        <div class="text">
-          <h3>Your songs, in libraries</h3>
-          <p>Songs live in ordinary folders on your computer. Keep several libraries, search by artist, tag or key, put songs into setlists, and share a library as a single pack file.</p>
-          <p>ukemusic comes with a library of public-domain songs to start you off.</p>
-        </div>
-        <div class="shot"><img src="img/library.webp" loading="lazy" width="1360" height="860" alt="The Public Domain Songs library: a list of songs with artist, key, instrument and tags"></div>
+        <figure><img class="shot" src="img/karaoke.webp" loading="lazy" width="1360" height="860" alt="Karaoke view: large words with chords above, the line being sung lit, and chord shapes for now, next and then"><figcaption>Karaoke, full screen.</figcaption></figure>
       </div>
 
       <div class="feature" id="learn">
         <div class="text">
-          <h3>Learn a song by heart</h3>
-          <p>The Learn tab gets a song into your head and your fingers, so you can play it without the sheet. It works out the song's key, its chords as numbers and what each one does, its parts and the familiar patterns in it, then helps you practise the way memory works best.</p>
+          <h3>Learning a song by heart</h3>
+          <p>The Learn tab works out the song's key, its chords as numbers, its parts and the familiar patterns in it, then helps you practise without the sheet.</p>
           <ul>
             <li>Play from memory, with the chords fading: shown, then as numbers, then gone</li>
-            <li>Next chord?: a quick quiz on each change, with every answer to hear</li>
+            <li>Next chord?: a quiz on each change, with every answer to hear</li>
             <li>The hardest changes, with what each finger does, and your trouble spots to loop</li>
-            <li>The circle of fifths, turned so the song's home is at the top</li>
             <li>A one-page learn sheet to keep on your music stand</li>
           </ul>
-          <p style="font-size:15px"><a href="learn.html">More about learning with ukemusic</a> · <a href="how-learn-works.html">How Learn works, and how far to trust it</a></p>
+          <p><a href="learn.html">Learning with ukemusic</a> · <a href="how-learn-works.html">How Learn works, and how far to trust it</a></p>
         </div>
-        <div class="shot"><img src="img/learn.webp" loading="lazy" width="1360" height="860" alt="A learn sheet for Danny Boy: the chords in C with their numbers and what each one does, the song's parts, and the chord map"></div>
+        <figure><img class="shot" src="img/learn.webp" loading="lazy" width="1360" height="860" alt="A learn sheet for Danny Boy: the chords in C with their numbers and what each one does, the song's parts, and the chord map"><figcaption>A learn sheet for Danny Boy.</figcaption></figure>
       </div>
 
-      <div class="feature flip" id="pick">
+      <div class="feature">
         <div class="text">
-          <h3>Fingerpick it, with the tune</h3>
-          <p>The Pick tab turns a strummed song into a picked one. The chords stay as they are: choose a standard pattern and ukemusic plays it, shows each string as it's picked, and lays the song out as a pick sheet, with tab over the bars and the words underneath.</p>
+          <h3>Free Practice</h3>
+          <p>Forty exercises with no song needed: warm-ups, chord changes, strumming, fingerpicking, scales and making up tunes, each with a moving fretboard and a metronome. Today's practice picks three, and Getting started suggests an order for beginners.</p>
+          <p><a href="practice/">All 40 exercises</a> · <a href="practice-guide.html">The Free Practice guide</a></p>
+        </div>
+        <figure><img class="shot" src="img/practice.webp" loading="lazy" width="1360" height="860" alt="Free Practice: today's practice and your week at the top, then the exercises as coloured cards, each marked beginner, improver or intermediate"><figcaption>Free Practice: today's practice, your week and Getting started.</figcaption></figure>
+      </div>
+
+      <div class="feature">
+        <div class="text">
+          <h3>The Music stand, for reading from a tablet</h3>
+          <p>Your songs on an iPad or laptop on your music stand, instead of paper: one steady text size, a page at a time, song after song. In the web player and the desktop app. <a href="perform.html">Music stand, Session screen or Stage copy: which one?</a></p>
+          <ul>
+            <li>Tap the right half of the screen for the next page or song, the left half to go back</li>
+            <li>Tap the top (or ☰ Menu) to close it, jump to a song or change the text size</li>
+            <li>A setlist goes song by song in its keys; a Bluetooth page-turner pedal works too</li>
+          </ul>
+        </div>
+        <figure><img class="shot" src="img/music-stand.webp" loading="lazy" width="1360" height="1020" alt="The Music stand on an iPad on its side: Danny Boy, the first song of a setlist, both verses side by side with the chord shapes across the top"><figcaption>The Music stand on an iPad on its side.</figcaption></figure>
+      </div>
+
+      <div class="feature">
+        <div class="text">
+          <h3>The Session screen, for playing together</h3>
+          <p>For a club night or a jam: the whole song on the TV or projector, as big as it will go, laid out so nobody has to scroll.</p>
+          <ul>
+            <li>Verses and choruses in columns, never split, with the chord shapes down the side</li>
+            <li>A setlist goes song by song: the arrow keys, a presentation clicker or a tap for the next</li>
+            <li>With a TV plugged in, the song fills it while the laptop shows what's next</li>
+          </ul>
+        </div>
+        <figure><img class="shot" src="img/session.webp" loading="lazy" width="1360" height="765" alt="The Session screen: Danny Boy in two columns of big chords and words, with the chord shapes down the right"><figcaption>The Session screen: Danny Boy in two columns.</figcaption></figure>
+      </div>
+
+      <div class="feature">
+        <div class="text">
+          <h3>Stage copies to print</h3>
+          <p>Print the song sheet for practice and a Stage copy for the gig: big, bold and easy to scan.</p>
+          <ul>
+            <li>Chords above the words, in the words, or Heavy</li>
+            <li>Choruses printed every time, or once and then "as before"</li>
+            <li>PDF, web page, words only, Markdown or ChordPro; a songbook from a setlist</li>
+          </ul>
+          <p><a href="gallery.html">See real files in the gallery</a></p>
+        </div>
+        <figure><img class="shot" src="img/stage.webp" loading="lazy" width="1360" height="765" alt="A Stage copy of The Wild Rover on two pages: plain words with the chords in them, and clear section names"><figcaption>A Stage copy of The Wild Rover.</figcaption></figure>
+      </div>
+
+      <div class="feature" id="pick">
+        <div class="text">
+          <h3>Fingerpicking, with the tune</h3>
+          <p>The Picking tab turns a strummed song into a picked one. Choose a standard pattern and ukemusic plays it, shows each string as it's picked, and makes a pick sheet with tab over the bars and the words underneath.</p>
           <ul>
             <li>Five standard patterns, from one string a beat to alternating thumb, in 4/4, 3/4 and 6/8</li>
-            <li>Change the pattern as the song goes, or write a line or the whole song out as tab to edit note by note</li>
             <li>Write the tune in by note name and see it as notes on a staff, with the chords above</li>
-            <li>Hear the tune quietly over the picking while you learn to sing it, or make it a chord melody solo</li>
-            <li>The first note to sing, sounded with the count-in</li>
+            <li>Hear the tune quietly over the picking while you learn to sing it</li>
           </ul>
-          <p style="font-size:15px"><a href="guide.html#guide-picking-patterns">Picking patterns</a> · <a href="guide.html#guide-the-tune">How to write the tune</a></p>
+          <p><a href="guide.html#guide-picking-patterns">Picking patterns</a> · <a href="guide.html#guide-the-tune">How to write the tune</a></p>
         </div>
-        <div class="shot"><img src="img/tune.webp" loading="lazy" width="1360" height="860" alt="Brahms' Lullaby on the Pick tab: the song with its tune written in, and the tune drawn as notes on a staff with the chords above"></div>
+        <figure><img class="shot" src="img/tune.webp" loading="lazy" width="1360" height="860" alt="Brahms' Lullaby on the Pick tab: the song with its tune written in, and the tune drawn as notes on a staff with the chords above"><figcaption>Brahms' Lullaby picked, with its tune drawn as notes.</figcaption></figure>
+      </div>
+
+      <div class="feature">
+        <div class="text">
+          <h3>Your songs, in libraries</h3>
+          <p>On the desktop, songs are ordinary folders on your computer. Show them as tiles or a list, search by artist, tag or key, put them into setlists, and keep several libraries. ukemusic comes with a library of public-domain songs to start you off.</p>
+        </div>
+        <figure><img class="shot" src="img/library.webp" loading="lazy" width="1360" height="860" alt="The Public Domain Songs library: the songs as tiles with artist, key and tags"><figcaption>The library: songs as tiles, with New song at the top.</figcaption></figure>
       </div>
 
       <div class="feature" id="web">
         <div class="text">
-          <h3>A player for your phone and tablet</h3>
-          <p>The web player runs in any browser, with nothing to install, and once it's on your Home Screen it works offline too: open a song, change the key, capo or instrument, play along, sing with karaoke, learn it by heart, put it on the big screen with the Session screen, and practise. Write new songs and change them there too, and keep them on your iPad, phone or Chromebook. It comes with the public-domain songs, so you can try it straight away. On iPhone and iPad, add it to your Home Screen.</p>
+          <h3>On a phone or tablet</h3>
+          <p>The web player runs in any browser with nothing to install, and once it's on your Home Screen it works offline too. Open a song, change the key, capo or instrument, play along, learn it, read it on the Music stand, and practise. Write and change songs there too.</p>
+          <p>Bring your songs in from files, or keep the desktop app's songs folder in Dropbox so both share one set of songs. <a href="phone.html">Putting it on your Home Screen and keeping your songs safe</a>.</p>
           <p><a class="btn primary" href="app/">Try the web player</a></p>
-          <p style="font-size:15px">Bring your songs in from files: song files, ChordPro, or a zipped songs folder. <strong>Back up all songs</strong> keeps them safe, and the desktop app's <strong>Phone and tablet…</strong> sends your library across and brings back what you wrote or changed. Or keep your songs folder in <strong>Dropbox</strong>, and the web player and the desktop app share one set of songs. <a href="phone.html">How to put it on your Home Screen and keep your songs safe</a>.</p>
         </div>
-        <div class="phones">
-          <div class="shot"><img src="img/phone-library.webp" loading="lazy" width="780" height="1688" alt="The web player on a phone: the list of songs"></div>
-          <div class="shot"><img src="img/phone-song.webp" loading="lazy" width="780" height="1688" alt="The web player on a phone: Shenandoah with chord shapes and chords above the words"></div>
-        </div>
+        <figure><div class="phones">
+          <img class="shot" src="img/phone-library.webp" loading="lazy" width="780" height="1688" alt="The web player on a phone: the list of songs">
+          <img class="shot" src="img/phone-song.webp" loading="lazy" width="780" height="1688" alt="The web player on a phone: Shenandoah with chord shapes and chords above the words">
+        </div><figcaption>The web player on a phone: the songs, and a song open.</figcaption></figure>
       </div>
 
-      <h3 style="margin-top:72px;margin-bottom:16px">And plenty more</h3>
-      <div class="grid">
-        <div class="card"><h3>Any key, any capo</h3><p>Move a song up or down in a click, keep it in several keys, or play it with a capo and see the shapes to finger.</p></div>
-        <div class="card"><h3>Ukulele, baritone or guitar</h3><p>Ukulele with high or low G, baritone ukulele and guitar, each with its own chord shapes, and Free Practice for each. Left-handed diagrams too. <a href="instruments.html">How it works</a>.</p></div>
-        <div class="card"><h3>Paste from a website</h3><p>Copy a chord sheet with the chords on their own lines, and ukemusic tidies it into the song format.</p></div>
-        <div class="card"><h3>Club songbooks and ChordPro</h3><p>Bring in a whole folder of ChordPro songs at once, and use the strum marks clubs write in the brackets: <code>[C↓]</code>, <code>[x]</code>, <code>[G…]</code>. Tunes written in ABC come in as the song's tune, and can go out again as notation. <a href="chordpro.html">How ukemusic and ChordPro fit together</a>.</p></div>
-        <div class="card"><h3>Tab and melody</h3><p>Write tab beside the words; it plays, moves with the key and prints neatly. Write the tune in too: it plays along and shows as notes on a staff, once at the top or over every line like a songbook.</p></div>
-        <div class="card"><h3>Chord patterns</h3><p>See each part's chords with its words, the progressions they use, and which parts share them. The same analysis is behind <a href="learn.html">Learn</a>.</p></div>
-        <div class="card"><h3>Choose your shapes</h3><p>Click a chord diagram to pick another way to play it, kept with the song, or hide the diagrams of the chords you already know.</p></div>
-        <div class="card"><h3>Nothing lost</h3><p>Every save keeps the earlier versions, and songs are plain text files you own.</p></div>
-        <div class="card"><h3>Made to be read</h3><p>A guide to writing songs is built in, and a hint line explains whatever you point at.</p></div>
-      </div>
+      <h3>Also</h3>
+      <ul>
+        <li><b>Any key, any capo:</b> move a song up or down, keep it in several keys, or play it with a capo and see the shapes to finger.</li>
+        <li><b>Ukulele, baritone or guitar:</b> high or low G, baritone and guitar, each with its own chord shapes; left-handed diagrams too. <a href="instruments.html">How instruments work</a>.</li>
+        <li><b>Club songbooks and ChordPro:</b> bring in a whole folder of ChordPro songs at once, with the strum marks clubs write. <a href="chordpro.html">ukemusic and ChordPro</a>.</li>
+        <li><b>Tab and the tune:</b> tab beside the words plays, moves with the key and prints; the tune plays along and shows as notes.</li>
+        <li><b>Chord patterns:</b> each part's chords, the progressions they use and which parts share them.</li>
+        <li><b>Your own shapes:</b> click a chord diagram to choose another way to play it, kept with the song.</li>
+        <li><b>Nothing lost:</b> every save keeps the earlier versions, and songs are plain text files you own.</li>
+      </ul>
     </div>
   </section>
 
   <section id="get">
     <div class="wrap" id="download">
-      <p class="eyebrow">Download</p>
-      <h2>Free for Windows, Mac and Linux</h2>
+      <h2>Download the desktop app: Windows, Mac and Linux</h2>
       <p class="version" id="version">The latest version is on the releases page.</p>
       <div class="dl">
         <div class="card" data-os="win">
@@ -583,7 +522,7 @@ oh don't you cry for me</pre>
         </div>
       </div>
       <div class="callout">
-        <p><strong>Just want to play?</strong> The web player runs in any browser, including on iPhone, iPad and Android, with the public-domain songs ready to go, and Free Practice. You can write and edit songs there too; the desktop app adds setlists, songbooks and every export.</p>
+        <p><strong>Just want to play?</strong> The web player runs in any browser, including on iPhone, iPad and Android, with the public-domain songs ready and Free Practice. You can write and change songs there too.</p>
         <a class="btn primary" href="app/">Try the web player</a>
       </div>
       <details>
@@ -601,18 +540,17 @@ npm run package      # make an installer for this computer, in dist/</pre>
 
   <section id="source">
     <div class="wrap">
-      <p class="eyebrow">Open source</p>
-      <h2>Free to use, free to change</h2>
-      <p class="intro">ukemusic is open source under the MIT licence. The code, the guide to writing songs and the public-domain song library are all on GitHub; suggestions and fixes are welcome there.</p>
-      <div class="grid">
-        <div class="card"><h3>The code</h3><p><a class="repo-link" href="https://github.com/markbeachill/ukemusic">ukemusic on GitHub</a>: issues, changes and every release.</p></div>
-        <div class="card"><h3>Gallery</h3><p><a href="gallery.html">What ukemusic makes</a>: chord sheets, Stage copies, learn and pick sheets and a songbook, as real files to open.</p></div>
-        <div class="card"><h3>How to write songs</h3><p><a href="guide.html">The guide</a> to everything you can type, with examples. It's in the app too.</p></div>
-        <div class="card"><h3>What's new</h3><p><a href="changes.html">The changes in each version</a>, newest first.</p></div>
-        <div class="card"><h3>ChordPro</h3><p><a href="chordpro.html">What ukemusic reads and writes</a>, and what it adds to the format.</p></div>
-        <div class="card"><h3>Share songs with your group</h3><p><a href="dropbox.html">Set up a shared Dropbox folder</a> for your club or band, choose who can edit, and open the songs on computers, phones and tablets.</p></div>
-        <div class="card"><h3>No copyrighted songs</h3><p>ukemusic only ships songs that are out of copyright. The songs you write or add stay on your computer.</p></div>
-      </div>
+      <h2>Open source, and more to read</h2>
+      <p class="intro">ukemusic is open source under the MIT licence. The code, the song guide and the public-domain song library are on GitHub; suggestions and fixes are welcome there. ukemusic only ships songs that are out of copyright, and the songs you write or add stay on your device.</p>
+      <ul>
+        <li><a href="user-guide.html">The user guide</a>: how to use ukemusic, step by step, with pictures</li>
+        <li><a href="guide.html">The song guide</a>: everything you can type in a song, with examples (it's in the app too)</li>
+        <li><a href="gallery.html">The gallery</a>: chord sheets, Stage copies, learn and pick sheets and a songbook, as real files</li>
+        <li><a href="changes.html">What's new</a>: the changes in each version, newest first</li>
+        <li><a href="chordpro.html">ukemusic and ChordPro</a>: what it reads and writes</li>
+        <li><a href="dropbox.html">Sharing songs with a group</a>: a shared Dropbox folder for a club or band</li>
+        <li><a class="repo-link" href="https://github.com/markbeachill/ukemusic">ukemusic on GitHub</a>: the code, issues and every release</li>
+      </ul>
     </div>
   </section>
 </main>
@@ -620,7 +558,7 @@ npm run package      # make an installer for this computer, in dist/</pre>
 <footer>
   <div class="wrap">
     <span>ukemusic by Mark Beachill · MIT licence · <a class="repo-file" data-path="THIRD_PARTY_NOTICES.md" href="https://github.com/markbeachill/ukemusic/blob/main/THIRD_PARTY_NOTICES.md">Thanks and third-party notices</a></span>
-    <span class="ref">Reference: <a href="gallery.html">Gallery</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a> · <a href="practice/">Free Practice: the 40 exercises</a> · <a class="repo-link" href="https://github.com/markbeachill/ukemusic">GitHub</a></span>
+    <span class="ref">Reference: <a href="user-guide.html">User guide</a> · <a href="gallery.html">Gallery</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a> · <a href="practice/">Free Practice: the 40 exercises</a> · <a class="repo-link" href="https://github.com/markbeachill/ukemusic">GitHub</a></span>
     <button class="theme" id="theme" type="button">Light / dark</button>
   </div>
 </footer>

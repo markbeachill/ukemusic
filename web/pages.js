@@ -19,7 +19,8 @@ const NAV = [
   { href: 'perform.html', label: 'Perform' },
   { href: 'teach.html', label: 'Teach' },
   { href: 'chord-sheets.html', label: 'Chord sheets' },
-  { href: 'songs.html', label: 'Add songs' }   // 4.66: getting songs in from the web, mostly (was "Your songs")
+  { href: 'songs.html', label: 'Add songs' },   // 4.66: getting songs in from the web, mostly (was "Your songs")
+  { href: 'user-guide.html', label: 'User guide' }   // 4.95
 ];
 function siteHeader(current = '') {
   const links = NAV.map((n) => `<a class="opt" href="${n.href}"${n.href === current ? ' aria-current="page"' : ''}>${esc(n.label)}</a>`).join('');
@@ -35,7 +36,7 @@ function siteFooter() {
   return `<footer>
   <div class="wrap">
     <span>ukemusic by Mark Beachill · MIT licence · <a class="repo-link" href="https://github.com/markbeachill/ukemusic">ukemusic on GitHub</a></span>
-    <span class="ref">Reference: <a href="features.html">Features</a> · <a href="gallery.html">Gallery</a> · <a href="dropbox.html">Shared Dropbox folder</a> · <a href="phone.html">Phone and tablet</a> · <a href="instruments.html">Ukulele, baritone or guitar</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a> · <a href="practice/">Free Practice: all exercises</a></span>
+    <span class="ref">Reference: <a href="user-guide.html">User guide</a> · <a href="features.html">Features</a> · <a href="gallery.html">Gallery</a> · <a href="dropbox.html">Shared Dropbox folder</a> · <a href="phone.html">Phone and tablet</a> · <a href="instruments.html">Ukulele, baritone or guitar</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a> · <a href="practice/">Free Practice: all exercises</a></span>
     <button class="theme" id="theme" type="button">Light / dark</button>
   </div>
 </footer>`;
@@ -62,69 +63,37 @@ const THEME_SCRIPT = `<script>
 
 // Extra styles for these pages (the rest comes from the home page)
 const PAGE_CSS = `
-.page-hero { padding: 56px 0 8px; }
-.page-hero h1 { font-size: clamp(34px, 5vw, 52px); line-height: 1.12; letter-spacing: -0.03em; margin: 0 0 16px; max-width: 20ch; }
-.page-hero .lede { font-size: clamp(18px, 2.2vw, 21px); color: var(--muted); max-width: 52ch; margin: 0 0 26px; }
-.who { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.course-wrap { overflow-x: auto; margin: 10px 0 26px; }
-table.course { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 560px; }
-table.course th, table.course td { padding: 9px 10px; border-bottom: 1px solid var(--line, #e3ddd2); text-align: left; vertical-align: top; }
-table.course thead th { font-size: 14px; }
-table.course tbody th { font-weight: 700; }
+/* 4.95: plain, as the website's style asks (AGENTS.md): four text sizes, no boxes or shadows */
+.course-wrap, .table-scroll { overflow-x: auto; margin: 8px 0 20px; }
+table.course, table.compare { width: 100%; border-collapse: collapse; }
+table.course { min-width: 560px; }
+table.course th, table.course td, table.compare th, table.compare td { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+table.course thead th, table.compare thead th { border-bottom: 2px solid var(--ink); }
 table.course td { color: var(--muted); }
-@media (max-width: 760px) { .who { grid-template-columns: 1fr; } }
-.who .card h3 { font-size: 19px; display: flex; gap: 8px; align-items: center; }
-.who .card ul { margin: 6px 0 0; padding-left: 20px; color: var(--muted); }
-.who .card li { margin: 4px 0; }
-.versions { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-@media (max-width: 760px) { .versions { grid-template-columns: 1fr; } }
-.versions .card { display: flex; flex-direction: column; gap: 8px; }
-.versions .card ul { margin: 0; padding-left: 20px; color: var(--muted); font-size: 15.5px; }
-.versions .card .btn { align-self: flex-start; margin-top: auto; }
-.versions .card.best { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-soft); }
-.versions .tag { font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal-ink); }
-.next-pages { display: flex; flex-wrap: wrap; gap: 10px; }
-.prompt-box { position: relative; }
-.prompt-box pre { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 18px; font: 14px/1.55 var(--mono); white-space: pre-wrap; margin: 0; max-height: 460px; overflow: auto; }
-.prompt-box .btn { margin: 12px 0 0; }
-.steps { counter-reset: step; list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
-.steps li { counter-increment: step; display: grid; grid-template-columns: 36px 1fr; gap: 12px; align-items: start; color: var(--muted); }
-.steps li::before { content: counter(step); width: 32px; height: 32px; border-radius: 50%; background: var(--teal); color: #fff; display: grid; place-items: center; font-weight: 800; }
-.steps li strong { color: var(--ink); }
-.feature.text-only { grid-template-columns: 1fr; }
-.feature.text-only .text { max-width: 70ch; }
-.feature.text-only ul { columns: 2; column-gap: 36px; }
-@media (max-width: 760px) { .feature.text-only ul { columns: 1; } }
-.note-box { background: var(--teal-soft); border-radius: var(--radius); padding: 18px 22px; }
-.note-box p { margin: 0; }
-footer .ref a { color: var(--muted); }
-.g-song { padding-bottom: 8px; }
-.g-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 18px; margin-top: 18px; }
-.g-card { display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: var(--ink); }
-.g-thumb { display: block; background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); overflow: hidden; aspect-ratio: 210 / 297; transition: transform 120ms; }
+table.compare tbody th { color: var(--muted); font-weight: 600; width: 7em; }
+.prompt-box pre { border: 1px solid var(--line); padding: 14px; font: 14px/1.55 var(--mono); white-space: pre-wrap; margin: 0; max-height: 460px; overflow: auto; }
+.prompt-box .btn { margin: 10px 0 0; }
+.g-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; margin-top: 12px; }
+.g-card { display: flex; flex-direction: column; gap: 4px; text-decoration: none; color: var(--ink); }
+.g-thumb { display: block; background: #fff; border: 1px solid var(--line); overflow: hidden; aspect-ratio: 210 / 297; }
 .g-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
-.g-card:hover .g-thumb { transform: translateY(-3px); border-color: var(--teal); }
-.g-name { font-weight: 800; font-size: 16px; }
-.g-name small { font-weight: 500; color: var(--muted); font-size: 13px; }
-.g-what { color: var(--muted); font-size: 14px; line-height: 1.45; }
-.g-more { margin-top: 16px; color: var(--muted); font-size: 15px; }
-nav.links a[aria-current] { color: var(--ink); }
-.facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
-.facts li { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; color: var(--muted); }
-.facts li strong { display: block; color: var(--ink); font-size: 18px; margin-bottom: 2px; }
-.ex-cat { margin: 0 0 34px; }
-.ex-cat h3 { font-size: 21px; margin: 0 0 4px; }
-.ex-cat > p { color: var(--muted); margin: 0 0 12px; }
-.ex-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
-.ex-list li { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
-.ex-list .ex-name { font-weight: 700; color: var(--ink); }
-.ex-list .ex-level { font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--teal-ink); margin-left: 6px; white-space: nowrap; }
-.ex-list .ex-aim { display: block; color: var(--muted); font-size: 15px; margin-top: 3px; }
-.songs-pd { columns: 2; column-gap: 36px; color: var(--muted); }
+.g-card:hover .g-thumb { border-color: var(--teal); }
+.g-name { font-weight: 700; }
+.g-name small, .g-what, .g-more { font-size: 14px; color: var(--muted); font-weight: 400; }
+.g-more { margin-top: 12px; }
+.ex-cat { margin: 0 0 28px; }
+.ex-cat h3 { font-size: 20px; margin: 0 0 4px; }
+.ex-cat > p { color: var(--muted); margin: 0 0 8px; }
+.ex-list { margin: 0; padding-left: 20px; columns: 2; column-gap: 40px; }
+@media (max-width: 760px) { .ex-list { columns: 1; } }
+.ex-list li { break-inside: avoid; margin: 0 0 8px; }
+.ex-list .ex-name { font-weight: 700; }
+.ex-list .ex-level { font-size: 14px; color: var(--teal-ink); margin-left: 6px; }
+.ex-list .ex-aim { display: block; color: var(--muted); }
+.songs-pd { columns: 2; column-gap: 40px; }
 @media (max-width: 760px) { .songs-pd { columns: 1; } }
-.faq h3 { font-size: 18px; margin: 22px 0 4px; }
-.faq p { margin: 0; color: var(--muted); max-width: 70ch; }
-@media (min-width: 861px) and (max-width: 980px) { nav.links { gap: 14px; } }
+.faq h3 { margin: 20px 0 4px; }
+.faq p { margin: 0; color: var(--muted); }
 `;
 
 /** "Which version for this?": the web player or the desktop app, the best one for the page marked */
@@ -136,15 +105,16 @@ function versionsBlock(best, web, desk) {
 }
 function featureRow(f, flip) {
   const list = f.list ? `<ul>${f.list.map((x) => `<li>${x}</li>`).join('')}</ul>` : '';
-  const shot = f.img ? `<div class="shot"><img src="img/${f.img}" loading="lazy" width="1360" height="${f.h || 860}" alt="${esc(f.alt || '')}"></div>` : (f.html || '');
-  return `<div class="feature${flip && shot ? ' flip' : ''}${shot ? '' : ' text-only'}"${f.id ? ` id="${f.id}"` : ''}><div class="text"><h3>${f.h3}</h3>${(f.p || []).map((x) => `<p>${x}</p>`).join('')}${list}</div>${shot}</div>`;
+  // 4.95: the picture under the words, with a one-line caption (the picture's description)
+  const shot = f.img ? `<figure><img class="shot" src="img/${f.img}" loading="lazy" width="1360" height="${f.h || 860}" alt="${esc(f.alt || '')}"><figcaption>${esc(f.cap || f.alt || '')}</figcaption></figure>` : (f.html || '');
+  return `<div class="feature${shot ? '' : ' text-only'}"${f.id ? ` id="${f.id}"` : ''}><div class="text"><h3>${f.h3}</h3>${(f.p || []).map((x) => `<p>${x}</p>`).join('')}${list}</div>${shot}</div>`;
 }
 
 // ── The pages ──
 const PAGES = [
   {
     file: 'learn.html', title: 'Learn a song by heart', blurb: 'Get a song into your head and your fingers, so you can play it without the sheet.',
-    eyebrow: 'Learn', h1: 'Learn a song by heart, not just the shapes',
+    h1: 'Learning a song by heart',
     lede: 'ukemusic works out how your song is put together (its key, its chords as numbers, its parts and the patterns in them) and then helps you practise it the way memory works best.',
     solo: ['Play along with the chords fading away: shown the first time, then as numbers, then gone', 'A quick quiz on each change: which chord comes next?', 'The hardest changes first, with what each finger does', 'Your trouble spots, collected as you go, to loop slowly', 'Fingerpick any song instead of strumming: five standard patterns and a pick sheet', 'Fingerpicking tab in layers: the chords, then the picking on open strings, then both'],
     group: ['A one-page learn sheet for everyone, to print or send round', 'Next chord? on the big screen, as a game for the room', 'Play it in the group\'s key, thinking in numbers', 'Chord patterns: "the chorus is the verse\'s first line": less to learn'],
@@ -165,7 +135,7 @@ const PAGES = [
   },
   {
     file: 'practise.html', seoTitle: 'Ukulele practice: exercises, metronome, slowed-down songs · ukemusic', title: 'Practise', blurb: 'Free Practice with a moving fretboard and a metronome, and your songs slowed down, looped and sped up.',
-    eyebrow: 'Practise', h1: 'Practise a little, often, and see it add up',
+    h1: 'Practising',
     lede: 'Warm-ups, chord changes, strumming, picking and scales, each with a moving fretboard and a metronome. And your own songs: slowed down, looped, and a little faster each time round.',
     solo: ['Free Practice: no song needed', 'Routines for the days you have ten minutes', 'One-minute chord changes, with your scores kept', 'Your progress over the weeks'],
     group: ['Warm up together with an exercise on the big screen', 'Everyone strums the same pattern with the metronome', 'Loop the tricky bit of the club\'s next song, slowly', 'Count in, and keep the room in time'],
@@ -182,9 +152,9 @@ const PAGES = [
   },
   {
     file: 'perform.html', seoTitle: 'Perform: Stage copies, setlists and the Session screen · ukemusic', title: 'Perform', blurb: 'Read at a gig on paper (Stage copies), on your tablet (the Music stand) or on the room\'s screen (the Session screen), with setlists and songbooks.',
-    eyebrow: 'Perform', h1: 'From the music stand to the big screen',
+    h1: 'Playing at a gig or a club night',
     // 4.92: three ways to read a song at a gig, and which is for what
-    compare: `<p class="eyebrow">Which one?</p><h2>On paper, on your tablet, or on the room's screen</h2>
+    compare: `<h2>Which one to use: paper, your tablet or the room's screen</h2>
 <div class="table-scroll"><table class="compare">
 <thead><tr><th></th><th scope="col"><a href="#music-stand">Music stand</a></th><th scope="col"><a href="#session-screen">Session screen</a></th><th scope="col"><a href="#stage-copies">Stage copy</a></th></tr></thead>
 <tbody>
@@ -195,7 +165,7 @@ const PAGES = [
 <tr><th scope="row">A setlist</th><td>Song after song, in its keys</td><td>Song after song, with what's next on the laptop</td><td>A songbook PDF of the whole set</td></tr>
 <tr><th scope="row">In</th><td>The web player and the desktop app</td><td>The web player and the desktop app</td><td>Both (Two-page Stage and songbooks: the desktop app)</td></tr>
 </tbody></table></div>
-<style>.compare { border-collapse: collapse; width: 100%; margin-top: 12px; font-size: 15px; } .compare th, .compare td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); } .compare thead th { font-size: 16px; } .compare tbody th { color: var(--muted); font-weight: 600; width: 7em; } .table-scroll { overflow-x: auto; }</style>`,
+`,
     lede: 'Three ways to read a song at a gig: a Stage copy on paper, the Music stand on your own tablet, and the Session screen on the TV for the whole room. Setlists go song by song on any of them.',
     solo: ['On a tablet: the Music stand, song after song, a tap to turn the page', 'On paper: a Stage copy, big, bold and easy to scan', 'Setlists, and a songbook PDF of the whole set', 'Stage PDFs copied to your gig folder as you export'],
     group: ['The Session screen: the whole song on one TV or projector, laid out so nobody scrolls', 'Arrow keys, a presentation clicker or a tap for the next song', 'Karaoke for the room: big words that light up as you sing', 'Check the whole library fits one screen before the night'],
@@ -214,7 +184,7 @@ const PAGES = [
   },
   {
     file: 'teach.html', seoTitle: 'Teach ukulele: handouts, the club screen and learn sheets · ukemusic', title: 'Teach', blurb: 'For club leaders and teachers: one song file becomes handouts, the screen at the front, learn sheets and practice at home.',
-    eyebrow: 'Teach', h1: 'Run a club or a class from one song file',
+    h1: 'Teaching a club or a class',
     lede: 'Type or import a song once, and it becomes the handout, the screen at the front of the room, a learn sheet for homework, and something to play along with at home.',
     solo: ['Prepare at home: the song in the group\'s key, with the shapes you teach', 'Make handouts: song sheet, Stage copy, words only, learn sheet', 'A songbook PDF for the term from a setlist', 'Bring in a whole folder of the club\'s ChordPro songs at once'],
     group: ['The song on the screen at the front, chords and shapes for all to see', 'Next chord? as a quiz for the room', 'Everyone loops the tricky bit together, slowly', 'Players take the songs home in the web player and practise'],
@@ -232,7 +202,7 @@ const PAGES = [
   },
   {
     file: 'chord-sheets.html', seoTitle: 'Ukulele chord sheets in any key, with shapes and strums · ukemusic', title: 'Chord sheets', blurb: 'Clear chord sheets in any key, capo or instrument, with chord shapes and the strum.',
-    eyebrow: 'Chord sheets', h1: 'Clear chord sheets, in any key',
+    h1: 'Chord sheets',
     lede: 'Bring a song in, or type it with the chords in square brackets. ukemusic draws the sheet with the chord shapes and the strum, in any key, for any instrument, and prints it beautifully.',
     solo: ['Any key in a click, or a capo with the shapes to finger', 'Ukulele, baritone or guitar, left-handed too', 'Choose a different shape for a chord, kept with the song', 'Every save keeps the earlier versions'],
     group: ['One file, the same sheet for everyone', 'Stage copies, words-only sheets and songbooks', 'ChordPro in and out, for other chord apps', 'A library you can share as a single pack file'],
@@ -264,7 +234,6 @@ function courseSection() {
   const rows = BEGINNER_COURSE.map((c) => `<tr><th scope="row">${esc(c.song)}</th><td>${esc(c.chords)}</td><td>${esc(c.step)}</td><td>${esc(c.sign)}</td></tr>`).join('');
   return `
 <section id="beginner-songs"><div class="wrap">
-  <p class="eyebrow">A course in six songs</p>
   <h2>Six beginner songs, in teaching order</h2>
   <p class="intro">The public-domain songs that come with ukemusic include six with new, simple chords for beginners. Each is a small step on from the one before: finish a song you know while learning one thing at a time. They work for ukulele, baritone and guitar.</p>
   <div class="course-wrap"><table class="course">
@@ -290,8 +259,7 @@ const SONGS_PAGE = {
   file: 'songs.html', seoTitle: 'Add songs from the web: paste any chord sheet · ukemusic', title: 'Add songs from the web', blurb: 'Paste a chord sheet from any website and ukemusic sorts out the chords and strum. Or import ChordPro songbooks, or use an AI chat for a difficult one.',
   body: () => `
 <div class="page-hero"><div class="wrap">
-  <p class="eyebrow">Add songs</p>
-  <h1>Any chord sheet from the web, into ukemusic in a minute</h1>
+  <h1>Adding songs</h1>
   <p class="lede">Found a song on a chord website? Copy it and paste it in: ukemusic moves the chords into the words, finds the parts and the strum, and turns it into everything else: the chord sheet and shapes, playback, karaoke, practice and a learn sheet.</p>
 </div></div>
 <section><div class="wrap">
@@ -315,7 +283,6 @@ const SONGS_PAGE = {
   <div class="note-box" style="margin-top:20px"><p><b>On a phone or tablet?</b> The web player pastes from websites too, and takes song files, ChordPro, a zipped songs folder or the desktop app's file. <a href="phone.html">How to put it on your Home Screen and keep your songs safe</a>.</p></div>
 </div></section>
 <section id="ai"><div class="wrap">
-  <p class="eyebrow">Using AI</p>
   <h2>Tidy a chord sheet with an AI chat</h2>
   <p class="intro">ukemusic's own import handles most chord sheets. For the awkward ones (a PDF where the chords have lost their places, a sheet that says "two bars of Dm" in words, chords at the top and words somewhere else), an AI chat such as Claude, ChatGPT or Gemini can do the tidying.</p>
   <ol class="steps">
@@ -356,8 +323,7 @@ const PHONE_PAGE = {
   file: 'phone.html', seoTitle: 'Ukulele songs and practice on your phone or tablet · ukemusic', title: 'Phone and tablet', blurb: 'ukemusic on an iPad, iPhone, Android or Chromebook: put it on your Home Screen, bring your songs in, write and change them, and keep them safe.',
   body: () => `
 <div class="page-hero"><div class="wrap">
-  <p class="eyebrow">Phone and tablet</p>
-  <h1>ukemusic on your iPad, phone or Chromebook</h1>
+  <h1>ukemusic on a phone, tablet or Chromebook</h1>
   <p class="lede">The web player runs in the browser, with nothing to download from an app store. Put it on your Home Screen and it opens like an app, works without a connection, and keeps your songs on the device: play them, sing them, learn them, and write new ones.</p>
   <div class="cta"><a class="btn primary" href="app/">Open the web player</a><span class="note">Free · Safari, Chrome, Edge, Firefox</span></div>
 </div></div>
@@ -477,8 +443,7 @@ const DROPBOX_PAGE = {
   blurb: 'Set up a shared Dropbox songs folder for your ukulele club or band, open it in ukemusic, sync phones and tablets, and avoid conflicting edits.',
   body: () => `
 <div class="page-hero"><div class="wrap">
-  <p class="eyebrow">Songs for your group</p>
-  <h1>One shared folder for your song files</h1>
+  <h1>Sharing songs with a group, through Dropbox</h1>
   <p class="lede">Keep your club or band's ukemusic songs in Dropbox. Each member opens the same collection through their own Dropbox account, so a saved change can reach everyone when their devices sync.</p>
   <div class="cta"><a class="btn primary" href="#setup">Set up the folder</a><a class="btn" href="#devices">Open it in ukemusic</a></div>
 </div></div>
@@ -593,7 +558,6 @@ const GALLERY_PAGE = {
 </div></section>` : '';
     return `
 <div class="page-hero"><div class="wrap">
-  <p class="eyebrow">Gallery</p>
   <h1>What ukemusic makes</h1>
   <p class="lede">Real files, made by the app from three public-domain songs: open any of them. Your songs come out the same way, on A4 or Letter, in the style you choose.</p>
   <div class="cta"><a class="btn primary" href="app/">Try it in your browser</a><a class="btn" href="./#get">Download the app</a></div>
@@ -616,7 +580,6 @@ const INSTRUMENTS_PAGE = {
   blurb: 'ukemusic works for ukulele (high or low G), baritone ukulele and guitar, left- or right-handed: songs, chord sheets and Free Practice, all for what you play.',
   body: () => `
 <div class="page-hero"><div class="wrap">
-  <p class="eyebrow">Your instrument</p>
   <h1>Ukulele, baritone or guitar, left- or right-handed</h1>
   <p class="lede">ukemusic is a ukulele app first, and works the same for a ukulele with a low G, a baritone ukulele and a guitar. Choose what you play once: your songs, chord sheets, playback and Free Practice all follow it, and left-handed players get every chord diagram mirrored.</p>
   <div class="cta"><a class="btn primary" href="app/">Try it in your browser</a><a class="btn" href="./#get">Download the desktop app</a></div>
@@ -682,8 +645,7 @@ const FEATURES_PAGE = {
   blurb: 'Everything ukemusic does, and which app does it: getting songs in from the web, playing along, learning, Free Practice, printing, groups and instruments.',
   body: () => `
 <div class="page-hero"><div class="wrap">
-  <p class="eyebrow">Features</p>
-  <h1>What ukemusic does, in the browser and on your computer</h1>
+  <h1>Features: the web player and the desktop app</h1>
   <p class="lede">The web player runs on phones, tablets and any computer; the desktop app adds songbooks and every kind of printing. Both are free, work offline and need no account. Each heading links to more about it.</p>
   <div class="cta"><a class="btn primary" href="app/">Try it in your browser</a><a class="btn" href="./#get">Download the desktop app</a></div>
 </div></div>
@@ -731,7 +693,7 @@ const PRACTICE_PAGE = {
     // under 160 characters (Bing's Site Scan)
     this.blurb = `Free Practice: ${n} ukulele exercises (warm-ups, chord changes, strumming, picking, scales, improvising) with a metronome and routines. Free, in your browser.`;
     const catHtml = cats.map((c) => `<div class="ex-cat" id="${esc(c.id)}">
-  <h3>${esc(c.name)} <small style="color:var(--muted);font-weight:500">(${exercises.filter((e) => e.cat === c.id).length})</small></h3>
+  <h3>${esc(c.name)} <small class="muted">(${exercises.filter((e) => e.cat === c.id).length})</small></h3>
   <p>${esc(c.aim)}.</p>
   <ul class="ex-list">${exercises.filter((e) => e.cat === c.id).map((e) => `<li><span class="ex-name">${esc(e.title)}</span><span class="ex-level">${esc(e.level)}</span><span class="ex-aim">${esc(e.aim)}</span></li>`).join('')}</ul>
 </div>`).join('\n');
@@ -777,8 +739,7 @@ const PRACTICE_PAGE = {
     };
     return `
 <div class="page-hero"><div class="wrap">
-  <p class="eyebrow">Free Practice</p>
-  <h1>Free, open-source ukulele practice</h1>
+  <h1>Free Practice: ${n} ukulele exercises</h1>
   <p class="lede">${n} short exercises for warm-ups, chord changes, strumming, fingerpicking, scales and tunes, and improvising, shown on a moving fretboard in time with a metronome. Part of ukemusic: free, open source, and in your browser, with nothing to install and no account.</p>
   <div class="cta"><a class="btn primary" href="app/#practice">Start free practice</a><a class="btn" href="https://github.com/markbeachill/ukemusic">See the source on GitHub</a><span class="note">Free · MIT licence · phones, tablets and computers</span></div>
 </div></div>
@@ -799,10 +760,9 @@ const PRACTICE_PAGE = {
   <div class="feature"><div class="text"><h2>Who it's for</h2>
     <p>Beginners finding their way round the neck, self-taught players filling in gaps, and improvers who want a routine. Each exercise says what it's for and what to aim at, and <strong>Getting started</strong> suggests an order for a beginner, one new thing at a time: steady down-strums, the change from C to F, the up-strum, and on to a first scale and a first tune of your own. <strong>Today’s practice</strong> picks three exercises for about eight minutes. <a href="practice-guide.html">The Free Practice guide</a> shows how it all works, in pictures.</p>
     <p>Open an exercise and press Start: the notes or chords show on a fretboard as they come, in time with the metronome. Make it slower or faster, change the chords, key or pattern, and the exercise remembers your settings.</p></div>
-    <div class="shot"><img src="img/practice.webp" loading="lazy" width="1360" height="860" alt="ukemusic Free Practice: the exercises as cards, each marked beginner, improver or intermediate"></div></div>
+    <figure><img class="shot" src="img/practice.webp" loading="lazy" width="1360" height="860" alt="ukemusic Free Practice: the exercises as cards, each marked beginner, improver or intermediate"></figure></div>
 </div></section>
 <section><div class="wrap">
-  <p class="eyebrow">The exercises</p>
   <h2>All ${n} exercises</h2>
   <p class="intro">Every exercise in Free Practice, by category, with its level and what it's for. All of them are in the free web player and in the desktop app.</p>
 ${catHtml}
@@ -818,14 +778,14 @@ ${catHtml}
     <li><strong>Clean rounds</strong>: press "That was clean" when a round goes well.</li>
     <li><strong>Today and days in a row</strong> at the top of the screen.</li>
   </ul>
-  <div class="note-box"><p><strong>It doesn't listen to you play.</strong> There's no microphone or pitch detection: you decide when a round was clean, and you count your one-minute changes. Your progress stays on the device you practise on (in the browser for the web player, in your songs folder for the desktop app), with its own backup.</p></div>
+  <div class="note-box"><p><strong>It doesn't judge your playing.</strong> There's no pitch detection: you decide when a round was clean. For one-minute changes, Count by listening can count your strums with the microphone, or you count them yourself. Your progress stays on the device you practise on (in the browser for the web player, in your songs folder for the desktop app), with its own backup.</p></div>
 </div></section>
 <section><div class="wrap">
-  <div class="feature flip"><div class="text"><h2>Then play some songs</h2>
+  <div class="feature"><div class="text"><h2>Then play some songs</h2>
     <p>ukemusic comes with songs that are out of copyright, with their words, chords and strums, to play along with (slowed down or looped), sing with karaoke, or learn by heart:</p>
     <ul class="songs-pd">${songs.map((x) => `<li>${esc(x.title)}${x.by ? ` <span style="color:var(--muted)">(${esc(x.by)})</span>` : ''}</li>`).join('')}</ul>
     <p>Each one notes where it comes from and why it's free to use. Add your own songs too: <a href="songs.html">bring your songs</a>.</p></div>
-    <div class="shot"><img src="img/playing.webp" loading="lazy" width="1360" height="860" alt="The Wild Rover playing in ukemusic: the current line lit, with its chord, the strum and the next chord shapes"></div></div>
+    <figure><img class="shot" src="img/playing.webp" loading="lazy" width="1360" height="860" alt="The Wild Rover playing in ukemusic: the current line lit, with its chord, the strum and the next chord shapes"></figure></div>
 </div></section>
 <section><div class="wrap">
   <h2>In your browser, or on your computer</h2>
@@ -860,7 +820,6 @@ function pageBody(p) {
   const rows = p.features.map((f, i) => featureRow(f, i % 2 === 1)).join('\n');
   return `
 <div class="page-hero"><div class="wrap">
-  <p class="eyebrow">${esc(p.eyebrow)}</p>
   <h1>${esc(p.h1)}</h1>
   <p class="lede">${esc(p.lede)}</p>
   <div class="cta"><a class="btn primary" href="app/">Try it in your browser</a><a class="btn" href="./#get">Download the app</a><span class="note">Free · Windows, Mac, Linux, phones and tablets</span></div>
@@ -877,8 +836,7 @@ ${rows}
 </div></section>
 ${p.course ? courseSection() : ''}
 <section><div class="wrap">
-  <p class="eyebrow">Which version?</p>
-  <h2>In your browser, or on your computer</h2>
+  <h2>The web player or the desktop app</h2>
   ${versionsBlock(p.best, p.web, p.desk)}
   ${p.more ? `<div style="margin-top:28px">${p.more}</div>` : ''}
   <p style="margin-top:28px;color:var(--muted)">Your songs come in from websites, songbooks, ChordPro files or an AI chat: <a href="songs.html">add songs from the web</a>.</p>
@@ -899,24 +857,22 @@ const PRACTICE_GUIDE_PAGE = {
     const card = (s, colour) => `<li class="pg-card" style="color:${colour}"><div class="pg-pic">${s.picture.replace(' class="pr-pic"', '')}</div><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></li>`;
     return `
 <style>
-.pg-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
-.pg-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px 16px; }
-.pg-card h3 { margin: 10px 0 4px; font-size: 17px; color: var(--ink); }
-.pg-card p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
-.pg-pic { border-radius: 10px; padding: 10px 26px; background: color-mix(in srgb, currentColor 9%, var(--paper)); }
+.pg-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; }
+.pg-card h3 { margin: 8px 0 2px; color: var(--ink); }
+.pg-card p { margin: 0; color: var(--muted); }
+.pg-pic { border: 1px solid var(--line); padding: 10px 24px; }
 .pg-pic svg { display: block; width: 100%; height: auto; max-height: 150px; }
-.pg-kind { margin-top: 34px; }
-.pg-kind h3.pg-name { font-size: 21px; margin: 0 0 4px; }
-.pg-kind .pg-count { color: var(--muted); margin: 0 0 12px; }
-.pg-path { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
-.pg-path li { display: grid; grid-template-columns: 40px 76px 1fr; gap: 12px; align-items: center; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; }
-.pg-path .num { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; border: 2px solid currentColor; font-weight: 800; }
+.pg-kind { margin-top: 28px; }
+.pg-kind h3.pg-name { font-size: 20px; margin: 0 0 2px; }
+.pg-kind .pg-count { color: var(--muted); margin: 0 0 10px; }
+.pg-path { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px 24px; }
+.pg-path li { display: grid; grid-template-columns: 28px 72px 1fr; gap: 10px; align-items: center; }
+.pg-path .num { font-weight: 700; }
 .pg-path svg { display: block; width: 100%; height: auto; }
 .pg-path strong { display: block; color: var(--ink); }
-.pg-path span.why { color: var(--muted); font-size: 14.5px; }
+.pg-path span.why { color: var(--muted); font-size: 14px; }
 </style>
 <div class="page-hero"><div class="wrap">
-  <p class="eyebrow">Free Practice</p>
   <h1>The Free Practice guide</h1>
   <p class="lede">How the ${n} practice exercises work, in pictures: where to start, which finger is which, and what each kind of exercise shows on the screen. The same slides are in the app: press “How it works” in any exercise.</p>
   <div class="cta"><a class="btn primary" href="app/#practice">Start free practice</a><a class="btn" href="practice/">See all ${n} exercises</a></div>
@@ -974,9 +930,6 @@ function wrapPage(p, body, siteCss) {
 <meta name="twitter:card" content="summary_large_image">${ld}
 <link rel="icon" href="img/icon-64.png">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Figtree:wght@400;500;600;700;800&display=swap">
 <style>
 ${siteCss}
 ${PAGE_CSS}
@@ -1031,7 +984,7 @@ function galleryPageHead(html, title, slug) {
 /** sitemap.xml: every page of the website, for search engines (submit it in Google Search Console and
  *  Bing Webmaster Tools; the host's robots.txt isn't ours, so it can't point to it) */
 function sitemap() {
-  const docs = ['guide.html', 'chordpro.html', 'changes.html', 'how-learn-works.html'];
+  const docs = ['guide.html', 'chordpro.html', 'changes.html', 'how-learn-works.html', 'user-guide.html'];
   // the gallery's song sheets are web pages too (4.58)
   let sheets = [];
   try { sheets = JSON.parse(fs.readFileSync(path.join(SITE, 'gallery', 'gallery.json'), 'utf8')).map((g) => `gallery/${g.slug}/sheet.html`).filter((f) => fs.existsSync(path.join(SITE, f))); } catch (_e) { sheets = []; }

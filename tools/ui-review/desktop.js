@@ -159,6 +159,9 @@ async function launch() {
     // the song really is open (not still the one before), or the step says so
     await page.waitForFunction((t) => document.getElementById('songTitle')?.textContent.trim() === t && document.getElementById('library')?.hidden, title, { timeout: 8000 });
     await page.evaluate(() => { const p = document.getElementById('preview'); if (p && p.contentWindow) p.contentWindow.scrollTo(0, 0); });
+    // 4.95: a song opens as the sheet; one open already (editing, from an earlier step) goes back to it
+    await page.evaluate(() => { if (document.documentElement.hasAttribute('data-editing')) document.getElementById('editWordsButton').click(); });
+    await page.waitForTimeout(300);
   }
   // the learn or pick sheet just made: in the song's learn folder (the song's folder name can differ
   // from its title, so the newest one anywhere if it isn't there)
@@ -185,8 +188,12 @@ async function launch() {
     await page.keyboard.press('Escape'); await page.mouse.click(5, 5);
   });
   await safe('L4', async () => {
+    await library(); await page.click('#libNew'); await page.waitForSelector('#newSongDialog[open]'); await page.waitForTimeout(400);
+    await shot('L4', 'New song: paste, write or import (4.94)'); await closeDialogs();
+  });
+  await safe('L12', async () => {
     await library(); await page.click('#libNew'); await page.click('#libWrite'); await page.waitForSelector('#titleDialog[open]'); await page.waitForTimeout(400);
-    await shot('L4', 'New song: choosing a title'); await closeDialogs();
+    await shot('L12', 'New song → Write your own: choosing a title'); await closeDialogs();
   });
   await safe('L5', async () => {
     await library(); await page.click('#libTabSetlists'); await page.waitForTimeout(500);
@@ -222,6 +229,7 @@ async function launch() {
       log('ribbon height stable', width, heights[0]);
     }
     await size(W, H); await tab('Song');
+    await page.evaluate(() => { if (document.documentElement.hasAttribute('data-editing')) document.getElementById('editWordsButton').click(); }); await page.waitForTimeout(300); // the Write tab started editing
     await shot('S1', 'A song open: the sheet to play from (✎ Edit words & chords shows the words)');
   });
   await safe('S3', async () => {

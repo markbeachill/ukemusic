@@ -25,7 +25,7 @@ test('the practice page lists every exercise, with its count and levels from the
   // the page's title says the same number
   assert.match(pages.PRACTICE_PAGE.title, new RegExp(`\\b${n} exercises`));
   assert.ok(practiceBody.includes('href="app/#practice"'));
-  assert.ok(/It doesn't listen to you play/.test(practiceBody), 'says feedback is self-assessed');
+  assert.ok(/It doesn't judge your playing/.test(practiceBody), 'says feedback is self-assessed'); // 4.95: Count by listening counts strums (4.88)
 });
 
 test('one H1, a canonical address, and links one level up', () => {

@@ -5,7 +5,7 @@
 <h1 align="center">ukemusic</h1>
 
 <p align="center">
-  <b>Any chord sheet from the web, ready to play along, learn and practise.</b><br>
+  <b>ukemusic: chord sheets, play-along and practice for the ukulele.</b><br>
   Paste a chord sheet from any website: ukemusic sorts out the chords, shapes and strum,<br>
   plays it with you, helps you learn it by heart, and prints it for the gig.<br>
   Free and open source · works offline · no account, no adverts.<br>
@@ -188,6 +188,7 @@ The guides and the changelog are pages of [the website](https://markbeachill.git
 
 ## The website and releases
 
+- **User guide:** https://markbeachill.github.io/ukemusic/user-guide.html (from [docs/user-guide.md](docs/user-guide.md)), how to use ukemusic step by step, with pictures.
 - **Website:** https://markbeachill.github.io/ukemusic/ (what ukemusic does, with downloads). Its page is `site/index.html`; it finds the repository and the latest release by itself.
 - **Web player:** https://markbeachill.github.io/ukemusic/app/ (for phones, tablets and any browser: play, write and edit songs, and use Free Practice; see [web/README.md](web/README.md)). It opens with public-domain songs; add your own from files, a desktop export or a shared Dropbox songs folder. Practice history stays on each device and has its own backup.
 - **The website's pictures:** `npm run site-pictures` takes them all again from the app as it is (and the gallery's files), with the public-domain songs; `npm run site-pictures -- img editor` retakes just one. It needs, once: `npm install --no-save playwright pdfjs-dist@4.10.38` and `npx playwright install chromium`.

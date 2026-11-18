@@ -46,7 +46,7 @@ test('features: what the web player lacks is marked, not hidden', () => {
 test('home page and README tables are up to date with web/features.js', () => {
   assert.strictEqual(pages.withFeatures(home, 'home'), home, 'run node web/make.js');
   assert.strictEqual(pages.withFeatures(readme, 'readme'), readme, 'run node web/make.js');
-  assert.match(home, /<div class="f-cards">/); // 4.68: cards on the home page
+  assert.match(home, /<div class="f-list">/); // 4.68: cards on the home page; 4.95: a plain list
   assert.match(readme, /\| Paste a chord sheet from any website \| ✓ \| ✓ \|/);
 });
 
@@ -55,11 +55,11 @@ test('home page: structured data lists each app\'s features', () => {
   assert.ok(home.includes(`"featureList": ${JSON.stringify(FEATURES.featureList('web'))}`));
 });
 
-test('the sell: any chord sheet from the web, free, offline, no account', () => {
-  const h1 = 'Any chord sheet from the web, ready to play along, learn and practise.';
-  assert.ok(home.includes(`<h1>${h1}</h1>`) || home.includes(h1));
+test('the start: what it is, free, offline, no account (4.95: plain words)', () => {
+  const h1 = 'ukemusic: chord sheets, play-along and practice for the ukulele';
+  assert.ok(home.includes(`<h1>${h1}</h1>`));
   assert.ok(readme.includes(h1));
-  assert.match(home, /Works offline · No account, no adverts/);
+  assert.match(home, /Works offline\. No account and no adverts\./);
 });
 
 test('site: Features first in the menu; songs page is "Add songs"', () => {

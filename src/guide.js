@@ -31,6 +31,9 @@ function slug(text) {
  * Markdown -> { html, sections: [{ id, title }] }
  *   options.href(url)  links become <a href=…> (the app shows them as plain text)
  *   options.nested     indented list items make a list inside the item above
+ *   options.image(url) 4.95: a picture on its own line becomes a figure with its caption (the
+ *                      website); without it, pictures are left out (the app)
+ *   options.ordered    4.95: lines starting "1. " make a numbered list
  */
 function markdownToHtml(markdown, options = {}) {
   const inl = (t) => inline(t, options);
@@ -85,6 +88,32 @@ function markdownToHtml(markdown, options = {}) {
       }
       out.push(`<table class="guide-table"><thead><tr>${head.map((c) => `<th>${inl(c)}</th>`).join('')}</tr></thead>`
         + `<tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${inl(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`);
+      continue;
+    }
+    // 4.95: a picture on a line of its own: ![What it shows](path). With options.image (the website)
+    // it's a picture with its caption; without (the app's own guide), it's left out
+    const picture = line.match(/^!\[([^\]]*)\]\(([^)\s]+)\)\s*$/);
+    if (picture) {
+      flush();
+      if (options.image) {
+        const src = options.image(picture[2]);
+        const narrow = /phone-|-guide\./.test(picture[2]) ? ' class="narrow"' : '';
+        out.push(`<figure${narrow}><img src="${escapeHtml(src)}" alt="${escapeHtml(picture[1])}" loading="lazy"><figcaption>${inl(picture[1])}</figcaption></figure>`);
+      }
+      i += 1;
+      continue;
+    }
+    // 4.95: numbered steps (1. … 2. …)
+    if (options.ordered && /^\s*\d+\.\s+/.test(line)) {
+      flush();
+      const items = [];
+      while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) {
+        let item = lines[i].replace(/^\s*\d+\.\s+/, '');
+        i += 1;
+        while (i < lines.length && /^\s{2,}\S/.test(lines[i]) && !/^\s*(\d+\.|[-*])\s+/.test(lines[i])) { item += ` ${lines[i].trim()}`; i += 1; }
+        items.push(item);
+      }
+      out.push(`<ol>${items.map((t) => `<li>${inl(t)}</li>`).join('')}</ol>`);
       continue;
     }
     if (/^\s*[-*]\s+/.test(line)) {

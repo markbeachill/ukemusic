@@ -12,17 +12,17 @@ const pages = require('../web/pages');
 // Windows checks files out with \r\n line endings (core.autocrlf): read them as \n, as the build writes them
 const home = fs.readFileSync(path.join(ROOT, 'site/index.html'), 'utf8').replace(/\r\n/g, '\n');
 
-test('every section has a card: a heading, one line, a colour and an icon', () => {
+test('every section has a heading, one line and a colour (4.95: no icons on the website)', () => {
   for (const s of FEATURES.SECTIONS) {
     assert.ok(s.card && s.card.h && s.card.p.length > 30 && s.card.p.length < 120, s.title);
     assert.ok(['teal', 'coral', 'amber', 'blue'].includes(s.tone), s.title);
     assert.ok(FEATURES.ICONS[s.icon], s.title);
   }
-  assert.strictEqual(FEATURES.SECTIONS[1].card.h, 'Play along, with karaoke');
+  assert.strictEqual(FEATURES.SECTIONS[1].card.h, 'Playing along');
 });
 
 test('home page: the cards, linking to each section\'s page, and the shared styles', () => {
-  assert.strictEqual((home.match(/<a class="f-card tone-/g) || []).length, FEATURES.SECTIONS.length);
+  assert.strictEqual((home.match(/<div class="tone-[a-z]+"><h3><a href=/g) || []).length, FEATURES.SECTIONS.length); // 4.95: a plain list
   for (const s of FEATURES.SECTIONS) assert.ok(home.includes(`href="${s.link}">`), s.link);
   assert.ok(home.includes(FEATURES.CSS), 'the styles come from web/features.js');
   assert.strictEqual(pages.withFeatures(home, 'home'), home, 'run node web/make.js');

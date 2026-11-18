@@ -17,7 +17,7 @@ const WRITING = read('WRITING.md');
 
 test('the feature list: the Music stand has its own section, apart from printing and from playing together', () => {
   assert.match(FEATURES, /title: 'Read from a tablet', link: 'perform\.html#music-stand'/);
-  assert.match(FEATURES, /card: \{ h: 'Music stand: no paper'/);
+  assert.match(FEATURES, /card: \{ h: 'Reading from a tablet'/); // 4.95: plain headings
   assert.match(FEATURES, /tablet: '<rect/);
   assert.ok(FEATURES.includes("f: 'Stage copies to print: big and easy to read at a gig'"));
   const together = FEATURES.slice(FEATURES.indexOf("title: 'Play together'"));
@@ -25,7 +25,7 @@ test('the feature list: the Music stand has its own section, apart from printing
 });
 
 test('Perform: which one? compares the Music stand, the Session screen and the Stage copy', () => {
-  assert.match(PAGES, /<p class="eyebrow">Which one\?<\/p><h2>On paper, on your tablet, or on the room's screen<\/h2>/);
+  assert.match(PAGES, /<h2>Which one to use: paper, your tablet or the room's screen<\/h2>/); // 4.95: no eyebrows
   for (const row of ['For', 'On', 'Text', 'Turning', 'A setlist', 'In']) assert.ok(PAGES.includes(`<th scope="row">${row}</th>`) || PAGES.includes(`<th>${row}</th>`), row);
   for (const id of ['music-stand', 'session-screen', 'stage-copies']) assert.ok(PAGES.includes(`{ id: '${id}'`), id);
   assert.ok(PAGES.includes('Three ways to read a song at a gig: a Stage copy on paper, the Music stand on your own tablet, and the Session screen on the TV for the whole room.'));
@@ -33,8 +33,7 @@ test('Perform: which one? compares the Music stand, the Session screen and the S
 });
 
 test('the home page and the writing guide point from each to the others', () => {
-  assert.ok(INDEX.includes('<a href="perform.html">which one?</a>'));
-  assert.ok(INDEX.includes('Reading on your own, from a tablet? The Music stand, below.'));
+  assert.ok(INDEX.includes('<a href="perform.html">Music stand, Session screen or Stage copy: which one?</a>')); // 4.95
   assert.ok(WRITING.includes('### Which to use at a gig'));
   assert.ok(WRITING.includes('### Printed for a music stand: the Stage copy on two pages'));
 });

@@ -15,7 +15,8 @@
 // It runs the desktop app with its own settings folder and a copy of the public-domain songs
 // (your songs and settings are left alone), and the web player (built with node web/make.js) as
 // an iPhone (and, for the Music stand, an iPad on its side). Each scene below says what the picture shows; the pages that use them are
-// site/index.html, web/pages.js and README.md.
+// site/index.html, web/pages.js, docs/user-guide.md (the user guide, which also uses UI review
+// pictures: tools/guide-pictures.js) and README.md.
 const fs = require('fs');
 const os = require('os');
 const path = require('path');

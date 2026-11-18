@@ -1,5 +1,16 @@
 # Changelog
 
+## v4.95.0
+
+- The website has a plainer design, closer to a manual than an advert:
+  - Four text sizes (28, 20, 16 and 14px), the system font, and one column of text with pictures and captions under the words.
+  - The feature cards, door tiles, icons, small capital labels, shadows and the web font have gone. Headings say what each section is ("Playing at a gig or a club night", "Adding songs").
+  - The rules are in AGENTS.md ("The website's style"), and `npm run site-check` fails a page that breaks them.
+- New **user guide** (`user-guide.html`, from `docs/user-guide.md`), in the menu on every page. It covers the home screen, adding songs, reading and editing, saving and Discard, key and capo, playing along, Learn, Picking, Free Practice, setlists, the Music stand and Session screen, printing, Settings and the simple view, the web player, and keeping songs safe.
+- The guide's pictures come from the website's own and from the UI review. `npm run guide-pictures` copies the UI review pictures it names into `site/img/guide/`.
+- The UI review's L4 shows New song's choices (L12 is Write your own), and its song pictures show a song as it opens (not editing).
+- The practice page now mentions Count by listening.
+
 ## v4.94.2
 
 - Opening Free Practice when it was already open (an exercise straight from its home) took the page behind it twice, so after Close the rest of the app stayed unclickable. Now the page behind is only taken the first time. In site-pictures this made the exports (gallery files, the Stage, learn and pick sheet pictures, the songbook) time out.
