@@ -14,7 +14,7 @@
 //
 // It runs the desktop app with its own settings folder and a copy of the public-domain songs
 // (your songs and settings are left alone), and the web player (built with node web/make.js) as
-// an iPhone. Each scene below says what the picture shows; the pages that use them are
+// an iPhone (and, for the Music stand, an iPad on its side). Each scene below says what the picture shows; the pages that use them are
 // site/index.html, web/pages.js and README.md.
 const fs = require('fs');
 const os = require('os');
@@ -208,9 +208,22 @@ async function desktop() {
       await shot('picking'); await closeDialogs();
     });
     // Free Practice
-    await scene('practice', async () => {
+    // (4.87: the first visit shows six slides first: closed, for the home screen behind them)
+    const practiceHome = async () => {
       await library(); await page.click('#libPractice'); await page.waitForSelector('#practice:not([hidden])', { timeout: 15000 }); await page.waitForTimeout(1500);
+      await page.evaluate(() => { const d = document.getElementById('prHelpDialog'); if (d && d.open) d.close(); }); await page.waitForTimeout(500);
+    };
+    await scene('practice', async () => {
+      await practiceHome();
       await shot('practice'); await page.click('#practiceClose').catch(() => {}); await page.waitForTimeout(500);
+    });
+    // 4.88: one-minute changes, with Count by listening on (the microphone counts the strums)
+    await scene('one-minute', async () => {
+      await practiceHome();
+      await page.evaluate(() => window.ukemusicPractice('one-minute')); await page.waitForTimeout(1200);
+      await page.evaluate(() => { const d = document.getElementById('prHelpDialog'); if (d && d.open) d.close(); });
+      await page.evaluate(() => { if (!document.getElementById('prListen').checked) document.getElementById('prListenToggle').click(); }); await page.waitForTimeout(600);
+      await shot('one-minute'); await page.click('#practiceClose').catch(() => {}); await page.waitForTimeout(500);
     });
     // the Session screen running a setlist: song 2 of 5
     await scene('session-setlist', async () => {
@@ -289,6 +302,20 @@ async function phone(base) {
     await p.evaluate(() => window.scrollTo(0, 0));
     await p.screenshot({ path: path.join(RAW, 'phone-song.png') }); log('took phone-song');
   }
+  await b.close();
+}
+
+// ── 4.89: the Music stand, on an iPad on its side (about an iPad Pro's 1366×1024) ───────────
+async function musicStand(base) {
+  const b = await launchBrowser();
+  const ctx = await b.newContext({ viewport: { width: 1360, height: 1020 }, hasTouch: true, deviceScaleFactor: 1 });
+  const p = await ctx.newPage();
+  p.on('dialog', (d) => d.dismiss());
+  await p.addInitScript(() => { try { localStorage.setItem('ukeweb.instrument', '"soprano"'); localStorage.setItem('ukeweb.look', JSON.stringify({ allFeatures: false, standSeen: true })); } catch (_e) { /* fine */ } });
+  await p.goto(`${base}/app/index.html`); await p.waitForTimeout(2000);
+  await p.locator('.song-row', { hasText: 'Danny Boy' }).first().click(); await p.waitForTimeout(1500);
+  await p.click('#standBtn'); await p.waitForTimeout(1800);
+  await p.screenshot({ path: path.join(RAW, 'music-stand.png') }); log('took music-stand');
   await b.close();
 }
 
@@ -440,6 +467,7 @@ async function finish(base) {
   const server = await serve();
   const base = `http://127.0.0.1:${server.address().port}`;
   if (doImg && (want('phone-library') || want('phone-song'))) await phone(base);
+  if (doImg && want('music-stand')) await musicStand(base);
   await finish(base);
   server.close();
   log('done. Look at site/img and site/gallery (git diff shows what changed), then build the site: node web/make.js');

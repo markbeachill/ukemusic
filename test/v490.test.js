@@ -96,4 +96,20 @@ test('web player: setlists go with Dropbox (one listing for songs and setlists);
   assert.match(read('web/pages.js'), /Its Dropbox sync handles song text, song settings and notes, and the setlists;/);
 });
 
+// 4.90.1
+test('4.90.1: the Music stand puts the chord shapes across the top, so the words have the whole width', () => {
+  assert.match(read('src/session-screen.js'), /noWrap: book\(\), stripTop: book\(\) \}\);/);
+  assert.match(read('src/session-fit.js'), /const tall = top \|\| r\.height > r\.width \* 1\.05;/);
+});
+test('4.90.1: the website\'s pictures: Free Practice without its first-visit slides, one-minute changes, the Music stand', () => {
+  const SP = read('tools/site-pictures.js');
+  assert.match(SP, /const d = document\.getElementById\('prHelpDialog'\); if \(d && d\.open\) d\.close\(\);/);
+  assert.match(SP, /await scene\('one-minute', async \(\) => \{/);
+  assert.match(SP, /if \(doImg && want\('music-stand'\)\) await musicStand\(base\);/);
+  const PAGES = read('web/pages.js');
+  assert.match(PAGES, /img: 'one-minute\.webp', alt: 'One-minute changes from C to F, with Count by listening on' \}/);
+  assert.match(PAGES, /\{ h3: 'Music stand', p: \[[^\]]*\], img: 'music-stand\.webp', h: 1020,/);
+  for (const f of ['one-minute.webp', 'music-stand.webp']) assert.ok(fs.existsSync(path.join(ROOT, 'site', 'img', f)), f);
+});
+
 console.log('v4.90 tests passed');

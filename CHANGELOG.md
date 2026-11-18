@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.90.1
+
+- **Website pictures.** The Free Practice picture had been taken with the first-visit slides open in front of it: the picture script now closes them. New pictures, on the Practise and Perform pages:
+  - one-minute changes with Count by listening on (`site/img/one-minute.webp`)
+  - the Music stand on an iPad on its side (`site/img/music-stand.webp`)
+- The website text says what's new in Free Practice (Today's practice, Getting started, the slides, the guide), that the web player has setlists and the Music stand, and that one-minute changes need nothing pressed.
+- **Music stand:** the chord shapes go in a row across the top on a wide screen too, so the words have the whole width. On an iPad on its side, Danny Boy's two verses now sit side by side on one page instead of turning a page after the first.
+
 ## v4.90.0
 
 **Setlists in the web player**, so an iPad can read a set in your own order with Music stand. Same format and folder as the desktop app.

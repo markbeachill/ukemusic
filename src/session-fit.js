@@ -11,6 +11,8 @@
 //     modes   which to try, in order (chords above first; chords in the words if it can't fit)
 //     maxCols the most columns (3)
 //     noWrap  4.89 (the music stand view): another column only if no line has to wrap in it
+//     stripTop 4.90.1 (the music stand view): the chord shapes in a row across the top, on a wide
+//             screen too, so the words have the whole width for their columns
 //   -> { mode, px, cols, pages, fits }   and lyrics is left laid out that way
 //
 // How: for one, two and three columns, the largest text (minPx…maxPx) at which every block
@@ -25,9 +27,9 @@
     return { W: Math.floor(r.width), H: Math.floor(r.height) };
   }
 
-  function fit({ box, lyrics, strip = null, html, minPx = 18, maxPx = 48, modes = ['over', 'inline'], diagramPx = null, maxCols = 3, noWrap = false }) {
+  function fit({ box, lyrics, strip = null, html, minPx = 18, maxPx = 48, modes = ['over', 'inline'], diagramPx = null, maxCols = 3, noWrap = false, stripTop = false }) {
     // the diagrams first: they take a strip down the side (or across the top on a tall screen)
-    if (strip) sizeStrip(box, strip, diagramPx || minPx);
+    if (strip) sizeStrip(box, strip, diagramPx || minPx, stripTop);
     const { W, H } = measure(box);
     const gapFor = (px) => Math.round(px * 1.6);
     let widest = null; // { px, width }: the longest line, unwrapped, at that size (for noWrap)
@@ -115,10 +117,10 @@
    * of the smallest text (so they grow with the screen and stay readable); on a tall screen, a
    * row across the top. Adds columns to the strip when they don't fit down the screen.
    */
-  function sizeStrip(box, strip, basePx) {
+  function sizeStrip(box, strip, basePx, top = false) {
     const stage = box.parentElement;
     const r = stage.getBoundingClientRect();
-    const tall = r.height > r.width * 1.05;
+    const tall = top || r.height > r.width * 1.05;
     stage.classList.toggle('ss-tall', tall);
     const cells = [...strip.children];
     if (!cells.length) { strip.hidden = true; return; }

@@ -175,7 +175,7 @@
       if (hintEl) hintEl.textContent = book() ? BOOK_HINT : HINT;
       // the music stand: chords above the words (unless M); another column only when no line wraps in it
       const bookModes = s.mode === 'auto' ? ['over'] : [s.mode];
-      s.result = Fit.fit({ box: els.box, lyrics: els.lyrics, strip: els.strip, html: (mode) => song.html[mode], minPx, maxPx, modes: book() ? bookModes : modes(), diagramPx: s.size === 'same' ? Math.round(samePx * 0.4) : book() ? Math.round(s.bookPx * 0.6) : null, maxCols: book() ? (rect.width > rect.height * 1.05 ? 3 : 2) : 3, noWrap: book() });
+      s.result = Fit.fit({ box: els.box, lyrics: els.lyrics, strip: els.strip, html: (mode) => song.html[mode], minPx, maxPx, modes: book() ? bookModes : modes(), diagramPx: s.size === 'same' ? Math.round(samePx * 0.4) : book() ? Math.round(s.bookPx * 0.6) : null, maxCols: book() ? (rect.width > rect.height * 1.05 ? 3 : 2) : 3, noWrap: book(), stripTop: book() });
       s.pages = s.result.pages;
       if (s.page >= s.pages) s.page = s.pages - 1;
       s.sections = [...els.lyrics.querySelectorAll('.blk')].map((el, k) => ({ label: blockLabel(el, k), page: pageOf(el) }));
