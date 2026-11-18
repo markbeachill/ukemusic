@@ -22,7 +22,7 @@ test('S1, S4, A1: after the features are applied', () => {
   assert.match(DESKTOP, /featureTabsShown\(\);\n {10}featuresSettled\(\);/);
   assert.match(DESKTOP, /state\.songUsesShown !== document\.documentElement\.dataset\.songUses\) \{[^\n]*featuresSettled\(\);/, 'and when a song brings a feature back');
   assert.match(DESKTOP, /<span class="rib-label" data-scope-label="song">Layout<\/span>/); // 4.85: the tab look says "(all songs)" itself
-  assert.match(DESKTOP, /<span class="rib-label" data-label-without="session:Karaoke">Full screen<\/span>/);
+  assert.match(DESKTOP, /<span class="rib-label">Full screen<\/span>/); // 4.89: Karaoke and Music stand both in the simple view
   assert.match(DESKTOP, /\.library-tabs\[hidden\] \{ display: none; \}/);
 });
 

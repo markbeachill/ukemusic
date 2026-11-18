@@ -56,6 +56,7 @@
     { id: 'play', app: 'both', where: 'Play; web: the player', name: 'Play, Stop', level: 'simple' },
     { id: 'karaoke', app: 'both', where: 'Play; web: the player', name: 'Karaoke', level: 'simple' },
     { id: 'session', app: 'both', where: 'Play; web: the player', name: 'Session screen', level: 'all' },
+    { id: 'musicStand', app: 'both', where: 'Play, and Setlists; web: the player', name: 'Music stand (read a song, or a setlist, page by page)', level: 'simple' },
     { id: 'tempo', app: 'both', where: 'Play; web: the player', name: 'Tempo: slower, faster, tap', level: 'simple' },
     { id: 'practice', app: 'desktop', where: 'Play', name: 'Practice speed', level: 'all' },
     { id: 'sound', app: 'both', where: 'Play; web: Settings', name: 'Sound and feel', level: 'all' },

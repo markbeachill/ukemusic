@@ -1,7 +1,7 @@
 // Session screen fit (4.35): the whole song on one screen, as big as it will go.
 // Runs in the page (it measures the laid-out song), in the desktop app and the web player.
 //
-//   UkeSessionFit.fit({ box, lyrics, strip, html, minPx, maxPx, modes })
+//   UkeSessionFit.fit({ box, lyrics, strip, html, minPx, maxPx, modes, maxCols })
 //     box     the element the words must fit in (its size is the space)
 //     lyrics  the element the words go in (inside box)
 //     strip   the chord diagrams element (sized here), or null
@@ -9,6 +9,8 @@
 //     minPx   the smallest text that's readable here (18px for a TV across a room)
 //     maxPx   the largest worth having
 //     modes   which to try, in order (chords above first; chords in the words if it can't fit)
+//     maxCols the most columns (3)
+//     noWrap  4.89 (the music stand view): another column only if no line has to wrap in it
 //   -> { mode, px, cols, pages, fits }   and lyrics is left laid out that way
 //
 // How: for one, two and three columns, the largest text (minPx…maxPx) at which every block
@@ -23,12 +25,27 @@
     return { W: Math.floor(r.width), H: Math.floor(r.height) };
   }
 
-  function fit({ box, lyrics, strip = null, html, minPx = 18, maxPx = 48, modes = ['over', 'inline'], diagramPx = null }) {
+  function fit({ box, lyrics, strip = null, html, minPx = 18, maxPx = 48, modes = ['over', 'inline'], diagramPx = null, maxCols = 3, noWrap = false }) {
     // the diagrams first: they take a strip down the side (or across the top on a tall screen)
     if (strip) sizeStrip(box, strip, diagramPx || minPx);
     const { W, H } = measure(box);
     const gapFor = (px) => Math.round(px * 1.6);
-    const colsOk = (c, px) => (W - (c - 1) * gapFor(px)) / c >= px * MIN_COLUMN_EM * 0.55;
+    let widest = null; // { px, width }: the longest line, unwrapped, at that size (for noWrap)
+    const widestAt = (px) => {
+      if (widest && widest.px === px) return widest.width;
+      const keep = lyrics.style.cssText;
+      lyrics.style.cssText = `font-size: ${px}px; column-count: 1; width: max-content; height: auto; position: absolute; visibility: hidden;`;
+      let width = 0;
+      for (const el of lyrics.querySelectorAll('.ln, .ss-strum')) width = Math.max(width, el.getBoundingClientRect().width);
+      lyrics.style.cssText = keep;
+      widest = { px, width };
+      return width;
+    };
+    const colsOk = (c, px) => {
+      const column = (W - (c - 1) * gapFor(px)) / c;
+      if (column < px * MIN_COLUMN_EM * 0.55) return false;
+      return !noWrap || c === 1 || widestAt(px) <= column;
+    };
     const apply = (px, c) => {
       const gap = gapFor(px);
       lyrics.style.fontSize = `${px}px`;
@@ -57,8 +74,9 @@
     for (const mode of modes) {
       lyrics.className = `ss-lyrics ${mode}`;
       lyrics.innerHTML = html(mode);
+      widest = null;
       const found = [];
-      for (let c = 1; c <= 3; c += 1) {
+      for (let c = 1; c <= maxCols; c += 1) {
         const px = best(c);
         if (px != null) found.push({ mode, px, cols: c });
       }
@@ -74,8 +92,9 @@
       const mode = modes[modes.length - 1];
       lyrics.className = `ss-lyrics ${mode}`;
       lyrics.innerHTML = html(mode);
+      widest = null;
       let cols = 1;
-      for (let c = 3; c >= 1; c -= 1) if (colsOk(c, minPx)) { cols = c; break; }
+      for (let c = maxCols; c >= 1; c -= 1) if (colsOk(c, minPx)) { cols = c; break; }
       chosen = { mode, px: minPx, cols };
       const gap = apply(minPx, cols);
       pages = Math.max(1, Math.round((lyrics.scrollWidth + gap) / (W + gap)));

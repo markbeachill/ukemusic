@@ -42,7 +42,8 @@ test('Session screen: fit each song, or every song the same size', () => {
   const { SAME } = require('../src/session-screen');
   assert.deepStrictEqual(SAME, { min: 2.5, max: 9, step: 0.25, usual: 4.5 });
   const src = read('src/session-screen.js');
-  assert.ok(src.includes("const [minPx, maxPx] = s.size === 'same' ? [samePx, samePx] : [s.minPx, Math.round(s.minPx * 2.6)];"));
+  // (4.89: and 'book', the music stand view, before them)
+  assert.ok(src.includes("const [minPx, maxPx] = book() ? [s.bookPx, s.bookPx] : s.size === 'same' ? [samePx, samePx] : [s.minPx, Math.round(s.minPx * 2.6)];"));
   assert.match(src, /S fit each song \/ same size/, 'in the key help');
   assert.match(src, /k === 's' \|\| k === 'S'|\['s', 'S'\]\.includes\(k\)/, 'S switches');
   // 4.5% of a 1080p screen's height: about 49px, every song
@@ -62,7 +63,7 @@ test('web player: the karaoke scale and the Group screen size are kept on this d
   assert.match(app, /localStorage\.getItem\('ukeweb\.karaokeScale'\)/);
   assert.match(app, /localStorage\.setItem\('ukeweb\.karaokeScale'/);
   assert.match(app, /look\.sessionSize = st\.size; look\.sessionSame = st\.same;/);
-  assert.match(app, /size: look\.sessionSize \|\| 'fit', same: look\.sessionSame \|\| 4\.5/);
+  assert.match(app, /size: stand \? 'book' : \(look\.sessionSize \|\| 'fit'\), same: look\.sessionSame \|\| 4\.5/); // 4.89: or the music stand
 });
 
 console.log('v4.73 tests passed');

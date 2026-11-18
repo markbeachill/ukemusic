@@ -70,7 +70,7 @@ test('desktop: the laptop plays, the TV follows; the bar has Go to, Colours, Bla
   assert.ok(DESKTOP.includes("theme: state.config?.export?.session_theme || 'light'"));
   assert.ok(DESKTOP.includes("'s', 'S', 'b', 'B', '.', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(e.key)"));
   assert.match(read('src/preload.js'), /playing: \(info\) => ipcRenderer\.send\('session:playing', info\)/);
-  assert.match(read('session.html'), /U\.session\.onPlaying\(\(info\) => screen\.playing\(info\)\)/);
+  assert.match(read('session.html'), /U\.session\.onPlaying\(\(info\) => screen && screen\.playing\(info\)\)/); // 4.89: the screen is made when the songs come
   const main = read('main.js');
   assert.match(main, /powerSaveBlocker\.start\('prevent-display-sleep'\)/);
   assert.match(main, /ipcMain\.on\('session:playing'/);

@@ -398,7 +398,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
  #songMeta {font-size:13px;margin:7px 0}
 }
 /* 4.86: while it plays on a narrow screen, the player is Pause and Stop: more of the song shows */
-@media (max-width: 640px) { .player.active #restartBtn, .player.active #accompanimentBtn, .player.active #karaokeButton, .player.active #learnBtn, .player.active #sessionBtn { display: none; } .player.active .now-shapes { zoom: 0.72; } .player.active .now-shapes > :nth-child(n+3) { display: none; } .player.active .tempo { margin-left: auto; } .player.active .player-row { flex-wrap: nowrap; } .player.active .now { min-width: 0; flex: 1 1 auto; overflow: hidden; } .player.active .tempo .val { display: none; } }
+@media (max-width: 640px) { .player.active #restartBtn, .player.active #accompanimentBtn, .player.active #karaokeButton, .player.active #learnBtn, .player.active #sessionBtn, .player.active #standBtn { display: none; } .player.active .now-shapes { zoom: 0.72; } .player.active .now-shapes > :nth-child(n+3) { display: none; } .player.active .tempo { margin-left: auto; } .player.active .player-row { flex-wrap: nowrap; } .player.active .now { min-width: 0; flex: 1 1 auto; overflow: hidden; } .player.active .tempo .val { display: none; } }
 /* 4.83: on a touch screen, nothing to tap is under 44px and nothing to read under 13px */
 @media (pointer: coarse), (max-width: 640px) {
   .tool button, .tool select { min-width: 44px; min-height: 44px; }
@@ -522,6 +522,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
           <button id="playBtn" data-feature="play" class="btn primary" type="button">▶ Play</button>
           <button id="restartBtn" data-feature="restart" class="btn" type="button">Restart</button><button id="stopBtn" class="btn" type="button" hidden>Stop</button><button id="accompanimentBtn" data-feature="accompaniment" class="btn" type="button">Strum or pick</button><button id="karaokeButton" data-feature="karaoke" class="btn" type="button" title="Full screen, big words that light up as you sing, with the chord shapes">Karaoke</button>
           <button id="learnBtn" data-feature="learn" class="btn" type="button" title="Learn the song by heart: play from memory, a quiz on the changes, the learn sheet, its chord patterns and the circle of fifths">Learn</button>
+          <button id="standBtn" data-feature="musicStand" class="btn" type="button" title="Music stand: the song full screen at one steady size, for reading from an iPad on a stand. Tap the right half for the next page or song, the left half to go back, the top for the menu. It goes through the songs as listed in your library.">Music stand</button>
           <button id="sessionBtn" data-feature="session" class="btn" type="button" title="Session screen: the whole song on one screen for a group to play from (a TV or projector). Arrow keys, a clicker or a tap go to the next song in the list">Session screen</button>
           <div class="now"><div id="nowChord" class="now-chord"></div><div id="nowShapes" class="now-shapes"></div></div>
           <div class="tempo" data-feature="tempo"><button id="slower" type="button" aria-label="Slower">−</button><span id="tempoVal" class="val"></span><button id="faster" type="button" aria-label="Faster">+</button></div>
@@ -2371,7 +2372,9 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     document.removeEventListener('keydown', sessionKeys, true);
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
   }
-  function openSession() {
+  // 4.89: { stand: true }: the music stand view (one player with an iPad on a stand): one steady text
+  // size, pages turned with a tap on the right or left half, the bar from a tap at the top
+  function openSession({ stand = false } = {}) {
     if (!view.song) return;
     stop();
     const ids = listedIds();
@@ -2384,6 +2387,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     // 4.73: fit each song, or the same size for every song (S, or the button in the bar): kept on this device
     // 4.74: and the colours (D); ▶ Play plays the song on screen, its line lit as it goes
     session = UkeSessionScreen.create(box, { css: U.sessionCss(), onClose: closeSession, closeButton: true, onState: (st) => {
+      if (stand) { if (st.bookPx && look.standPx !== st.bookPx) { look.standPx = st.bookPx; local.set('look', look); } return; }
       if (st.size && (look.sessionSize !== st.size || look.sessionSame !== st.same || look.sessionTheme !== st.theme)) { look.sessionSize = st.size; look.sessionSame = st.same; look.sessionTheme = st.theme; local.set('look', look); }
     }, onPlay: ({ index, playing }) => {
       if (playing) { stop(); return; }
@@ -2397,8 +2401,9 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       const get = () => (made = made || sessionSong(song));
       return { title: song.title, folder: song.id, get sub() { return get().sub; }, get diagrams() { return get().diagrams; }, get html() { return get().html; } };
     });
-    session.show({ songs: lazy, start: Math.max(0, ids.indexOf(view.song.id)), hideCommon: look.hideCommon === true, theme: look.sessionTheme || (isDark() ? 'dark' : 'light'), minPx: Math.round(Math.max(13, Math.min(18, Math.min(innerWidth, innerHeight) / 45))), size: look.sessionSize || 'fit', same: look.sessionSame || 4.5 });
-    box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', 'Session screen');
+    session.show({ songs: lazy, start: Math.max(0, ids.indexOf(view.song.id)), hideCommon: look.hideCommon === true, theme: look.sessionTheme || (isDark() ? 'dark' : 'light'), minPx: Math.round(Math.max(13, Math.min(18, Math.min(innerWidth, innerHeight) / 45))), size: stand ? 'book' : (look.sessionSize || 'fit'), same: look.sessionSame || 4.5, bookPx: look.standPx || 0, showTaps: stand && !look.standSeen });
+    if (stand && !look.standSeen) { look.standSeen = true; local.set('look', look); }
+    box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', stand ? 'Music stand' : 'Session screen');
     releaseSessionFocus = UkeSongUI.enterOverlay(box);
     document.addEventListener('keydown', sessionKeys, true);
   }
@@ -2407,6 +2412,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
   document.body.append(queueDialog);
   queueDialog.querySelector('[data-cancel]').onclick = () => queueDialog.close();
   queueDialog.querySelector('[data-open]').onclick = () => { queueDialog.close(); openSession(); };
+  $('standBtn').addEventListener('click', () => openSession({ stand: true }));
   $('sessionBtn').addEventListener('click', () => {
     const ids = listedIds(); if (!ids.includes(view.song.id)) ids.unshift(view.song.id);
     queueDialog.querySelector('ol').replaceChildren(...ids.map(id => Object.assign(document.createElement('li'), {textContent:getSong(id)?.title || id})));

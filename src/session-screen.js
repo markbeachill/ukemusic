@@ -17,6 +17,11 @@
 //     theme 'light' (red chords), 'blue' (dark blue chords: easier at a distance), 'dark' or
 //           'contrast' (white and yellow on black, for a bright hall or a weak projector); D
 //           goes round them. 4.74 (dark: true, from before, is 'dark')
+//     4.89: size 'book': the music stand view, for one player with an iPad (or a laptop) on a
+//           stand. One steady text size for every song (bookPx, + and − change it), columns only
+//           when no line has to wrap in them, pages rather than smaller text; a tap on the right half
+//           goes on, the left half back, and the top of the screen shows the bar (Close, Go to,
+//           text size), which hides again on the next turn
 //   screen.key(k)       a key name (KeyboardEvent.key): the remote control. 4.74: B blanks the
 //                       screen (as a presenter's clicker's blank button does); 1–9 jump to that
 //                       section (verse, chorus…), and '#n' to any
@@ -85,10 +90,32 @@
 .ss-screen .ss-dots { position: absolute; left: 50%; bottom: 0.6vh; transform: translateX(-50%); display: flex; gap: 8px; pointer-events: none; }
 .ss-screen .ss-dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--ss-faint); opacity: 0.35; }
 .ss-screen .ss-dots i.on { opacity: 1; background: var(--ss-label); }
+/* 4.89: the music stand view: the bar only when asked for (a tap at the top), and its own buttons */
+.ss-screen.ss-book { grid-template-rows: minmax(0, 1fr); }
+.ss-screen.ss-book .ss-bar { position: absolute; left: 0; right: 0; top: 0; z-index: 4; padding: 10px 14px; font-size: 17px; flex-wrap: wrap; row-gap: 8px; align-items: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18); transform: translateY(-110%); transition: transform 0.2s; }
+.ss-screen.ss-book.ss-bar-on .ss-bar { transform: none; }
+.ss-screen .ss-bookbtn { display: none; border: 1px solid var(--ss-faint); border-radius: 10px; background: var(--ss-bg); color: var(--ss-ink); font: inherit; font-weight: 700; min-width: 44px; min-height: 44px; padding: 0 12px; cursor: pointer; flex: 0 0 auto; }
+.ss-screen.ss-book .ss-bookbtn { display: inline-block; }
+.ss-screen.ss-book .ss-size, .ss-screen.ss-book .ss-playbtn, .ss-screen.ss-book .ss-sub { display: none; }
+.ss-screen.ss-book .ss-x { font-size: 30px; min-width: 44px; min-height: 44px; }
+.ss-screen.ss-book .ss-goto { font-size: 15px; min-height: 40px; max-width: 14em; }
+.ss-screen.ss-book .ss-stage { padding: 14px 18px 22px; }
+.ss-screen .ss-foot { display: none; position: absolute; left: 18px; right: 18px; bottom: 3px; font-size: 12px; line-height: 16px; color: var(--ss-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+.ss-screen.ss-book .ss-foot { display: block; }
+.ss-screen.ss-book .ss-dots { bottom: 6px; left: auto; right: 18px; transform: none; }
+.ss-screen .ss-taphelp { display: none; position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.ss-screen.ss-book.ss-show-taps .ss-taphelp { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 14% 1fr; }
+.ss-screen .ss-taphelp span { display: grid; place-items: center; background: color-mix(in srgb, var(--ss-bg) 82%, transparent); border: 3px dashed var(--ss-label); color: var(--ss-label); font-weight: 800; font-size: 28px; margin: 8px; border-radius: 16px; }
+.ss-screen .ss-taphelp .top { grid-column: 1 / -1; font-size: 20px; }
 `;
+  const BOOK_HINT = 'Click or tap the right half: next · the left half: back · the top: menu · + − text size · Esc end';
   const HINT = '→ / Space next · ← back · 1–9 go to a verse or chorus · + − text size · S fit each song / same size · M chords above / in the words · D colours · B blank · C common chords · Esc end';
   const THEMES = ['light', 'blue', 'dark', 'contrast']; // 4.74: D goes round them
   const SAME = { min: 2.5, max: 9, step: 0.25, usual: 4.5 }; // 'same' size: % of the screen's height
+  // 4.89: the music stand view's text size, in px: about a printed A4 chord sheet shrunk to an iPad's page
+  const BOOK = { min: 14, max: 48, usual: 22 };
+  const bookUsual = (w, h) => Math.max(18, Math.min(26, Math.round(Math.min(w, h) / 36)));
   const esc = (t) => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   let styled = false;
@@ -119,13 +146,15 @@
     const doc = rootEl.ownerDocument;
     addStyles(doc, css);
     rootEl.classList.add('ss-screen');
-    rootEl.innerHTML = `<header class="ss-bar"><span class="ss-title"></span><span class="ss-sub"></span><span class="ss-play" aria-live="off"><span class="now"></span><span class="nx"></span></span><span class="ss-where"></span>${onPlay ? '<button class="ss-playbtn" type="button" title="Play this song, its line lit as it goes">▶ Play</button>' : ''}${closeButton ? '<select class="ss-goto" aria-label="Go to a verse or chorus" title="Go to a verse or chorus (1–9)"></select><button class="ss-size" type="button" title="Text: each song as big as fits, or every song the same size (S)"></button><button class="ss-x" type="button" title="End (Esc)" aria-label="End the Session screen">×</button>' : ''}</header>
+    rootEl.innerHTML = `<header class="ss-bar"><span class="ss-title"></span><span class="ss-sub"></span><span class="ss-play" aria-live="off"><span class="now"></span><span class="nx"></span></span><span class="ss-where"></span>${onPlay ? '<button class="ss-playbtn" type="button" title="Play this song, its line lit as it goes">▶ Play</button>' : ''}${closeButton ? '<select class="ss-goto" aria-label="Go to a verse or chorus" title="Go to a verse or chorus (1–9)"></select><button class="ss-size" type="button" title="Text: each song as big as fits, or every song the same size (S)"></button><button class="ss-bookbtn ss-smaller" type="button" title="Smaller text (−)" aria-label="Smaller text">A−</button><button class="ss-bookbtn ss-bigger" type="button" title="Bigger text (+)" aria-label="Bigger text">A+</button><button class="ss-x" type="button" title="End (Esc)" aria-label="End the Session screen">×</button>' : ''}</header>
 <main class="ss-stage"><div class="ss-box"><div class="ss-lyrics"></div></div><aside class="ss-strip" aria-label="Chord shapes"></aside></main>
-<div class="ss-dots" aria-hidden="true"></div><div class="ss-hint">${HINT}</div>
+<div class="ss-dots" aria-hidden="true"></div><div class="ss-hint">${HINT}</div><div class="ss-foot" aria-live="polite"></div><div class="ss-taphelp" aria-hidden="true"><span class="top">Tap here for the menu</span><span>← Back</span><span>Next →</span></div>
 <div class="ss-progress"></div><div class="ss-blank"></div>`;
     const q = (c) => rootEl.querySelector(c);
     const els = { title: q('.ss-title'), sub: q('.ss-sub'), where: q('.ss-where'), box: q('.ss-box'), lyrics: q('.ss-lyrics'), strip: q('.ss-strip'), dots: q('.ss-dots'), goto: q('.ss-goto'), play: q('.ss-play'), progress: q('.ss-progress') };
-    const s = { songs: [], i: 0, page: 0, pages: 1, minPx: 18, mode: 'auto', hideCommon: false, result: null, size: 'fit', same: SAME.usual, theme: 'light', blank: false, now: null, sections: [] };
+    const s = { songs: [], i: 0, page: 0, pages: 1, minPx: 18, mode: 'auto', hideCommon: false, result: null, size: 'fit', same: SAME.usual, bookPx: 0, theme: 'light', blank: false, now: null, sections: [] };
+    const book = () => s.size === 'book';
+    const setBar = (on) => rootEl.classList.toggle('ss-bar-on', Boolean(on) && book());
     const modes = () => (s.mode === 'auto' ? ['over', 'inline'] : [s.mode]);
 
     function layout() {
@@ -137,9 +166,16 @@
       // the diagram's own name is hidden (the caption is bigger) and its space below cropped off
       els.strip.innerHTML = chords.map((d) => `<figure><figcaption>${esc(d.name)}</figcaption>${String(d.svg).replace('viewBox="0 0 100 145"', 'viewBox="0 4 100 108"')}</figure>`).join('');
       // 4.73: 'same': one size for every song, from the screen's height (columns or pages if a song is long)
-      const samePx = Math.max(12, Math.round(rootEl.getBoundingClientRect().height * s.same / 100));
-      const [minPx, maxPx] = s.size === 'same' ? [samePx, samePx] : [s.minPx, Math.round(s.minPx * 2.6)];
-      s.result = Fit.fit({ box: els.box, lyrics: els.lyrics, strip: els.strip, html: (mode) => song.html[mode], minPx, maxPx, modes: modes(), diagramPx: s.size === 'same' ? Math.round(samePx * 0.4) : null });
+      const rect = rootEl.getBoundingClientRect();
+      const samePx = Math.max(12, Math.round(rect.height * s.same / 100));
+      if (book() && !s.bookPx) s.bookPx = bookUsual(rect.width, rect.height);
+      const [minPx, maxPx] = book() ? [s.bookPx, s.bookPx] : s.size === 'same' ? [samePx, samePx] : [s.minPx, Math.round(s.minPx * 2.6)];
+      rootEl.classList.toggle('ss-book', book());
+      const hintEl = rootEl.querySelector('.ss-hint');
+      if (hintEl) hintEl.textContent = book() ? BOOK_HINT : HINT;
+      // the music stand: chords above the words (unless M); another column only when no line wraps in it
+      const bookModes = s.mode === 'auto' ? ['over'] : [s.mode];
+      s.result = Fit.fit({ box: els.box, lyrics: els.lyrics, strip: els.strip, html: (mode) => song.html[mode], minPx, maxPx, modes: book() ? bookModes : modes(), diagramPx: s.size === 'same' ? Math.round(samePx * 0.4) : book() ? Math.round(s.bookPx * 0.6) : null, maxCols: book() ? (rect.width > rect.height * 1.05 ? 3 : 2) : 3, noWrap: book() });
       s.pages = s.result.pages;
       if (s.page >= s.pages) s.page = s.pages - 1;
       s.sections = [...els.lyrics.querySelectorAll('.blk')].map((el, k) => ({ label: blockLabel(el, k), page: pageOf(el) }));
@@ -216,6 +252,8 @@
       if (s.songs.length > 1) parts.push(`Song ${s.i + 1} of ${s.songs.length}`);
       if (s.pages > 1) parts.push(`page ${s.page + 1} of ${s.pages}`);
       els.where.textContent = parts.join(' · ');
+      const foot = rootEl.querySelector('.ss-foot');
+      if (foot) foot.textContent = [s.songs[s.i]?.title || '', ...parts].filter(Boolean).join(' · ');
       els.dots.innerHTML = s.pages > 1 ? Array.from({ length: s.pages }, (_, k) => `<i class="${k === s.page ? 'on' : ''}"></i>`).join('') : '';
       const next = s.songs[s.i + 1];
       const sizeButton = rootEl.querySelector('.ss-size');
@@ -225,9 +263,11 @@
         if (els.goto.innerHTML !== options) els.goto.innerHTML = options;
         els.goto.value = '';
       }
-      onState({ index: s.i, count: s.songs.length, page: s.page, pages: s.pages, title: s.songs[s.i]?.title || '', next: next ? next.title : '', px: s.result?.px, cols: s.result?.cols, mode: s.result?.mode, size: s.size, same: s.same, theme: s.theme, blank: s.blank, sections: s.sections });
+      onState({ index: s.i, count: s.songs.length, page: s.page, pages: s.pages, title: s.songs[s.i]?.title || '', next: next ? next.title : '', px: s.result?.px, cols: s.result?.cols, mode: s.result?.mode, size: s.size, same: s.same, bookPx: s.bookPx, theme: s.theme, blank: s.blank, sections: s.sections });
     }
     function go(dir) {
+      setBar(false);
+      rootEl.classList.remove('ss-show-taps');
       if (dir > 0) {
         if (s.page < s.pages - 1) { s.page += 1; Fit.page(els.lyrics, s.page); status(); return; }
         if (s.i < s.songs.length - 1) { s.i += 1; s.page = 0; layout(); }
@@ -241,6 +281,9 @@
       else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace', 'p', 'P'].includes(k)) go(-1);
       else if (k === 'Home') { s.i = 0; s.page = 0; layout(); }
       else if (k === 'End') { s.i = Math.max(0, s.songs.length - 1); s.page = 0; layout(); }
+      else if ((k === '+' || k === '=') && book()) { s.bookPx = Math.min(BOOK.max, (s.bookPx || BOOK.usual) + 1); layout(); }
+      else if ((k === '-' || k === '_') && book()) { s.bookPx = Math.max(BOOK.min, (s.bookPx || BOOK.usual) - 1); layout(); }
+      else if ((k === 's' || k === 'S') && book()) return true; // the music stand keeps its one size
       else if (k === '+' || k === '=') { if (s.size === 'same') s.same = Math.min(SAME.max, s.same + SAME.step); else s.minPx = Math.min(40, s.minPx + 1); layout(); }
       else if (k === '-' || k === '_') { if (s.size === 'same') s.same = Math.max(SAME.min, s.same - SAME.step); else s.minPx = Math.max(12, s.minPx - 1); layout(); }
       else if (k === 's' || k === 'S') { s.size = s.size === 'same' ? 'fit' : 'same'; s.page = 0; layout(); }
@@ -261,7 +304,17 @@
       if (e.target.closest && e.target.closest('.ss-playbtn')) { onPlay({ index: s.i, playing: Boolean(s.now && sameSong(s.songs[s.i], s.now)) }); return; }
       if (e.target.closest && e.target.closest('.ss-x')) { onClose(); return; }
       if (e.target.closest && e.target.closest('.ss-size')) { key('S'); return; }
+      if (e.target.closest && e.target.closest('.ss-smaller')) { key('-'); return; }
+      if (e.target.closest && e.target.closest('.ss-bigger')) { key('+'); return; }
       const r = rootEl.getBoundingClientRect();
+      if (book()) {
+        // 4.89: the music stand: the bar's own taps stay in it; the top of the screen shows or hides
+        // the bar; otherwise the right half goes on and the left half back
+        if (e.target.closest && e.target.closest('.ss-bar')) return;
+        if (e.clientY - r.top < Math.max(60, r.height * 0.14)) { rootEl.classList.remove('ss-show-taps'); setBar(!rootEl.classList.contains('ss-bar-on')); return; }
+        go(e.clientX - r.left > r.width / 2 ? 1 : -1);
+        return;
+      }
       go(e.clientX - r.left > r.width / 3 ? 1 : -1);
     };
     rootEl.addEventListener('click', onClick);
@@ -288,13 +341,17 @@
       s.page = 0;
       if (data.minPx) s.minPx = data.minPx;
       if (data.hideCommon !== undefined) s.hideCommon = Boolean(data.hideCommon);
-      if (data.size) s.size = data.size === 'same' ? 'same' : 'fit';
+      if (data.size) s.size = ['same', 'book'].includes(data.size) ? data.size : 'fit';
+      if (Number(data.bookPx)) s.bookPx = Math.max(BOOK.min, Math.min(BOOK.max, Number(data.bookPx)));
       if (Number(data.same)) s.same = Math.max(SAME.min, Math.min(SAME.max, Number(data.same)));
       setTheme(data.theme || (data.dark ? 'dark' : s.theme));
       setBlank(false);
+      setBar(false);
       layout();
       keepAwake();
       hint(4000);
+      // the music stand, the first time: where to tap (gone at the first tap)
+      if (book() && data.showTaps) { rootEl.classList.add('ss-show-taps'); setTimeout(() => rootEl.classList.remove('ss-show-taps'), 6000); }
     }
     function check() {
       const report = [];
@@ -309,7 +366,7 @@
     return { show, key, playing, layout, check, destroy, state: s, get minPx() { return s.minPx; } };
   }
 
-  const api = { create, nowFrom, CSS, SAME, THEMES };
+  const api = { create, nowFrom, CSS, SAME, THEMES, BOOK, bookUsual };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.UkeSessionScreen = api;
 }(typeof window !== 'undefined' ? window : globalThis));

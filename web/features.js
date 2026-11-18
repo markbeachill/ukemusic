@@ -74,6 +74,7 @@ const SECTIONS = [
     rows: [
       { f: 'Setlists', web: false, desktop: true },
       { f: 'The Session screen: big words and chords for a group', web: 'On this device', desktop: 'On a second screen or TV' },
+      { f: 'Music stand: read song after song on an iPad or laptop, a tap to turn the page', web: true, desktop: true },
       { f: 'Songs from the desktop to a phone or tablet, in one file', web: 'Takes it in', desktop: true }
     ]
   },

@@ -83,6 +83,7 @@ One name for each thing, in both apps, the menu, the guide and the website (4.82
 | The thing | We call it | Not |
 |---|---|---|
 | The whole song on one screen for a group | Session screen | Group screen |
+| Songs to read yourself, a page at a time (iPad on a stand) | Music stand | Songbook (that's the PDF of a setlist), page turner, reading view |
 | The pictures of chords | Chord diagrams (karaoke's button: Diagrams) | Shapes |
 | One way of fingering a chord | A chord shape (Write → Chord shapes) | |
 | How chords sit with the words | Layout | Sheet |

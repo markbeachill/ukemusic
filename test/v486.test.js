@@ -51,7 +51,7 @@ test('A2, A3: a focus ring on everything; no ribbon label under 12px', () => {
 });
 
 test('L9, E4: the web player while playing on a phone; the section list; the edit preview', () => {
-  assert.match(WEB, /@media \(max-width: 640px\) \{ \.player\.active #restartBtn, \.player\.active #accompanimentBtn, \.player\.active #karaokeButton, \.player\.active #learnBtn, \.player\.active #sessionBtn \{ display: none; \}/);
+  assert.match(WEB, /@media \(max-width: 640px\) \{ \.player\.active #restartBtn, \.player\.active #accompanimentBtn, \.player\.active #karaokeButton, \.player\.active #learnBtn, .player\.active #sessionBtn, \.player\.active #standBtn \{ display: none; \}/);
   assert.match(WEB, /\.section-jump select \{min-height:36px;/);
   assert.match(WEB, /\.edit-wrap \.sheet \{ position: sticky; top: 170px; height: calc\(100vh - 200px\);/);
 });

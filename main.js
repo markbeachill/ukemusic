@@ -64,6 +64,8 @@ const DEFAULT_CONFIG = {
     stage_format: 'auto',   // 4.70: Auto (chords above on screen, in the words in print); 4.52–4.69 Compact
     session_size: 'fit',   // 4.73: Session screen text: 'fit' each song, or the 'same' size for every song
     session_same: 4.5,      // 4.73: that same size, in % of the screen's height
+    stand_px: 0,            // 4.89: the music stand view's text size in px (0: from the screen's size)
+    stand_seen: false,      // 4.89: where to tap has been shown
     session_theme: 'light', // 4.74: its colours: light, blue, dark, contrast (D)
     sheet_date: false,      // 4.76: "Updated 9 Nov 2026" at the foot of printed sheets
     stage_compact: true,       // 4.52: settings from before then have been moved to Compact once
@@ -1143,7 +1145,10 @@ function registerIpc() {
   });
   handle('session:open', async (_event, payload = {}) => {
     const mainDisplay = screen.getDisplayMatching(mainWindow.getBounds());
-    const other = screen.getAllDisplays().find((d) => d.id !== mainDisplay.id);
+    // 4.89: the music stand view (size 'book') is for reading yourself: on this screen, not the TV
+    const stand = payload.size === 'book';
+    const other = stand ? null : screen.getAllDisplays().find((d) => d.id !== mainDisplay.id);
+    if (sessionWindow && !sessionWindow.isDestroyed() && Boolean(sessionWindow.ukemusicStand) !== stand) { sessionWindow.destroy(); sessionWindow = null; }
     const target = other || mainDisplay;
     if (!sessionWindow || sessionWindow.isDestroyed()) {
       sessionWindow = new BrowserWindow({
@@ -1154,11 +1159,12 @@ function registerIpc() {
         fullscreen: true,
         autoHideMenuBar: true,
         backgroundColor: '#ffffff',
-        title: 'ukemusic: Session screen',
+        title: stand ? 'ukemusic: Music stand' : 'ukemusic: Session screen',
         icon: getBundledResourcePath('icon.png') || path.join(__dirname, 'build', 'icon.png'),
         webPreferences: sessionPrefs()
       });
       sessionWindow.setMenuBarVisibility(false);
+      sessionWindow.ukemusicStand = stand;
       attachWindowLogging(sessionWindow);
       // 4.74: no screen saver or sleep while the Session screen is up (a club night is long)
       const awake = powerSaveBlocker.start('prevent-display-sleep');

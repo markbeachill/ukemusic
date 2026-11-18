@@ -2655,9 +2655,10 @@
             <div class="rib-group">
               <div class="rib-items">
                 <button id="karaokeButton" data-feature="karaoke" class="rib-button" type="button" data-icon="karaoke" title="Karaoke: full screen, with big words lighting up as they're sung, the strum and the chord shapes">Karaoke</button>
+                <button id="standButton" data-feature="musicStand" class="rib-button" type="button" data-icon="screen" title="Music stand: the song full screen at one steady size, to read from on a stand. A click or tap on the right half goes to the next page, the left half back; the top shows Close and the text size. Esc to end. From a setlist, it goes through the setlist.">Music stand</button>
                 <button id="sessionButton" data-feature="session" class="rib-button" type="button" data-icon="screen" title="Session screen: the whole song on one screen, as big as it will go, for a group to play from (on the TV or projector, if one is plugged in)">Session screen</button>
               </div>
-              <span class="rib-label" data-label-without="session:Karaoke">Full screen</span>
+              <span class="rib-label">Full screen</span>
             </div>
             <div class="rib-group" data-feature="tempo">
               <div class="rib-items">
@@ -3502,6 +3503,7 @@
               <input id="setlistName" type="text" aria-label="Setlist name" />
               <span class="appbar-spacer"></span>
               <button id="setlistSession" class="appbar-button session-cta" type="button" data-icon="screen" title="Run the session: each song on one screen, in order, on the TV or projector if one is plugged in. → or a clicker for the next song">Session screen</button>
+              <button id="setlistStand" class="appbar-button" type="button" data-icon="screen" title="Music stand: read the setlist yourself, song after song, full screen at one steady size. Click or tap the right half for the next page, the left half to go back.">Music stand</button>
               <button id="setlistPdf" class="appbar-button" type="button" data-icon="export" title="One PDF with every song in this setlist, in order">Songbook PDF…</button>
               <button id="setlistFolder" class="appbar-button" type="button" data-icon="folder" title="A folder with one PDF per song, numbered in setlist order (in the gig folder, if you've chosen one): for a tablet, or to print">Setlist folder…</button>
               <button id="setlistDelete" class="appbar-button" type="button" title="Delete this setlist (the songs stay in your library)">Delete</button>
@@ -12976,10 +12978,13 @@ function showTab(tab) {
         const sessionOptions = () => ({ hideCommon: state.config?.diagrams?.skip_common === true || state.config?.diagrams?.skip_common === 'true', minPx: Number(state.config?.export?.session_min_px) || 18, easyRead: easyRead(), size: state.config?.export?.session_size === 'same' ? 'same' : 'fit', same: Number(state.config?.export?.session_same) || 4.5, theme: state.config?.export?.session_theme || 'light' });
         let sessionExternal = false;
         let sessionOpen = false; // 4.74: on the TV or not, the song playing is lit there
-        async function openSession(songs, start = 0) {
+        // 4.89: { stand: true }: the music stand view, on this screen, to read from yourself
+        async function openSession(songs, start = 0, { stand = false } = {}) {
           if (!songs.length) return;
           try {
-            const r = await window.ukemusic.session.open({ songs, start, ...sessionOptions() });
+            const standOptions = stand ? { size: 'book', bookPx: Number(state.config?.export?.stand_px) || 0, showTaps: !state.config?.export?.stand_seen } : {};
+            const r = await window.ukemusic.session.open({ songs, start, ...sessionOptions(), ...standOptions });
+            if (stand && !state.config?.export?.stand_seen) { (state.config.export = state.config.export || {}).stand_seen = true; persistConfig().catch(() => {}); }
             sessionExternal = Boolean(r?.external);
             sessionOpen = true;
             document.getElementById('sessionBar').hidden = !sessionExternal;
@@ -12988,17 +12993,19 @@ function showTab(tab) {
           }
         }
         // the open song (as it is in the editor, in the key and capo shown)
-        async function sessionThisSong() {
+        async function sessionThisSong(options) {
           const title = state.song?.title || state.suggestedTitle || 'Song';
-          await openSession([sessionSong({ title, content: getEditorValue(), config: effectiveConfig(), semitones: state.transpose, folder: state.song?.folder || '' })]);
+          await openSession([sessionSong({ title, content: getEditorValue(), config: effectiveConfig(), semitones: state.transpose, folder: state.song?.folder || '' })], 0, options);
         }
-        async function sessionSetlist() {
+        async function sessionSetlist(options) {
           const setlist = setlistView.current;
           if (!setlist || !setlist.songs.length) return;
           const songs = [];
           for (const line of setlist.songs) { const s = await sessionSongFromLine(line); if (s) songs.push(s); }
-          await openSession(songs);
+          await openSession(songs, 0, options);
         }
+        document.getElementById('standButton').addEventListener('click', () => sessionThisSong({ stand: true }));
+        document.getElementById('setlistStand').addEventListener('click', () => sessionSetlist({ stand: true }));
         document.getElementById('sessionButton').addEventListener('click', () => sessionThisSong());
         document.getElementById('setlistSession').addEventListener('click', () => sessionSetlist());
         document.getElementById('sessionPrev').addEventListener('click', () => window.ukemusic.session.key('ArrowLeft'));
@@ -13027,7 +13034,11 @@ function showTab(tab) {
             persistConfig().catch((error) => window.ukemusicLogError('Could not save the Session screen colours', error));
           }
           // 4.73: fit each song / same size, and the same size, are kept for next time
-          if (s.size) {
+          // 4.89: the music stand's text size is kept for next time (and not the Session screen's size)
+          if (s.size === 'book') {
+            const ex = state.config.export = state.config.export || {};
+            if (s.bookPx && Number(ex.stand_px) !== s.bookPx) { ex.stand_px = s.bookPx; persistConfig().catch((error) => window.ukemusicLogError('Could not save the music stand text size', error)); }
+          } else if (s.size) {
             document.getElementById('sessionSize').textContent = s.size === 'same' ? 'Same size' : 'Fit each song';
             const ex = state.config.export = state.config.export || {};
             if (ex.session_size !== s.size || Number(ex.session_same) !== s.same) {

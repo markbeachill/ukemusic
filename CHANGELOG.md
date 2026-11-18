@@ -1,5 +1,18 @@
 # Changelog
 
+## v4.89.0
+
+**Music stand**: a new way to read songs yourself, from an iPad (or a laptop) on a music stand. It uses the Session screen's machinery, which was made for a TV across a room: there, each song is made as big as fits, so the text changed size from song to song (18 to 46px on an iPad) and long songs were squeezed into three narrow columns.
+
+- **One steady size** for every song: about a printed A4 chord sheet shrunk to an iPad's page (23px on an iPad Air). A− and A+ change it, and it's kept for next time.
+- **Pages rather than smaller text.** Chords sit above the words. A second column is used only when no line has to wrap in it, so upright on an iPad it's usually one column, and on its side two or three.
+- **Tap the right half** for the next page, or the next song after the last page; **the left half** goes back. A pedal or the arrow keys do the same.
+- **Tap the top** for the bar: Close, Go to a verse or chorus, A− and A+. It hides again at the next turn, so the whole screen is the song. The song and page are shown small along the bottom.
+- The first time, it shows where to tap (Back, Next, the menu) for a few seconds.
+- **Web player:** the Music stand button (next to Session screen) goes through the songs as your library lists them, starting at the open song. It's in the simple view.
+- **Desktop:** Play → Music stand for the open song, and Music stand in a setlist for the whole setlist. It opens on this screen (the Session screen goes to the TV). Esc ends it.
+- The Session screen itself is unchanged.
+
 ## v4.88.1
 
 Web player and desktop: two count-in faults.
