@@ -143,8 +143,13 @@ async function desktop() {
     await page.locator('#libList .library-row', { hasText: title }).first().click();
     await page.waitForTimeout(1500);
     await page.evaluate(() => { const p = document.getElementById('preview'); if (p && p.contentWindow) p.contentWindow.scrollTo(0, 0); });
+    // 4.93: as a song opens, the sheet alone (a song open already stays as it was: back to the sheet)
+    await page.evaluate(() => { if (document.documentElement.hasAttribute('data-editing')) document.getElementById('editWordsButton').click(); });
+    await page.waitForTimeout(300);
   };
   const tab = async (t) => { await page.click(`#ribbonTab${t}`); await page.waitForTimeout(400); };
+  // 4.93: a song opens as the sheet; the words and chords show with Edit words & chords
+  const edit = async () => { if (!(await page.evaluate(() => document.documentElement.hasAttribute('data-editing')))) { await page.click('#editWordsButton'); await page.waitForTimeout(500); } };
   const clubNight = async () => {
     await library(); await page.click('#libTabSetlists'); await page.waitForTimeout(500);
     await page.locator('#setlistList >> text=Club night').first().click(); await page.waitForTimeout(800);
@@ -155,10 +160,10 @@ async function desktop() {
     await scene('library', async () => { await library(); await page.waitForTimeout(600); await shot('library'); });
     await scene('setlist', async () => { await clubNight(); await shot('setlist'); });
     // a song open on the Write tab: the words and chords, and the sheet beside them
-    await scene('editor', async () => { await open('The Wild Rover'); await tab('Write'); await shot('editor'); });
+    await scene('editor', async () => { await open('The Wild Rover'); await edit(); await tab('Write'); await shot('editor'); });
     // 4.79: Edit chords on the sheet: a chord's menu open on the sheet (changes nothing)
     await scene('chord-edit', async () => {
-      await open('The Wild Rover'); await tab('Write');
+      await open('The Wild Rover'); await edit(); await tab('Write');
       if (await page.getAttribute('#chordEditButton', 'aria-pressed') !== 'true') await page.click('#chordEditButton');
       await page.waitForTimeout(1500);
       const frame = page.frameLocator('#preview');

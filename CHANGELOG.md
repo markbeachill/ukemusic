@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.93.0
+
+- A song now opens as the sheet to play from, the whole width of the window, without the editor. **✎ Edit words & chords** (at the top, or F2, or Edit → Edit Words and Chords) shows the words and chords beside the sheet, and **Done** puts them away. The Write tab, Tidy chords and Edit chords on the sheet come with editing.
+- **Save** and **Discard** appear beside "Not saved" whenever anything is unsaved, editing or not. A tempo, picking pattern or other song setting changed while playing waits for Save the same way as the words. Discard (after asking) takes the song back to how it was last saved.
+- New songs, pasted and imported songs open ready to change. To have every song open that way, tick Settings → Opening a song.
+- Web player: the song page's button is now **✎ Edit words & chords** (✎ Edit on a phone).
+- The website, README, feature list and pictures show the new layout.
+
 ## v4.92.1
 
 - Music stand on a laptop, or an iPad on its side: a song with a long line or two was shown in one column over more pages, with half the screen empty. Now it uses two columns and wraps only those long lines (the chords stay over their words), on no more pages than one column would need. On an upright iPad it is still one column of whole lines.

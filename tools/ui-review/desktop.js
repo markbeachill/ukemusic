@@ -169,7 +169,8 @@ async function launch() {
     if (!found.length) throw new Error(`no ${pattern} sheet was made`);
     return found.sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs)[0];
   };
-  const tab = async (t) => { await page.click(`#ribbonTab${t}`); await page.waitForTimeout(400); };
+  // 4.93: the Write tab shows while editing (a song opens as the sheet)
+  const tab = async (t) => { if (t === 'Write') await page.evaluate(() => { if (!document.documentElement.hasAttribute('data-editing')) document.getElementById('editWordsButton').click(); }); await page.click(`#ribbonTab${t}`); await page.waitForTimeout(400); };
 
   // ── L: Library ──
   await safe('L1', async () => { await library(); await page.waitForTimeout(600); await shot('L1', 'Your songs: the library'); });

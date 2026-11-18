@@ -41,7 +41,7 @@ test('the guide, the website, the Features table and the picture', () => {
   assert.match(pages, /h3: 'Or move the chords with the mouse'[^\n]*img: 'chord-edit\.webp'/);
   assert.ok(fs.existsSync(path.join(ROOT, 'site', 'img', 'chord-edit.webp')));
   assert.match(read('tools/site-pictures.js'), /await scene\('chord-edit', async \(\) => \{/);
-  assert.match(read('web/features.js'), /Drag a chord to the right word on the sheet: Edit chords on the sheet \(Write tab, or right-click the sheet\)/);
+  assert.match(read('web/features.js'), /Drag a chord to the right word on the sheet: Edit chords on the sheet \(while editing: the Write tab, or right-click the sheet\)/);
   assert.strictEqual(require('../src/feature-levels').FEATURES.find((f) => f.id === 'chordEdit').where, 'Write; web: the Edit page');
 });
 

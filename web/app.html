@@ -421,6 +421,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
  #songMeta {font-size:13px;margin:7px 0}
 }
 /* 4.86: while it plays on a narrow screen, the player is Pause and Stop: more of the song shows */
+@media (max-width: 640px) { .edit-long { display: none; } } /* 4.93: "✎ Edit" on a phone */
 @media (max-width: 640px) { .player.active #restartBtn, .player.active #accompanimentBtn, .player.active #karaokeButton, .player.active #learnBtn, .player.active #sessionBtn, .player.active #standBtn, .player.active #addToSetlistBtn { display: none; } .player.active .now-shapes { zoom: 0.72; } .player.active .now-shapes > :nth-child(n+3) { display: none; } .player.active .tempo { margin-left: auto; } .player.active .player-row { flex-wrap: nowrap; } .player.active .now { min-width: 0; flex: 1 1 auto; overflow: hidden; } .player.active .tempo .val { display: none; } }
 /* 4.83: on a touch screen, nothing to tap is under 44px and nothing to read under 13px */
 @media (pointer: coarse), (max-width: 640px) {
@@ -512,7 +513,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div class="song-head"><div id="songTitle" class="title"></div><div id="songArtist" class="artist"></div></div>
         <span class="spacer"></span>
         <span id="saveState" class="sync"></span>
-        <button id="editBtn" class="btn" type="button" title="Change the words and chords, the details and the notes">Edit</button>
+        <button id="editBtn" data-feature="editWords" class="btn" type="button" title="Change the words and chords, the details and the notes"><span>✎ Edit<span class="edit-long"> words &amp; chords</span></span></button>
         <button id="downloadBtn" class="btn ghost icon" type="button" title="Download" aria-label="Download this song">⤓</button>
       </div>
       <div id="tools" class="tools gutter" role="toolbar" aria-label="Playing choices for this song on this device">

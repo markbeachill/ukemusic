@@ -110,6 +110,19 @@
         white-space: nowrap;
       }
       .saved-badge.unsaved { background: #fef3c7; color: #92400e; }
+      /* 4.93: Save and Discard beside "Not saved", whenever something is unsaved (editing or not) */
+      .bar-save { font: inherit; font-size: 13px; font-weight: 700; padding: 5px 12px; border-radius: 7px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; white-space: nowrap; }
+      .bar-save.ghost { background: var(--panel-bg, #fff); color: var(--text); border-color: #c8d5d3; font-weight: 600; }
+      .bar-save:hover { filter: brightness(0.95); }
+      .bar-save[hidden] { display: none; }
+      /* 4.93: Edit words & chords: the song opens as a sheet to play from; the editor comes when you ask */
+      #editWordsButton { font: inherit; font-size: 13px; font-weight: 700; padding: 7px 12px; border-radius: 7px; border: 1px solid var(--accent); background: var(--panel-bg, #fff); color: var(--accent-dark); cursor: pointer; white-space: nowrap; }
+      #editWordsButton:hover { background: var(--accent-soft); }
+      html[data-editing] #editWordsButton { background: var(--accent); color: #fff; }
+      html:not([data-editing]) .workspace { grid-template-columns: minmax(0, 1fr) !important; }
+      html:not([data-editing]) .workspace > .editor-panel, html:not([data-editing]) .workspace > #splitter { display: none; }
+      html:not([data-editing]) [data-edit-only] { display: none !important; }
+      html:not([data-editing]) .preview-head, html:not([data-editing]) #cursorLabel { display: none; }
 
       .now-playing {
         min-width: 40px;
@@ -2211,8 +2224,11 @@
           <div class="appbar-title">
             <strong id="songTitle">New song</strong>
             <span id="savedBadge" class="saved-badge">Saved</span>
+            <button id="barSave" class="bar-save" type="button" data-feature="save" title="Save the song: its words and chords, and the settings you've changed (Ctrl+S)" hidden>Save</button>
+            <button id="barDiscard" class="bar-save ghost" type="button" data-feature="save" title="Go back to the song as it was last saved" hidden>Discard</button>
           </div>
           <span class="appbar-spacer"></span>
+          <button id="editWordsButton" type="button" data-feature="editWords" aria-pressed="false" title="Show the words and chords to change them (F2). Done goes back to the sheet; Save keeps your changes">✎ Edit words &amp; chords</button>
           <button id="quickPlay" type="button" title="Play, pause or resume">Play</button>
           <button id="quickStop" type="button">Stop</button>
           <select id="songSections" aria-label="Jump to section"><option value="">Jump to section</option></select>
@@ -2221,7 +2237,7 @@
         <nav class="ribbon" aria-label="Tools">
           <div class="ribbon-tabs" role="tablist">
             <button id="ribbonTabSong" class="ribbon-tab" type="button" role="tab" data-ribbon="song" title="Close, save, bring in and export songs">File</button>
-            <button id="ribbonTabWrite" class="ribbon-tab" type="button" role="tab" data-ribbon="write" title="Help with writing the song: tab, strums, key, tidying">Write</button>
+            <button id="ribbonTabWrite" data-edit-only class="ribbon-tab" type="button" role="tab" data-ribbon="write" title="Help with writing the song: tab, strums, key, tidying">Write</button>
             <button id="ribbonTabThisSong" class="ribbon-tab" type="button" role="tab" data-ribbon="thissong" title="Saved song settings; transpose and practice speed are temporary playing choices">Song</button>
             <button id="ribbonTabView" class="ribbon-tab" type="button" role="tab" data-ribbon="view" title="How the song looks: chord diagrams, text size, strum patterns, layout">Display</button>
             <button id="ribbonTabExport" class="ribbon-tab" type="button" role="tab" data-ribbon="export" title="PDFs, web pages, lyrics and ChordPro files, into the song's exports folder">Export</button>
@@ -2259,7 +2275,7 @@
               <div class="rib-items">
                 <button id="importButton" class="rib-button" type="button" data-icon="import" title="Bring in a text or ChordPro (.cho) file from your computer as a new song">Import file</button>
                 <button id="pasteSheetButton" class="rib-button" type="button" data-icon="paste" title="Paste a song from a website (chords above the words, tab or ChordPro) and have it tidied (Ctrl+Shift+V)">Paste from a website</button>
-                <button id="convertLinesButton" data-feature="tidy" class="rib-button" type="button" data-icon="convert" title="Tidy the chords written above the words: songs copied from websites often have the chords on their own line above the words. This moves them into the words, as [C]hords, so the app can play, transpose and lay them out. Check the lines it marks afterwards.">Tidy chords</button>
+                <button id="convertLinesButton" data-feature="tidy" data-edit-only class="rib-button" type="button" data-icon="convert" title="Tidy the chords written above the words: songs copied from websites often have the chords on their own line above the words. This moves them into the words, as [C]hords, so the app can play, transpose and lay them out. Check the lines it marks afterwards.">Tidy chords</button>
               </div>
               <span class="rib-label">Bring in</span>
             </div>
@@ -2646,7 +2662,7 @@
           <div class="ribbon-panel" data-ribbon-panel="play" role="tabpanel" hidden>
             <div class="rib-group" data-feature="play">
               <div class="rib-items">
-                <button id="playButton" class="rib-button" type="button" data-icon="play" title="Play the song here, beside the editor: the preview follows the words, with the chord, the strum and the next shapes above it (F5)">Play</button>
+                <button id="playButton" class="rib-button" type="button" data-icon="play" title="Play the song here: the sheet follows the words, with the chord, the strum and the next shapes above it (F5)">Play</button>
                 <button id="stopButton" class="rib-button" type="button" data-icon="stop" title="Stop playing (Shift+F5)" disabled>Stop</button>
                 <button id="playFromStartButton" class="rib-button" type="button" data-icon="restart" title="Play from the top of the song (also while it's playing). Tip: while it plays, click a line in the preview to jump there">Restart</button>
               </div>
@@ -2825,7 +2841,7 @@
             </div>
             <div class="rib-group">
               <div class="rib-items">
-                <button id="pickPlayButton" class="rib-button" type="button" data-icon="play" title="Play the song picked, beside the editor (the strip shows the strings to pick). Slower: Play → Practice speed">Play</button>
+                <button id="pickPlayButton" class="rib-button" type="button" data-icon="play" title="Play the song picked, here (the strip shows the strings to pick). Slower: Play → Practice speed">Play</button>
                 <button id="pickStopButton" class="rib-button" type="button" data-icon="stop" title="Stop playing (Shift+F5)" disabled>Stop</button>
                 <button id="pickKaraokeButton" class="rib-button" type="button" data-icon="karaoke" title="Karaoke, picked: the strip at the top shows each string as it's picked">Karaoke</button>
               </div>
@@ -3401,6 +3417,13 @@
                           <option value="dark">Dark</option>
                         </select>
                         <p class="help">Only changes the screen, not exports or PDFs.</p>
+                      </div>
+                    </section>
+                    <section class="settings-group" id="set-editing" data-feature="editWords">
+                      <h3>Opening a song</h3>
+                      <div class="field">
+                        <label class="check-line"><input id="general-open_editing" type="checkbox" data-config-path="general.open_editing" /> Open songs with the words and chords showing, ready to change</label>
+                        <p class="help">Off, a song opens as the sheet to play from, and <b>✎ Edit words &amp; chords</b> (F2) shows the words beside it. New and imported songs always open ready to change.</p>
                       </div>
                     </section>
                     <section class="settings-group" id="set-features">
@@ -4819,9 +4842,45 @@
 
         function updateDirtyState() {
           state.dirty = getEditorValue() !== state.savedContent || songSettingsChanged();
-          dirtyLabel.textContent = state.dirty ? 'Unsaved changes' : (state.song ? 'Saved' : 'Not saved yet');
+          dirtyLabel.textContent = state.dirty ? 'Not saved' : (state.song ? 'Saved' : 'Not saved yet');
           dirtyLabel.classList.toggle('unsaved', state.dirty || !state.song);
+          // 4.93: Save and Discard, editing or not: a tempo or picking pattern changed while playing
+          // is saved (or taken back) the same way as the words
+          document.getElementById('barSave').hidden = !(state.dirty || !state.song);
+          document.getElementById('barDiscard').hidden = !(state.dirty && state.song);
           window.ukemusic.setDirtyState(state.dirty);
+        }
+
+        // 4.93: Edit words & chords. A song opens as the sheet to play from (the editor hidden, the
+        // sheet the whole width); the button (or F2) shows the words and chords beside it, and Done
+        // hides them again. Nothing is saved by switching: Save (and Discard) do that, either way.
+        function isEditing() { return document.documentElement.hasAttribute('data-editing'); }
+        function setEditing(on, { focus = false } = {}) {
+          const was = isEditing();
+          document.documentElement.toggleAttribute('data-editing', Boolean(on));
+          const button = document.getElementById('editWordsButton');
+          button.textContent = on ? 'Done' : '✎ Edit words & chords';
+          button.setAttribute('aria-pressed', String(Boolean(on)));
+          button.title = on
+            ? 'Back to the sheet (F2). Your changes stay until you Save or Discard them'
+            : 'Show the words and chords to change them (F2). Done goes back to the sheet; Save keeps your changes';
+          if (!on && document.querySelector('.ribbon-tab.active[data-edit-only]')) showRibbon('song');
+          if (was !== Boolean(on)) {
+            window.ukemusicFoldRibbon?.();
+            showChordEditButton();
+            if (state.song || state.dirty) renderPreviewNow(); // Edit chords on the sheet works only while editing
+            requestAnimationFrame(() => { window.dispatchEvent(new Event('resize')); if (on && focus) focusEditor(); });
+          }
+        }
+        document.getElementById('editWordsButton').addEventListener('click', () => setEditing(!isEditing(), { focus: true }));
+        document.getElementById('barSave').addEventListener('click', () => saveFile());
+        document.getElementById('barDiscard').addEventListener('click', () => discardChanges());
+        async function discardChanges() {
+          if (!state.song || !state.dirty) return;
+          if (!(await askConfirm('Discard your changes? The song goes back to how it was when you last saved it.', { ok: 'Discard', danger: true }))) return;
+          const editing = isEditing();
+          await loadSong(state.song.folder, { keepEditing: editing });
+          setStatusMessage('Changes discarded: the song is as you last saved it.');
         }
 
         function updateFileLabel() {
@@ -5052,10 +5111,11 @@
         }
         // 4.77: chords edited on the sheet (src/sheet-chord-editor.js → src/chord-edit.js): the change
         // is made in the song text, as if typed (so Undo works), and the preview stays where it was
-        function chordEditWanted() { return state.config?.general?.chord_edit === true || state.config?.general?.chord_edit === 'true'; }
+        function chordEditWanted() { return isEditing() && (state.config?.general?.chord_edit === true || state.config?.general?.chord_edit === 'true'); } // 4.93: only while editing
         // 4.79: on or off from the Write tab (On the sheet), or by right-clicking the sheet
         async function setChordEdit(on) {
           state.config.general = { ...(state.config.general || {}), chord_edit: on };
+          if (on && !isEditing()) setEditing(true); // 4.93: changing chords is editing
           showChordEditButton();
           renderPreviewNow();
           await persistConfig().catch((error) => window.ukemusicLogError('Could not save Edit chords on the sheet', error));
@@ -5202,6 +5262,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           populateSettingsForm();
           showTab('song');
           setDocumentContent(content, { markSaved });
+          setEditing(true); // 4.93: something brought in (or not yet a song) opens ready to change
         }
 
         // 4.57: a change to the song's settings waits for Save, like a change to its words: the badge
@@ -5483,11 +5544,12 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const song = await window.ukemusic.createSong({ songsFolder, title, content: NEW_SONG_TEMPLATE, settings });
           adoptSong(song);
           setDocumentContent(song.content);
+          setEditing(true); // 4.93: a new song is for writing
           setStatusMessage(`Created "${song.title}" in ${songsFolder}`);
           focusEditor();
         }
 
-        async function loadSong(folder) {
+        async function loadSong(folder, { keepEditing = null } = {}) {
           let song;
           try {
             song = await window.ukemusic.openSong(folder);
@@ -5502,6 +5564,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           adoptSong(song);
           await upgradeSongSettings();
           setDocumentContent(song.content);
+          setEditing(keepEditing ?? Boolean(state.config?.general?.open_editing)); // 4.93
           setStatusMessage(`Opened "${song.title}"`);
         }
 
@@ -12123,6 +12186,10 @@ function showTab(tab) {
             case 'file-open':
               await openFile();
               break;
+            case 'edit-words':
+              if (!libraryEl.hidden) break;
+              setEditing(!isEditing(), { focus: true });
+              break;
             case 'library':
               await showLibrary();
               break;
@@ -12352,6 +12419,8 @@ function showTab(tab) {
         try { if (localStorage.getItem(RIBBON_HIDDEN_KEY) === '1') setRibbonHidden(true); } catch (_err) { /* shown */ }
         function showRibbon(name) {
           if (document.querySelector('nav.ribbon.collapsed')) setRibbonHidden(false);
+          // 4.93: the Write tab is for editing: going to it (from Help, say) shows the words
+          if (!isEditing() && (state.song || state.dirty) && document.querySelector(`.ribbon-tab[data-ribbon="${name}"][data-edit-only]`)) setEditing(true);
           for (const tab of document.querySelectorAll('.ribbon-tab[data-ribbon]')) {
             const on = tab.dataset.ribbon === name;
             tab.classList.toggle('active', on);

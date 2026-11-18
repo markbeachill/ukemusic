@@ -14,6 +14,8 @@
 (function (root) {
   // app: 'desktop', 'web' or 'both'. level: 'simple' (in the simple view) or 'all' (all features only)
   const FEATURES = [
+    // ── The song: reading or editing (4.93) ──
+    { id: 'editWords', app: 'both', where: 'the song\'s top bar, and Settings; web: the song page', name: 'Edit words & chords (a song opens as the sheet to play from)', level: 'simple' }, // 4.93
     // ── Desktop: File ──
     { id: 'save', app: 'desktop', where: 'File', name: 'Save, Save as new', level: 'simple' },
     { id: 'versions', app: 'desktop', where: 'File', name: 'Earlier versions of a song', level: 'all' },

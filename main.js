@@ -34,7 +34,7 @@ process.on('uncaughtException', (error) => log.error('main', 'Uncaught exception
 process.on('unhandledRejection', (reason) => log.error('main', 'Unhandled promise rejection', reason));
 
 const DEFAULT_CONFIG = {
-  general: { theme: 'auto', look: 'standard', style_set: 'classic', easy_read: false, chord_edit: false, all_features: false, feature_levels: '' }, // 4.71: easy_read: Atkinson Hyperlegible; 4.77: chord_edit: Edit chords on the sheet; 4.78: all_features (off: the simple view), feature_levels (changes to src/feature-levels.js)
+  general: { theme: 'auto', look: 'standard', style_set: 'classic', easy_read: false, chord_edit: false, all_features: false, feature_levels: '', open_editing: false }, // 4.71: easy_read: Atkinson Hyperlegible; 4.77: chord_edit: Edit chords on the sheet; 4.78: all_features (off: the simple view), feature_levels (changes to src/feature-levels.js); 4.93: open_editing (songs open with the editor showing)
   library: { songs_folder: '', libraries: '', last_song: '', show_notes_on_open: true, start_screen: 'library', starters_added: false, starters_info: false },
   song: { instrument: 'soprano', key: 'auto' },
   parsing: { use_delimiters: true },
@@ -412,6 +412,8 @@ function buildMenu() {
     {
       label: 'Edit',
       submenu: [
+        { id: 'song-edit-words', label: 'Edit Words and Chords', accelerator: 'F2', click: () => sendMenuAction('edit-words') }, // 4.93
+        { type: 'separator' },
         { id: 'song-undo', label: 'Undo', accelerator: 'CmdOrCtrl+Z', click: () => sendMenuAction('editor-undo') },
         { id: 'song-redo', label: 'Redo', accelerator: 'CmdOrCtrl+Shift+Z', click: () => sendMenuAction('editor-redo') },
         { type: 'separator' },

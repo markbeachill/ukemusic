@@ -54,8 +54,8 @@
 | AI prompts for difficult sheets and PDFs | ✓ | ✓ |
 | Public-domain songs to start with, ready to play | ✓ | ✓ |
 | A simple view to start with; all features when you want them | ✓ | ✓ |
-| Change a song, or write your own | ✓ | ✓ |
-| Drag a chord to the right word on the sheet: Edit chords on the sheet (Write tab, or right-click the sheet) | ✓ On the Edit page | ✓ |
+| A song opens as the sheet to play from; ✎ Edit words & chords to change it, or write your own | ✓ | ✓ |
+| Drag a chord to the right word on the sheet: Edit chords on the sheet (while editing: the Write tab, or right-click the sheet) | ✓ While editing | ✓ |
 | Find songs by title, artist, tag or key | ✓ | ✓ Several libraries too |
 | **[Play along](https://markbeachill.github.io/ukemusic/practise.html)** | | |
 | It plays along with you: the chords and the strum, or picking | ✓ | ✓ |
@@ -167,11 +167,12 @@ The guides and the changelog are pages of [the website](https://markbeachill.git
 ## Getting around the desktop app
 
 - ukemusic opens on **Your songs** (the library): open a song, start a new one, paste one from a website or import a file. Three old, copyright-free starter songs show how songs are written.
+- A song opens as the **sheet to play from**, the whole width of the window. **✎ Edit words & chords** (or F2) shows the words and chords beside it to change them, and **Done** goes back. A new or imported song opens ready to change (Settings → Opening a song can make every song open that way). Anything you change, editing or not (the words, or the tempo or picking pattern while playing), waits for **Save** or **Discard**, at the top beside the song's name.
 - In a song, the tabs hold everything (File → Close goes back to your songs). **View** has the look (diagrams, text size, strum style, layout) and **Export** makes PDFs and other files in one click:
   - **File**: close, save, save as new, rename, import, paste, add to setlist;
   - **Write**: tab, strums, suggest the key, chords into words (for songs copied from websites), How to write (the guide);
   - **This song**: key, capo, instrument, tempo, time, strum;
-  - **Play**: play (beside the editor, with the chord, strum and next shapes above the preview), play along (full-screen karaoke with chord shapes), Session screen (the whole song on one screen, on the TV if one is plugged in, for playing as a group; a setlist song by song), stop, practice (strum, 12-bar blues, chord change), tempo (change it while playing), tap tempo, practice (loop a section, slower, speeding up), sound;
+  - **Play**: play (on the sheet, with the chord, strum and next shapes above the preview), play along (full-screen karaoke with chord shapes), Session screen (the whole song on one screen, on the TV if one is plugged in, for playing as a group; a setlist song by song), stop, practice (strum, 12-bar blues, chord change), tempo (change it while playing), tap tempo, practice (loop a section, slower, speeding up), sound;
   - **Learn**: play from memory (the chords fading), a what-comes-next quiz, trouble spots to loop, the circle of fifths, the song's changes with what each finger does (and practice for each), numbers on the sheet, play it in another key, and a learn sheet (PDF and web page in the song's learn folder). How it works out a song, and how far to trust it: [How ukemusic helps you learn a song](docs/explanation/learning-a-song.md);
   - **Settings**: opens Settings.
 - The hint line under the tabs explains whatever the mouse is over.
@@ -183,7 +184,7 @@ The guides and the changelog are pages of [the website](https://markbeachill.git
 - Shorthand: `[Em:2]` for a 2-beat chord, `[N.C.]` for a pause, `[C x3]` for three bars, `| C | F | % | G7 C |` for a line of bars, `(x2)` to repeat a line, `{A: D-DU-UDU}` … `{A}` for named strums, `{stop}`.
 - **View → Layout**: chords above the words, in columns, in the words, or chords only.
 - Strum patterns show on **one line** (time signature and tempo, arrows, letters, name), or as info boxes with the count, or plain; `{3/4 D-DUDU}` changes the time from there on.
-- The song is on the left and its preview on the right, kept in step: scroll the song and the preview follows; click a preview line to jump to it in the song.
+- While editing, the words are on the left and the sheet on the right, kept in step: scroll the words and the sheet follows; click a line of the sheet to jump to it in the words.
 
 ## The website and releases
 
