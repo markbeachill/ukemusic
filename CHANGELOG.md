@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.94.2
+
+- Opening Free Practice when it was already open (an exercise straight from its home) took the page behind it twice, so after Close the rest of the app stayed unclickable. Now the page behind is only taken the first time. In site-pictures this made the exports (gallery files, the Stage, learn and pick sheet pictures, the songbook) time out.
+- site-pictures and the UI review close Free Practice before going back to the library. The UI review uses New song's choices (L12: write your own; L6: paste), shows the Write tab while editing (B3), and S1's caption describes the song opening as the sheet.
+
 ## v4.94.1
 
 - The home screen's **Songs** and **Free Practice** are now tab shapes on the top bar's edge. The one in use is joined to the page under it, in its colour with a coloured top edge (blue for Songs, orange for Free Practice). The other is a grey tab. The web player is the same.

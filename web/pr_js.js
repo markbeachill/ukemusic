@@ -1932,9 +1932,12 @@
           const tempo = Number(effectiveConfig()?.song?.tempo);
           if (!pr.opened && tempo) $p('prTempo').value = String(Math.max(50, Math.min(120, tempo)));
           pr.opened = true;
-          pr.returnFocus = document.activeElement;
-          pr.inertElements = [...document.body.children].filter((el) => el !== practiceEl && el !== $p('prHelpDialog') && el.id !== 'askDialog' && !['SCRIPT','STYLE'].includes(el.tagName) && !el.contains(practiceEl)).map((el) => ({ el, inert: el.inert }));
-          for (const item of pr.inertElements) item.el.inert = true;
+          // 4.94.2: already open (an exercise opened from Free Practice's home, say): the page behind
+          // stays as it is (taking it again would keep it inert after Close)
+          const already = !practiceEl.hidden;
+          if (!already) pr.returnFocus = document.activeElement;
+          if (!already) pr.inertElements = [...document.body.children].filter((el) => el !== practiceEl && el !== $p('prHelpDialog') && el.id !== 'askDialog' && !['SCRIPT','STYLE'].includes(el.tagName) && !el.contains(practiceEl)).map((el) => ({ el, inert: el.inert }));
+          if (!already) for (const item of pr.inertElements) item.el.inert = true;
           practiceEl.hidden = false;
           practiceEl.focus();
           if (typeof exId === 'string' && PL.EXERCISES.some((e) => e.id === exId)) prOpen(exId);

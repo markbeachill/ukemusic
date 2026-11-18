@@ -143,6 +143,8 @@ async function launch() {
   });
   async function library() {
     await closeDialogs();
+    // 4.94.2: Free Practice left open (from a song's Learn tab, say) covers the library
+    await page.evaluate(() => { const b = document.getElementById('practiceClose'); if (b && !document.getElementById('practice').hidden) b.click(); });
     await page.evaluate(() => window.ukemusicShowLibrary());
     await page.waitForTimeout(500);
     await page.click('#libTabSongs').catch(() => {});
@@ -192,10 +194,10 @@ async function launch() {
     await shot('L5', 'Setlists: a setlist for a club night');
   });
   await safe('L6', async () => {
-    await library(); await page.click('#pasteSheetButton'); await page.waitForSelector('#convertDialog[open]');
+    await library(); await page.click('#libNew'); await page.click('#libPaste'); await page.waitForSelector('#convertDialog[open]');
     await page.fill('#convertInput', 'C           G\nHello there my friend\nF              C\nSinging all the day\n');
     await page.waitForTimeout(700);
-    await shot('L6', 'Paste a song from a website'); await closeDialogs();
+    await shot('L6', 'New song → Paste from a website'); await closeDialogs();
   });
   await safe('L7', async () => { await library(); await page.click('#libSwitch'); await page.waitForTimeout(500); await shot('L7', 'Libraries: switch, start a new one, share as a pack'); await page.keyboard.press('Escape'); await page.mouse.click(5, 5); });
   await safe('L8', async () => { await library(); await page.click('#libPhone'); await page.waitForSelector('#phoneDialog[open]'); await page.waitForTimeout(500); await shot('D2', 'Phone and tablet: songs to and from the web player'); await closeDialogs(); });
@@ -220,7 +222,7 @@ async function launch() {
       log('ribbon height stable', width, heights[0]);
     }
     await size(W, H); await tab('Song');
-    await shot('S1', 'A song open: the words and chords, and the chord sheet beside them');
+    await shot('S1', 'A song open: the sheet to play from (✎ Edit words & chords shows the words)');
   });
   await safe('S3', async () => {
     await page.evaluate(() => { const p = document.getElementById('preview'); p.contentWindow.scrollTo(0, 700); });
@@ -395,6 +397,7 @@ async function launch() {
       const tabs = await page.evaluate(() => [...document.querySelectorAll('.ribbon-tab[data-ribbon]')].filter((b) => b.offsetParent).map((b) => b.id.replace('ribbonTab', '')));
       const ids = { Song: 'B2', Write: 'B3', ThisSong: 'B4', View: 'B5', Export: 'B6', Play: 'B7', Learn: 'B8' };
       for (const t of tabs) if (ids[t]) { await tab(t); await shot(ids[t], `Simple view: the ${await page.textContent(`#ribbonTab${t}`)} tab`); }
+      await tab('Write'); await shot('B3', 'Simple view: editing, the Write tab'); await page.click('#editWordsButton'); await page.waitForTimeout(400); // 4.93: Write is there while editing
       await page.click('#settingsToggleButton'); await page.waitForTimeout(700); await shot('B9', 'Simple view: Settings');
       await page.click('#closeSettingsButton').catch(() => {});
       await tab('Export'); await page.click('#exportNowButton'); await page.waitForSelector('#exportDialog[open]', { timeout: 5000 }); await page.waitForTimeout(500);

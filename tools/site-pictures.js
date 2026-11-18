@@ -130,6 +130,7 @@ async function desktop() {
   };
   const library = async () => {
     await closeDialogs();
+    await page.evaluate(() => { const b = document.getElementById('practiceClose'); if (b && !document.getElementById('practice').hidden) b.click(); }); // 4.94.2
     await page.evaluate(() => window.ukemusicShowLibrary());
     await page.waitForTimeout(500);
     await page.click('#libTabSongs').catch(() => {});
