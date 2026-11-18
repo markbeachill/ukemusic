@@ -18,7 +18,7 @@
     { id: 'editWords', app: 'both', where: 'the song\'s top bar, and Settings; web: the song page', name: 'Edit words & chords (a song opens as the sheet to play from)', level: 'simple' }, // 4.93
     // ── Desktop: File ──
     { id: 'save', app: 'desktop', where: 'File', name: 'Save, Save as new', level: 'simple' },
-    { id: 'versions', app: 'desktop', where: 'File', name: 'Earlier versions of a song', level: 'all' },
+    { id: 'versions', app: 'desktop', where: 'File', name: 'Earlier versions of a song', level: 'simple' },
     { id: 'songFile', app: 'desktop', where: 'File', name: 'Rename, Close', level: 'simple' },
     { id: 'bringIn', app: 'desktop', where: 'File', name: 'Bring in: import, paste a chord sheet', level: 'simple' },
     { id: 'tidy', app: 'desktop', where: 'File', name: 'Tidy chords above the words', level: 'all' },
@@ -33,7 +33,7 @@
     { id: 'key', app: 'desktop', where: 'Song', name: 'Key: try it higher or lower, other keys', level: 'simple' },
     { id: 'keyVersions', app: 'desktop', where: 'Song', name: 'Saved keys: keep a key as a version, rewrite the song in a key', level: 'all' },
     { id: 'capo', app: 'desktop', where: 'Song', name: 'Capo', level: 'simple' },
-    { id: 'capoSuggest', app: 'desktop', where: 'Song', name: 'Suggest a capo', level: 'all' },
+    { id: 'capoSuggest', app: 'desktop', where: 'Song', name: 'Suggest a capo', level: 'simple' },
     { id: 'instrument', app: 'both', where: 'Song; web: the song page', name: 'Instrument', level: 'simple' },
     { id: 'tempoTime', app: 'desktop', where: 'Song', name: 'Tempo and time', level: 'simple' },
     { id: 'songStrum', app: 'desktop', where: 'Song', name: 'Strum where none is written', level: 'all' },
@@ -67,7 +67,7 @@
     // ── Desktop: Learn ──
     { id: 'learnMemory', app: 'desktop', where: 'Learn', name: 'Play from memory', level: 'simple' },
     { id: 'learnQuiz', app: 'desktop', where: 'Learn', name: 'Test yourself: Next chord?', level: 'simple' },
-    { id: 'learnFingers', app: 'desktop', where: 'Learn', name: 'Chord changes, drills', level: 'all' },
+    { id: 'learnFingers', app: 'desktop', where: 'Learn', name: 'Chord changes, drills', level: 'simple' },
     { id: 'learnNumbers', app: 'desktop', where: 'Learn', name: 'Chords as numbers', level: 'all' },
     { id: 'learnKey', app: 'desktop', where: 'Learn', name: 'Learn it in another key', level: 'all' },
     { id: 'learnTheory', app: 'desktop', where: 'Learn', name: 'How the song works: learn sheet, circle, patterns', level: 'all' },
@@ -79,10 +79,10 @@
     { id: 'libraries', app: 'desktop', where: 'the library', name: 'Other libraries and library packs', level: 'all' },
     { id: 'libraryTools', app: 'desktop', where: 'the library', name: 'Open the library folder, export every song', level: 'all' },
     // ── Desktop: song tabs ──
-    { id: 'detailsMore', app: 'desktop', where: 'the song: Details tab', name: 'Album, source, difficulty, licence', level: 'all' },
-    { id: 'songLinks', app: 'desktop', where: 'the song: Links tab', name: 'Links', level: 'all' },
-    { id: 'songExports', app: 'desktop', where: 'the song: Exports tab', name: 'Exports', level: 'all' },
-    { id: 'songChordPro', app: 'desktop', where: 'the song: ChordPro tab', name: 'ChordPro fields', level: 'all' },
+    { id: 'detailsMore', app: 'desktop', where: 'the song: Details tab', name: 'Album, source, difficulty, licence', level: 'simple' },
+    { id: 'songLinks', app: 'desktop', where: 'the song: Links tab', name: 'Links', level: 'simple' },
+    { id: 'songExports', app: 'desktop', where: 'the song: Exports tab', name: 'Exports', level: 'simple' },
+    { id: 'songChordPro', app: 'desktop', where: 'the song: ChordPro tab', name: 'ChordPro fields', level: 'simple' },
     // ── Settings (greyed in the simple view, not hidden) ──
     { id: 'setSongCustom', app: 'desktop', where: 'Settings', name: 'Settings: custom for this song', level: 'all', grey: true },
     { id: 'setSongFonts', app: 'desktop', where: 'Settings', name: 'Settings: font for this song', level: 'all', grey: true },

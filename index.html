@@ -3146,6 +3146,21 @@
                       </div>
                     </section>
 
+                    <section class="settings-group" id="set-features">
+                      <h3>Features: the simple view</h3>
+                      <div class="field">
+                        <label class="check-line"><input id="general-all_features" type="checkbox" data-config-path="general.all_features" /> Show all features</label>
+                        <p class="help">Off (the simple view), the app shows the features a beginner needs to play and add songs; the rest wait here, and the settings for them are greyed. Hidden is not off: a song that uses a hidden feature plays and prints as before.</p>
+                      </div>
+                      <p class="help"><a href="#set-feature-table" data-settings-jump="set-feature-table">Choose what the simple view shows</a>, one feature at a time (at the end of Settings).</p>
+                    </section>
+                    <section class="settings-group" id="set-editing" data-feature="editWords">
+                      <h3>Opening a song</h3>
+                      <div class="field">
+                        <label class="check-line"><input id="general-open_editing" type="checkbox" data-config-path="general.open_editing" /> Open songs with the words and chords showing, ready to change</label>
+                        <p class="help">Off, a song opens as the sheet to play from, and <b>✎ Edit words &amp; chords</b> (F2) shows the words beside it. New and imported songs always open ready to change.</p>
+                      </div>
+                    </section>
                     <section class="settings-group" id="set-library">
                       <h3>Songs folder</h3>
                       <div id="songsFolderLabel" class="folder-path">Not set</div>
@@ -3466,19 +3481,9 @@
                         <p class="help">Only changes the screen, not exports or PDFs.</p>
                       </div>
                     </section>
-                    <section class="settings-group" id="set-editing" data-feature="editWords">
-                      <h3>Opening a song</h3>
-                      <div class="field">
-                        <label class="check-line"><input id="general-open_editing" type="checkbox" data-config-path="general.open_editing" /> Open songs with the words and chords showing, ready to change</label>
-                        <p class="help">Off, a song opens as the sheet to play from, and <b>✎ Edit words &amp; chords</b> (F2) shows the words beside it. New and imported songs always open ready to change.</p>
-                      </div>
-                    </section>
-                    <section class="settings-group" id="set-features">
-                      <h3>Features: the simple view</h3>
-                      <div class="field">
-                        <label class="check-line"><input id="general-all_features" type="checkbox" data-config-path="general.all_features" /> Show all features</label>
-                        <p class="help">Off, the app shows the features a beginner needs to play and add songs; the rest wait here, and the settings for them are greyed. Hidden is not off: a song that uses a hidden feature plays and prints as before. Tick or untick a feature below to choose what the simple view shows.</p>
-                      </div>
+                    <section class="settings-group" id="set-feature-table">
+                      <h3>What the simple view shows</h3>
+                      <p class="help">Tick a feature to show it in the simple view. Show all features (at the top of Settings) shows everything.</p>
                       <div id="featureTable" class="field"></div>
                       <div class="field"><button id="featureTableReset" type="button">Back to the defaults</button></div>
                     </section>
@@ -6461,6 +6466,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           // 4.81: in the simple view, the page with settings you can change (This song's are for all features)
           if (shouldShow && typeof forceValue !== 'boolean') showSettingsTab(!document.documentElement.hasAttribute('data-simple') && libraryEl.hidden && state.song ? 'song' : 'all');
           else if (shouldShow && document.documentElement.hasAttribute('data-simple')) showSettingsTab('all');
+          // 4.96: from the home screen there's no song: only the settings for all songs
+          if (shouldShow) document.getElementById('settingsTabSong').hidden = !libraryEl.hidden;
           if (shouldShow) buildSettingsNav();
         }
 
@@ -7982,6 +7989,13 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
 
         document.getElementById('settingsTabSong').addEventListener('click', () => showSettingsTab('song'));
         document.getElementById('settingsTabAll').addEventListener('click', () => showSettingsTab('all'));
+        // 4.96: a link from one part of Settings to another
+        settingsPanel.addEventListener('click', (event) => {
+          const jump = event.target.closest('[data-settings-jump]');
+          if (!jump) return;
+          event.preventDefault();
+          document.getElementById(jump.dataset.settingsJump)?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        });
         function showSettingsTab(tab) {
           document.getElementById('settingsTabSong').classList.toggle('active', tab === 'song');
           document.getElementById('settingsTabAll').classList.toggle('active', tab === 'all');

@@ -16,7 +16,7 @@ const F = require('../src/feature-levels');
 const level = (id) => F.FEATURES.find((f) => f.id === id).level;
 
 test('S3, S9: more of the app belongs to a feature', () => {
-  for (const id of ['versions', 'tidy', 'capoSuggest', 'keyVersions', 'libraries', 'libraryTools', 'detailsMore', 'exportMore', 'downloadMore']) assert.strictEqual(level(id), 'all', id);
+  for (const id of ['tidy', 'keyVersions', 'libraries', 'libraryTools', 'exportMore', 'downloadMore']) assert.strictEqual(level(id), 'all', id); // 4.96: versions, capoSuggest and detailsMore are simple
   assert.strictEqual(level('phone'), 'simple');
   for (const [id, feature] of [['historyButton', 'versions'], ['convertLinesButton', 'tidy'], ['capoSuggestButton', 'capoSuggest'], ['libSwitch', 'libraries'], ['libOpenFolder', 'libraryTools'], ['libExportAll', 'libraryTools'], ['libPhone', 'phone'], ['detailsAlbum', 'detailsMore'], ['detailsLicence', 'detailsMore']]) {
     assert.match(DESKTOP, new RegExp(`id="${id}" data-feature="${feature}"`), id);

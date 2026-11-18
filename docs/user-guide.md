@@ -45,7 +45,7 @@ A new, pasted or imported song opens ready to edit. Press **Save** to keep it.
 
 ## A song: reading and editing
 
-A song opens as the sheet to play from. Beside it, in a narrower column, are the song's **Details** (artist, year, key, tempo, time, tags), **Notes**, and (with all features) its **Links**, **Exports** and **ChordPro** fields. The column opens on the notes, if the song has any, or on the tab you last looked at.
+A song opens as the sheet to play from. Beside it, in a narrower column, are the song's **Details** (artist, year, key, tempo, time, tags), **Notes**, **Links**, **Exports** and **ChordPro** fields. The column opens on the notes, if the song has any, or on the tab you last looked at.
 
 ![A song open as the sheet, with its notes beside it and the tools above it](../site/img/guide/desktop-S1.jpg)
 
@@ -80,7 +80,7 @@ Anything you change waits for **Save**, whether you're editing or not: the words
 - **Discard** asks first, then takes the song back to how it was last saved.
 - **Done** doesn't save: your changes stay until you Save or Discard them.
 - If you close a song with changes, ukemusic asks whether to save them.
-- Every save keeps the one before. **File → Earlier versions** (with all features) shows them, and puts one back.
+- Every save keeps the one before. **File → Earlier versions** shows them, and puts one back.
 
 Two things are never saved with the song: **Practice speed** (Play tab) and trying the song **higher or lower** (Song tab), until you keep that key.
 
@@ -233,15 +233,17 @@ The web player saves sheets from **Download** (⤓ on a song). See real files in
 
 ## Settings and the simple view
 
-**Settings** (on the home screen, or the ⚙ at the right of the tabs) has two tabs: **This song**, and **All songs (defaults)**.
+**Settings** on the home screen is for all your songs. In a song, the ⚙ **Settings** at the right of the tabs also has **This song**: a setting there is kept with that song (untick **Use default** to give it its own value).
 
 ![Settings, all songs: the list of sections on the left](../site/img/guide/desktop-G2.jpg)
 
-- **Your instrument**, **Songs folder**, **Chord diagrams** (including **Left-handed**), **How the chord sheet looks**, **Fonts, colours and printing**, **Stage copies**, **Playback and karaoke**, **App appearance**.
-- **Opening a song:** tick it to have every song open with the words and chords showing.
-- **Features: the simple view.** At first ukemusic shows what someone new needs; **More features** (on the tabs) or **Show all features** here shows everything. The table under it chooses what the simple view shows, one feature at a time. Hidden isn't off: a song that uses a hidden feature plays and prints as before.
+The first three are the ones to look at first:
 
-A setting on **This song** is kept with that song; untick **Use default** to give it its own value.
+- **Your instrument:** what you play. New songs, chord shapes, tab and playback follow it.
+- **Features: the simple view.** At first ukemusic shows what someone new needs. Tick **Show all features** here (or press **More features** on the tabs) to see everything. **What the simple view shows**, at the end of Settings, chooses one feature at a time. Hidden isn't off: a song that uses a hidden feature plays and prints as before.
+- **Opening a song:** tick it to have every song open with the words and chords showing.
+
+Then **Songs folder**, **Chord diagrams** (including **Left-handed**), **How the chord sheet looks**, **Fonts, colours and printing**, **Stage copies**, **Playback and karaoke** and **App appearance**.
 
 ## On a phone or tablet
 

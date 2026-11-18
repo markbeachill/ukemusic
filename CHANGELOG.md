@@ -1,5 +1,17 @@
 # Changelog
 
+## v4.96.0
+
+- **The simple view, reviewed.** Comparing the two views tab by tab, some hidden items made little difference, so they're now in the simple view:
+  - the song's **Links**, **Exports** and **ChordPro** tabs, and its other details (album, source, difficulty, licence);
+  - **Earlier versions** (File);
+  - **Suggest** a capo (Song);
+  - **Changes** and **Shapes** (Learn).
+  
+  What it still hides makes a real difference: the Display tab's styles and the tune, the Export tab's Stage copies and other formats, the Session screen, sound and feel, the rest of Learn, and the Picking tab.
+- **Settings starts with what matters first:** Your instrument, then **Features: the simple view** (the Show all features switch), then Opening a song. The table that chooses what the simple view shows is at the end, with a link to it.
+- **Settings from the home screen** shows only the settings for all songs. The This song tab appears when a song is open.
+
 ## v4.95.1
 
 - When you're reading a song (not editing), its **Details**, **Links**, **Exports**, **Notes** and **ChordPro** tabs now stay beside the sheet, in a narrower column. Before, they were only there while editing. Only **Words & chords** waits for **✎ Edit words & chords**.
