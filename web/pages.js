@@ -137,7 +137,7 @@ function versionsBlock(best, web, desk) {
 function featureRow(f, flip) {
   const list = f.list ? `<ul>${f.list.map((x) => `<li>${x}</li>`).join('')}</ul>` : '';
   const shot = f.img ? `<div class="shot"><img src="img/${f.img}" loading="lazy" width="1360" height="${f.h || 860}" alt="${esc(f.alt || '')}"></div>` : (f.html || '');
-  return `<div class="feature${flip && shot ? ' flip' : ''}${shot ? '' : ' text-only'}"><div class="text"><h3>${f.h3}</h3>${(f.p || []).map((x) => `<p>${x}</p>`).join('')}${list}</div>${shot}</div>`;
+  return `<div class="feature${flip && shot ? ' flip' : ''}${shot ? '' : ' text-only'}"${f.id ? ` id="${f.id}"` : ''}><div class="text"><h3>${f.h3}</h3>${(f.p || []).map((x) => `<p>${x}</p>`).join('')}${list}</div>${shot}</div>`;
 }
 
 // ── The pages ──
@@ -181,17 +181,30 @@ const PAGES = [
     more: ''
   },
   {
-    file: 'perform.html', seoTitle: 'Perform: Stage copies, setlists and the Session screen · ukemusic', title: 'Perform', blurb: 'Stage copies you can read at a glance, the Session screen for club nights, setlists and songbooks.',
+    file: 'perform.html', seoTitle: 'Perform: Stage copies, setlists and the Session screen · ukemusic', title: 'Perform', blurb: 'Read at a gig on paper (Stage copies), on your tablet (the Music stand) or on the room\'s screen (the Session screen), with setlists and songbooks.',
     eyebrow: 'Perform', h1: 'From the music stand to the big screen',
-    lede: 'Clear Stage copies for the gig, a Session screen that fills the TV for a club night, and setlists that go song by song with a clicker.',
-    solo: ['A Stage copy: big, bold and easy to scan', 'The Music stand: song after song on a tablet, a tap to turn the page', 'Setlists, and a songbook PDF of the whole set', 'Stage PDFs copied to your gig folder as you export'],
+    // 4.92: three ways to read a song at a gig, and which is for what
+    compare: `<p class="eyebrow">Which one?</p><h2>On paper, on your tablet, or on the room's screen</h2>
+<div class="table-scroll"><table class="compare">
+<thead><tr><th></th><th scope="col"><a href="#music-stand">Music stand</a></th><th scope="col"><a href="#session-screen">Session screen</a></th><th scope="col"><a href="#stage-copies">Stage copy</a></th></tr></thead>
+<tbody>
+<tr><th scope="row">For</th><td>You, reading on your own stand</td><td>The whole room: a club night, a jam</td><td>You, with no screen at all</td></tr>
+<tr><th scope="row">On</th><td>An iPad or a laptop</td><td>A TV or projector (or the laptop itself)</td><td>Paper: printed, or a PDF</td></tr>
+<tr><th scope="row">Text</th><td>One steady size for every song; a long song turns a page</td><td>Each song as big as it will go, to read across the room</td><td>Big and bold, the chords where you like them</td></tr>
+<tr><th scope="row">Turning</th><td>A tap on the right half, or a pedal</td><td>The laptop's arrow keys, a clicker, or a tap</td><td>Two-page Stage: one page or two, so there's no turn mid-song</td></tr>
+<tr><th scope="row">A setlist</th><td>Song after song, in its keys</td><td>Song after song, with what's next on the laptop</td><td>A songbook PDF of the whole set</td></tr>
+<tr><th scope="row">In</th><td>The web player and the desktop app</td><td>The web player and the desktop app</td><td>Both (Two-page Stage and songbooks: the desktop app)</td></tr>
+</tbody></table></div>
+<style>.compare { border-collapse: collapse; width: 100%; margin-top: 12px; font-size: 15px; } .compare th, .compare td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); } .compare thead th { font-size: 16px; } .compare tbody th { color: var(--muted); font-weight: 600; width: 7em; } .table-scroll { overflow-x: auto; }</style>`,
+    lede: 'Three ways to read a song at a gig: a Stage copy on paper, the Music stand on your own tablet, and the Session screen on the TV for the whole room. Setlists go song by song on any of them.',
+    solo: ['On a tablet: the Music stand, song after song, a tap to turn the page', 'On paper: a Stage copy, big, bold and easy to scan', 'Setlists, and a songbook PDF of the whole set', 'Stage PDFs copied to your gig folder as you export'],
     group: ['The Session screen: the whole song on one TV or projector, laid out so nobody scrolls', 'Arrow keys, a presentation clicker or a tap for the next song', 'Karaoke for the room: big words that light up as you sing', 'Check the whole library fits one screen before the night'],
     features: [
-      { h3: 'The Session screen', p: ['For a club night or a jam: the whole song on one screen, as big as it will go. Verses and choruses in columns, never split, with the chord shapes down the side. With a TV plugged in, the song fills it while the laptop shows what\'s next.'], img: 'session-setlist.webp', h: 765, alt: 'The Session screen: It\'s a Long Way to Tipperary in two columns, song 2 of 5 in the setlist' },
-      { h3: 'Music stand', p: ['Your own songs on an iPad (or a laptop) on a music stand: one steady size for every song, chords above the words, and pages rather than smaller text. From the songs list, or song after song through a setlist, in its order and its keys.', 'The song and the page are along the bottom, and at the end of a song it says which comes next. A Bluetooth page-turner pedal or the arrow keys turn the pages too.'], img: 'music-stand.webp', h: 1020, alt: 'The Music stand on an iPad on its side: Danny Boy, the first song of a setlist, both verses side by side with the chord shapes across the top' },
+      { id: 'music-stand', h3: 'Music stand: reading on your own, from a tablet', p: ['Your own songs on an iPad (or a laptop) on your music stand, instead of paper: one steady size for every song, chords above the words, and pages rather than smaller text. From the songs list, or song after song through a setlist, in its order and its keys.', 'The song and the page are along the bottom, and at the end of a song it says which comes next. A Bluetooth page-turner pedal or the arrow keys turn the pages too. For the whole room, use the <a href="#session-screen">Session screen</a>; to print, a <a href="#stage-copies">Stage copy</a>.'], img: 'music-stand.webp', h: 1020, alt: 'The Music stand on an iPad on its side: Danny Boy, the first song of a setlist, both verses side by side with the chord shapes across the top' },
       { h3: 'How to use the Music stand', p: ['The first time it opens, it shows you how: tap the right half of the screen for the next page (and then the next song), the left half to go back, and the top, or ☰ Menu in the corner, for the menu. The menu has Close, the songs to jump to, a verse or chorus to go to, the text size (A− A+), and ? for these instructions again.', 'To make a setlist in the web player: <strong>+ Setlist</strong> on a song, or <strong>Setlists → + New setlist</strong> in the songs list. With Dropbox, the setlists are shared with the desktop app.'], img: 'music-stand-guide.webp', h: 1020, alt: 'The Music stand\'s first-time guide: tap the top for the menu, the left half to go back, the right half for the next page' },
+      { id: 'session-screen', h3: 'The Session screen: for the whole room', p: ['For a club night or a jam: the whole song on one screen, as big as it will go, for everyone to read across the room. Verses and choruses in columns, never split, with the chord shapes down the side. With a TV plugged in, the song fills it while the laptop shows what\'s next. (Reading on your own? The <a href="#music-stand">Music stand</a> keeps one size and turns pages.)'], img: 'session-setlist.webp', h: 765, alt: 'The Session screen: It\'s a Long Way to Tipperary in two columns, song 2 of 5 in the setlist' },
       { h3: 'Setlists and songbooks', p: ['Put the night\'s songs in order, in the keys you play them. Run the setlist on the Session screen, make one songbook PDF of the whole set, or a folder with a PDF per song for a tablet.'], img: 'setlist.webp', h: 860, alt: 'A setlist called Club night with five songs, and buttons for the Session screen and a songbook PDF' },
-      { h3: 'Stage copies', p: ['Print the song sheet for practice and a Stage copy for the gig, with the chords where they suit you: Auto (the default: chords above the words on screen, the easiest to read, and in the words when printed, the fewest pages), Chords above, Chords above in [ ], Chords in the words, or Heavy. Choruses printed every time, or once and then "as before".'], img: 'stage.webp', h: 765, alt: 'A Stage copy: plain words with the chords in them' },
+      { id: 'stage-copies', h3: 'Stage copies: on paper', p: ['Print the song sheet for practice and a Stage copy for the gig, with the chords where they suit you: Auto (the default: chords above the words on screen, the easiest to read, and in the words when printed, the fewest pages), Chords above, Chords above in [ ], Chords in the words, or Heavy. Choruses printed every time, or once and then "as before".'], img: 'stage.webp', h: 765, alt: 'A Stage copy: plain words with the chords in them' },
       { h3: 'Karaoke for the whole room', p: ['Full screen, big words that light up as you sing, with the chord above each word and the shapes down the side. Tap any line to start from there.'], img: 'karaoke.webp', alt: 'The karaoke view' }
     ],
     best: 'desktop',
@@ -226,7 +239,7 @@ const PAGES = [
     features: [
       { h3: 'Type it once', p: ['A song is a plain text file you can read anywhere. Put each chord in square brackets just before the word where it changes, and everything else follows: the sheet, the shapes, the strum, the playback and the printing.'], img: 'editor.webp', alt: 'The song typed on the left, the chord sheet on the right' },
       { h3: 'Or move the chords with the mouse', p: ['Turn on Edit chords on the sheet (Write → On the sheet, or right-click the sheet) and drag a chord to the word where it\'s played, even part way into a word. Click a chord to change it, choose its shape or take it out; click in the words to put one there. The song changes as if you\'d typed it.'], img: 'chord-edit.webp', h: 860, alt: 'A chord being changed on the sheet: a small menu of the song\'s chords next to it' },
-      { h3: 'Every format you need', list: ['PDF and web page, in your own style or a Stage format', 'Words only, Markdown for notes apps, ChordPro for other chord apps', 'A songbook PDF from a setlist', 'Tab and melody beside the words'], img: 'stage.webp', h: 765, alt: 'A Stage copy' },
+      { h3: 'Every format you need', p: ['Reading from a tablet instead of paper? The <a href="perform.html#music-stand">Music stand</a> shows your songs a page at a time, a tap to turn.'], list: ['PDF and web page, in your own style or a Stage format', 'Words only, Markdown for notes apps, ChordPro for other chord apps', 'A songbook PDF from a setlist', 'Tab and melody beside the words'], img: 'stage.webp', h: 765, alt: 'A Stage copy' },
       { h3: 'Your songs, in libraries', p: ['Songs live in ordinary folders on your computer. Keep several libraries, search by artist, tag or key, and put songs into setlists. ukemusic comes with a library of public-domain songs to start you off.'], img: 'library.webp', alt: 'The library of songs' }
     ],
     best: 'desktop',
@@ -541,7 +554,7 @@ const DROPBOX_PAGE = {
 const GALLERY_KINDS = [
   { file: 'sheet.pdf', name: 'Chord sheet', what: 'The song to print: the chord shapes and the strum at the top, the chords over the words.' },
   { file: 'stage.pdf', name: 'Stage copy', what: 'For a gig or a club night: big plain words with the chords in them, the fewest pages.' },
-  { file: 'stage2.pdf', name: 'Two-page Stage', what: 'For a music stand: the Stage copy fitted to one page if it goes, or two, so there\'s no page to turn.' },
+  { file: 'stage2.pdf', name: 'Two-page Stage', what: 'Printed, for a music stand: the Stage copy fitted to one page if it goes, or two, so there\'s no page to turn. (On a tablet, the app\'s Music stand does this on screen.)' },
   { file: 'learn.pdf', name: 'Learn sheet', what: 'The chords and what each one does, the parts of the song, the chord map with its patterns, the changes to practise and the circle of fifths.' },
   { file: 'pick.pdf', name: 'Pick sheet', what: 'The song set out for fingerpicking: the pattern counted out, then the song as tab with the chords over it and the words under it.' },
   { file: 'lyrics.pdf', name: 'Words only', what: 'The words, for singers, with the section names.' }
@@ -858,6 +871,7 @@ function pageBody(p) {
     <div class="card"><h3>In a group</h3><ul>${p.group.map((x) => `<li>${x}</li>`).join('')}</ul></div>
   </div>
 </div></section>
+${p.compare ? `<section><div class="wrap">${p.compare}</div></section>` : ''}
 <section><div class="wrap">
 ${rows}
 </div></section>

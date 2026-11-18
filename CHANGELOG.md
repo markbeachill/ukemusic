@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.92.0
+
+- The feature list gives the Music stand its own section, "Read from a tablet", instead of mixing it with printing and playing together. Printing is now "Stage copies to print".
+- The Perform page starts with a "Which one?" table that compares the Music stand (your own tablet), the Session screen (the room's TV) and the Stage copy (paper). Each has its own heading, and each heading links to the other two.
+- The home page and the chord-sheets page point from printing to the Music stand, and from the Music stand to the Session screen.
+- WRITING.md: "Which to use at a gig".
+
 ## v4.91.0
 
 The Music stand made easier to find your way in and out of, and to use with setlists. Web player and desktop.

@@ -76,17 +76,20 @@
 | Chords by key, a sheet to print | ✓ Print | ✓ PDF |
 | **[Print and share](https://markbeachill.github.io/ukemusic/chord-sheets.html)** | | |
 | Chord sheets with chord diagrams | ✓ Print or save a PDF | ✓ PDF |
-| Stage copies: big and easy to read at a gig | ✓ | ✓ One or two pages |
+| Stage copies to print: big and easy to read at a gig | ✓ | ✓ One or two pages |
 | Pick sheets: tab for fingerpicking | ✓ | ✓ |
 | Easy-to-read text for low vision (Atkinson Hyperlegible) | ✓ | ✓ |
 | ChordPro, web page and lyrics files | ✓ | ✓ And Markdown |
 | Songbook PDFs of a setlist, with a cover and contents | — | ✓ |
 | Your club's logo and an "Updated" date on sheets | ✓ | ✓ |
 | Export every song at once | — | ✓ |
-| **[Play together](https://markbeachill.github.io/ukemusic/perform.html)** | | |
-| Setlists | ✓ | ✓ |
-| The Session screen: big words and chords for a group | ✓ On this device | ✓ On a second screen or TV |
+| **[Read from a tablet](https://markbeachill.github.io/ukemusic/perform.html#music-stand)** | | |
 | Music stand: read song after song on an iPad or laptop, a tap to turn the page | ✓ | ✓ |
+| One steady text size, chords above the words: pages, never smaller text | ✓ | ✓ |
+| A Bluetooth page-turner pedal, or the arrow keys | ✓ | ✓ |
+| **[Play together](https://markbeachill.github.io/ukemusic/perform.html)** | | |
+| Setlists: the night's songs in order, for the Music stand, the Session screen or a songbook PDF | ✓ | ✓ |
+| The Session screen: big words and chords for a group | ✓ On this device | ✓ On a second screen or TV |
 | Songs from the desktop to a phone or tablet, in one file | ✓ Takes it in | ✓ |
 | **[Your instrument](https://markbeachill.github.io/ukemusic/instruments.html)** | | |
 | Ukulele (high or low G), baritone ukulele and guitar | ✓ | ✓ |

@@ -59,7 +59,7 @@ const SECTIONS = [
     tone: 'teal', icon: 'print', card: { h: 'Chord sheets to print', p: 'The chord shapes beside the words, in any key. Stage copies big enough to read at a gig.' },
     rows: [
       { f: 'Chord sheets with chord diagrams', web: 'Print or save a PDF', desktop: 'PDF', home: true },
-      { f: 'Stage copies: big and easy to read at a gig', web: true, desktop: 'One or two pages' },
+      { f: 'Stage copies to print: big and easy to read at a gig', web: true, desktop: 'One or two pages' },
       { f: 'Pick sheets: tab for fingerpicking', web: true, desktop: true },
       { f: 'Easy-to-read text for low vision (Atkinson Hyperlegible)', web: true, desktop: true },
       { f: 'ChordPro, web page and lyrics files', web: true, desktop: 'And Markdown' },
@@ -68,13 +68,23 @@ const SECTIONS = [
       { f: 'Export every song at once', web: false, desktop: true }
     ]
   },
+  // 4.92: reading from a screen on your own stand is its own section, apart from printing (paper)
+  // and from the Session screen (the room's TV)
+  {
+    title: 'Read from a tablet', link: 'perform.html#music-stand',
+    tone: 'blue', icon: 'tablet', card: { h: 'Music stand: no paper', p: 'Your songs a page at a time on an iPad or laptop on your stand. A tap turns the page; a setlist goes song by song.' },
+    rows: [
+      { f: 'Music stand: read song after song on an iPad or laptop, a tap to turn the page', web: true, desktop: true },
+      { f: 'One steady text size, chords above the words: pages, never smaller text', web: true, desktop: true },
+      { f: 'A Bluetooth page-turner pedal, or the arrow keys', web: true, desktop: true }
+    ]
+  },
   {
     title: 'Play together', link: 'perform.html',
     tone: 'coral', icon: 'group', card: { h: 'Play together', p: "The Session screen puts the song on the TV for the whole room, and goes through the night's setlist." },
     rows: [
-      { f: 'Setlists', web: true, desktop: true },
+      { f: 'Setlists: the night\'s songs in order, for the Music stand, the Session screen or a songbook PDF', web: true, desktop: true },
       { f: 'The Session screen: big words and chords for a group', web: 'On this device', desktop: 'On a second screen or TV' },
-      { f: 'Music stand: read song after song on an iPad or laptop, a tap to turn the page', web: true, desktop: true },
       { f: 'Songs from the desktop to a phone or tablet, in one file', web: 'Takes it in', desktop: true }
     ]
   },
@@ -115,6 +125,7 @@ const ICONS = {
   print: '<path d="M7 9V3h10v6M7 17H4v-7h16v7h-3"/><rect x="7" y="14" width="10" height="7"/>',
   group: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c3 0 6 2 6 5.5"/>',
   note: '<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',
+  tablet: '<rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M8 7h8M8 10.5h8M8 14h5M11 18.5h2"/>',
   heart: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>'
 };
 const icon = (name) => `<svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[name] || ''}</svg>`;

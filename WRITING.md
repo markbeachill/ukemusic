@@ -443,6 +443,12 @@ The same choice is in **Settings → How the chord sheet looks**, and it applies
 
 **Library → Check songs fit one screen…** tells you which songs need a page turn before the night.
 
+### Which to use at a gig
+
+- **On paper:** a **Stage copy** (Export), or the **Two-page Stage** so there's no page turn mid-song. For you, with no screen.
+- **On your own tablet or laptop:** the **Music stand**. For you, reading from a screen on your stand: one size, a tap turns the page.
+- **On the room's TV or projector:** the **Session screen**. For everyone: each song as big as it fits.
+
 ### On a tablet on a music stand: the Music stand
 
 **Music stand** (Play → Music stand on the desktop; beside Play in the web player; and on a setlist) shows your songs a page at a time, for you to read from an iPad or a laptop on a stand:
@@ -454,7 +460,7 @@ The same choice is in **Settings → How the chord sheet looks**, and it applies
 - A **setlist** goes through its songs in its order and its keys. In the web player, **+ Setlist** on a song puts it in one (or starts one), and **Setlists** in the songs list has them all, each with **Music stand** and **Edit**. With Dropbox, the setlists are shared with the desktop app.
 - A Bluetooth page-turner pedal, or the arrow keys, turn the pages too. Esc closes it.
 
-### On a music stand: the Stage copy on two pages
+### Printed for a music stand: the Stage copy on two pages
 
 **Export → Two-page Stage** fits the song onto one page if it will go, or two, so you never turn a page mid-song. It makes the text as big as will fit (but no smaller than the smallest size you choose), then closes up the gaps, then uses two columns a page, then prints a repeated chorus once. On the ribbon's Export tab (Two-page Stage) you choose the chords above or in the words, and the smallest text it may use (12 pt to start with). The same habits help: a blank line or a heading between parts, since parts are kept together.
 

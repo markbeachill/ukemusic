@@ -108,7 +108,7 @@ test('4.90.1: the website\'s pictures: Free Practice without its first-visit sli
   assert.match(SP, /if \(doImg && \(want\('music-stand'\) \|\| want\('music-stand-guide'\)\)\) await musicStand\(base\);/); // 4.91: and its guide
   const PAGES = read('web/pages.js');
   assert.match(PAGES, /img: 'one-minute\.webp', alt: 'One-minute changes from C to F, with Count by listening on' \}/);
-  assert.match(PAGES, /\{ h3: 'Music stand', p: \[[^\]]*\], img: 'music-stand\.webp', h: 1020,/);
+  assert.match(PAGES, /\{ id: 'music-stand', h3: 'Music stand: reading on your own, from a tablet', p: \[[^\]]*\], img: 'music-stand\.webp', h: 1020,/); // 4.92: its own heading
   for (const f of ['one-minute.webp', 'music-stand.webp']) assert.ok(fs.existsSync(path.join(ROOT, 'site', 'img', f)), f);
 });
 
