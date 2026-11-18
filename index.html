@@ -320,6 +320,7 @@
         color: var(--text);
       }
       .library[hidden] { display: none; }
+      .library { scrollbar-gutter: stable; } /* 4.94.1: Songs and Setlists line up (no jump when the scroll bar comes and goes) */
       .library-bar {
         position: sticky;
         top: 0;
@@ -388,11 +389,14 @@
       .phone-plan-list .what { color: var(--muted-text, #666); }
       .library-heading { display: flex; align-items: center; gap: 18px; }
       /* 4.94: Songs | Free Practice, in the top bar */
-      .home-tabs { display: flex; gap: 4px; align-self: stretch; margin: -12px 0; }
-      .home-tab { display: inline-flex; align-items: center; gap: 7px; border: 0; border-bottom: 3px solid transparent; background: none; font: inherit; font-size: 16px; font-weight: 700; color: var(--muted); padding: 0 16px; cursor: pointer; }
-      .home-tab:hover { color: var(--text); background: var(--accent-soft); }
-      .home-tab.active { color: var(--tabs-blue); border-bottom-color: var(--tabs-blue); }
-      .home-tab.practice-tab.active { color: #c2410c; border-bottom-color: #c2410c; }
+      /* 4.94.1: real tabs: each a raised card on the bar's bottom edge; the one in use is joined to
+         the page under it (its colour, no line between) with a coloured top edge */
+      .home-tabs { display: flex; gap: 6px; align-self: flex-end; margin-bottom: -13px; position: relative; z-index: 2; }
+      .home-tab { display: inline-flex; align-items: center; gap: 7px; font: inherit; font-size: 16px; font-weight: 700; color: var(--muted); padding: 9px 20px 10px; cursor: pointer;
+        background: color-mix(in srgb, var(--border) 55%, var(--panel-bg)); border: 1px solid var(--border); border-bottom-color: var(--border); border-radius: 11px 11px 0 0; box-shadow: inset 0 3px 0 transparent; }
+      .home-tab:hover:not(.active) { color: var(--text); background: var(--accent-soft); }
+      .home-tab.active { color: var(--tabs-blue); background: var(--app-bg); border-bottom-color: var(--app-bg); box-shadow: inset 0 3px 0 var(--tabs-blue); }
+      .home-tab.practice-tab.active { color: #c2410c; background: var(--toolbar-bg); border-bottom-color: var(--toolbar-bg); box-shadow: inset 0 3px 0 #c2410c; }
       .home-tab svg { width: 18px; height: 18px; }
       .practice.pr-under-home { top: var(--home-bar-h, 60px); }
       .new-song-dialog { width: min(560px, 94vw); }

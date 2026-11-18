@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.94.1
+
+- The home screen's **Songs** and **Free Practice** are now tab shapes on the top bar's edge. The one in use is joined to the page under it, in its colour with a coloured top edge (blue for Songs, orange for Free Practice). The other is a grey tab. The web player is the same.
+- Switching between **Songs** and **Setlists** no longer shifts the page sideways. The scroll bar's room is always kept, so the page doesn't move when the scroll bar comes and goes.
+- Website pictures of the home screen and Free Practice retaken.
+
 ## v4.94.0
 
 - Home screen: **Songs** and **Free Practice** are tabs at the top. Free Practice opens under them, so Songs takes you straight back. The orange Free Practice button has gone.
