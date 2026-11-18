@@ -119,8 +119,9 @@
       #editWordsButton { font: inherit; font-size: 13px; font-weight: 700; padding: 7px 12px; border-radius: 7px; border: 1px solid var(--accent); background: var(--panel-bg, #fff); color: var(--accent-dark); cursor: pointer; white-space: nowrap; }
       #editWordsButton:hover { background: var(--accent-soft); }
       html[data-editing] #editWordsButton { background: var(--accent); color: #fff; }
-      html:not([data-editing]) .workspace { grid-template-columns: minmax(0, 1fr) !important; }
-      html:not([data-editing]) .workspace > .editor-panel, html:not([data-editing]) .workspace > #splitter { display: none; }
+      /* 4.95.1: reading, the song's Details, Links, Exports, Notes and ChordPro stay beside the sheet,
+         in a narrower column; only Words & chords waits for Edit words & chords */
+      html:not([data-editing]) .workspace { grid-template-columns: minmax(260px, 0.6fr) 6px minmax(0, 1.4fr) !important; }
       html:not([data-editing]) [data-edit-only] { display: none !important; }
       html:not([data-editing]) .preview-head, html:not([data-editing]) #cursorLabel { display: none; }
       /* 4.94: reading, a firm line between the tools and the song */
@@ -2940,7 +2941,7 @@
       <div class="workspace" id="workspace">
         <section class="panel editor-panel">
           <div class="editor-tabs" role="tablist">
-            <button id="tabSong" type="button" role="tab" class="active">Words &amp; chords</button>
+            <button id="tabSong" type="button" role="tab" class="active" data-edit-only>Words &amp; chords</button>
             <button id="tabDetails" type="button" role="tab" title="About the song: artist, year, written by, album, source, tags, difficulty and its key">Details</button>
             <button id="tabLinks" data-feature="songLinks" type="button" role="tab" title="Web pages for the song: the original on YouTube, a uke play-along, a lesson, Wikipedia">Links</button>
             <button id="tabExports" data-feature="songExports" type="button" role="tab" title="Everything exported for this song: look at it, see what's out of date, delete it">Exports</button>
@@ -4916,7 +4917,7 @@
         }
 
         // 4.93: Edit words & chords. A song opens as the sheet to play from (the editor hidden, the
-        // sheet the whole width); the button (or F2) shows the words and chords beside it, and Done
+        // song's Details, Notes, Links… beside it, 4.95.1); the button (or F2) shows the words and chords too, and Done
         // hides them again. Nothing is saved by switching: Save (and Discard) do that, either way.
         function isEditing() { return document.documentElement.hasAttribute('data-editing'); }
         function setEditing(on, { focus = false } = {}) {
@@ -4929,6 +4930,9 @@
             ? 'Back to the sheet (F2). Your changes stay until you Save or Discard them'
             : 'Show the words and chords to change them (F2). Done goes back to the sheet; Save keeps your changes';
           if (!on && document.querySelector('.ribbon-tab.active[data-edit-only]')) showRibbon('song');
+          // 4.95.1: editing shows the words; reading, the tab you last read (the notes, if the song has any)
+          if (on && !was) showTab('song');
+          if (!on && document.getElementById('tabSong').classList.contains('active')) showTab(state.readingTab || (notesEditor.value.trim() ? 'notes' : 'details'));
           if (was !== Boolean(on)) {
             window.ukemusicFoldRibbon?.();
             showChordEditButton();
@@ -10993,6 +10997,8 @@ function showTab(tab) {
 
         document.getElementById('tabSong').addEventListener('click', () => showTab('song'));
         document.getElementById('tabNotes').addEventListener('click', () => showTab('notes'));
+        // 4.95.1: the tab you read while not editing is the one you come back to
+        for (const [id, tab] of [['tabNotes', 'notes'], ['tabDetails', 'details'], ['tabLinks', 'links'], ['tabExports', 'exports'], ['tabChordPro', 'chordpro']]) document.getElementById(id).addEventListener('click', () => { if (!isEditing()) state.readingTab = tab; });
         document.getElementById('tabDetails').addEventListener('click', () => showTab('details'));
         document.getElementById('tabLinks').addEventListener('click', () => showTab('links'));
         document.getElementById('tabExports').addEventListener('click', () => showTab('exports'));

@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.95.1
+
+- When you're reading a song (not editing), its **Details**, **Links**, **Exports**, **Notes** and **ChordPro** tabs now stay beside the sheet, in a narrower column. Before, they were only there while editing. Only **Words & chords** waits for **✎ Edit words & chords**.
+- The column opens on the song's notes if it has any (otherwise Details), and after that on the tab you last looked at. **Done** goes back to it.
+- The user guide, the README, and the guide's and website's pictures of a song open have been updated.
+
 ## v4.95.0
 
 - The website has a plainer design, closer to a manual than an advert:

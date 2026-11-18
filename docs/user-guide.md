@@ -45,9 +45,9 @@ A new, pasted or imported song opens ready to edit. Press **Save** to keep it.
 
 ## A song: reading and editing
 
-A song opens as the sheet to play from, the whole width of the window.
+A song opens as the sheet to play from. Beside it, in a narrower column, are the song's **Details** (artist, year, key, tempo, time, tags), **Notes**, and (with all features) its **Links**, **Exports** and **ChordPro** fields. The column opens on the notes, if the song has any, or on the tab you last looked at.
 
-![A song open as the sheet, with the tools above it](../site/img/guide/desktop-S1.jpg)
+![A song open as the sheet, with its notes beside it and the tools above it](../site/img/guide/desktop-S1.jpg)
 
 Along the top:
 
@@ -66,7 +66,7 @@ Press **✎ Edit words & chords**. The words and chords are on the left, the she
 
 - Type the words with each chord in square brackets just before the word where it changes: `[C]Oh my [G7]darling`. The [song guide](../WRITING.md) has everything else you can type.
 - The **Write** tab has buttons for what's harder to type (a chord, a heading, a strum, a bar line, tab), Undo and Redo, and **Writing**, the song guide.
-- The tabs over the words: **Words & chords**, **Details** (artist, year, key, tempo, time, tags), **Notes**, and (with all features) **Links**, **Exports** and **ChordPro**.
+- **Words & chords** joins the song's other tabs while you edit; **Done** goes back to the tab you were reading.
 
 **Edit chords on the sheet** lets you move chords with the mouse instead: turn it on with **Write → On the sheet**, the **Edit chords** box over the sheet, or a right-click on the sheet. Then drag a chord to the word where it's played, click a chord to change it or take it out, or click in the words to put one there.
 
