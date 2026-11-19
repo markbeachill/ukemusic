@@ -1,17 +1,22 @@
 # Changelog
 
-## v4.99.6
+## v4.99.7 · What's new: a headline for each version
+
+- **What's new** (the website's changes page) is easier to look down: each version is one line, its number and a headline saying what's new in it, with the details a click away. Versions with only fixes and small changes say **Minor updates**, in grey.
+- The release notes on GitHub start with the version's headline.
+
+## v4.99.6 · Practise a song: a Free Practice plan made from the song
 
 - **Practise this song** (Learn tab; the web player: Learn): a plan in Free Practice made from the song, run one step after another like a routine, a few minutes each: its chord shapes (the shapes drill), its two hardest changes (chord switching), its strum in steps (Learn a strum, at 70% of the song's tempo, on its first chords), then its chords in order with its strum (85%). The bar at the top says which step it's on; **Next ▶** skips one. At the end it says what's next: the song itself, from memory, at its own speed.
 - **Practise a song** on Free Practice's home screen lists the last six songs you've practised: press one to go through its plan again. They're kept with your practice progress.
 
-## v4.99.5
+## v4.99.5 · Free Practice: Learn a strum in steps, and Strum switch
 
 - **Learn a strum** (Free Practice → Strumming & rhythm): any strum, from the library or My strums, in four steps: **Listen** (2 bars, the app louder), **Muted** (4 bars of chucks: copy the hand's movement on muted strings), **On one chord** (4), then **With the changes** (8). The step shows under the bar as it comes. With **Add 5 bpm after a clean round**, each **That was clean** makes the next round faster. **Learn it in steps** is a setting, so it works for any strum.
 - **Strum switch:** two strums in turn, two bars each (**Switch with** under Pattern): change the strum without losing the beat.
 - Free Practice now has 42 exercises; its strum lists name 6/8 strums correctly.
 
-## v4.99.4
+## v4.99.4 · Strum builder and My strums; bass-note and muted strums; nine more strums
 
 - **The strum builder** (Song → **Build a strum**, Help → Strum Builder, **Build your own…** in the strum library; the web player: **Build a strum…** in a song's Strum menu). A bar as a row of slots counted 1 & 2 & …: choose the time (4/4, 3/4, 6/8, 2/4) and the slots in a beat (beats, eighths, triplets, sixteenths), pick a stroke (down, up, chuck, muted, bass, other bass, rest, or an accent) and tap the slots to place it, or type the letters. It shows the strum as it looks on the sheet, says how to play it (down on the numbers, up on the "&"s; anything that breaks the down-up motion), and **Hear it** plays a few bars on the song's instrument.
 - **My strums:** name it and save it. They're kept in your settings (the web player: on this device) and show wherever you choose a strum: the song's strum and Free Practice. **Use for this song** makes it the song's strum where none is written; **Add to the words** puts it in as a {…} line. A song keeps the pattern itself, so it plays the same on another computer.
@@ -19,40 +24,40 @@
 - **Nine more strums** (27 in all): Down, then down-ups; Alternating bass (boom-chick); Alternating bass with ups; Bass and island; Bossa nova (simple); Palm-muted eighths; Waltz with bass (oom-pah-pah); 6/8 with bass; Polka with bass. The ones for a guitar or baritone say so, and the island strum's guitar names (folk, campfire) are given.
 - How to write songs, and both user guides, explain them.
 
-## v4.99.3
+## v4.99.3 · Both chord names on the sheet; help on keeping your shapes on another instrument
 
 - **Both names on the sheet.** With **Bari, uke shapes** or **Uke, bari shapes**, each chord diagram says what the shape sounds as under its name (**C**, *sounds G*): on the sheet, in prints and exports, on the Music stand and Session screen, and in the web player. A capo is counted in.
 - **Your shapes?** under the Instrument menu (the web player: **?** beside it): playing a song on another instrument, and how to keep the shapes you know by moving the key yourself, for every pair of instruments (ukulele to baritone or guitar: five down; back: five up; baritone and guitar, high and low G: nothing).
 - The user guides explain it by hand too: a table in Switching instruments, and a new section in the phone guide, Playing it on another instrument.
 
-## v4.99.2
+## v4.99.2 · Minor updates: fixes and small changes
 
 - **Bari, uke shapes and Uke, bari shapes:** Free Practice from such a song opens for the instrument the shapes belong to (it showed a blank instrument), and **First note** sounds and names the note as it sounds on the instrument you're holding.
 - INSTRUMENTS.md: "Bari, uke shapes" is a baritone with the key five down, named as on a ukulele; and what to know (Free Practice, string names, export names, older versions).
 
-## v4.99.1
+## v4.99.1 · Minor updates: fixes and small changes
 
 - **User guide: Switching instruments** (under Key, capo, instrument and tempo): what changes when you switch, where the choices are (one song, every song, the web player), C–D7–F–C on each instrument, keeping the shapes you know (Bari, uke shapes and Uke, bari shapes), and moving the key yourself, and why: to sing it higher or lower, for easier shapes, or to keep your ukulele shapes on a guitar (five down, C to G). The phone guide links to it.
 
-## v4.99.0
+## v4.99.0 · Your ukulele shapes on a baritone (and baritone shapes on a ukulele)
 
 - **The shapes you know, on the other instrument** (all features). A song's **Instrument** menu has two more: **Bari, uke shapes** plays your ukulele shapes on a baritone (the sheet keeps the ukulele chords and shapes, and it sounds a fourth lower: C–D7–F–C sounds as G–A7–C–G), and **Uke, bari shapes** plays your baritone (or guitar) shapes on a ukulele, a fourth higher. Playback sounds as the instrument you're holding, the tune too, and the line under the song says the key it sounds in (Key C · sounds in G). Settings → Your instrument has them too; the first-time question and Free Practice keep to the four instruments.
 - INSTRUMENTS.md explains it, with what the familiar shapes become (the ukulele's F shape on a baritone is C with E at the bottom).
 
-## v4.98.0
+## v4.98.0 · A song's tabs as a strip down the left; hide the column while reading
 
 - **The song's tabs are a rail down the left edge.** Details, Links, Exports, Notes and ChordPro are a narrow strip of icons with their names, so the column beside the sheet keeps its width for the words (Words & chords joins the top while you edit).
 - **Hide the column while reading.** Click the open tab again, or **Hide** at the bottom of the strip, and the sheet has the whole width; any tab (or **Show**) brings it back. It stays the way you left it from song to song; until you choose, it shows for a song with notes.
 - **A dot on Notes** when the song has notes.
 - The user guide, README and pictures show the rail.
 
-## v4.97.1
+## v4.97.1 · Minor updates: fixes and small changes
 
 - The guide to everything you can type in a song now has one name everywhere: **How to write songs**. Before, it was "the song guide" on the website, "Writing" on the Write tab, and "How to write songs" in Help and the web player. The Write tab's button is now **How to write** (F1).
 - Both user guides have a new section, **Writing a song: the basics**: chords in square brackets, parts and strums, with an example.
 - Both user guides open with a line linking to the other user guide, How to write songs and ukemusic and ChordPro. ChordPro is also linked where songs come in from files.
 
-## v4.97.0
+## v4.97.0 · A user guide for phones and tablets
 
 - New: **a user guide for phones and tablets** (`user-guide-phone.html`, from `docs/user-guide-phone.md`). It covers the web player step by step, with 17 pictures from an iPhone:
   - putting it on the Home Screen, your songs, adding a song;
@@ -62,7 +67,7 @@
 - The main user guide links to it at the top, and its phone section points there.
 - `npm run guide-pictures` copies the pictures both guides use from the UI review.
 
-## v4.96.0
+## v4.96.0 · Simple view reviewed; Settings starts with your instrument
 
 - **The simple view, reviewed.** Comparing the two views tab by tab, some hidden items made little difference, so they're now in the simple view:
   - the song's **Links**, **Exports** and **ChordPro** tabs, and its other details (album, source, difficulty, licence);
@@ -74,13 +79,13 @@
 - **Settings starts with what matters first:** Your instrument, then **Features: the simple view** (the Show all features switch), then Opening a song. The table that chooses what the simple view shows is at the end, with a link to it.
 - **Settings from the home screen** shows only the settings for all songs. The This song tab appears when a song is open.
 
-## v4.95.1
+## v4.95.1 · Minor updates: fixes and small changes
 
 - When you're reading a song (not editing), its **Details**, **Links**, **Exports**, **Notes** and **ChordPro** tabs now stay beside the sheet, in a narrower column. Before, they were only there while editing. Only **Words & chords** waits for **✎ Edit words & chords**.
 - The column opens on the song's notes if it has any (otherwise Details), and after that on the tab you last looked at. **Done** goes back to it.
 - The user guide, the README, and the guide's and website's pictures of a song open have been updated.
 
-## v4.95.0
+## v4.95.0 · A plainer website, and a user guide with pictures
 
 - The website has a plainer design, closer to a manual than an advert:
   - Four text sizes (28, 20, 16 and 14px), the system font, and one column of text with pictures and captions under the words.
@@ -91,18 +96,18 @@
 - The UI review's L4 shows New song's choices (L12 is Write your own), and its song pictures show a song as it opens (not editing).
 - The practice page now mentions Count by listening.
 
-## v4.94.2
+## v4.94.2 · Minor updates: fixes and small changes
 
 - Opening Free Practice when it was already open (an exercise straight from its home) took the page behind it twice, so after Close the rest of the app stayed unclickable. Now the page behind is only taken the first time. In site-pictures this made the exports (gallery files, the Stage, learn and pick sheet pictures, the songbook) time out.
 - site-pictures and the UI review close Free Practice before going back to the library. The UI review uses New song's choices (L12: write your own; L6: paste), shows the Write tab while editing (B3), and S1's caption describes the song opening as the sheet.
 
-## v4.94.1
+## v4.94.1 · Minor updates: fixes and small changes
 
 - The home screen's **Songs** and **Free Practice** are now tab shapes on the top bar's edge. The one in use is joined to the page under it, in its colour with a coloured top edge (blue for Songs, orange for Free Practice). The other is a grey tab. The web player is the same.
 - Switching between **Songs** and **Setlists** no longer shifts the page sideways. The scroll bar's room is always kept, so the page doesn't move when the scroll bar comes and goes.
 - Website pictures of the home screen and Free Practice retaken.
 
-## v4.94.0
+## v4.94.0 · Home screen: Songs and Free Practice tabs, songs as tiles
 
 - Home screen: **Songs** and **Free Practice** are tabs at the top. Free Practice opens under them, so Songs takes you straight back. The orange Free Practice button has gone.
 - The songs show as **tiles** (title, artist, key, tags), or as the **list** with every detail. Tiles sort A to Z, by artist, by key or by last changed. The choice is kept.
@@ -112,7 +117,7 @@
 - Web player: the same Songs and Free Practice tabs (on a phone, under the top bar), and New song asks how (paste, write, or add song files).
 - Website pictures retaken for the new home screen and song screen.
 
-## v4.93.0
+## v4.93.0 · Edit words & chords: a song opens as the sheet, with Save and Discard
 
 - A song now opens as the sheet to play from, the whole width of the window, without the editor. **✎ Edit words & chords** (at the top, or F2, or Edit → Edit Words and Chords) shows the words and chords beside the sheet, and **Done** puts them away. The Write tab, Tidy chords and Edit chords on the sheet come with editing.
 - **Save** and **Discard** appear beside "Not saved" whenever anything is unsaved, editing or not. A tempo, picking pattern or other song setting changed while playing waits for Save the same way as the words. Discard (after asking) takes the song back to how it was last saved.
@@ -120,19 +125,19 @@
 - Web player: the song page's button is now **✎ Edit words & chords** (✎ Edit on a phone).
 - The website, README, feature list and pictures show the new layout.
 
-## v4.92.1
+## v4.92.1 · Minor updates: fixes and small changes
 
 - Music stand on a laptop, or an iPad on its side: a song with a long line or two was shown in one column over more pages, with half the screen empty. Now it uses two columns and wraps only those long lines (the chords stay over their words), on no more pages than one column would need. On an upright iPad it is still one column of whole lines.
 - Music stand: the tap hint no longer sits on top of the page dots.
 
-## v4.92.0
+## v4.92.0 · Minor updates: fixes and small changes
 
 - The feature list gives the Music stand its own section, "Read from a tablet", instead of mixing it with printing and playing together. Printing is now "Stage copies to print".
 - The Perform page starts with a "Which one?" table that compares the Music stand (your own tablet), the Session screen (the room's TV) and the Stage copy (paper). Each has its own heading, and each heading links to the other two.
 - The home page and the chord-sheets page point from printing to the Music stand, and from the Music stand to the Session screen.
 - WRITING.md: "Which to use at a gig".
 
-## v4.91.0
+## v4.91.0 · Music stand: a guide the first time, a menu in the corner, jump between songs
 
 The Music stand made easier to find your way in and out of, and to use with setlists. Web player and desktop.
 
@@ -144,7 +149,7 @@ The Music stand made easier to find your way in and out of, and to use with setl
 - **Web player: + Setlist** beside Music stand on a song puts it in a setlist, takes it out again, or starts a new one with it.
 - **The website:** the home page has a Music stand section. The Perform page describes it and how to use it, with two new pictures: the Music stand on an iPad going through a setlist, and its first-time guide (`site/img/music-stand.webp`, `site/img/music-stand-guide.webp`). The guide (How to Write Songs) has "On a tablet on a music stand", and the README's table lists it.
 
-## v4.90.1
+## v4.90.1 · Minor updates: fixes and small changes
 
 - **Website pictures.** The Free Practice picture had been taken with the first-visit slides open in front of it: the picture script now closes them. New pictures, on the Practise and Perform pages:
   - one-minute changes with Count by listening on (`site/img/one-minute.webp`)
@@ -152,7 +157,7 @@ The Music stand made easier to find your way in and out of, and to use with setl
 - The website text says what's new in Free Practice (Today's practice, Getting started, the slides, the guide), that the web player has setlists and the Music stand, and that one-minute changes need nothing pressed.
 - **Music stand:** the chord shapes go in a row across the top on a wide screen too, so the words have the whole width. On an iPad on its side, Danny Boy's two verses now sit side by side on one page instead of turning a page after the first.
 
-## v4.90.0
+## v4.90.0 · Setlists in the web player, synced with the desktop app
 
 **Setlists in the web player**, so an iPad can read a set in your own order with Music stand. Same format and folder as the desktop app.
 
@@ -162,7 +167,7 @@ The Music stand made easier to find your way in and out of, and to use with setl
 - Without Dropbox, setlists stay on the device.
 - **Desktop:** nothing changes; its setlist files are written as before (the format is now one shared file, `src/setlist-text.js`).
 
-## v4.89.0
+## v4.89.0 · Music stand: read songs from a tablet on a stand, a page at a time
 
 **Music stand**: a new way to read songs yourself, from an iPad (or a laptop) on a music stand. It uses the Session screen's machinery, which was made for a TV across a room: there, each song is made as big as fits, so the text changed size from song to song (18 to 46px on an iPad) and long songs were squeezed into three narrow columns.
 
@@ -175,14 +180,14 @@ The Music stand made easier to find your way in and out of, and to use with setl
 - **Desktop:** Play → Music stand for the open song, and Music stand in a setlist for the whole setlist. It opens on this screen (the Session screen goes to the TV). Esc ends it.
 - The Session screen itself is unchanged.
 
-## v4.88.1
+## v4.88.1 · Minor updates: fixes and small changes
 
 Web player and desktop: two count-in faults.
 
 - **Web player: Play had no count-in when you'd tapped a line.** Play plays from the line you last tapped, and tapping the sheet (to scroll, or the first line of words) selects a line, so Play then started straight in with no count-in. Starting again from the top had one, which is why it seemed to come and go. Play now always counts in, from any line, as the desktop app does, and karaoke started from a line does too. A restart in the middle of a song (changing a setting while it plays) still carries straight on.
 - **Desktop and web: the sung first note was late.** A song's first note to sing (`first_note`) is meant to sound with the first click of the count-in; it sounded with the last one. The player now plays everything in time order.
 
-## v4.88.0
+## v4.88.0 · Free Practice hands-free: one-minute changes with beeps, strums counted by listening
 
 Free Practice reviewed for practising with your hands on the instrument, where you can't press anything. Desktop and web player alike.
 
@@ -198,7 +203,7 @@ Free Practice reviewed for practising with your hands on the instrument, where y
   - Then the next exercise shows for three seconds ("Next: Chord switching. It starts in a moment.") before its count-in, so there's time to read it and move your hand.
 - **Mac:** the app says why it asks for the microphone (Count by listening).
 
-## v4.87.0
+## v4.87.0 · Free Practice redesigned: Today's practice, Getting started, pictures
 
 Free Practice has a new home screen, a cleaner exercise screen and instructions in pictures. The 40 exercises, your progress, your routines and your settings are unchanged. Desktop and web player alike.
 
@@ -215,7 +220,7 @@ Free Practice has a new home screen, a cleaner exercise screen and instructions 
 
 The website's Free Practice picture (`site/img/practice.webp`) shows the old screen until `npm run site-pictures` is run.
 
-## v4.86.3
+## v4.86.3 · Minor updates: fixes and small changes
 
 From a review of the code. Nothing changes in how the app looks.
 
@@ -224,18 +229,18 @@ From a review of the code. Nothing changes in how the app looks.
 - **Desktop: "Get songs from the web player" escapes titles fully.** A title with a quote mark in the web player's file could break out of the tick-box list.
 - **Desktop: the Write tab's Chord, Heading, Strum and Bar line buttons work in the plain editor** (the one used if the main editor can't start); they looked for the wrong box and did nothing.
 
-## v4.86.2
+## v4.86.2 · Minor updates: fixes and small changes
 
 - **Desktop: the preview breaks long lines to fit it**, in "Chords above" and "In columns". A song written with a verse on one long line ran off the right of the preview, so it scrolled sideways. The preview now fits the lines again when you resize it or change the text size. PDFs and printing are unchanged: they already split lines to fit the page.
 - **Web player: "In columns" breaks long lines to fit** too, as "Chords above" already did.
 
-## v4.86.1
+## v4.86.1 · Minor updates: fixes and small changes
 
 - **Web player: long lines wrap on a phone again.** If the display settings kept on the device didn't include a layout (as could happen, and did in the UI review), long lines ran off the right of the sheet instead of wrapping: The Wild Rover showed it. The settings kept on a device are now filled in from the defaults and checked.
 - **`@playwright/test` is out of the app's dependencies** (it would have been packed into the installer); the UI review uses the Playwright in `tools/node_modules`.
 - **For maintainers:** `npm run ui-review` works on a computer without Playwright's own browser (it uses Edge or Chrome, as `npm run site-pictures` does); it answers "You have unsaved changes" itself (Discard), which had left the Learn and Picking pictures showing the wrong song; and each section can be run on its own.
 
-## v4.86.0
+## v4.86.0 · Minor updates: fixes and small changes
 
 Polish from the UI review (C5, D3, D4, W1, W2, W4, A2, A3, L9, part of E4).
 
@@ -249,7 +254,7 @@ Polish from the UI review (C5, D3, D4, W1, W2, W4, A2, A3, L9, part of E4).
 - **Web player:** "Jump to section" looks like the other controls; the preview beside the editor fills the height of the window; Features and Download start with their heading and end with Close.
 - **`docs/ui-improvements.md`** now starts with "Where this stands": what each release did, and what was left, with the reason.
 
-## v4.85.0
+## v4.85.0 · Minor updates: fixes and small changes
 
 Where settings live (UI review L5, L6, L7, L8).
 
@@ -259,7 +264,7 @@ Where settings live (UI review L5, L6, L7, L8).
 - **The Export choices' buttons stay in view** when the list of formats is long.
 - **Web player: "Strum or pick"** is the one name for the strum or picking it plays: it was "Accompaniment" on the song page and the player, "Pick" on its dialog and "Strumming" inside it.
 
-## v4.84.0
+## v4.84.0 · Minor updates: fixes and small changes
 
 The desktop app: one of each (UI review L1, L3, L4, C3, D2).
 
@@ -269,7 +274,7 @@ The desktop app: one of each (UI review L1, L3, L4, C3, D2).
 - **The preview's header has an "Edit chords" switch**, the same setting as Write → On the sheet and the right-click menu, and with it on the header says what you can do: drag a chord to its word, click a chord to change it.
 - **The top bar's button says Play** (then Pause, then Resume). It read "Play / Pause" until first pressed. Play and Stop stay on the Play and Picking tabs too.
 
-## v4.83.0
+## v4.83.0 · Minor updates: fixes and small changes
 
 The web player's library and phone layout (UI review C7, S7, E1, E2, E3, C2).
 
@@ -281,7 +286,7 @@ The web player's library and phone layout (UI review C7, S7, E1, E2, E3, C2).
 - **Edit chords on the sheet, on a phone,** now shows the sheet when you turn it on (it was behind Preview, so nothing seemed to happen).
 - **First run:** "What do you play?" is asked once (the instrument list above it waits until you've answered).
 
-## v4.82.0
+## v4.82.0 · Minor updates: fixes and small changes
 
 One name for each thing (UI review C1, C4, C6, W3).
 
@@ -292,7 +297,7 @@ One name for each thing (UI review C1, C4, C6, W3).
 - **No "…" on ribbon buttons** (a few had it, most didn't).
 - **For maintainers:** `AGENTS.md` has "The names we use"; a test keeps the retired names out and checks every "Tab → Button" in the app and the guide against the ribbon. The website's pictures show the old labels until `npm run site-pictures` is run again.
 
-## v4.81.0
+## v4.81.0 · Minor updates: fixes and small changes
 
 The simple view, sealed, and a shorter menu bar (UI review S3, S5, S6, S8, S9, L2).
 
@@ -303,7 +308,7 @@ The simple view, sealed, and a shorter menu bar (UI review S3, S5, S6, S8, S9, L
 - **The Features table** is grouped under where each feature is (File, Write, Song…), with a plain tick box per row.
 - **A short menu bar: File, Edit, View, Help.** Everything else is on the ribbon, under one name. The shortcuts all still work: F5 plays, Shift+F5 stops, Ctrl+K guesses the key, Ctrl+Alt+E edits the style. Help has **How to Write Songs** (F1) and **Strum Patterns**. The library's own ▾ menu has what the Library menu had.
 
-## v4.80.0
+## v4.80.0 · Minor updates: fixes and small changes
 
 First of the changes from the UI review (`docs/ui-improvements.md`): the simple view, fixed.
 
@@ -313,30 +318,30 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - **Greyed settings can't be changed from the keyboard** either (they could be reached with Tab).
 - **For maintainers:** `npm run ui-review` has a new section, "The simple view", for all three apps, and the web review turns all features on for its other sections (since 4.78 it had been running in the simple view).
 
-## v4.79.0
+## v4.79.0 · Minor updates: fixes and small changes
 
 - **Edit chords on the sheet is on the Write tab:** **Write → Edit chords → On the sheet** turns it on or off (the button stays pressed while it's on), in the simple view too. It has left the Display tab.
 - **Or right-click the sheet:** right-click the preview (desktop) or the sheet on the web Edit page for a small menu with **Edit chords on the sheet**, ticked when it's on. On a Stage copy, or with the chords shown as numbers, the menu says why it can't be used.
 - **The song guide (WRITING.md), the Features list and the website say so:** the Songs and Chord sheets pages describe it, and Chord sheets has a new picture (`site/img/chord-edit.webp`, a new `chord-edit` scene in `npm run site-pictures`).
 
-## v4.78.4
+## v4.78.4 · Minor updates: fixes and small changes
 
 - **`npm run site-pictures` needs less setting up.** Without Playwright's own browser downloaded, it uses the Microsoft Edge or Google Chrome already on the computer. Its two helpers (Playwright and pdf.js) can be kept in `tools/node_modules`, apart from the app's own packages.
 
-## v4.78.3
+## v4.78.3 · Minor updates: fixes and small changes
 
 - **Display → Layout and tab:** **Tab look** sits beside the layout choice again, instead of below Edit chords on the sheet, where it covered the group's name.
 
-## v4.78.2
+## v4.78.2 · Minor updates: fixes and small changes
 
 - **`npm run site-pictures` works with newer pdf.js.** pdf.js 5 and later no longer open a PDF from its address alone, so the Stage, learn-sheet and gallery pictures stopped with a getDocument error. The website's pictures and gallery are retaken from v4.78.
 - **PDFs, pictures, fonts and sounds are marked as binary for git** (`.gitattributes`), so git never changes their line endings, which can spoil a PDF.
 
-## v4.78.1
+## v4.78.1 · Minor updates: fixes and small changes
 
 - **`npm run site-check` builds the site first.** Some pages (Features, Instruments) are made by the build and not kept in git, so on a computer where the build hadn't been run, the check reported links to them as broken. Run on its own (`node tools/site-check.js`), it now says that the build is needed instead.
 
-## v4.78.0
+## v4.78.0 · Simple view: ukemusic starts simple, with more features to turn on
 
 ### A simple view for beginners
 - **ukemusic now starts simple for someone new.** It shows what you need to **play a song** and **add a song**: open, save, paste or import, key, capo, instrument, layout, chord diagrams, text size, play, karaoke, tempo, play from memory, Next chord?, PDF and print.
@@ -357,7 +362,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 ### Chord diagrams on the right-hand side
 - **A new place for chord diagrams: the right-hand side.** An option: they go in a column to the right of the words, in the order the chords come, as in many club songbooks. It's in Display → Chord diagrams and Settings, and in the web player's Shapes. It works for PDFs and printing too.
 
-## v4.77.0
+## v4.77.0 · Edit chords on the sheet: drag a chord to move it
 
 ### Edit chords on the sheet (an option)
 - **Turn it on:**
@@ -373,7 +378,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - **Works in every layout:** chords above (with spaces or in columns), in the words, and raised. Also in another key or with a capo: a chord named on the sheet is written in the song's own key.
 - **Not on a Stage copy, or with the chords shown as numbers,** because those aren't the song as written.
 
-## v4.76.0
+## v4.76.0 · Chords raised in the words; your club's logo on printed sheets
 
 ### For clubs: sheets that look like your songbook
 - **New layout: Chords raised in the words.** Each chord sits in bold, a little above the start of its word, with no brackets and no line of its own. It's as compact as Chords in the words, and the chords stand out more, as in many club songbooks.
@@ -393,7 +398,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
   - **Web player:** the Download box says how many pages the sheet prints on.
   - Now and then it's one short, because a part of a song is never split across pages.
 
-## v4.75.0
+## v4.75.0 · Minor updates: fixes and small changes
 
 ### Desktop and web player: one copy of the shared parts
 - **Fixed: left-handed chord shapes on the web player's Group screen.** With Left-handed on, the song sheet's shapes were flipped but the Group screen's weren't. Now they are.
@@ -407,7 +412,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
   - The desktop's quiz shows the line number and keeps a missed answer as a trouble spot (the web player doesn't keep trouble spots).
   - The web player's downloaded and printed sheets stay plainer than the desktop's.
 
-## v4.74.0
+## v4.74.0 · Karaoke the same in both apps, with the chord now and next
 
 ### The Session screen follows the music
 - **The line being played lights up** on the Session screen (pale yellow), and the page turns to it by itself.
@@ -432,7 +437,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
   - the same messages when you finish
 - **Trouble spots stay desktop-only** (the web player doesn't keep them), so the ⚑ button and T don't appear there.
 
-## v4.73.0
+## v4.73.0 · Karaoke full screen, with words sized to the screen
 
 ### Big screens for a club
 - **Karaoke has a full screen button** (⛶, or press F). The words fill the whole screen, and the bar slides away when the mouse is still; move the mouse to bring it back. Esc leaves full screen first, then closes karaoke.
@@ -442,7 +447,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
   - **Web player:** the Group screen's **Fit each song / Same size** button, or S; + and − change the size.
   - Your choice is kept for next time.
 
-## v4.72.0
+## v4.72.0 · Real guitar recordings for the guitar and baritone
 
 ### A real guitar to play along with
 - **The guitar plays real recordings now:** 18 notes, from the low E up to C6, of a Spanish classical (nylon-string) guitar from FreePats. Before, it had only the app's own steel or nylon sound. Real guitar is the new default. Anyone on Steel strings, the old default, moves to it once; anything chosen since is kept. Steel and nylon strings are still there: Play → Sound, or Settings → Playback → Guitar sound.
@@ -456,7 +461,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - **The ukulele recordings are unchanged.**
 - **The recordings are public domain** (CC0), like the ukulele's: `src/sounds/guitar/README.txt` and the third-party notices say where they come from and what was changed.
 
-## v4.71.0
+## v4.71.0 · Easy to read: a setting for a clearer font
 
 ### Easy to read text
 - **New setting: Easy to read.** It puts song sheets, Stage copies and the Session screen in **Atkinson Hyperlegible**, a typeface the Braille Institute made for readers with low vision. Letters that are easily confused are easy to tell apart: I, l and 1; O and 0; b and d. That helps at arm's length on a music stand, or on a tablet under stage lights.
@@ -466,7 +471,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - **It works offline and in print.** The fonts are inside the app, so it's the same on screen, in PDFs, in songbooks, in downloaded sheets and with no connection. It adds about 100 KB.
 - **The fonts are free,** under the SIL Open Font License. The licences are in `src/fonts/` and in the third-party notices.
 
-## v4.70.0
+## v4.70.0 · Stage copies: Auto picks the layout
 
 ### Stage copies: chords above on screen
 - **Auto is the new default for Stage copies:** the chords go above the words on screen, which is easiest to read on a phone or tablet at a gig. When printed, they go in the words, which takes the fewest pages. If you had Compact, the old default, you're moved to Auto once: printing is the same, and the screen now has the chords above. A layout chosen since is kept, and so is a song's own.
@@ -481,7 +486,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - **No setting that isn't being used:** while the look is Stage copy, the chords go where the Stage layout says, so the web player hides **Sheet**. The desktop app's View tab shows "Chords: as the Stage format" in place of **Layout**. They come back with the song sheet look.
 - Stage copies stay black on white: that's what makes them easy to read at a gig and copy cleanly.
 
-## v4.69.0
+## v4.69.0 · Web player: the built-in songs always there beside yours
 
 ### Built-in songs and your own, together (web player)
 - **The built-in songs are always there, beside your own.** Before, the web player showed the public-domain songs only until you had songs of your own:
@@ -497,12 +502,12 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - **The web player's guide (the ? button) opens as a list of its sections.** Tap one to open it. **Find in the guide** opens just the sections with what you typed, and **Open all** opens the rest.
 - **On the website, the song guide and What's new fold the same way:** the guide starts as a list of sections, and What's new opens at the latest version. The contents list beside each page, and links from elsewhere, open the section they point to. **Open every section** opens them all.
 
-## v4.68.2
+## v4.68.2 · Minor updates: fixes and small changes
 
 ### The beginner songs, in time
 - **The six beginner songs play in time with their tunes.** They'd come in without chord lengths, so playback gave every chord one bar. Drunken Sailor gained an extra bar at "Early in the morning", which, with its slow practice tempo, made it plod. Each chord now has its length: Drunken Sailor is 120 with G and Am sharing that last bar, and an accented strum. The Saints have their classic 16 bars, and Oh! Susanna, Buffalo Gals, Down by the Riverside and Auld Lang Syne follow their tunes too. The tempos are livelier (Buffalo Gals, Oh! Susanna and the Saints 100; Down by the Riverside 104). Use the tempo control to slow down while learning.
 
-## v4.68.1
+## v4.68.1 · Minor updates: fixes and small changes
 
 ### The installers build again
 - **The v4.67.0 installers didn't build:** the Windows build stopped at its tests. Windows checks the files out with Windows line endings (`\r\n`), and three of the newest tests (4.66–4.68) compared file contents as if they had Unix ones (`\n`). The tests now read files the same way on any system. The Mac and Linux builds were fine.
@@ -511,7 +516,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - **npm audit is clean.** The 6 warnings were all one problem: a pattern-matching library (minimatch) used by the installer builder, which could be slowed down by a crafted pattern. That only matters while building, not in the app. `npm audit fix --force` would have gone back to an old installer builder (electron-builder 24), so instead `package.json` swaps the affected copies of minimatch for the fixed version (an npm override).
 - **GitHub Actions:** checkout, setup-node and upload-artifact move to their current versions, which run on Node 24. GitHub has deprecated Node 20, and the builds were showing warnings.
 
-## v4.68.0
+## v4.68.0 · Minor updates: fixes and small changes
 
 ### Features, with more colour
 - **The home page shows the features as eight cards,** with headings that say what you get:
@@ -530,7 +535,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - The cards, the table and their styles all come from `web/features.js`. The build puts the styles into the home page, which every page shares.
 - The home page had two sections with the id `features`. The new one is now `what-it-does`.
 
-## v4.67.0
+## v4.67.0 · Six beginner songs, also as ChordPro files
 
 ### Six beginner songs
 - **The Public Domain Songs library has six new beginner songs, in teaching order:**
@@ -546,7 +551,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 ### ChordPro import keeps the notes
 - **A ChordPro file's `#` comments and its subtitle now go into the song's notes,** under the title and above the history. Many files say there where a song is from or what to check. This applies to Import ChordPro files, Import text file and Paste from a website on the desktop, and to adding songs in the web player. Before, they were only on the song's ChordPro tab. They're still there, so an export writes them back.
 
-## v4.66.0
+## v4.66.0 · Paste from a website in the web player; a Features page
 
 ### Any chord sheet from the web
 - **The website and README lead with what most people do: paste a chord sheet from a website.** New headline: "Any chord sheet from the web, ready to play along, learn and practise." Under the buttons: free and open source, works offline, no account, no adverts.
@@ -559,7 +564,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - **The home page has the short version**, and the README has the whole table.
 - **All of them come from one list, `web/features.js`.** Building the website updates the home page, the README and the features that search engines read. A test checks they match.
 
-## v4.65.0
+## v4.65.0 · Minor updates: fixes and small changes
 
 ### Default, or the song's own instrument
 - **The Instrument menu now starts with Default (Uke), Default (Low G), Default (Baritone) or Default (Guitar)**, naming your instrument. It means the song follows yours. The other choices are the song's own instrument, saved with it. Before, the menu showed your instrument in both cases, so you couldn't tell them apart. You couldn't choose your own instrument for a song either, or switch a song back to following yours from the ribbon.
@@ -567,7 +572,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - **The library's Instrument column** shows "Default (…)" in grey for songs that follow yours, and the instrument for songs with their own. In the web player, a song with its own instrument that isn't yours says which beside its artist.
 - The labels are short so the menu doesn't get wider: "Default (Low G)" rather than "Default (Low G Uke)".
 
-## v4.64.0
+## v4.64.0 · Left-handed in the web player; an Instruments page on the website
 
 ### Ukulele, baritone or guitar, left- or right-handed
 - **The website's home page and the README now say it up front**: for ukulele, baritone ukulele and guitar, left- or right-handed. Both link to a new page, **Ukulele, baritone or guitar** (`instruments.html`). It explains the four instruments, choosing yours, songs with their own instrument, song sheets, playback and exports, Free Practice, and left-handed diagrams.
@@ -578,7 +583,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - **The prompts are plain text files** in `src/ai-prompts/` (`ai-convert.txt`, `ai-practice.txt`). The desktop app, the web player and the website all use them, so one change reaches everything. The README there says how.
 - **The website's Bring your songs page** explains which prompt to use, the menu and what comes back. It links straight to them at `songs.html#ai-prompts`, as the README does.
 
-## v4.63.0
+## v4.63.0 · ChordPro: bar lines, songbook marks and bold or italic words come and go
 
 ### ChordPro export: closer to what other apps understand
 - **Bar lines** (`| C | G D | % |`) go out as a ChordPro chord grid, a cell for each beat: `| C . . . | G . D . | % |`. Chord lengths come across exactly (`| D:3 A:1 |` is `| D . . A |`), with the line's label and `(x2)`. Before, they went out as a line of text.
@@ -593,7 +598,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 ### The ChordPro page
 - **A new last section**: everything in ukemusic's own notation, what it becomes in ChordPro, what other apps show, and what can't be converted. Tables on the page with a `|` in them now show properly.
 
-## v4.62.0
+## v4.62.0 · Web player: your instrument for every song
 
 ### Your instrument in the web player
 - **Under Your songs there's now Your instrument**, and on your first visit the web player asks what you play. Songs that don't have an instrument of their own use it, new songs are made for it, and Free Practice opened from Your songs is for it.
@@ -601,7 +606,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 ### The website
 - **The Free Practice page** says it follows your instrument (ukulele with high or low G, baritone ukulele or guitar) and mentions the Chords by key sheet. "Is it only for ukulele?" has a fuller answer, and the README says the same.
 
-## v4.61.0
+## v4.61.0 · Free Practice: chords by key, and progressions from memory
 
 ### Chords by key, to print
 - **Free Practice → Chords & changes → Chords by key, to print**: two pages made for your instrument (and left-handed, if you've set that).
@@ -617,7 +622,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 ### Minor progressions
 - **Common progressions has four minor ones**: i–iv–v, i–iv–V7–i, i–VI–III–VII and i–VII–VI–V (the Andalusian). Each is played in the key's relative minor (in C: A minor).
 
-## v4.60.0
+## v4.60.0 · Free Practice follows your instrument, baritone and guitar too
 
 ### Free Practice for your instrument
 - **Free Practice now uses your instrument**: the one in Settings → All songs, or the open song's if you come from a song. Before, it kept the instrument it was first opened with, so most people only ever had standard ukulele. All 39 exercises work on ukulele, ukulele with low G, baritone ukulele and guitar: chord shapes, the fretboard, scales, tunes and the backing all follow the instrument.
@@ -627,14 +632,14 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - **Your own changes to an exercise, and your one-minute-change scores, are kept for each instrument**, so a guitar score isn't compared with a ukulele one.
 - **Fixed:** an exercise opened straight from a song (right-click a chord → Practise changing, or Learn's practise buttons) wouldn't start.
 
-## v4.59.0
+## v4.59.0 · ukemusic asks what you play, the first time
 
 ### Your instrument
 - **The first time ukemusic starts, it asks what you play**: ukulele (soprano, concert or tenor), ukulele with low G, baritone ukulele or guitar. Then it asks where to keep your songs, as before.
 - **Settings → All songs starts with Your instrument.** It's the default for every song that hasn't been given an instrument of its own.
 - **A new song is made for your instrument, and keeps it.** If you change the default later, songs you've already made stay as they are. A song saved as a new song, or written out with a picking pattern, keeps the instrument of the song it came from. A folder of ChordPro files is imported for your instrument.
 
-## v4.58.0
+## v4.58.0 · Right-click menus
 
 ### Right-click menus
 - **Right-click wherever you can type** (the song, your notes, a song's details, Settings) for **Undo, Redo, Cut, Copy, Paste and Select all**. A misspelt word in your notes or details shows spelling suggestions and **Add to dictionary**. Right-click text you've selected in the preview to **Copy** it.
@@ -646,14 +651,14 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - **The guide pages and the gallery's song sheets** now have their own address and description for search engines, and the web player has one main heading. The gallery's song sheets are in the sitemap.
 - **The website is checked before it goes up.** Every page is checked as search engines check it (title and description lengths, its address, one main heading, picture descriptions, links that work, the sitemap); if any page fails, the website isn't updated and the problem is listed on GitHub. `npm run site-check` does the same check on your computer.
 
-## v4.57.0
+## v4.57.0 · A song's settings are kept when you Save
 
 ### A song's settings are saved with the song
 - **Changing the instrument, tempo, time, key shift, the song's details or any of its settings now counts as an unsaved change**, the same as changing its words. The badge says **Unsaved changes**, **Save** keeps them, and closing the song or the app asks **Save, Discard or Cancel**. Before, these changes were written into the song straight away, so closing never asked and it looked as if they hadn't been kept.
 - **Save version** and **Remove version** still keep the version at once.
 - **A new song you haven't saved yet keeps its own settings.** Choosing an instrument (or tempo, or a ribbon setting) for it used to change the default for all songs; now it goes with the song when you save it. The defaults are in Settings → All songs, which still saves as you change them.
 
-## v4.56.0
+## v4.56.0 · Paste from a website, with help from an AI chat
 
 ### Help from an AI chat, in more places
 - **File → Paste from website** has a second prompt, **Copy AI prompt: ready to practise**: as well as putting a sheet into ukemusic's format, it asks the AI to give each chord its length (so playback follows the recording), name the parts the same way each time, suggest strums for your level, and list what to check by ear and how to practise the hard bits. It takes the sheet you've pasted in the window or, if that's empty, the song that's open, with its title.
@@ -667,7 +672,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 ### The website's pictures
 - Every picture on the website and in the gallery is retaken from the app as it is now (`npm run site-pictures`), and the gallery has the Two-page Stage PDF.
 
-## v4.55.0
+## v4.55.0 · Strum patterns on one line; songs try to fit one page
 
 ### The one-line strum box for every song
 - **Strum patterns are shown on one line by default**: the time, arrows, letters and the pattern's name, and now **the tempo** on the song's first pattern (`3/4  120 bpm  ↓ · ↓ ↑ ↓ ↑  D>-DUDU  Waltz`). The info boxes, with the count under the arrows, are still in Display → Strum patterns → Show as, and in Settings.
@@ -685,7 +690,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - **README:** a "What is ukemusic?" section at the top.
 - The audit, the facts it checked, and the steps for Search Console, Bing and GitHub are in `docs/discoverability-audit.md` and `docs/discoverability-checklist.md`.
 
-## v4.54.0
+## v4.54.0 · Minor updates: fixes and small changes
 
 ### Three PDFs to choose from: Chord sheet, Stage, Two-page Stage
 - **The Export box now has three separate choices at the top**: the **Chord sheet PDF** (your style set, for printing), the **Stage PDF** (big and bold, for playing from) and the **Two-page Stage PDF** (for a music stand). The Stage PDF used to come with the chord sheet PDF every time; now you tick the ones you want. The web page (under More formats) still comes as both copies.
@@ -698,7 +703,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - The words are bold, so the smaller sizes stay easy to read at a music stand.
 - A song too long for two pages even then takes a third page, rather than going smaller (the export message says so, and suggests chords in the words or a smaller size on the ribbon).
 
-## v4.53.0
+## v4.53.0 · Minor updates: fixes and small changes
 
 ### Tidier ribbon buttons
 - Ribbon buttons size to their text with a small minimum, wrap longer labels, and align icons and controls at the top. Dropdowns keep the room their choices need.
@@ -715,7 +720,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - **Accompaniment is now called Picking.**
 - Section captions provide context below the controls, with fewer repeated labels above. Play uses **Loop current section**, **Speed up each loop**, **Auto feel** and **Even**. Detailed explanations remain in the bottom hint line; dropdowns retain accessible names.
 
-## v4.52.0
+## v4.52.0 · Minor updates: fixes and small changes
 
 ### Compact Stage copies by default
 - **Compact** (the chords in the words, the fewest pages) is now the Stage format for every song, unless you choose another. Settings from before this version move to Compact once; choose Clear, Brackets or Heavy again in Settings → Export, or for one song in Export → Stage, and it's kept. Compact is first in the lists.
@@ -729,7 +734,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - New pictures throughout, showing this version. The README has them too, with a quick tour.
 - The home page heading has no stray "C" over "songs".
 
-## v4.51.0
+## v4.51.0 · A clearer song page in the web player; safer saving
 
 ### A clearer song workspace
 - The web song sheet opens with the words visible. Introductory chord shapes, tune notation and rhythm sit in an optional Song overview; the stopped player is compact on a phone.
@@ -744,7 +749,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - Karaoke and the web Group screen isolate background controls, move focus into the screen and restore it on close. Karaoke lines can be played from the keyboard; editor tabs support arrow-key navigation.
 - The Group screen previews its song queue. Download includes Print / Save PDF, and editing provides optional insertion-button help while preserving the editing position when returning from Preview.
 
-## v4.50.0
+## v4.50.0 · Free Practice easier to start and come back to; your practice kept
 
 ### Free Practice: easier to start and return to
 - Exercises open straight away. Optional **Help** contains instructions and a goal for that exercise only, with a **Close help** button that stays visible on a phone.
@@ -769,7 +774,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - Ear training offers 2–6-note phrases, **Repeat this phrase** and **New phrase**. **Make a melody** clearly creates a song template with empty tab; it does not record your playing.
 - Shared desktop/web practice checks and regression tests cover storage, old-data migration, recent history, saved settings, contextual results and timer cleanup.
 
-## v4.49.1
+## v4.49.1 · Minor updates: fixes and small changes
 
 ### Learn sheets for songs that change key
 - A `{key: G}` above the song's first chord is the key the song is in, not a key change (a song with `{key: G}` before verse 1 and `{key: A}` before verse 3 was said to be in D).
@@ -778,7 +783,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - The chord map leaves out the tab's bars (the Picking section has them).
 - The circle of fifths is drawn for the key the song starts in, with a note on where the key change moves home.
 
-## v4.49.0
+## v4.49.0 · Key changes in songs
 
 ### Key changes
 - **`{key: A}`** on a line of its own: the song changes key there ("Folsom Prison Blues" moves from G up to A). The sheet shows a small **Key change: A** mark; karaoke says it as it comes; changing the key you play in, or rewriting the song in another key, moves it too; ChordPro saves it as `{key: A}` mid-song, and a second `{key}` in a ChordPro file comes in as a key change.
@@ -787,7 +792,7 @@ First of the changes from the UI review (`docs/ui-improvements.md`): the simple 
 - **The chord that leads into it**: when the chord just before is the new key's five (E7 into A), Learn says so: the pivot, or turnaround.
 - Fixed: a `{melody}` or `{pick}` line inside a verse no longer splits it into separate parts in Learn.
 
-## v4.48.0
+## v4.48.0 · Eight more chord progressions recognised; sync through Dropbox
 
 ### Learn: more of the chord patterns players know
 - **Eight standard progressions added**, so Learn, the learn sheet and Chord patterns name them: **Eight Days a Week** (I – II7 – IV – I), the **garage-rock riff** (I – IV – V – IV: "Wild Thing", "Twist and Shout"), **Pachelbel's Canon** (I – V – vi – iii – IV – I – IV – V: "Streets of London"), **Salty Dog** (VI7 – II7 – V7 – I: "Sweet Georgia Brown"), the **minor four** (I – IV – iv – I), **Creep** (I – III – IV – iv), **minor rock** (i – VI – VII – i) and **Watchtower** (i – VII – VI – VII).
@@ -805,7 +810,7 @@ The web player can keep its songs in the desktop app's own songs folder, in Drop
 - Signing in uses Dropbox's own page (PKCE: no password or secret is kept, only the sign-in on that device). On a Home Screen app on iPhone or iPad, Dropbox shows a code to copy back. **Disconnect** stops syncing and keeps the songs on the device.
 - It needs a free Dropbox app key, made once at dropbox.com/developers: the steps are on the website's Phone and tablet page.
 
-## v4.46.0
+## v4.46.0 · The words colour in as they're sung; the shapes drill in order
 
 ### Playing beside the editor
 - **The words being sung colour in word by word**, in the desktop preview and now in the web player too. Before, a coloured band swept across the line's whole box, so a line that wraps onto two rows (a long line, or Chords in the words) filled both rows at once. Now each word is coloured as it's begun, along the first row and on into the second, as you read it.
@@ -814,7 +819,7 @@ The web player can keep its songs in the desktop app's own songs folder, in Drop
 - **Chord shapes drill: Order.** **In turn, as typed** (now the usual) goes through the chords as you typed them, round and round, so a song's changes (`Dm Dm F G`) can be drilled in its order; **Mixed up** is the old way (any order, never the same chord twice running). Learn's "practise the shapes" still mixes them up.
 
 
-## v4.45.0
+## v4.45.0 · The web player keeps and edits your songs
 
 ### The web player: write and keep your songs on a phone or tablet
 The web player (ukemusic in the browser: iPad, iPhone, Android, or any computer) now keeps your songs on the device and lets you write and change them, not just play them.
@@ -829,7 +834,7 @@ The web player (ukemusic in the browser: iPad, iPhone, Android, or any computer)
 ### Desktop: Phone and tablet…
 - **Phone and tablet…** in the library (beside Export every song…): **Save songs for the web player…** (every song in one file, as before, when the button had gone missing) and **Bring in songs from the web player…**: choose the web player's backup and see the songs written or changed there, each with a tick box. New songs are added; changed songs are updated, keeping the earlier version in the song's history and a line in its notes. A song that's only different because it changed on the computer since is left alone.
 
-## v4.44.0
+## v4.44.0 · Pick: fingerpick a song, with five patterns and a pick sheet
 
 ### Pick: fingerpick a song instead of strumming
 A new **Pick** tab. The chords stay; your right hand picks a pattern instead of strumming.
@@ -860,7 +865,7 @@ A new **Pick** tab. The chords stay; your right hand picks a pattern instead of 
 - **Two classical songs** in Public Domain Songs: **Ode to Joy** (Beethoven, with Henry van Dyke's words) and **Brahms' Lullaby**, set to be picked. Four songs now link to published picking arrangements.
 - **Web player:** Learn → **Pick** has the patterns, the pick sheet and the same explainer; the Strum menu can pick too.
 
-## v4.43.0
+## v4.43.0 · Fingerstyle: picking from a song's tab
 
 ### Fingerstyle: learning tab
 - **Learn → Picking…** (and **Learn → Picking in steps** in the web player) learns a song's tab in layers, each step played in karaoke:
@@ -876,7 +881,7 @@ A new **Pick** tab. The chords stay; your right hand picks a pattern instead of 
 ### Changed
 - **Learn → The changes…** is now **Changes…**, so the Learn tab still fits on one row.
 
-## v4.42.0
+## v4.42.0 · Learn in the web player
 
 ### Learn in the web player
 The web player has a **Learn** button beside Karaoke, with the same analysis as the desktop app:
@@ -901,7 +906,7 @@ Trouble spots, exporting learn sheets and the Exports tab stay in the desktop ap
 - New pictures from the app: a setlist, the Session screen going through it, the changes with finger tips, the chords as numbers, and a real Stage copy.
 - How Learn works moved to `how-learn-works.html`; the song guide, ChordPro, How Learn works and What's new are linked from every page's footer. On a phone, the menu is a row under the name.
 
-## v4.41.0
+## v4.41.0 · Minor updates: fixes and small changes
 
 ### Learn sheets, checked against eight songs
 We made learn sheets for eight songs (four traditional, four from a songbook) and checked every part against the song. These are the fixes.
@@ -933,13 +938,13 @@ We made learn sheets for eight songs (four traditional, four from a songbook) an
 - Finger tips: "put your index finger across the G C E strings" (it said "on the across the").
 - Chord diagrams that reach the 4th fret line up with the rest.
 
-## v4.40.5
+## v4.40.5 · Minor updates: fixes and small changes
 - **The Exports tab lists the learn sheets**, under *Learn sheets*: look at them there, open them, and see "old" on one made before the song last changed. **Delete all** and **Delete old ones** include them; your trouble spots are never deleted.
 
-## v4.40.4
+## v4.40.4 · Minor updates: fixes and small changes
 - **Learn sheets from Export:** Export → More formats has **Learn sheet (PDF and web page)**. Tick it and Export makes the song's learn sheet too, in its learn folder; with *every saved key* ticked, one for each key. **Library → Export every song…** does it for the whole library in one go.
 
-## v4.40.3
+## v4.40.3 · Minor updates: fixes and small changes
 
 ### The learn sheet takes the best of Chord patterns
 - It starts with **the chords and how they feel**: each shape with its number and what it does ("home", "tension (wants to go home)", "the sad home", "rock / Celtic colour"), home first, then IV and V, then the minors, then the ones from outside the key.
@@ -948,7 +953,7 @@ We made learn sheets for eight songs (four traditional, four from a songbook) an
 - Fixed: the words at the start of each chord-map row didn't appear on sheets made in the app.
 - A home chord with a seventh (I7, like C7 in C) is "home, leaning on to four", not just "home".
 
-## v4.40.2
+## v4.40.2 · Minor updates: fixes and small changes
 
 ### The learn sheet's chord map: words, patterns where they are, and what's really new
 - **The words as cues:** each row of the chord map starts with the first words of its line ("Baby love, my baby love…"), so you can find your place and tie the chords to the singing. A part that comes more than once says whether it has **the same words each time** (learn them once) or **new words each time**.
@@ -957,12 +962,12 @@ We made learn sheets for eight songs (four traditional, four from a songbook) an
 - A part heard once uses its name from the song (Baby Love's last verse showed as "Verse 3").
 - **Chord patterns** shows the same: each named pattern with its chords and the line it's in (explained once), "the same words / new words each time", "= the start of C" on a part that's only a bit of another, and a line at the top saying which parts aren't really new.
 
-## v4.40.1
+## v4.40.1 · Minor updates: fixes and small changes
 - Fixed: Learn made its own guess at the key instead of using the one the app shows, and could get it wrong: Baby Love (in G) was called C major, and moved to C it came out as a learn sheet "in F" with the wrong numbers. The learn sheet, the numbers, playing from memory, the circle, the quiz and **Chord patterns** now all use the song's key (Info → Written in, or the app's guess shown in the status bar), moved with the chords. Chord patterns also follows the key you've moved the song to with − and + (it used to show the written chords).
 - **Circle:** turned so the song's home chord is at the top, ringed, with "Key of G" in the middle and the key's chords numbered round it (IV to the left, V to the right, ii vi iii inside). It used to have C at the top whatever the key, a circle with no start.
 - Fixed: the status bar's key ignored the key set in Info → Written in and always showed the guess from the chords.
 
-## v4.40.0
+## v4.40.0 · Learn: the circle of fifths, Next chord? and trouble spots
 
 ### Learn: understand it, test yourself, fix the hard bits
 - **Circle:** the circle of fifths with the song's chords lit, the key's family shaded and arrows for how the song moves, with plain notes: which chords are outside the family, and each change with its numbers ("G7 → C (V7 → I), 4 times: one step anticlockwise and home").
@@ -971,7 +976,7 @@ We made learn sheets for eight songs (four traditional, four from a songbook) an
 - The learn sheet has the circle and your trouble spots.
 - The Learn tab's labels are shorter so it all fits: From memory, Next chord?, Trouble, Shapes, Numbers, Play it, Circle, Patterns.
 
-## v4.39.0
+## v4.39.0 · Learn: play from memory, the changes, numbers on the sheet, a learn sheet
 
 ### Learn: get a song into your head and your fingers
 A new **Learn** tab, from the research on how musicians memorise: recalling a song beats reading it again, and fingers, ears and understanding all help.
@@ -982,7 +987,7 @@ A new **Learn** tab, from the research on how musicians memorise: recalling a so
 - **Learn sheet:** a PDF and a web page in the song's new **learn** folder (beside exports): key, time, tempo, strum and first chord; the song's parts in order; a chord map with each part once, bar by bar, a row per line, chords and numbers; the chord shapes; the five changes to practise with finger tips; the patterns in it; how to learn it; and a box for trouble spots.
 - The learn folder isn't copied with a song to another library (it's made again from the song), and "Learn" can't be a song's title.
 
-## v4.38.0
+## v4.38.0 · Minor updates: fixes and small changes
 
 ### Chords in the words, with their timing
 - **Words templates:** a line where every letter is a dot and the chords sit in brackets at their letter (`[Dm:2]······· [F:1][G:1]····`). Paste the words on the line underneath and Tidy fills them in, every chord on its syllable however long it's written.
@@ -993,12 +998,12 @@ A new **Learn** tab, from the research on how musicians memorise: recalling a so
 - Fixed: importing a song with bar lines (`| E7 | E7 G A | E7 | G7 |`) offered to "tidy chords above words", and doing so merged the bars into the next line. Bar lines are left as they are.
 - **Importing a song you already have:** saving it under a name that's taken now offers **Replace the words in "…"**, which puts the words into that song (its old words go to its history) instead of leaving you stuck on "There's already a song folder called…".
 
-## v4.37.0
+## v4.37.0 · Minor updates: fixes and small changes
 
 ### Web player
 - **No more hidden settings in the web player.** The row above the song used to scroll sideways, which a mouse can't do. Now the row holds the everyday ones (Key, Capo, Plays, Strum and Text) and **More** opens the rest: Time, Feel, Sheet, Shapes, Common, Look and the Stage options. On a phone the row is just Key and Capo, with More beside the song's title. More stays open or closed as you left it.
 
-## v4.36.0
+## v4.36.0 · Web player: strum, time and feel
 
 From feedback on Reddit.
 
@@ -1022,7 +1027,7 @@ From feedback on Reddit.
 - **Release notes:** each release on GitHub gets its version's section of this changelog.
 - ChordPro: `{swing}` and the other feel lines go out as `{comment: Feel: swing}` and come back; before, they came back as a heading called "Strum".
 
-## v4.35.0
+## v4.35.0 · Session screen: songs on a TV for the room
 
 ### The Session screen, for playing together
 - **Play → Session** (the Session screen) puts the song on one screen for a group to play from (a club night on the TV or projector): the whole song, as big as it will go, laid out for you so nobody scrolls.
@@ -1035,7 +1040,7 @@ From feedback on Reddit.
 - **Check songs fit one screen…** (the library button) lays out every song as the Session screen would on a 1920×1080 TV, and lists any that need a page turn or would only fit with the smallest text.
 - **The web player has it too:** Session beside Karaoke, full screen, going through the songs as listed (so search first for tonight's songs). Works on a laptop plugged into a TV, or a tablet.
 
-## v4.34.0
+## v4.34.0 · Songbook marks in songs; import ChordPro files
 
 ### Club songbooks
 - **Songbook marks are part of the song format,** as the North Shore Ukulele Circle writes them, and show on the sheet as written:
@@ -1059,7 +1064,7 @@ From feedback on Reddit.
 - **Power chords** (C5, G5 …) have diagrams on every instrument, the shape lowest on the neck.
 - **View → Hide common** leaves out the diagrams of the chords everyone knows (C, G, Am, F, D7 …), so the ones to look at stand out. The list is in Settings → All songs → Chord diagrams. Also in the web player (Common: shown / hidden).
 
-## v4.33.1
+## v4.33.1 · A public project: the website, the web version and public-domain songs
 
 ### Ready for a public repository
 - **No copyrighted words anywhere in the app, the guide or the tests.** Examples now use Oh! Susanna, Clementine and other public-domain songs, or words written for the test.
@@ -1075,7 +1080,7 @@ From feedback on Reddit.
 - Public Domain Songs: the strums of Amazing Grace, Scarborough Fair and The Wild Rover now fit a bar of 3/4 (`{D-DUDU}`), and It's a Long Way to Tipperary's fits 4/4 (`{D-DUD-DU}`).
 - `.gitignore` keeps your songs, exports, history and working files out of the repository; MIT `LICENSE` added.
 
-## v4.33.0
+## v4.33.0 · Minor updates: fixes and small changes
 
 ### Clearer for a beginner (from the review: U1–U9)
 - **One name per action**, the same in the menus, the ribbon and the hints:
@@ -1098,7 +1103,7 @@ From feedback on Reddit.
   - Layout "Columns" is **Chords above, in columns**.
   - Feel "Auto" is **As written**.
 
-## v4.32.0
+## v4.32.0 · Exports know when they're out of date
 
 ### Printed output (from the review: B8, P1–P5)
 - **Exports know when they're out of date.** "Old" on the Exports tab now also means made by an earlier version of ukemusic, made before the look changed (style, Stage format, layout, section names, diagrams), or named after the song's old name, not just made before the song changed. Point at "old" to see why. After an update, Export every song brings everything up to date, including the Stage PDFs made by 4.28.
@@ -1109,7 +1114,7 @@ From feedback on Reddit.
 - **Settings → Stage copies → Chord diagrams:** as on the song's sheet, or none (more room for the words).
 - **Fewer half-empty pages on Stage copies:** only short parts are kept whole on a page.
 
-## v4.31.0
+## v4.31.0 · Minor updates: fixes and small changes
 
 ### Protecting your songs and settings (from the review, REVIEW.md B1–B9)
 - **Undo works after a pause.** The editor rebuilt itself 0.3 seconds after every edit to reapply its colours, which threw the undo history away (Ctrl+Z after a pause did nothing). The colours now change without a rebuild. Opening another song starts a fresh undo history, so Undo can never bring back the song you had open before.
@@ -1122,7 +1127,7 @@ From feedback on Reddit.
 - **Renaming, archiving and moving** retry when Windows briefly locks the folder, let go of the Exports-tab preview first, and say plainly what to close if it still fails.
 - "Archived songs" can't be used as a song title. The log no longer fills up with the PDF preview's harmless messages.
 
-## v4.30.0
+## v4.30.0 · Minor updates: fixes and small changes
 
 ### Stage copies: choruses
 - **Every chorus is printed in full** unless you choose otherwise. 4.29 shortened repeats by default.
@@ -1130,7 +1135,7 @@ From feedback on Reddit.
 - **No guessing:** only parts the song itself marks with a heading ([[Chorus]], [[Refrain]]…) are ever shortened, and only when the words and chords are exactly the same. A song with no headings (Let Your Love Flow, Country Roads) is always printed in full. Write → Chord patterns → "Write the part names into the song" adds headings if you want them.
 - **Stage copies have their own Settings section:** format, repeated choruses, shrink to fit, font and size, gig folder.
 
-## v4.29.0
+## v4.29.0 · Stage copies in four formats
 
 ### Stage formats (Stage copies for a gig or practice at home)
 - 4.28's squeezed Stage look is gone: printed, it was readable but not scannable. Your Stage style is put back as it was.
@@ -1146,14 +1151,14 @@ From feedback on Reddit.
 ### Karaoke
 - Words that start before a line's first chord now show the chord still playing from the line before, faintly in brackets: (C). They were always timed with it; now you can see it.
 
-## v4.28.0 (Stage changes put back in 4.29)
+## v4.28.0 · Minor updates: fixes and small changes
 
 ### Stage copies on fewer pages
 - **Chords in the words** on Stage copies use an ordinary bold font (Segoe UI or Arial) instead of the fixed-width one. Nothing has to line up in that layout, and the fixed-width font made almost every line wrap. Lines are closer (1.45 instead of 1.7) and the white-on-black chords are slimmer. Baby Love's Stage copy goes from two pages to one at full size. Chords above the words keep the fixed-width font, which they need.
 - **Shrink to fit** (Settings → Stage: shrink to fit fewer pages, on by default): a Stage PDF that runs onto another page is printed again a little smaller, no smaller than 14px, and kept smaller only if that saves a page (Let It Be: 3 pages to 2).
 - Your Stage style (styles/stage.css) is updated for this; if you edited those lines yourself, they're left alone.
 
-## v4.27.0
+## v4.27.0 · ChordPro: a song's details come and go
 
 ### ChordPro tab: nothing from a ChordPro file is lost
 - A new **ChordPro** tab beside Notes lists every ChordPro field the song has: {title}, {subtitle}, {artist}, {composer}, {lyricist}, {arranger}, {album}, {year}, {copyright}, {key}, {capo}, {tempo}, {time}, {duration}, {sorttitle}, plus any {meta: …} or {x_…} fields, and the file's other lines (# comments, {textfont}, {columns}, {new_page}…).
@@ -1163,12 +1168,12 @@ From feedback on Reddit.
 - **+ Add a field** for anything of your own (written as {meta: name value}).
 - The ChordPro fields go with the song in library packs and when copying to another library.
 
-## v4.26.0
+## v4.26.0 · Minor updates: fixes and small changes
 
 - **Section names: Default.** Export → Section names now has **Default**, which follows Settings (it shows which: "Default (Show)"), plus Show, Small and Hide for this song only. The general setting is back in Settings → Section names, as the default for every song. Choosing Default takes the song's own choice away.
 - Fixed: a heading line with a stray space after it ("[[Chorus]] ") wasn't treated as the start of a section, so Small and Hide missed it (the first Chorus in Mull of Kintyre).
 
-## v4.25.0
+## v4.25.0 · Libraries: more than one songs library, and packs to share
 
 ### Libraries (as in Calibre)
 - A **library** is a folder of songs with its own setlists and archive. Your songs folder is your first library. The **library button** at the top left of Your songs (and **File → Library**) lists your libraries with their song counts: click one to switch.
@@ -1184,7 +1189,7 @@ From feedback on Reddit.
 - **Export → Section names** (Show / Small / Hide) is now saved with the song. (4.26 adds Default, which follows Settings.)
 - Fixed: a song's own section names and swing feel were lost when it was saved.
 
-## v4.24.0
+## v4.24.0 · The song, part by part, with part names written in
 
 ### Chord patterns: with the words, and better part names
 - Each part shows **how it goes**: the chords over the words, the first time it's sung, with the numbers beside each chord. A chord in brackets, like (G), is still sounding from the line before.
@@ -1199,7 +1204,7 @@ From feedback on Reddit.
   - a heading followed by a blank line names the part after it.
 - **Add to notes** includes each part's words.
 
-## v4.23.0
+## v4.23.0 · Minor updates: fixes and small changes
 
 ### Chord patterns that make sense of real songs
 - The song is split into its parts at **blank lines** as well as [[headings]], so songs without headings (most pasted ones) come out as verses and choruses, not one long block.
@@ -1209,7 +1214,7 @@ From feedback on Reddit.
 - A heading on a line of chords ("Intro:") no longer renames the verses that share them; it says "the Intro uses these chords too".
 - A guessed key now prefers the chord the song starts and ends on (I Can See Clearly Now is in D, not G).
 
-## v4.22.0
+## v4.22.0 · Exports list: out-of-date exports, gig and setlist folders
 
 ### Exports tab (Song, Info, Links, Exports, Notes)
 - Every file exported for the song, by folder (Song, saved keys, Stage, Lyrics), with when it was made and **how**: the style set or Stage style, the key, paper size, section names.
@@ -1227,7 +1232,7 @@ From feedback on Reddit.
 - **From the start** (Play tab, and ⏮ in Karaoke): from the top, whatever the cursor, and while playing it jumps back.
 - **Click a line** in Karaoke to play from there; while playing, clicking a line in the preview jumps there too.
 
-## v4.21.0
+## v4.21.0 · Chord progressions explained; archived songs; export every song
 
 ### Chord patterns (Write → Chord patterns, or Song → Chord Patterns…)
 - The song's chords as numbers in its key (**I IV V**, **vi** for the minor six…), with what each one does (home, away, tension, the sad home).
@@ -1245,7 +1250,7 @@ From feedback on Reddit.
 ### Strum boxes
 - The strum box no longer says "light swing", "shuffle" and so on: the feel is for playback only.
 
-## v4.20.0
+## v4.20.0 · Minor updates: fixes and small changes
 
 ### Your songs (the home page)
 - Just **New song** beside the heading. Paste from a website and Import a file are on the song page (File tab); with no song open, **Paste from website** starts a new song. Songs for the web… has gone from here.
@@ -1258,7 +1263,7 @@ From feedback on Reddit.
 ### Voice (Play and Karaoke)
 - **Play → Voice ▾** (and Settings → Playback), each on or off: **Count in out loud** ("one, two, three, four"; in 6/8 "one, two"), **Say what's next** ("Chorus", "Verse 2", about a bar ahead), **Say the next chord** ("G seven", "F sharp minor", just before it changes; with a capo, the shapes you play). Uses your computer's own voice. Nothing talks over the count-in, and a chord that would come late is left out.
 
-## v4.19.0
+## v4.19.0 · Stage look: big, clear copies to play from
 
 ### Stage is a style of its own
 - Every **Stage** copy (exports, stage songbooks, View → Look: Stage) now uses the **Stage style** (styles/stage.css), whatever style set your song copies use. So you can make Songbook copies and still get the usual Stage copies, without switching back and forth.
@@ -1282,7 +1287,7 @@ From feedback on Reddit.
 - **Play along** is now **Karaoke**. **Practice** has left the Play tab: it's on the songs screen.
 - ChordPro exports of 6/8 songs say 6/8 (they said 6/4).
 
-## v4.18.0
+## v4.18.0 · Swing and shuffle
 
 ### Swing
 - **Play → Feel**: Auto, Straight, Light swing, Swing, Shuffle (for this song, or all songs in Settings → Playback). Swung, the beats stay where they are and each in-between strum (the "&") comes a little late (58%, 62% or 67% of the way), so the strum goes long-short; the tempo and bar lengths don't change, and the strokes on the beat lean a little harder.
@@ -1296,26 +1301,26 @@ From feedback on Reddit.
 ### Screen
 - Play: Sound and Feel sit one above the other, so the Play tools fit on one row.
 
-## v4.17.0
+## v4.17.0 · Minor updates: fixes and small changes
 
 ### Section names: Show, Small or Hide (fewer pages)
 - **Export → Section names** (also in Settings, and per song under This song's settings): **Show** as before, **Small**, or **Hide**. Hidden, "Verse 1", "Chorus" and so on are left out and the sections are just a line apart, so a song prints on fewer pages; a long test song went from 4 pages to 3.
 - A heading with nothing under it, such as a lone "Chorus" telling you to play it again, is a cue: it **always stays** (smaller), so you still know what to play. "[[Chorus]] x2" on a line of its own shows as before.
 - It applies to the preview, PDFs and web pages (Standard and Stage), songbooks and the lyrics pages. The rules are in the style sets (the "Section names" part), and your style sets get them the first time 4.17 starts.
 
-## v4.16.2
+## v4.16.2 · Minor updates: fixes and small changes
 
 - **Strum boxes are back to their 4.16.0 size.**
 - **Plain strum patterns** (View → Strum patterns: Plain) are now bold, in the words' colour, and bigger than the words: 1.2 × by default. **View → Plain strums** (As the words, Bigger, Large, Extra large) changes this; it's kept in the style set as `--plain-strum-scale`. Your style sets are updated the first time 4.16.2 starts.
 
-## v4.16.1
+## v4.16.1 · Minor updates: fixes and small changes
 
 - **×** at the right of the tabs now **closes the song** (as File → Close). The **⌄** beside it hides the tools; press it again (it turns to ⌃), or click any tab, to show them.
 - Strum boxes were made bigger here (View → Strum size); 4.16.2 puts them back and makes the plain strum patterns bigger instead.
 - No more flash of the song screen at start: when ukemusic starts on **Your songs**, that's the first thing you see.
 - View: the Tab look menu sits with the Sheet tools, so View fits on one row again.
 
-## v4.16.0
+## v4.16.0 · Style sets: choose and edit the look
 
 ### Style sets
 - **View → Style set** picks the look of every song: **Classic** (as before), **Big and clear** (large, dark text, big diagrams), **Songbook** (warm paper, serif headings, boxed chord diagrams) and **Ink saver** (black only, for black-and-white printing). The preview, exports and PDFs all follow it.
@@ -1334,13 +1339,13 @@ From feedback on Reddit.
 - **×** at the right of the tabs (File, Write…) hides the tools for more room; click any tab to show them again.
 - View: the tab options are under **Tab look ▾**, so the View tools fit on one row.
 
-## v4.15.1
+## v4.15.1 · Minor updates: fixes and small changes
 
 ### Tempo, time and key: one place each
 - **Tempo and time** are set on **This song** only. **Info** shows them as a fact ("80 bpm · 3/4") with a **Change on This song** button that takes you there.
 - Info's **Key** is now **Written in** (the key the song is written in, used for the key name and capo hints). It is no longer repeated in the song settings box.
 
-## v4.15.0
+## v4.15.0 · Stage copies, and songs for the web version
 
 ### More of the look lives in style.css
 - **Stage** is now a section of **style.css**, used for the "(stage)" PDFs and web pages, stage songbooks and the lyrics' stage versions. Its font, size and colour are `--stage-font`, `--stage-size` and `--stage-color` at the top of style.css; Settings → Export changes the font and size there.
@@ -1355,14 +1360,14 @@ From feedback on Reddit.
 - No editing on the web: no new song, paste, Edit, Info or Notes. Songs come from the desktop with Update songs.
 - Key, capo, instrument and tempo changes are kept on each device. A Look: Standard / Stage choice is on the toolbar.
 
-## v4.14.0
+## v4.14.0 · Minor updates: fixes and small changes
 
 ### Help → About
 - **About** (Settings tab → Help, or the menu Help → About ukemusic) shows the version and thanks everything ukemusic uses, with its licence and a link: the FreePats ukulele recordings (CC0), the chord shapes from chords-db (MIT), the editor (CodeMirror, MIT), ini (ISC), Electron, and the public-domain starter songs and practice tunes. The web version has the same page, listing what it uses.
 - THIRD_PARTY_NOTICES.md now has the licence texts for the editor and ini as well.
 - Links open in your web browser.
 
-## v4.13.0
+## v4.13.0 · Export everything at once; bold and italic words; tab styles
 
 ### Exporting
 - **Export now** opens one more step, the export list, with **everything ticked**: the chord sheet as a PDF, a web page, Markdown and ChordPro, and the lyrics as a PDF, text and a web page. Untick what you don't need this time, then Export. (Choose… and the Print style list are gone.)
@@ -1386,7 +1391,7 @@ From feedback on Reddit.
 ### Process Import
 - **Chords into words** has moved to the File tab, beside Import text file and Paste from website, and is now called **Process Import**. The tooltip explains it: it moves chords that sit on their own line above the words into the words.
 
-## v4.12.0
+## v4.12.0 · Practice: 39 exercises in 7 categories
 
 ### Practice is now its own section
 - **Practice opens on a menu**: categories on the left (Warm-ups & finger work, Chords & changes, Strumming & rhythm, Fingerpicking, Scales & melody, Noodling & creativity, My routine), and a card for each exercise with a **difficulty badge** (Beginner, Improver, Intermediate), its aim, and when you last did it, at what tempo. A card opens the trainer, already set up; **← All exercises** (or Esc) goes back.
@@ -1401,7 +1406,7 @@ From feedback on Reddit.
 - **My routine**: a 10-minute daily routine and a 5-minute "before playing" one, ready made. Each exercise runs for its minutes and moves on by itself (Next ▶ to skip). Edit them, or make your own.
 - The help (? How this works) has a section for each kind of exercise.
 
-## v4.11.0
+## v4.11.0 · Minor updates: fixes and small changes
 
 ### Tidier tabs and clearer names
 - The song's tabs are **Song · Info · Notes** (Details is now Info). A song always opens on the **Song** tab; the "show notes when opening" setting is gone.
@@ -1418,7 +1423,7 @@ From feedback on Reddit.
   - **Convert chord lines** is now **Chords into words**, with a tooltip explaining it (for songs copied from websites with the chords on their own line).
   - **Guess the key** is now **Suggest key**. The key list says "Auto: from the chords"; Info's button is "Suggest key…".
 
-## v4.10.0
+## v4.10.0 · Play along in the editor: the chord, the strum and the next shapes
 
 ### Play in the editor, closer to karaoke
 - **Play** (in the editor) shows a band above the preview while it plays:
@@ -1430,7 +1435,7 @@ From feedback on Reddit.
 - The line being sung **fills in as it goes**, letter by letter, in the preview (using the same timing as karaoke), as well as being highlighted.
 - The Play tab buttons are now **Play** (here, beside the editor: for checking a song while you write it) and **Play along** (the full-screen karaoke view, for playing along).
 
-## v4.9.0
+## v4.9.0 · Karaoke shows the chord shapes
 
 ### Karaoke: chord shapes
 - A column on the right of the karaoke view shows the chord diagrams: **now** (big), **next** and **then**. "Next" and "then" are the next two *different* chords, so a chord repeated over several bars doesn't fill the list. Before playing, the first chord is shown.
@@ -1438,7 +1443,7 @@ From feedback on Reddit.
 - **Shapes** in the karaoke bar hides or shows the column (remembered).
 - The karaoke bar is a little more compact and wraps rather than running off a narrow window.
 
-## v4.8.1
+## v4.8.1 · Minor updates: fixes and small changes
 
 ### Finger exercises: clearer picture
 - **The next note is blue** (dashed), so it stands apart from the red note to play now. A key under the fretboard explains the colours: red = play now, blue = next, faint red = finger still down, arrow = the string to pluck.
@@ -1446,7 +1451,7 @@ From feedback on Reddit.
 - **The plucking hand**: an arrow on the right points at the string to pluck ("pluck G"), and moves string to string. The line under the picture says it too: "Index finger (1) · G string · fret 1 · pluck the G string".
 - **? How this works** (and "How does this work?" under the picture): a pop-up explaining the picture, the colours, both hands, the tab, how to practise and the sound options, with short sections for the other trainers. It opens by itself the first time you open the finger exercises.
 
-## v4.8.0
+## v4.8.0 · Finger exercises: the spider walk, on an animated fretboard
 
 ### Practice → Finger exercises (the spider walk)
 - A fourth Practice mode for the fretting hand: one finger per fret, string by string. It's also called the spider crawl, finger walking, the chromatic walk, the 1-2-3-4 exercise or the moonwalker.
@@ -1469,7 +1474,7 @@ From feedback on Reddit.
   - No sound: just watch.
 - Tips for each pattern (hand position, keeping fingers down, the thumb).
 
-## v4.7.0
+## v4.7.0 · Practice: strum trainer, 12-bar blues and chord changes
 
 ### Practice
 A **Practice** window, opened from the library or **Play → Practice…**. It works without a song open. Three trainers share one set of controls and one display.
@@ -1481,7 +1486,7 @@ A **Practice** window, opened from the library or **Play → Practice…**. It w
   - **Shuffle**: on beats 2 and 4, one more finger goes down two frets above the chord's 5th, so the 5th becomes a 6th (C7 0001 → 2001). The second diagram shows the shape, with a note saying which string and fret; playback plays it.
 - **Chord change**: the chord you're learning and the one you come from (with suggestions such as "from C"), changing every bar or every 2 beats. Tips say which finger can stay down, which strings ring open, and when there's a barre. Your changes are counted.
 
-## v4.6.0
+## v4.6.0 · Chords shorter than a bar, and N.C. pauses
 
 ### Chords shorter than a bar, and pauses
 - **`[Em:2]`**: Em for 2 beats, shown **Em:2**. Any number of beats works (`[C:1]`, `[C:3]`, `[C:6]`).
@@ -1492,7 +1497,7 @@ A **Practice** window, opened from the library or **Play → Practice…**. It w
 - Karaoke and the strum strip follow short chords and pauses. Playback and karaoke now share one bar plan (`songSlots`), so they always agree.
 - The How to write guide has new sections: Chords shorter than a bar, and Pauses: no chord.
 
-## v4.5.0
+## v4.5.0 · Shorthand: repeats, bar lines and named strums
 
 ### Writing shorthand
 - **`[C x3]`**: C for three bars, shown **C×3**. The same as `[C][][]`.
@@ -1521,7 +1526,7 @@ A **Practice** window, opened from the library or **Play → Practice…**. It w
 ### How to write
 - **Write → How to write** (or F1) opens a guide to everything you can type, with examples. The same guide is `WRITING.md` in the app folder.
 
-## v4.4.0
+## v4.4.0 · View and Export tabs; saved keys in setlists
 
 ### Tabs: View and Export
 - Tabs are now **File · Write · This song · View · Export · Play · Settings**.
@@ -1558,7 +1563,7 @@ A **Practice** window, opened from the library or **Play → Practice…**. It w
 - The library has an **Artist** column (with the year), sortable.
 - Setlists show the artist beside each song, and so do the Add songs list, the Open… list and songbook contents.
 
-## v4.3.0
+## v4.3.0 · Song details: artist, year, tags and more, searchable
 
 ### Song details: fields, not notes
 - A **Details** tab beside Song and Notes holds the song's facts as proper fields, kept in song.ini:
@@ -1571,7 +1576,7 @@ A **Practice** window, opened from the library or **Play → Practice…**. It w
 - **ChordPro**: `{artist}`, `{year}`, `{composer}`/`{lyricist}` (→ Written by) and `{album}` are read on import and written on export.
 - **Starter songs** now come with artist, year and tags. Starters added by 4.0 get them filled in once.
 
-## v4.2.0
+## v4.2.0 · Strum patterns in boxes, with the count; time changes in a song
 
 ### Strum info boxes
 Strumming carries a ukulele song (it makes up for the small range of notes and gives the rhythm its bounce), so a `{strum pattern}` now gets an info box on the sheet instead of a small grey line:
@@ -1602,7 +1607,7 @@ More styles can be added in one place (`src/strum-box.js`).
 ### Tests
 - 238 unit tests (new: strum boxes, counts, names, time changes in playback and karaoke); end-to-end checks for the styles and time changes.
 
-## v4.1.0
+## v4.1.0 · Low-G ukulele, setlists and songbooks, practice loops
 
 ### Low-G ukulele
 - New instrument **Ukulele (low G)** (This song → Instrument, or Settings for new songs): concert or tenor ukulele with the G string an octave lower.
@@ -1644,7 +1649,7 @@ More styles can be added in one place (`src/strum-box.js`).
 ### Tests
 - 231 unit tests (new: low G, chord shapes, setlists, section playback, artist/tags); new end-to-end phase `v41`.
 
-## v4.0.0
+## v4.0.0 · A new look: a song library home screen and ribbon tabs
 
 A new layout, made for someone opening ukemusic for the first time.
 
@@ -1699,7 +1704,7 @@ A new layout, made for someone opening ukemusic for the first time.
 - 217 unit tests (new: starter songs, the song list's key and instrument).
 - New end-to-end phase for the library, starters, ribbon, hint line, tap tempo, song strum and matched panes. All earlier end-to-end checks pass on the new layout.
 
-## v3.2.0
+## v3.2.0 · Strum library: country, rock, blues and funk
 
 ### Strum library: country, rock, blues and funk
 - Five new patterns:
@@ -1724,7 +1729,7 @@ A new layout, made for someone opening ukemusic for the first time.
 ### Tests
 - 209 unit tests; end-to-end checks for the style filter and the new strums.
 
-## v3.1.0
+## v3.1.0 · Guess the key
 
 ### Guess the key
 - New **Song** menu → **Guess the Key…** (Ctrl+K). A pop-up names the song's most likely key and says how sure it is (very likely / fairly likely / a guess). It explains why:
@@ -1745,7 +1750,7 @@ A new layout, made for someone opening ukemusic for the first time.
 ### Tests
 - 208 unit tests. End-to-end: new key phase (pop-up opened from the real menu command); 194 checks in all.
 
-## v3.0.0
+## v3.0.0 · Baritone and guitar, as well as ukulele
 
 ukemusic is still a ukulele app first, but the same songs now work for the **baritone ukulele** and the **guitar**. Full description: **INSTRUMENTS.md**.
 
@@ -1783,7 +1788,7 @@ ukemusic is still a ukulele app first, but the same songs now work for the **bar
 ### Tests
 - 204 unit tests (new: `capo`, `strums`; guitar library, 6-string and left-handed diagrams, tab conversion, capo playback). End-to-end: new instruments phase; 183 checks in all.
 
-## v2.18.0
+## v2.18.0 · Minor updates: fixes and small changes
 
 ### Karaoke: tab notes light up as they're played
 - In the karaoke view, each note in a tab block lights up as it's picked, and notes already played turn blue. The strip at the top names the note (e.g. C5), or several notes if they're played together.
@@ -1795,7 +1800,7 @@ ukemusic is still a ukulele app first, but the same songs now work for the **bar
 ### Tests
 - 186 unit tests. End-to-end: tab notes light in order and the strip names them; 157 checks in all.
 
-## v2.17.0
+## v2.17.0 · Tablature
 
 ### Tablature
 Tab stays as readable text in the song (```tab blocks). The app now also reads it into a model of strings, frets and pitches, and uses that to check, display, transpose and play it. New `src/tab.js`.
@@ -1815,7 +1820,7 @@ Tab stays as readable text in the song (```tab blocks). The app now also reads i
 ### Tests
 - 185 unit tests (new `test/tab.test.js`). End-to-end: new tab phase; 155 checks in all.
 
-## v2.16.0
+## v2.16.0 · Settings in a full window, in plain English
 
 ### Settings: full window, easier to follow
 - Settings now fill the window. The **This song / All songs** tabs and Close stay at the top however far you scroll; a list of sections on the left jumps to each one (and shows where you are); **↑ Top** appears once you scroll down; **Esc** closes.
@@ -1833,7 +1838,7 @@ Tab stays as readable text in the song (```tab blocks). The app now also reads i
 ### Tests
 - 164 unit tests. End-to-end: strum strip, settings layout/navigation/All black, notes saved on close; 143 checks in all.
 
-## v2.15.0
+## v2.15.0 · Karaoke
 
 ### Karaoke view
 - New **🎤 Karaoke** button next to Play. It plays the song with the words filling the window: several lines at once, so you can see what came before and what's next; the current line is lit and kept about a third of the way down.
@@ -1849,7 +1854,7 @@ Tab stays as readable text in the song (```tab blocks). The app now also reads i
 ### Tests
 - 163 unit tests (new `test/karaoke.test.js`). End-to-end: new karaoke phase; 131 checks in all.
 
-## v2.14.0
+## v2.14.0 · Default strum (Simple, Island or your own) and accents
 
 ### Strum when the song has none
 - New setting, Settings → All songs → Playback: **Strum when the song has no {pattern}**:
@@ -1869,7 +1874,7 @@ Tab stays as readable text in the song (```tab blocks). The app now also reads i
 ### Tests
 - 157 unit tests (new: simple/island/custom default strum, accents). End-to-end: hollow-body render, default strum saved and offered per song.
 
-## v2.13.0
+## v2.13.0 · Settings for all songs, and for one song
 
 ### Labels at the start of a line
 - `[[Label]]` followed by anything on the same line prints the label **in bold** at the start of that line, e.g. `[[Intro:]] [Am] [F] [D]` or `[[Chorus]] [C]Lost and gone…`. Nothing is moved or guessed: a `[[Label]]` on a line of its own is still a section heading, and you make the line breaks yourself.
@@ -1894,7 +1899,7 @@ Tab stays as readable text in the song (```tab blocks). The app now also reads i
 ### Tests
 - 154 unit tests. End-to-end: new settings phase (24 checks); 125 checks in all.
 
-## v2.12.0
+## v2.12.0 · Print styles: Standard and Stage
 
 ### Print styles
 - **Print style** in the Export dialog: **Standard** (your stylesheet) or **Stage** — for reading off a music stand at a gig, printed on a black-and-white printer. The choice is remembered as the default.
@@ -1910,13 +1915,13 @@ Tab stays as readable text in the song (```tab blocks). The app now also reads i
 ### Tests
 - New `test/line-wrap.test.js` (8). 139 unit tests; end-to-end 96 checks.
 
-## v2.11.1
+## v2.11.1 · Minor updates: fixes and small changes
 
 ### Fixes
 - Chords separated by single spaces ran together: `[C] [F] [C]` printed as `CFC` (in the preview, HTML, PDF and Markdown). The minimum gap between chords was only applied when a chord had been pushed right by a longer name; it now always applies. Present since v2.6; it affected every chords-only/instrumental line, including those made by the chord-sheet converter.
 - PDFs no longer leave pages half empty: only short sections (up to 60% of a page) are kept on one page; longer sections can break between lines (a chord line always stays with its lyric line, and a heading stays with what follows). Baby Love: 3 pages → 2.
 
-## v2.11.0
+## v2.11.0 · ChordPro import and export; chords spelt for the key
 
 ### ChordPro import and export
 - **Import**: Paste chord sheet… and Import Text File recognise ChordPro automatically (and `.cho .chordpro .chopro .crd .pro` files). `{title}` becomes the suggested song name; `{key}`, `{tempo}` and `{time}` become the song's settings; artist, capo etc. are added to the notes; verse/chorus/bridge sections become `[[headings]]` (unlabelled verses are numbered); `{chorus}` repeats, tabs, grids, `[|]` bar lines and `{comment: Strum …}` patterns are converted; `[*annotations]`, `[N.C.]` and `{define}` are dropped (and listed).
@@ -1932,7 +1937,7 @@ Tab stays as readable text in the song (```tab blocks). The app now also reads i
 ### Tests
 - New `test/keys.test.js` (11) and `test/chordpro.test.js` (7). 128 unit tests. End-to-end: 96 checks across all features.
 
-## v2.10.0
+## v2.10.0 · 540-chord libraries for ukulele and baritone
 
 ### Chord library: 28 → 540 chords per instrument
 - Soprano/concert/tenor and baritone libraries now cover 12 roots × 45 chord types: 6ths, 7ths, maj7, m7, m7b5, dim7, aug, sus2/4, add9, 9ths, 11ths, 13ths and altered chords (7b9, 7#9, alt…).
@@ -1950,7 +1955,7 @@ Tab stays as readable text in the song (```tab blocks). The app now also reads i
 ### Tests
 - Every fingering in both libraries (1,080) is verified in `test/chord-library.test.js`; new `test/chord-names.test.js`. 110 unit tests. End-to-end: a 21-chord song renders real diagrams for every chord on both instruments.
 
-## v2.9.0
+## v2.9.0 · Paste a chord sheet and convert it
 
 ### Chord sheets (chords above the words)
 - **Paste chord sheet…** (toolbar, Edit menu, Ctrl+Shift+V): paste a song laid out with chords on the line above the lyrics and see it converted to `[C]hord` format as you type. Insert at the cursor or replace the song (wrapped in START/END MUSIC).
@@ -1971,7 +1976,7 @@ Tab stays as readable text in the song (```tab blocks). The app now also reads i
 ### Tests
 - New `test/chord-sheet.test.js` (11), plus lyrics and playback additions: 100 unit tests. End-to-end: 71 checks.
 
-## v2.8.0
+## v2.8.0 · Versions in other keys, PDF export, strum playback
 
 ### Transposed versions
 - **Save key as version…**: pick any chord in the song and what it should become ("C becomes F"); the app works out the shift (+5) and shows every chord change before saving. No need to know the song's key.
@@ -2008,7 +2013,7 @@ Tab stays as readable text in the song (```tab blocks). The app now also reads i
 - New: versions (12), lyrics renderer (3), playback schedule (10); song library +4; HTML renderer +1. 87 unit tests.
 - End-to-end run of the real app (54 checks) covering versions, notes, all export formats incl. PDF page layout, and playback.
 
-## v2.7.0
+## v2.7.0 · Song library: a folder for each song
 
 ### Song Library
 
@@ -2052,7 +2057,7 @@ Tab stays as readable text in the song (```tab blocks). The app now also reads i
 - Closing the window threw `TypeError: Object has been destroyed` (the `closed` handler read `webContents.id` after the window was destroyed). The id is now captured when the window is created.
 - Markdown export ignored the transpose setting and the arrows strum notation; it now matches the HTML export.
 
-## v2.6.0
+## v2.6.0 · Transpose; table layout
 
 ### New Features
 
@@ -2089,10 +2094,10 @@ Tab stays as readable text in the song (```tab blocks). The app now also reads i
 
 ---
 
-## v2.5.5
+## v2.5.5 · Minor updates: fixes and small changes
 
 - Version bump, layout dropdown moved to General settings, font labels clarified.
 
-## v2.5.0
+## v2.5.0 · The first release
 
 - Initial release with parser, HTML/Markdown renderers, Electron UI, CodeMirror editor, live preview, fingering diagrams, tablature, INI config, editable stylesheet.

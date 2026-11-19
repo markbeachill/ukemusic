@@ -14,8 +14,11 @@ function notesFor(changelog, tag) {
   if (start < 0) return null;
   let end = lines.findIndex((l, i) => i > start && /^##\s/.test(l));
   if (end < 0) end = lines.length;
-  return lines.slice(start + 1, end).join('\n').trim()
+  // 4.99.7: the version's headline ("## v4.99.6 · Practise a song…") leads, unless it's a minor one
+  const headline = (lines[start].match(/·\s*(.+)$/) || [])[1];
+  const body = lines.slice(start + 1, end).join('\n').trim()
     .replace(/^### /gm, '## '); // one level up: the release page has its own title
+  return headline && !/^Minor\b/.test(headline) ? `**${headline.trim()}**\n\n${body}` : body;
 }
 
 function releaseNotes(changelog, tag) {

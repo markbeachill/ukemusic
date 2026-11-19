@@ -17,7 +17,7 @@ const REPO = (() => {
 const PAGES = [
   { md: 'WRITING.md', html: 'guide.html', seoTitle: "How to write songs in ukemusic: everything you can type", title: 'How to write songs', nav: 'How to write songs', blurb: 'Everything you can type in a ukemusic song, with examples. The same guide is in the app: Write → How to write.', ownIntro: true },
   { md: 'CHORDPRO.md', html: 'chordpro.html', seoTitle: "ukemusic and ChordPro: what it reads and writes", title: 'ukemusic and ChordPro', nav: 'ChordPro', blurb: 'What ukemusic does with ChordPro files, what it writes, and what it adds.' },
-  { md: 'CHANGELOG.md', html: 'changes.html', seoTitle: "What's new in ukemusic: the changes in every version", title: "What's new", nav: "What's new", blurb: 'What changed in each version of ukemusic, the free ukulele app: new features, fixes and improvements, newest first.' },
+  { md: 'CHANGELOG.md', html: 'changes.html', seoTitle: "What's new in ukemusic: the changes in every version", title: "What's new", nav: "What's new", blurb: 'What changed in each version of ukemusic, the free ukulele app, newest first: one line each, the details a click away. Minor updates are fixes.', headlines: true, toc: false },
   // 4.95: the user guide, with the website's pictures; read straight through (no folding)
   { md: 'docs/user-guide.md', html: 'user-guide.html', seoTitle: 'ukemusic user guide: how to use the ukulele app, step by step', title: 'User guide', nav: 'User guide', blurb: 'How to use ukemusic, step by step and with pictures: songs, reading and editing, playing along, learning, Free Practice, gigs and printing.', ownIntro: true, fold: false },
   { md: 'docs/user-guide-phone.md', html: 'user-guide-phone.html', seoTitle: 'ukemusic on a phone or tablet: the user guide for the web player', title: 'User guide: phone and tablet', nav: 'User guide', blurb: 'How to use ukemusic on an iPhone, iPad or Android phone or tablet, step by step and with pictures from a phone.', ownIntro: true, fold: false },
@@ -45,7 +45,7 @@ function page(p, html, sections, siteCss) {
   // the menu and footer every page shares (web/pages.js)
   const { siteHeader, siteFooter } = require('./pages');
   // the changelog's contents list is its versions; the others, their sections
-  const toc = sections.length > 2 ? `<nav class="toc${p.fold === false ? ' always' : ''}" aria-label="On this page"><p>On this page</p>${sections.map((s) => `<a href="#guide-${s.id}">${esc(s.title)}</a>`).join('')}</nav>` : '';
+  const toc = p.toc !== false && sections.length > 2 ? `<nav class="toc${p.fold === false ? ' always' : ''}" aria-label="On this page"><p>On this page</p>${sections.map((s) => `<a href="#guide-${s.id}">${esc(s.title)}</a>`).join('')}</nav>` : '';
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -59,6 +59,7 @@ function page(p, html, sections, siteCss) {
 ${siteCss}
 /* documents (4.95: in the website's style, AGENTS.md) */
 .doc-wrap { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 40px; padding: 32px 0 64px; }
+.doc-wrap.no-toc { grid-template-columns: minmax(0, 1fr); max-width: 860px; }   /* 4.99.7: What's new: the list is its own contents */
 .toc { position: sticky; top: 16px; align-self: start; max-height: calc(100vh - 32px); overflow-y: auto; display: grid; gap: 2px; font-size: 14px; }
 .toc p { margin: 0 0 6px; font-weight: 700; color: var(--muted); }
 .toc a { color: var(--muted); text-decoration: none; padding: 2px 0; line-height: 1.35; }
@@ -93,13 +94,17 @@ ${siteCss}
 .doc details.fold > summary:hover h2 { color: var(--teal-ink); }
 .doc .fold-body { padding: 0 0 16px; }
 .doc .fold-all { margin: 0 0 10px; text-align: right; }
+.doc details.fold > summary h2 .ver { flex: none; min-width: 5.5em; font-variant-numeric: tabular-nums; }
+.doc details.fold > summary h2:has(.headline) { display: flex; gap: 12px; align-items: baseline; font-size: 16px; }
+.doc .headline { font-weight: 400; }
+.doc .headline.minor { color: var(--muted); }
 .doc .fold-all button { font: inherit; font-size: 14px; color: var(--teal-ink); background: none; border: 0; cursor: pointer; padding: 4px 0; text-decoration: underline; }
 </style>
 </head>
 <body>
 ${siteHeader(p.html)}
-<main class="wrap doc-wrap">
-  ${toc || '<div></div>'}
+<main class="wrap doc-wrap${p.toc === false ? ' no-toc' : ''}">
+  ${toc || (p.toc === false ? '' : '<div></div>')}
   <article class="doc">
 ${(p.ownIntro ? html : html.replace(/^<h1[^>]*>.*?<\/h1>/, (h) => `${h}\n<p class="lede">${esc(p.blurb)}</p>`)).replace(/(<details class="fold")/, (d) => `<p class="fold-all"><button type="button" id="foldAll">Open every section</button></p>\n${d}`)}
     <p class="source">This page is made from <a href="${REPO}/blob/main/${p.md}">${p.md}</a> in the ukemusic repository.</p>
@@ -141,6 +146,19 @@ ${siteFooter()}
 `;
 }
 
+/**
+ * 4.99.7: the changes page: each version's heading is its number and a headline
+ * ("## v4.99.6 · Practise a song…" in CHANGELOG.md); a minor one ("Minor updates: …") is greyed.
+ * The anchor stays the version's alone (#guide-v4-99-6), so links to a version keep working.
+ */
+function headlines(html) {
+  return String(html).replace(/<h2 id="guide-[^"]*">(v[\d.]+)\s+·\s+([\s\S]*?)<\/h2>/g, (m, ver, line) => {
+    const id = ver.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const minor = /^Minor\b/.test(line);
+    return `<h2 id="guide-${id}"><span class="ver">${ver}</span> <span class="headline${minor ? ' minor' : ''}">${line}</span></h2>`;
+  });
+}
+
 function build() {
   const index = fs.readFileSync(path.join(SITE, 'index.html'), 'utf8');
   const siteCss = index.slice(index.indexOf('<style>') + 7, index.indexOf('</style>'));
@@ -150,6 +168,7 @@ function build() {
     // 4.95: pictures from the website's own (../site/img/x.webp in the .md, as GitHub shows it, is img/x.webp here)
     const image = (u) => { const file = base ? path.posix.normalize(path.posix.join(base, u)) : u; return file.startsWith('site/') ? file.slice(5) : href(u, base); };
     const made = markdownToHtml(md, { href: (u) => href(u, base), nested: true, image, ordered: true });
+    if (p.headlines) made.html = headlines(made.html);
     // the newest changes start open; the guides start as a list of their sections (the user guide reads straight through)
     const html = p.fold !== false && made.sections.length >= FOLD_FROM ? foldSections(made.html, { open: p.html === 'changes.html' ? 1 : 0 }) : made.html;
     fs.writeFileSync(path.join(SITE, p.html), page(p, html, made.sections, siteCss));
@@ -157,5 +176,5 @@ function build() {
   return PAGES.map((p) => p.html);
 }
 
-module.exports = { build, PAGES, href, FOLD_FROM };
+module.exports = { build, PAGES, href, FOLD_FROM, headlines };
 if (require.main === module) console.log('pages:', build().join(', '));
