@@ -44,6 +44,9 @@ function strumRow(pattern, { y = 30, height = 44 } = {}) {
     if (s === 'D') mark = `<path d="M${cx} ${top}V${bottom}M${cx - 6} ${bottom - 7}L${cx} ${bottom}L${cx + 6} ${bottom - 7}" stroke-width="2.6"/>`;
     else if (s === 'U') mark = `<path d="M${cx} ${bottom}V${top}M${cx - 6} ${top + 7}L${cx} ${top}L${cx + 6} ${top + 7}" stroke-width="2.6"/>`;
     else if (s === 'X') mark = `<path d="M${cx - 6} ${y + height / 2 - 6}l12 12m0 -12l-12 12" stroke-width="2.6"/>`;
+    // 4.99.4: palm-muted (a dashed down arrow), and the bass notes (B, b)
+    else if (s === 'M') mark = `<path d="M${cx} ${top}V${bottom}" stroke-width="2.6" stroke-dasharray="4 3"/><path d="M${cx - 6} ${bottom - 7}L${cx} ${bottom}L${cx + 6} ${bottom - 7}" stroke-width="2.6"/>`;
+    else if (s === 'B' || s === 'b') mark = text(cx, y + height / 2 + 6, s, { size: 17, weight: 800 });
     else mark = `<circle cx="${cx}" cy="${y + height / 2}" r="2.2" ${solid} opacity="0.5"/>`;
     return `<rect x="${x}" y="${y}" width="${bw}" height="${height}" rx="6" ${i === 0 ? soft : 'opacity="0.35"'} stroke-width="1.4"/>${mark}`;
   }).join('');

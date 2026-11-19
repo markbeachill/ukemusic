@@ -73,7 +73,7 @@ test('the in-app table: desktop Settings, web Features dialog', () => {
   assert.match(DESKTOP, /id="set-stage" data-feature="setStage" data-feature-grey>/);
   assert.match(WEB, /<dialog id="featuresDialog"/);
   assert.match(WEB, /<input id="askAllFeatures" type="checkbox"> Show all features/);
-  assert.match(read('web/build.js'), /'feature-levels\.js'\]/);
+  assert.match(read('web/build.js'), /'feature-levels\.js'[,\]]/);
 });
 
 test('someone new starts simple; settings from before keep everything', () => {

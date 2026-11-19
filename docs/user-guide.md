@@ -156,6 +156,14 @@ A shape can be a slightly different chord on the other instrument: the ukulele's
 
 **Moving the key for other reasons:** to sing it higher or lower, or for easier shapes on the instrument you've chosen (or try **Capo → Suggest**).
 
+### Strums: the library and the builder
+
+A song's strum is written in it as a line like `{D-DU-UDU}` (see [Writing a song: the basics](#writing-a-song-the-basics)). Where a song has none, **Strum where none is written** (on the Song tab) chooses one.
+
+- **The strum library** (**Write → Strums**, or **Help → Strum Patterns**) has 27 strums by time and style, each with how to play it and what it suits: hear one, add it to the song, or make it the default. Some are for a guitar or baritone: they play the chord's bass note on its own (**B**, and **b** for the other bass note), as in **Alternating bass (boom-chick)**.
+- **The strum builder** (**Song → Build a strum**, **Help → Strum Builder**, or **Build your own…** in the library) builds your own. Choose the time (4/4, 3/4, 6/8 or 2/4) and how many slots a beat has (eighths for most strums), pick a stroke (down, up, chuck, muted, bass, other bass, rest, or an accent) and tap the slots to place it. The count (1 & 2 & …) is under the slots, and notes under the bar say how to play it: down on the numbers, up on the "&"s. **Hear it** plays a few bars on the song's instrument.
+- **My strums:** give it a name and **Save to My strums**. They're kept in your settings and show wherever you choose a strum: **Strum where none is written**, and Free Practice. **Use for this song** makes it the song's strum; **Add to the words** puts it in the song as a `{…}` line. A song that uses one keeps the pattern itself, so it plays the same on another computer.
+
 ## How the sheet looks
 
 The **Display** tab changes how the song looks on screen and when printed: chord diagrams (which, where and how big), text size, how strums look, and the layout (chords above the words, in the words, or in columns).

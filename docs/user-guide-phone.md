@@ -80,6 +80,10 @@ Tap **Play**. ukemusic plays the song on a real ukulele (or guitar) the way it's
 
 ![Karaoke: big words lit as they're sung, with the chord above](../site/img/guide/iphone-P3.jpg)
 
+## Strums
+
+**Strum or pick** (on a song, with all features) chooses the strum it plays: the song's own, one from the strum library, or one of **My strums**. **Build a strum…**, at the end of that menu, builds your own: pick a stroke (down, up, chuck, muted, bass, rest, or an accent), tap the slots of the bar to place it, and **Hear it**. Give it a name and **Save to My strums** (kept on this device), or **Use for this song**. More in the main guide: [Strums: the library and the builder](user-guide.md#strums-the-library-and-the-builder).
+
 ## Learning a song by heart
 
 Tap **Learn** in the player.

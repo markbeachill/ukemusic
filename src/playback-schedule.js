@@ -60,12 +60,16 @@ const QUALITY_INTERVALS = [
   [/^5/, [0, 7]]
 ];
 
-/** Normalise a strum pattern into slots: D (down), U (up), X (chuck), - (rest). */
+/**
+ * Normalise a strum pattern into slots: D (down), U (up), X (chuck), - (rest); 4.99.4: and
+ * B (the chord's bass note), b (the other bass note, usually the fifth) and M (a palm-muted down).
+ * B and b are told apart by case; the other letters can be either.
+ */
 function parsePattern(text) {
   let slots = String(text || '')
-    .replace(/[↓]/g, 'D').replace(/[↑]/g, 'U').replace(/[✕×]/g, 'X')
-    .toUpperCase()
-    .replace(/[^DUX>-]/g, '')
+    .replace(/[↓]/g, 'D').replace(/[↑]/g, 'U').replace(/[✕×]/g, 'X').replace(/[⇣]/g, 'M')
+    .replace(/[duxm]/g, (c) => c.toUpperCase())
+    .replace(/[^DUXMBb>-]/g, '')
     .replace(/^>+/, '')        // an accent needs a stroke before it
     .replace(/-?>+/g, (m) => (m[0] === '-' ? '-' : '>')); // no accents on rests, one ">" is enough
   // "D D U U D U" written with spaces is the classic calypso strum: D-DU-UDU
@@ -110,6 +114,26 @@ function voiceChord(chordName, library, instrument = 'soprano') {
   const notes = intervals.map((i) => low + ((root + i - low % 12 + 24) % 12));
   notes.push(notes[0] + 12);
   return notes.sort((a, b) => a - b);
+}
+
+/**
+ * 4.99.4: which of a chord's notes is its bass note (B), or the other bass note (b): the index in
+ * notes. B is the lowest note that is the root (or the bass of a slash chord); b is the lowest
+ * fifth that isn't it, else the next-lowest note. A high-G ukulele has no low string, so its
+ * lowest notes stand in.
+ */
+function bassString(notes, chordName, other = false, capo = 0) {
+  const sounding = notes.map((n, i) => ({ n, i })).filter((x) => typeof x.n === 'number').sort((a, b) => a.n - b.n);
+  if (!sounding.length) return -1;
+  const parsed = parseChordName(String(chordName || ''));
+  const rootIndex = parsed ? (parsed.bass && noteIndex(parsed.bass) !== null ? noteIndex(parsed.bass) : parsed.rootIndex) : null;
+  const root = rootIndex == null ? null : (rootIndex + capo + 120) % 12;
+  const main = sounding.find((x) => root !== null && x.n % 12 === root) || sounding[0];
+  if (!other) return main.i;
+  const fifth = root === null ? null : (root + 7) % 12;
+  const alt = sounding.find((x) => x.i !== main.i && fifth !== null && x.n % 12 === fifth)
+    || sounding.find((x) => x.i !== main.i);
+  return (alt || main).i;
 }
 
 const EPS = 1e-6;
@@ -498,7 +522,7 @@ function buildSchedule(irNodes, options = {}) {
       const at = swung ? time + Math.floor(k / 2) * 2 * step + (k % 2 ? ratio * 2 * step : 0) : time + k * step;
       if (stroke === '-') return;
       const onBeat = Math.abs(((i * step) % pulseLength + pulseLength) % pulseLength) < 1e-6 || Math.abs(((i * step) % pulseLength) - pulseLength) < 1e-6;
-      const down = stroke === 'D';
+      const down = stroke === 'D' || stroke === 'M';
       // Swung, the beats lean a little more, so the long-short lilt comes through
       const usual = onBeat ? (swung ? 0.92 : 0.85) : (down ? 0.75 : 0.6) * (swung ? 0.88 : 1);
       // With accents marked, those strokes are heavy and the rest clearly lighter;
@@ -506,6 +530,15 @@ function buildSchedule(irNodes, options = {}) {
       const velocity = accented ? (accent ? 1 : usual * 0.6) : (i === 0 ? 1 : usual);
       if (stroke === 'X') {
         events.push({ time: at, kind: 'chuck', velocity: accented ? velocity : 0.7, barIndex });
+        return;
+      }
+      // 4.99.4: B and b, a bass note on its own (boom-chick on a guitar or baritone)
+      if (stroke === 'B' || stroke === 'b') {
+        const string = bassString(notes, slot.chord, stroke === 'b', capo);
+        if (string < 0) return;
+        const bass = new Array(notes.length);
+        bass[string] = notes[string];
+        events.push({ time: at, kind: 'strum', direction: 'down', notes: bass, velocity: accent ? 1 : Math.max(velocity, 0.85), accent, barIndex, bass: true });
         return;
       }
       events.push({
@@ -516,6 +549,7 @@ function buildSchedule(irNodes, options = {}) {
         velocity,
         accent,
         barIndex,
+        ...(stroke === 'M' ? { muted: true, velocity: velocity * 0.8 } : {}),   // 4.99.4: palm-muted
         ...(slot.stop ? { ring: true } : {})
       });
     });
@@ -534,4 +568,4 @@ function buildSchedule(irNodes, options = {}) {
 }
 
 module.exports = {
-  isCompound, buildSchedule, songSlots, parsePattern, patternSteps, defaultPattern, voiceChord, TUNINGS, STRUM_STYLES };
+  isCompound, buildSchedule, songSlots, parsePattern, bassString, patternSteps, defaultPattern, voiceChord, TUNINGS, STRUM_STYLES };

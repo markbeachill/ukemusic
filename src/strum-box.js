@@ -18,7 +18,7 @@
 // A pattern can carry its own time signature: {3/4 D-DUDU}. From there on the song is in
 // that time (playback too) until another one says otherwise.
 
-const ARROWS = { D: '↓', U: '↑', X: '✕', '-': '·' };
+const ARROWS = { D: '↓', U: '↑', X: '✕', '-': '·', M: '⇣', B: 'B', b: 'b' };   // 4.99.4: palm-muted, and the bass notes
 /** How a number of beats is usually written: 4 → 4/4, 3 → 3/4, 6 → 6/8 */
 const timeLabel = (beats) => ({ 6: '6/8', 12: '12/8', 9: '9/8' }[beats] || `${beats}/4`);
 const STYLES = ['comic', 'clean', 'compact', 'plain'];
@@ -36,13 +36,13 @@ function strumTime(text) {
   return { beats, label: `${m[1]}/${m[2]}` };
 }
 
-/** The strokes: [{ stroke: 'D'|'U'|'X'|'-', accent }] (same reading as playback) */
+/** The strokes: [{ stroke: 'D'|'U'|'X'|'M'|'B'|'b'|'-', accent }] (same reading as playback) */
 function strumSteps(text) {
   const slots = String(text || '')
     .replace(/(?:^|\s)\d{1,2}\s*\/\s*\d{1,2}(?=\s|$)/g, ' ')
-    .replace(/[↓]/g, 'D').replace(/[↑]/g, 'U').replace(/[✕×]/g, 'X')
-    .toUpperCase()
-    .replace(/[^DUX>-]/g, '')
+    .replace(/[↓]/g, 'D').replace(/[↑]/g, 'U').replace(/[✕×]/g, 'X').replace(/[⇣]/g, 'M')
+    .replace(/[duxm]/g, (c) => c.toUpperCase())
+    .replace(/[^DUXMBb>-]/g, '')
     .replace(/^>+/, '')
     .replace(/-?>+/g, (m) => (m[0] === '-' ? '-' : '>'));
   const steps = [];
@@ -111,7 +111,7 @@ function renderStrum(text, ctx = {}) {
     if (ctx.stop) return '<div class="rhythm">Stop: one strum, let it ring</div>';
     if (ctx.recall) return `<div class="rhythm">Strum ${escapeHtml(ownName)}</div>`;
     const shown = ctx.notation === 'arrows'
-      ? String(text).replace(/[DdUuXx]/g, (ch) => ({ d: '↓', u: '↑', x: '✕' }[ch.toLowerCase()]))
+      ? String(text).replace(/[DdUuXxMm]/g, (ch) => ({ d: '↓', u: '↑', x: '✕', m: '⇣' }[ch.toLowerCase()]))
       : String(text);
     return `<div class="rhythm">${ownName ? `${escapeHtml(ownName)}: ` : ''}${escapeHtml(shown)}${ctx.feelLabel ? ` <span class="sb-feel">(${escapeHtml(ctx.feelLabel)})</span>` : ''}</div>`;
   }

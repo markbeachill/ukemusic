@@ -27,7 +27,11 @@
         }
         function prStrumOptions(select, preferred, { extra = [] } = {}) {
           const strums = window.ukemusic.strums;
-          select.replaceChildren(...strums.map((s) => new Option(`${s.name} · ${s.pattern}${s.beats !== 4 ? ` (${s.beats}/4)` : ''}`, s.pattern)), ...extra.map(([v, l]) => new Option(l, v)));
+          // 4.99.4: and My strums (the strum builder), after the library
+          const mine = (window.ukeMyStrums ? window.ukeMyStrums() : []).filter((m) => !strums.some((x) => x.pattern === m.pattern));
+          const mineGroup = mine.length ? [Object.assign(document.createElement('optgroup'), { label: 'My strums' })] : [];
+          if (mineGroup.length) mineGroup[0].append(...mine.map((m) => new Option(`${m.name} · ${m.pattern}${m.beats !== 4 ? ` (${m.beats === 6 ? '6/8' : `${m.beats}/4`})` : ''}`, m.pattern)));
+          select.replaceChildren(...strums.map((s) => new Option(`${s.name} · ${s.pattern}${s.beats !== 4 ? ` (${s.beats}/4)` : ''}`, s.pattern)), ...mineGroup, ...extra.map(([v, l]) => new Option(l, v)));
           const pick = strums.find((s) => s.name === preferred || s.pattern === preferred);
           if (pick) select.value = pick.pattern;
         }
@@ -1930,6 +1934,8 @@
         function openPractice(exId = null) {
           if (player && player.playing) stopPlayback();
           prSetup();
+          // 4.99.4: My strums may have changed since (the strum builder): list them again, keeping the choice
+          { const sel = $p('prStrum'); const was = sel.value; prStrumOptions(sel, was, { extra: [...sel.options].filter((o) => !o.parentElement || o.parentElement === sel).filter((o) => !window.ukemusic.strums.some((x) => x.pattern === o.value) && !(window.ukeMyStrums ? window.ukeMyStrums() : []).some((m) => m.pattern === o.value)).map((o) => [o.value, o.textContent]) }); if ([...sel.options].some((o) => o.value === was)) sel.value = was; }
           if (!pr.progress) prLoadProgress(); // opened straight into an exercise (from a song): Start needs it (4.60)
           prSyncInstrument();
           const tempo = Number(effectiveConfig()?.song?.tempo);

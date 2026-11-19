@@ -230,7 +230,8 @@ function strumDefinition(content) {
 /** Is this rhythm text a word (not a strum)? "Chorus", "Island" */
 function looksLikeName(content) {
   const t = String(content || '').trim();
-  return /^[A-Za-z][A-Za-z0-9 ]{0,15}$/.test(t) && !/^[DUXdux\s]+$/.test(t);
+  // 4.99.4: strokes only (BDbD, MMMM) are a strum, not a name; a single letter stays a name ({B})
+  return /^[A-Za-z][A-Za-z0-9 ]{0,15}$/.test(t) && !/^[DUXdux\s]+$/.test(t) && !(t.replace(/\s/g, '').length > 1 && /^[DUXMBbduxm\s]+$/.test(t));
 }
 
 /**

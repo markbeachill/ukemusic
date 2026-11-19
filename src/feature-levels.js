@@ -38,6 +38,7 @@
     { id: 'shapesAcross', app: 'both', where: 'Song → Instrument, and Settings; web: the song page, and Settings', name: 'The shapes you know on another instrument: ukulele shapes on a baritone, baritone shapes on a ukulele', level: 'all' }, // 4.99
     { id: 'tempoTime', app: 'desktop', where: 'Song', name: 'Tempo and time', level: 'simple' },
     { id: 'songStrum', app: 'desktop', where: 'Song', name: 'Strum where none is written', level: 'all' },
+    { id: 'strumBuilder', app: 'both', where: 'Song → Build a strum…, Help → Strum Builder, the strum library; web: the song\'s Strum menu', name: 'The strum builder and My strums', level: 'all' }, // 4.99.4
     // ── Desktop: Display ──
     { id: 'style', app: 'desktop', where: 'Display', name: 'Style sets, the Stage look, the stylesheet', level: 'all' },
     { id: 'diagrams', app: 'both', where: 'Display; web: Settings', name: 'Chord diagrams', level: 'simple' },

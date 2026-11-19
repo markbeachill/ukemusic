@@ -2491,6 +2491,7 @@
                   <div class="rib-field" title="The strum played where the song has no {pattern} of its own, or a picking pattern instead (Pick: …). Saved with the song; Default follows Settings → All songs.">
                     <select id="songStrumSelect" aria-label="Strum for unmarked passages" title="The strum played where the song has no {pattern} of its own, or a picking pattern instead (Pick: …). Saved with the song; Default follows Settings → All songs."></select>
                   </div>
+                  <button id="strumBuildButton" class="rib-small" type="button" data-feature="strumBuilder" title="Build your own strum, a slot at a time, hear it and keep it in My strums">Build a strum</button>
                 </div>
               </div>
               <span class="rib-label">Strum where none is written</span>
@@ -3916,9 +3917,15 @@
         </menu>
       </form>
     </dialog>
+    <!-- 4.99.4: the strum builder (src/strum-builder.js) -->
+    <dialog id="strumBuilderDialog" class="strum-dialog" aria-labelledby="strumBuilderTitle">
+      <div class="guide-head"><h2 id="strumBuilderTitle">Strum builder</h2><button id="strumBuilderClose" type="button">Close</button></div>
+      <p class="dialog-note">Build a strum a slot at a time, hear it on this song's instrument, and keep it in My strums: they show wherever you choose a strum (the song's strum, Free Practice), and a song that uses one keeps the pattern itself.</p>
+      <div id="strumBuilderBody"></div>
+    </dialog>
     <dialog id="strumDialog" class="strum-dialog">
       <form id="strumForm" method="dialog">
-        <h2>Strum library</h2>
+        <div class="guide-head"><h2>Strum library</h2><button id="strumLibraryBuild" type="button" title="Build your own strum, a slot at a time, and keep it in My strums">Build your own…</button></div>
         <p class="dialog-note">D = down, U = up, X = chuck (muted), · = rest; a bold stroke is played harder. Hear a pattern on the song's instrument and tempo, add it to the song above the cursor, or make it the default for songs with no pattern.</p>
         <div id="strumTimes" class="strum-times" role="tablist"></div>
         <div id="strumStyles" class="strum-times strum-styles"></div>
@@ -4567,6 +4574,8 @@
 
 
 
+
+
     <div id="karaoke" class="karaoke" hidden role="dialog" aria-label="Karaoke view">
       <div class="karaoke-bar">
         <div class="k-heading-block">
@@ -4605,6 +4614,8 @@
     <script src="src/sheet-extras.js"></script>
     <script src="src/sheet-chord-editor.js"></script>
     <script src="src/feature-levels.js"></script>
+    <script src="src/my-strums.js"></script>
+    <script src="src/strum-builder.js"></script>
     <script src="src/playback-audio.js"></script>
     <script>
       // Error logging: send uncaught errors (with stack traces) to logs/ukemusic.log
@@ -7595,6 +7606,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             if (boxStyle !== 'plain') card.querySelector('.pattern').classList.add('as-box');
             card.querySelector('.desc').textContent = strum.description;
             card.querySelector('.uses').textContent = `Good for: ${strum.uses}`;
+            // 4.99.4: other names, and the instruments it suits best
+            if (strum.aka || strum.suits) card.querySelector('.uses').insertAdjacentElement('afterend', Object.assign(document.createElement('p'), { className: 'uses', textContent: [strum.suits ? `Best on a ${strum.suits}.` : '', strum.aka ? `Also called ${strum.aka}.` : ''].filter(Boolean).join(' ') }));
             card.querySelector('[data-act="hear"]').addEventListener('click', () => hearStrum(strum));
             card.querySelector('[data-act="insert"]').addEventListener('click', () => { document.getElementById('strumDialog').close(); insertStrum(strum); });
             card.querySelector('[data-act="default"]').addEventListener('click', () => makeDefaultStrum(strum));
@@ -7639,6 +7652,86 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           state.userStopped = true;
           if (player && player.playing) player.stop();
           document.getElementById('strumDialog').close();
+        });
+
+        // ── 4.99.4: the strum builder (src/strum-builder.js) and My strums (src/my-strums.js) ──
+        // My strums are kept in Settings (playback.my_strums). A song that uses one keeps the
+        // pattern itself (playback.custom_strum, or a {pattern} line), so it plays the same anywhere.
+        document.head.insertAdjacentHTML('beforeend', `<style id="strumBuilderCss">${window.UkeStrumBuilder.builderCss()}</style>`);
+        function myStrums() {
+          return window.UkeMyStrums.parseMyStrums(state.config?.playback?.my_strums || '');
+        }
+        window.ukeMyStrums = myStrums;   // Free Practice lists them too
+        // A few bars of a pattern on the song's instrument: resolves when it has played (or is stopped)
+        function hearPattern(pattern, beats, tempo) {
+          return new Promise((resolve, reject) => {
+            if (!player) { resolve(); return; }
+            const config = effectiveConfig();
+            const instrument = songInstrument(config).id;
+            const ir = window.ukemusic.parseSong(`{${pattern}}\n[C] [C] [F] [G]`, { useDelimiters: false, rhythmEnabled: true, tablatureEnabled: false });
+            const schedule = window.ukemusic.buildSchedule(ir, {
+              library: chordLibraryFor(instrument), instrument, tempo, beatsPerBar: beats, countIn: false,
+              swing: config?.playback?.swing || 'auto'
+            });
+            player.setSound(soundFor(instrument));
+            player.play(schedule, { onEnd: resolve }).catch(reject);
+          });
+        }
+        async function useStrumForSong(strum) {
+          if (!state.song) { setStatusMessage('Save the song first: the strum is kept with the song.'); return; }
+          const songBeats = Number(effectiveConfig()?.song?.beats_per_bar) || 4;
+          if (strum.beats !== songBeats) {
+            setStatusMessage(`"${strum.name}" is in ${timeLabel(strum.beats)} and this song is in ${timeLabel(songBeats)}: change the song's time first (Tempo and time), or use Add to the words, which changes the time where it goes.`);
+            return;
+          }
+          setAt(state.songSettings, 'playback.default_strum', 'custom');
+          setAt(state.songSettings, 'playback.custom_strum', strum.pattern);
+          await saveSongSettingChange();
+          const own = window.ukemusic.parseSong(getEditorValue(), getParserOptions()).some((n) => n.type === 'rhythm' && !n.stop && !n.feelOnly && n.content);
+          setStatusMessage(`"${strum.name}" (${strum.pattern}) is this song's strum where none is written${own ? '; its own {…} lines still play where they are' : ''}. Save keeps it.`);
+        }
+        let strumBuilder = null;
+        function openStrumBuilder(start) {
+          const dialog = document.getElementById('strumBuilderDialog');
+          if (!strumBuilder) {
+            strumBuilder = window.UkeStrumBuilder.createStrumBuilder(document.getElementById('strumBuilderBody'), {
+              strums: window.ukemusic.strums,
+              tempo: effectiveConfig()?.song?.tempo || 90,
+              getMine: myStrums,
+              async setMine(list) {
+                state.config.playback = state.config.playback || {};
+                state.config.playback.my_strums = window.UkeMyStrums.formatMyStrums(list);
+                await persistConfig();
+                if (state.song) refreshRibbon();
+              },
+              hear: hearPattern,
+              stop: () => { state.userStopped = true; if (player && player.playing) player.stop(); },
+              renderBox: (pattern, beats) => window.ukemusic.renderStrum(pattern, { style: ['comic', 'clean', 'compact'].includes(effectiveConfig()?.rhythm?.style) ? effectiveConfig().rhythm.style : 'compact', beats, timeLabel: timeLabel(beats) }),
+              uses: [
+                { label: 'Use for this song', title: "The song's strum where none is written (Song → Strum where none is written); Save keeps it", run: (strum) => useStrumForSong(strum) },
+                { label: 'Add to the words', title: 'Put it in the song as a {pattern} line, above the cursor', run: (strum) => { dialog.close(); insertStrum(strum); } }
+              ]
+            });
+          } else {
+            strumBuilder.setMine(myStrums());
+          }
+          if (start && start.pattern) strumBuilder.load(start.pattern, start.beats);
+          if (!dialog.open) dialog.showModal();
+        }
+        document.getElementById('strumBuilderClose').addEventListener('click', () => {
+          state.userStopped = true;
+          if (player && player.playing) player.stop();
+          document.getElementById('strumBuilderDialog').close();
+        });
+        document.getElementById('strumBuildButton').addEventListener('click', () => {
+          const config = effectiveConfig();
+          const beats = Number(config?.song?.beats_per_bar) || 4;
+          const rhythm = window.ukemusic.parseSong(getEditorValue(), getParserOptions()).find((n) => n.type === 'rhythm' && !n.stop && !n.feelOnly && n.content && !/\|/.test(n.content));
+          openStrumBuilder({ pattern: rhythm ? rhythm.content.replace(/^\s*\d{1,2}\s*\/\s*\d{1,2}\s+/, '').replace(/^(swing|shuffle|straight|light)\s+/i, '') : window.ukemusic.defaultStrumPattern ? window.ukemusic.defaultStrumPattern(beats, config?.playback?.default_strum || 'simple', config?.playback?.custom_strum || '') : 'D-DU-UDU', beats });
+        });
+        document.getElementById('strumLibraryBuild').addEventListener('click', () => {
+          document.getElementById('strumDialog').close();
+          openStrumBuilder({ pattern: 'D-DU-UDU', beats: strumTime });
         });
 
         // ── Capo ────────────────────────────────────────────────
@@ -9041,7 +9134,11 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         }
         function prStrumOptions(select, preferred, { extra = [] } = {}) {
           const strums = window.ukemusic.strums;
-          select.replaceChildren(...strums.map((s) => new Option(`${s.name} · ${s.pattern}${s.beats !== 4 ? ` (${s.beats}/4)` : ''}`, s.pattern)), ...extra.map(([v, l]) => new Option(l, v)));
+          // 4.99.4: and My strums (the strum builder), after the library
+          const mine = (window.ukeMyStrums ? window.ukeMyStrums() : []).filter((m) => !strums.some((x) => x.pattern === m.pattern));
+          const mineGroup = mine.length ? [Object.assign(document.createElement('optgroup'), { label: 'My strums' })] : [];
+          if (mineGroup.length) mineGroup[0].append(...mine.map((m) => new Option(`${m.name} · ${m.pattern}${m.beats !== 4 ? ` (${m.beats === 6 ? '6/8' : `${m.beats}/4`})` : ''}`, m.pattern)));
+          select.replaceChildren(...strums.map((s) => new Option(`${s.name} · ${s.pattern}${s.beats !== 4 ? ` (${s.beats}/4)` : ''}`, s.pattern)), ...mineGroup, ...extra.map(([v, l]) => new Option(l, v)));
           const pick = strums.find((s) => s.name === preferred || s.pattern === preferred);
           if (pick) select.value = pick.pattern;
         }
@@ -10944,6 +11041,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         function openPractice(exId = null) {
           if (player && player.playing) stopPlayback();
           prSetup();
+          // 4.99.4: My strums may have changed since (the strum builder): list them again, keeping the choice
+          { const sel = $p('prStrum'); const was = sel.value; prStrumOptions(sel, was, { extra: [...sel.options].filter((o) => !o.parentElement || o.parentElement === sel).filter((o) => !window.ukemusic.strums.some((x) => x.pattern === o.value) && !(window.ukeMyStrums ? window.ukeMyStrums() : []).some((m) => m.pattern === o.value)).map((o) => [o.value, o.textContent]) }); if ([...sel.options].some((o) => o.value === was)) sel.value = was; }
           if (!pr.progress) prLoadProgress(); // opened straight into an exercise (from a song): Start needs it (4.60)
           prSyncInstrument();
           const tempo = Number(effectiveConfig()?.song?.tempo);
@@ -12387,6 +12486,9 @@ function showTab(tab) {
             case 'suggest-capo':
               openCapoDialog();
               break;
+            case 'strum-builder':   // 4.99.4
+              openStrumBuilder();
+              break;
             case 'strum-library':
               openStrumLibrary();
               break;
@@ -12840,7 +12942,20 @@ function showTab(tab) {
             option.textContent = found ? `${found.name}  ${window.ukemusic.strumArrows(found.pattern).replace(/>/g, '')}` : strumLabel(id);
             songStrumSelect.appendChild(option);
           }
-          songStrumSelect.value = own || '';
+          // 4.99.4: My strums (the strum builder): choosing one keeps its pattern with the song
+          const songCustom = state.song ? getAt(state.songSettings || {}, 'playback.custom_strum') : '';
+          const mine = myStrums().filter((s) => s.beats === beats);
+          if (mine.length) {
+            const group = document.createElement('optgroup');
+            group.label = 'My strums';
+            for (const s of mine) group.append(new Option(`${s.name}  ${window.ukemusic.strumArrows(s.pattern).replace(/>/g, '')}`, `mine:${s.name}`));
+            songStrumSelect.appendChild(group);
+          }
+          const mineNow = own === 'custom' && songCustom ? mine.find((s) => s.pattern === songCustom) : null;
+          const customOption = [...songStrumSelect.options].find((o) => o.value === 'custom');
+          if (customOption && own === 'custom' && songCustom) customOption.textContent = `My own (${songCustom})`;
+          songStrumSelect.append(new Option('Build a strum…', 'build'));
+          songStrumSelect.value = mineNow ? `mine:${mineNow.name}` : (own || '');
           songStrumSelect.disabled = !state.song;
           let written = document.getElementById('writtenAccompaniment');
           if (!written) { written = document.createElement('small'); written.id = 'writtenAccompaniment'; (songStrumSelect.closest('.rib-col') || songStrumSelect.parentElement).append(written); }
@@ -12851,6 +12966,12 @@ function showTab(tab) {
         }
         songStrumSelect.addEventListener('change', async () => {
           if (!state.song) return;
+          // 4.99.4: the strum builder, and My strums
+          if (songStrumSelect.value === 'build') { refreshSongStrum(effectiveConfig()); document.getElementById('strumBuildButton').click(); return; }
+          if (songStrumSelect.value.startsWith('mine:')) {
+            const strum = myStrums().find((s) => `mine:${s.name}` === songStrumSelect.value);
+            if (strum) { await useStrumForSong(strum); return; }
+          }
           if (songStrumSelect.value) setAt(state.songSettings, 'playback.default_strum', songStrumSelect.value);
           else deleteAt(state.songSettings, 'playback.default_strum');
           await saveSongSettingChange();

@@ -183,12 +183,17 @@ A strum pattern goes in curly brackets on a line of its own. It applies from the
 | `D` | down-strum |
 | `U` | up-strum |
 | `X` | chuck: a strum into strings damped with the palm, a percussive "chk" |
+| `M` | a palm-muted down: the heel of the hand resting on the strings by the bridge, so the chord is short and thuddy |
+| `B` | the chord's bass note on its own (its root, on the lowest string that has it), for boom-chick on a guitar or baritone |
+| `b` | the other bass note (usually the fifth): `B-D-b-D-` is bass, strum, other bass, strum |
 | `-` | a rest: let the strings ring, no strum |
 | `>` | after a stroke: play it harder (`D>-DU-UDU`) |
 
 The pattern is spread evenly over one bar. `D-DU-UDU` is eight slots in a 4/4 bar, so each is half a beat: **1 & 2 & 3 & 4 &**.
 
-On the sheet, a pattern is shown on one line: the time (and the tempo, on the song's first pattern), arrows, letters and, for a common pattern, its name. **Display → Strum patterns → Show as** can show it as a box with the count (1 & 2 &) under the arrows instead. **Help → Strum Patterns** has a library of patterns to hear and add.
+On the sheet, a pattern is shown on one line: the time (and the tempo, on the song's first pattern), arrows, letters and, for a common pattern, its name. **Display → Strum patterns → Show as** can show it as a box with the count (1 & 2 &) under the arrows instead. **Help → Strum Patterns** has a library of patterns to hear and add, and **Song → Build a strum** (**Help → Strum Builder**) builds your own a slot at a time and keeps it in **My strums**.
+
+`B` and `b` are told apart by case; the other letters can be either. On a high-G ukulele, which has no low string, `B` and `b` play its lowest strings.
 
 ### Changing the time
 

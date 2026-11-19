@@ -83,7 +83,7 @@ const DEFAULT_CONFIG = {
     common_chords: 'A A7 Am B7 Bb Bm C C7 D D7 Dm E E7 Em F F7 F#m G G7 Gm Gm7'
   },
   tablature: { enable: true, frets: 'chord', size: 'same', box: false, faint: false, in_print: true },
-  playback: { count_in: true, follow: true, from_cursor: false, default_strum: 'simple', custom_strum: 'D>-DU-UDU', swing: 'auto', voice_count: false, voice_sections: false, voice_chords: false, sound: 'sampled', guitar_sound: 'real', guitar_real: true, karaoke_size: 26 } // 4.72: real guitar recordings
+  playback: { count_in: true, follow: true, from_cursor: false, default_strum: 'simple', custom_strum: 'D>-DU-UDU', my_strums: '', swing: 'auto', voice_count: false, voice_sections: false, voice_chords: false, sound: 'sampled', guitar_sound: 'real', guitar_real: true, karaoke_size: 26 } // 4.72: real guitar recordings
 };
 
 let mainWindow = null;
@@ -439,6 +439,7 @@ function buildMenu() {
       submenu: [
         { label: 'How to Write Songs', accelerator: 'F1', click: () => sendMenuAction('guide') },
         { id: 'song-strums', label: 'Strum Patterns…', click: () => sendMenuAction('strum-library') },
+        { id: 'song-strum-builder', label: 'Strum Builder…', click: () => sendMenuAction('strum-builder') },   // 4.99.4
         { label: 'Keyboard Shortcuts', click: () => sendMenuAction('shortcuts') },
         { type: 'separator' },
         {

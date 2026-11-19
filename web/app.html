@@ -782,6 +782,13 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
   <div id="instrumentHelpBody" class="guide-body"></div>
   <div class="dialog-actions"><button id="instrumentHelpClose" class="btn primary" type="button">Close</button></div>
 </dialog>
+<!-- 4.99.4: the strum builder (src/strum-builder.js) -->
+<dialog id="strumBuilderDialog" class="guide-dialog" aria-labelledby="strumBuilderTitle">
+  <h2 id="strumBuilderTitle">Strum builder</h2>
+  <p class="note">Build a strum a slot at a time, hear it, and keep it in My strums on this device: they show in this song's Strum menu and in Free Practice.</p>
+  <div id="strumBuilderBody"></div>
+  <div class="dialog-actions"><button id="strumBuilderClose" class="btn primary" type="button">Close</button></div>
+</dialog>
 <dialog id="pickHelpDialog" class="guide-dialog">
   <h2>How picking works</h2>
   <div class="guide-body pick-help">
@@ -2090,8 +2097,15 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     try { return setting ? U.shapes.withShapes(base, U.shapes.parseSetting(setting, inst.strings.length)) : base; } catch (_e) { return base; }
   }
   // Strum chosen here (the Strum menu): it takes the place of the song's own strum lines
+  // 4.99.4: My strums (the strum builder), kept on this device: [{ name, beats, pattern }]
+  function myStrums() { return UkeMyStrums.parseMyStrums(look.myStrums || ''); }
+  window.ukeMyStrums = myStrums;   // Free Practice lists them too
+  function strumById(id) {
+    if (String(id).startsWith('mine:')) return myStrums().find((s) => `mine:${s.name}` === id) || null;
+    return U.strums.find((x) => x.id === id) || null;
+  }
   function played(text) {
-    const chosen = prefs().strum && U.strums.find((x) => x.id === prefs().strum);
+    const chosen = prefs().strum && strumById(prefs().strum);
     if (!chosen) return text;
     let ir;
     try { ir = U.parseSong(text, parserOptions); } catch (_e) { return text; }
@@ -2227,8 +2241,10 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     const shown = (pattern) => pattern.replace(/>/g, '›');
     $('strumSel').innerHTML = `<option value="">${esc(own.own ? `Song's own: ${own.name ? `${own.name} ` : ''}${shown(own.pattern)}` : `Usual: ${own.name ? `${own.name} ` : ''}${shown(own.pattern)}`)}</option>`
       + fits.map((x) => `<option value="${x.id}">${esc(x.name)}: ${esc(shown(x.pattern))}</option>`).join('')
+      + (() => { const mine = myStrums().filter((x) => x.beats === p.beats); return mine.length ? `<optgroup label="My strums">${mine.map((x) => `<option value="mine:${esc(x.name)}">${esc(x.name)}: ${esc(shown(x.pattern))}</option>`).join('')}</optgroup>` : ''; })()
+      + '<option value="build" data-feature="strumBuilder">Build a strum…</option>'
       + `<optgroup label="Pick instead of strumming">${U.picking.PATTERNS.map((x) => `<option value="pick:${x.id}">Pick: ${esc(x.name)}</option>`).join('')}</optgroup>`;
-    $('strumSel').value = p.pick ? `pick:${p.pick}` : (fits.some((x) => x.id === p.strum) ? p.strum : '');
+    $('strumSel').value = p.pick ? `pick:${p.pick}` : (strumById(p.strum) && (fits.some((x) => x.id === p.strum) || String(p.strum).startsWith('mine:')) ? p.strum : '');
     $('feelSel').value = p.feel;
   }
   function renderSong() {
@@ -2310,6 +2326,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   }));
   $('strumSel').addEventListener('change', change(() => {
     const v = $('strumSel').value;
+    if (v === 'build') { openStrumBuilder(); return; }   // 4.99.4
     if (v.startsWith('pick:')) { S().pick = v.slice(5); return; }
     S().pick = '';
     if (v) S().strum = v; else delete S().strum;
@@ -2367,6 +2384,49 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   // 4.99.3: playing a song on another instrument: keeping the shapes you know (src/instrument-help.js)
   $('instrumentHelpBtn').addEventListener('click', () => { $('instrumentHelpBody').innerHTML = U.instrumentHelpHtml({ app: 'web' }); $('instrumentHelpDialog').showModal(); });
   $('instrumentHelpClose').addEventListener('click', () => $('instrumentHelpDialog').close());
+  // 4.99.4: the strum builder (src/strum-builder.js), and My strums on this device
+  document.head.insertAdjacentHTML('beforeend', `<style id="strumBuilderCss">${UkeStrumBuilder.builderCss()}</style>`);
+  let strumBuilder = null;
+  function hearPattern(pattern, beats, tempo) {
+    return new Promise((resolve, reject) => {
+      if (!player) { resolve(); return; }
+      const p = view.song ? prefs() : { instrument: myInstrument() };
+      const lib = view.song ? library() : null;
+      const ir = U.parseSong(`{${pattern}}\n[C] [C] [F] [G]`, { useDelimiters: false, rhythmEnabled: true });
+      const schedule = U.buildSchedule(ir, { library: lib, instrument: p.instrument, tempo, beatsPerBar: beats, countIn: false });
+      if (player.playing) player.stop();
+      player.setSound(soundFor(p.instrument));
+      player.play(schedule, { onEnd: resolve }).catch(reject);
+    });
+  }
+  function openStrumBuilder() {
+    const p = view.song ? prefs() : { beats: 4, tempo: 90 };
+    if (!strumBuilder) {
+      strumBuilder = UkeStrumBuilder.createStrumBuilder($('strumBuilderBody'), {
+        strums: U.strums,
+        tempo: p.tempo,
+        getMine: myStrums,
+        setMine(list) { look.myStrums = UkeMyStrums.formatMyStrums(list); local.set('look', look); if (view.song) renderTools(); },
+        hear: hearPattern,
+        stop: () => { if (player && player.playing) player.stop(); },
+        renderBox: (pattern, beats) => U.renderStrum(pattern, { style: 'compact', beats, timeLabel: UkeMyStrums.TIMES[beats] }),
+        uses: [{ label: 'Use for this song', title: 'This song plays it, on this device', run: (strum) => {
+          if (!view.song) return;
+          if (strum.beats !== prefs().beats) { toast(`"${strum.name}" is in ${UkeMyStrums.TIMES[strum.beats]} and this song is in ${UkeMyStrums.TIMES[prefs().beats] || `${prefs().beats}/4`}: change the song's Time first.`); return; }
+          let mine = myStrums().find((s) => s.pattern === strum.pattern && s.beats === strum.beats);
+          if (!mine) { look.myStrums = UkeMyStrums.formatMyStrums(UkeMyStrums.saveStrum(myStrums(), strum)); local.set('look', look); mine = myStrums().find((s) => s.name.toLowerCase() === UkeMyStrums.cleanName(strum.name).toLowerCase()); }
+          change(() => { S().pick = ''; S().strum = `mine:${mine.name}`; })();
+          $('strumBuilderDialog').close();
+        } }]
+      });
+    } else {
+      strumBuilder.setMine(myStrums());
+    }
+    const own = view.song ? writtenStrum() : null;
+    if (own && !/\|/.test(own.pattern)) strumBuilder.load(own.pattern.replace(/^\s*\d{1,2}\s*\/\s*\d{1,2}\s+/, ''), p.beats);
+    $('strumBuilderDialog').showModal();
+  }
+  $('strumBuilderClose').addEventListener('click', () => { if (player && player.playing) player.stop(); $('strumBuilderDialog').close(); });
   $('dlMarkup').checked = local.get('chordproMarkup', false) === true; // 4.63: remembered on this device
   $('dlMarkup').addEventListener('change', () => local.set('chordproMarkup', $('dlMarkup').checked));
   function sheetDocument(stage) {

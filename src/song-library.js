@@ -181,7 +181,7 @@ function pickSongSettings(config) {
     if (p === 'playback.pick' && !require('./picking').pattern(value)) continue;
     if (p === 'playback.tune') { if (value !== true && value !== 'true') continue; value = true; }
     if (p === 'playback.swing' && !['auto', 'straight', 'light', 'swing', 'shuffle'].includes(value)) continue;
-    if (p === 'playback.custom_strum') value = String(value).replace(/[^DUXdux>\- ↓↑✕]/g, '').trim() || undefined;
+    if (p === 'playback.custom_strum') value = String(value).replace(/[^DUXMBbduxm>\- ↓↑✕⇣]/g, '').trim() || undefined;   // 4.99.4: and B b M
     if (p === 'font.size') value = Math.max(8, Math.min(40, Math.round(Number(value) || 0))) || undefined;
     if (p === 'font.bold') value = value === true || value === 'true';
     if (p === 'font.family') value = String(value).replace(/["<>;{}]/g, '').trim() || undefined;

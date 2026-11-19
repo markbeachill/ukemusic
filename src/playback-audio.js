@@ -322,6 +322,8 @@
         // Up-strums catch the strings more lightly
         const level = (sample ? (SAMPLE_SETS[this.samples.set] || SAMPLE_SETS.ukulele).level : 0.22) * event.velocity * (event.direction === 'up' ? 0.8 : 1);
         gain.gain.setValueAtTime(level, time);
+        // 4.99.4: palm-muted (M): the heel of the hand on the strings, so the notes die at once
+        if (event.muted) gain.gain.setTargetAtTime(0, time + 0.025, 0.035);
         source.connect(gain).connect(this.master);
         source.start(time);
         this.voices[string] = { source, gain };

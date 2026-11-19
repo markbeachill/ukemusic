@@ -50,7 +50,7 @@ test('player: sample sets by name; the guitar sound uses the guitar set; the uku
 
 test('desktop: soundFor picks the sound; guitar defaults to the recordings; Steel moves to them once', () => {
   const html = read('index.html');
-  assert.strictEqual((html.match(/player\.setSound\(soundFor\(/g) || []).length, 5);
+  assert.strictEqual((html.match(/player\.setSound\(soundFor\(/g) || []).length, 6); // 4.99.4: and the strum builder's Hear it
   assert.ok(!/guitar_sound === 'nylon' \? 'nylon' : 'steel'/.test(html), 'the old choice is gone');
   // the function itself
   const src = html.slice(html.indexOf('        function soundFor(instrument) {'), html.indexOf('        // 4.71: Easy to read text'));
@@ -76,7 +76,7 @@ test('desktop: soundFor picks the sound; guitar defaults to the recordings; Stee
 test('web player: the recordings for every instrument, Free Practice too; WAVs beside the page', () => {
   const app = read('web/app.html');
   assert.ok(app.includes("return like === 'guitar' || like === 'baritone' ? 'guitar' : 'sampled'; };"), 'guitar and baritone: the guitar recordings (4.99: or what the instrument sounds like)');
-  assert.strictEqual((app.match(/player\.setSound\(soundFor\(/g) || []).length, 3);
+  assert.strictEqual((app.match(/player\.setSound\(soundFor\(/g) || []).length, 4); // 4.99.4: and the strum builder's Hear it
   assert.match(read('web/pr_js.js'), /player\.setSound\(soundFor\(instrument\)\);/);
   const build = read('web/build.js');
   assert.match(build, /\.replace\("dir: 'src\/sounds\/guitar\/'", "dir: 'sounds\/guitar\/'"\)/);

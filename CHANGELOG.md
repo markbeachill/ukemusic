@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.99.4
+
+- **The strum builder** (Song → **Build a strum**, Help → Strum Builder, **Build your own…** in the strum library; the web player: **Build a strum…** in a song's Strum menu). A bar as a row of slots counted 1 & 2 & …: choose the time (4/4, 3/4, 6/8, 2/4) and the slots in a beat (beats, eighths, triplets, sixteenths), pick a stroke (down, up, chuck, muted, bass, other bass, rest, or an accent) and tap the slots to place it, or type the letters. It shows the strum as it looks on the sheet, says how to play it (down on the numbers, up on the "&"s; anything that breaks the down-up motion), and **Hear it** plays a few bars on the song's instrument.
+- **My strums:** name it and save it. They're kept in your settings (the web player: on this device) and show wherever you choose a strum: the song's strum and Free Practice. **Use for this song** makes it the song's strum where none is written; **Add to the words** puts it in as a {…} line. A song keeps the pattern itself, so it plays the same on another computer.
+- **New strokes:** `B`, the chord's bass note on its own (its root on the lowest string that has it), and `b`, the other bass note (usually the fifth), for boom-chick on a guitar or baritone; `M`, a palm-muted down (short and thuddy). On the sheet, in playback and in Free Practice's pictures.
+- **Nine more strums** (27 in all): Down, then down-ups; Alternating bass (boom-chick); Alternating bass with ups; Bass and island; Bossa nova (simple); Palm-muted eighths; Waltz with bass (oom-pah-pah); 6/8 with bass; Polka with bass. The ones for a guitar or baritone say so, and the island strum's guitar names (folk, campfire) are given.
+- How to write songs, and both user guides, explain them.
+
 ## v4.99.3
 
 - **Both names on the sheet.** With **Bari, uke shapes** or **Uke, bari shapes**, each chord diagram says what the shape sounds as under its name (**C**, *sounds G*): on the sheet, in prints and exports, on the Music stand and Session screen, and in the web player. A capo is counted in.

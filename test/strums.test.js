@@ -37,7 +37,7 @@ test('a library strum can be the default; one for another time signature falls b
 
 test('strums by time signature', () => {
   assert.ok(strumsFor(3).every((s) => s.beats === 3));
-  assert.deepStrictEqual(strumsFor(3).map((s) => s.id), ['waltz-simple', 'waltz']);
+  assert.deepStrictEqual(strumsFor(3).map((s) => s.id), ['waltz-simple', 'waltz', 'waltz-bass']); // 4.99.4: and with bass
   assert.strictEqual(strum('nope'), undefined);
 });
 
