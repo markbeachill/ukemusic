@@ -227,7 +227,7 @@ A song with tab? **Tab in steps** teaches it in four steps: the chords strummed,
 
 ## Free Practice
 
-**Free Practice** (the tab on the home screen, or in the web player) has 40 exercises, no song needed: warm-ups, chord changes, strumming, fingerpicking, scales and making up tunes.
+**Free Practice** (the tab on the home screen, or in the web player) has 42 exercises, no song needed: warm-ups, chord changes, strumming, fingerpicking, scales and making up tunes.
 
 ![Free Practice: today's practice, your week, Getting started, and the exercises](../site/img/practice.webp)
 
@@ -240,6 +240,8 @@ A song with tab? **Tab in steps** teaches it in four steps: the chords strummed,
 ![One-minute changes from C to F, with Count by listening on](../site/img/one-minute.webp)
 
 **One-minute changes:** how many clean changes between two chords in a minute? Three beeps to get ready, a beep at ten seconds to go, three to stop. Turn on **Count by listening** and the microphone counts your strums; or count in your head.
+
+**Learn a strum** (in Strumming & rhythm) takes any strum, from the library or **My strums** (see [Strums: the library and the builder](#strums-the-library-and-the-builder)), in four steps: **Listen** (2 bars), **Muted** (4 bars: rest your fretting hand lightly across the strings and copy the movement), **On one chord** (4), then **With the changes** (8). The bar shows each step as it comes. Tick **Add 5 bpm after a clean round** and each **That was clean** makes the next round faster. **Strum switch** plays two strums in turn, two bars each.
 
 More: the [Free Practice guide](https://markbeachill.github.io/ukemusic/practice-guide.html), and the [list of exercises](https://markbeachill.github.io/ukemusic/practice/).
 

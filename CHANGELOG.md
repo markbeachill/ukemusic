@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.99.5
+
+- **Learn a strum** (Free Practice → Strumming & rhythm): any strum, from the library or My strums, in four steps: **Listen** (2 bars, the app louder), **Muted** (4 bars of chucks: copy the hand's movement on muted strings), **On one chord** (4), then **With the changes** (8). The step shows under the bar as it comes. With **Add 5 bpm after a clean round**, each **That was clean** makes the next round faster. **Learn it in steps** is a setting, so it works for any strum.
+- **Strum switch:** two strums in turn, two bars each (**Switch with** under Pattern): change the strum without losing the beat.
+- Free Practice now has 42 exercises; its strum lists name 6/8 strums correctly.
+
 ## v4.99.4
 
 - **The strum builder** (Song → **Build a strum**, Help → Strum Builder, **Build your own…** in the strum library; the web player: **Build a strum…** in a song's Strum menu). A bar as a row of slots counted 1 & 2 & …: choose the time (4/4, 3/4, 6/8, 2/4) and the slots in a beat (beats, eighths, triplets, sixteenths), pick a stroke (down, up, chuck, muted, bass, other bass, rest, or an accent) and tap the slots to place it, or type the letters. It shows the strum as it looks on the sheet, says how to play it (down on the numbers, up on the "&"s; anything that breaks the down-up motion), and **Hear it** plays a few bars on the song's instrument.

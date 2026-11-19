@@ -31,7 +31,7 @@
           const mine = (window.ukeMyStrums ? window.ukeMyStrums() : []).filter((m) => !strums.some((x) => x.pattern === m.pattern));
           const mineGroup = mine.length ? [Object.assign(document.createElement('optgroup'), { label: 'My strums' })] : [];
           if (mineGroup.length) mineGroup[0].append(...mine.map((m) => new Option(`${m.name} · ${m.pattern}${m.beats !== 4 ? ` (${m.beats === 6 ? '6/8' : `${m.beats}/4`})` : ''}`, m.pattern)));
-          select.replaceChildren(...strums.map((s) => new Option(`${s.name} · ${s.pattern}${s.beats !== 4 ? ` (${s.beats}/4)` : ''}`, s.pattern)), ...mineGroup, ...extra.map(([v, l]) => new Option(l, v)));
+          select.replaceChildren(...strums.map((s) => new Option(`${s.name} · ${s.pattern}${s.beats !== 4 ? ` (${s.beats === 6 ? '6/8' : `${s.beats}/4`})` : ''}`, s.pattern)), ...mineGroup, ...extra.map(([v, l]) => new Option(l, v)));
           const pick = strums.find((s) => s.name === preferred || s.pattern === preferred);
           if (pick) select.value = pick.pattern;
         }
@@ -47,6 +47,15 @@
           }
         }
         const prChordOf = (rootSel, typeSel) => `${rootSel.value}${typeSel.value}`;
+        // 4.99.5: the second strum for Strum switch: none, or any strum (keeps its choice)
+        function prStrumOptionsB() {
+          const sel = $p('prStrumB');
+          if (!sel) return;
+          const was = sel.value;
+          prStrumOptions(sel, '', {});
+          sel.prepend(new Option('None: just the one', ''));
+          sel.value = [...sel.options].some((o) => o.value === was) ? was : '';
+        }
         // 4.99.2: the shapes you know on another instrument (Bari, uke shapes) practise as the instrument
         // whose shapes they are: Free Practice drills shapes, so it's the ukulele's
         const prShapesOf = (id) => window.ukemusic.instrument?.(id)?.shapesFrom || id;
@@ -417,6 +426,7 @@
           $p('prClean').hidden = ['oneminute', 'metronome', 'noodle'].includes(e.mode);
           prShowMode(e.mode, { quiet: true });
           for (const row of practiceEl.querySelectorAll('.pr-memory-row')) row.hidden = !e.memory; // 4.61
+          for (const row of practiceEl.querySelectorAll('.pr-strum-extra')) row.hidden = !['learn-strum', 'strum-switch', 'metronome-strum'].includes(e.id); // 4.99.5
           for (const [id, value] of Object.entries(e.set || {})) {
             const el = $p(id);
             if (!el) continue;
@@ -654,7 +664,8 @@
         function prSetup() {
           if (pr.ready) return;
           pr.ready = true;
-          prStrumOptions($p('prStrum'), 'Island (calypso)', { extra: [['ladder', 'Rhythm ladder: quarters → eighths → triplets → sixteenths → syncopation'], ['own', 'Type your own…']] });
+          prStrumOptions($p('prStrum'), 'Island (calypso)', { extra: [['ladder', 'Rhythm ladder: quarters → eighths → triplets → sixteenths → syncopation'], ['own', 'Type your own…']] })
+          prStrumOptionsB();;
           prStrumOptions($p('prBluesStrum'), 'Swing / shuffle');
           prStrumOptions($p('prChangeStrum'), 'Simple');
           prStrumOptions($p('prNoodleStrum'), 'Island (calypso)');
@@ -928,6 +939,19 @@
           const chords = list.length ? list : T.EASY_CHORDS;
           const dynamics = $p('prDynamics').checked;
           const barList = [];
+          const patternB = $p('prStrumB').value;   // 4.99.5: Strum switch
+          if ($p('prStrumSteps').checked && pattern !== 'ladder') {
+            // 4.99.5: Learn a strum: listen, muted, one chord, the changes; round again if it keeps going
+            const rounds = endless ? 1 : Math.max(1, Math.round(count / 18));
+            for (let r = 0; r < rounds; r += 1) barList.push(...PL.strumStepBars(pattern, chords));
+            return { kind: 'chords', pattern, beats: strumBeats(pattern), barList, endless, steps: true };
+          }
+          if (patternB && pattern !== 'ladder' && strumBeats(patternB) === strumBeats(pattern)) {
+            const n = endless ? 32 : Math.max(4, Math.ceil(count / 4) * 4);
+            barList.push(...PL.switchBars(pattern, patternB, chords, n));
+            if (dynamics) barList.forEach((b, i) => { b.level = Math.floor(i / 2) % 2 ? 'loud' : 'soft'; });
+            return { kind: 'chords', pattern, beats: strumBeats(pattern), barList, endless };
+          }
           if (pattern === 'ladder') {
             const rounds = endless ? 4 : Math.max(1, Math.ceil(count / (PL.LADDER.length * 2)));
             for (let r = 0; r < rounds; r += 1) {
@@ -1745,7 +1769,7 @@
               }
               if (pr.mode === 'change') where += ` · changes: ${pr.changesBase + changes}`;
               if (planBar.label && pr.mode === 'strum') where += ` · ${planBar.label}`;
-              if (planBar.level) where += ` · ${planBar.level === 'loud' ? 'LOUD' : 'soft'}`;
+              if (planBar.level && !planBar.step) where += ` · ${planBar.level === 'loud' ? 'LOUD' : 'soft'}`;
               pr.lastWhere = where;
               $p('prWhere').textContent = where;
             }
@@ -1936,6 +1960,7 @@
           prSetup();
           // 4.99.4: My strums may have changed since (the strum builder): list them again, keeping the choice
           { const sel = $p('prStrum'); const was = sel.value; prStrumOptions(sel, was, { extra: [...sel.options].filter((o) => !o.parentElement || o.parentElement === sel).filter((o) => !window.ukemusic.strums.some((x) => x.pattern === o.value) && !(window.ukeMyStrums ? window.ukeMyStrums() : []).some((m) => m.pattern === o.value)).map((o) => [o.value, o.textContent]) }); if ([...sel.options].some((o) => o.value === was)) sel.value = was; }
+          prStrumOptionsB();
           if (!pr.progress) prLoadProgress(); // opened straight into an exercise (from a song): Start needs it (4.60)
           prSyncInstrument();
           const tempo = Number(effectiveConfig()?.song?.tempo);

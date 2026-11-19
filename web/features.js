@@ -46,9 +46,9 @@ const SECTIONS = [
   },
   {
     title: 'Free Practice', link: 'practice/',
-    tone: 'blue', icon: 'metronome', card: { h: 'Free Practice', p: '40 exercises: warm-ups, chord switching, strumming, picking, scales and improvising, with routines.' },
+    tone: 'blue', icon: 'metronome', card: { h: 'Free Practice', p: '42 exercises: warm-ups, chord switching, strumming, picking, scales and improvising, with routines.' },
     rows: [
-      { f: '40 exercises: warm-ups, chords, strumming, picking, scales, improvising', web: true, desktop: true, home: true },
+      { f: '42 exercises: warm-ups, chords, strumming, picking, scales, improvising', web: true, desktop: true, home: true },
       { f: 'Routines, and your progress (days, best tempos, scores)', web: true, desktop: true },
       { f: 'Progressions from memory, major and minor', web: true, desktop: true },
       { f: 'Chords by key, a sheet to print', web: 'Print', desktop: 'PDF' }

@@ -130,12 +130,13 @@ Tap **✎ Edit**. Changes save on this device as you type: there's no Save butto
 
 ## Free Practice
 
-Tap **Free Practice** at the top. It has 40 exercises with no song needed: warm-ups, chord changes, strumming, fingerpicking, scales and making up tunes.
+Tap **Free Practice** at the top. It has 42 exercises with no song needed: warm-ups, chord changes, strumming, fingerpicking, scales and making up tunes.
 
 ![Free Practice: today's practice, your week and Getting started](../site/img/guide/iphone-F1.jpg)
 
 - **Today's practice** picks three exercises for about eight minutes: tap **Start**.
 - **Getting started** suggests an order for a beginner, one new thing at a time.
+- **Learn a strum** takes any strum (the library's, or one of My strums) in steps: listen, copy it on muted strings, on one chord, then with the changes.
 - Each exercise has a moving fretboard and a metronome. **How it works** shows, in pictures, what it does and which finger is which.
 
 ![How it works: one finger for each fret](../site/img/guide/iphone-F14.jpg)

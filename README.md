@@ -35,7 +35,7 @@
 
 **Free, open-source software for learning and practising ukulele**, with baritone ukulele and guitar too, left- or right-handed ([how instruments work](https://markbeachill.github.io/ukemusic/instruments.html)). It's MIT-licensed, with no account, no adverts and no paid version.
 
-- **Practise:** [Free Practice](https://markbeachill.github.io/ukemusic/practice/) has 40 exercises in six categories (warm-ups and finger work, chords and changes, strumming and rhythm, fingerpicking, scales and melody, improvising), shown on a moving fretboard in time with a metronome, plus timed routines and your progress (time practised, days in a row, best tempo, one-minute change scores). It follows your instrument (ukulele, low G, baritone or guitar), and prints a two-page **Chords by key** sheet for it. It's all in the free web player.
+- **Practise:** [Free Practice](https://markbeachill.github.io/ukemusic/practice/) has 42 exercises in six categories (warm-ups and finger work, chords and changes, strumming and rhythm, fingerpicking, scales and melody, improvising), shown on a moving fretboard in time with a metronome, plus timed routines and your progress (time practised, days in a row, best tempo, one-minute change scores). It follows your instrument (ukulele, low G, baritone or guitar), and prints a two-page **Chords by key** sheet for it. It's all in the free web player.
 - **Learn songs:** play along on real ukulele (or nylon guitar) sounds, karaoke, learn a song by heart with the chords fading out, and drills for its hardest chord changes.
 - **Add songs from the web:** paste a chord sheet from any website (or import your club's ChordPro songbook) and get the chord sheet, the shapes, the strum, Stage copies for gigs, and songbooks. Writing your own is just typing the words with the chords in square brackets.
 - **Free, offline, no account:** no adverts, nothing to pay, and your songs stay on your device.
@@ -70,7 +70,7 @@
 | Quizzes on the changes and the chord numbers | ✓ | ✓ |
 | A learn sheet to print | ✓ Print | ✓ PDF |
 | **[Free Practice](https://markbeachill.github.io/ukemusic/practice/)** | | |
-| 40 exercises: warm-ups, chords, strumming, picking, scales, improvising | ✓ | ✓ |
+| 42 exercises: warm-ups, chords, strumming, picking, scales, improvising | ✓ | ✓ |
 | Routines, and your progress (days, best tempos, scores) | ✓ | ✓ |
 | Progressions from memory, major and minor | ✓ | ✓ |
 | Chords by key, a sheet to print | ✓ Print | ✓ PDF |
@@ -136,7 +136,7 @@ The chords go in square brackets where they're played; `{D-DU-UDU}` is the strum
 <td><img src="site/img/tune.webp" alt="Brahms' Lullaby with its tune drawn as notes"><br><b>Fingerpick it, with the tune.</b> Picking patterns, tab, and the tune drawn as notes on a staff.</td>
 </tr>
 <tr>
-<td><img src="site/img/practice.webp" alt="Free Practice: exercises by category"><br><b>Free Practice.</b> 40 exercises: warm-ups, chord changes, strumming, picking, scales and noodling, with routines and your progress.</td>
+<td><img src="site/img/practice.webp" alt="Free Practice: exercises by category"><br><b>Free Practice.</b> 42 exercises: warm-ups, chord changes, strumming, picking, scales and noodling, with routines and your progress.</td>
 <td><img src="site/img/session-setlist.webp" alt="The Session screen: a song on one screen for a group"><br><b>Play together.</b> Setlists, songbook PDFs, and the Session screen: the whole song on the TV for a club night.</td>
 </tr>
 <tr>
@@ -176,7 +176,7 @@ The guides and the changelog are pages of [the website](https://markbeachill.git
   - **Learn**: play from memory (the chords fading), a what-comes-next quiz, trouble spots to loop, the circle of fifths, the song's changes with what each finger does (and practice for each), numbers on the sheet, play it in another key, and a learn sheet (PDF and web page in the song's learn folder). How it works out a song, and how far to trust it: [How ukemusic helps you learn a song](docs/explanation/learning-a-song.md);
   - **Settings**: opens Settings.
 - The hint line under the tabs explains whatever the mouse is over.
-- **Free Practice**: 40 exercises for warm-ups, chords, rhythm, fingerpicking, scales and improvisation, plus timed routines. Exercises open directly with optional help just for that exercise. The last three started exercises, your settings, scores and routines are kept between visits. Phones have a compact playing view; one-minute changes lets you enter your count afterwards. Practice backups are separate from song backups.
+- **Free Practice**: 42 exercises for warm-ups, chords, rhythm, fingerpicking, scales and improvisation, plus timed routines. Exercises open directly with optional help just for that exercise. The last three started exercises, your settings, scores and routines are kept between visits. Phones have a compact playing view; one-minute changes lets you enter your count afterwards. Practice backups are separate from song backups.
 - The library's **Setlists** tab puts songs in order for a gig or club night and makes a **songbook PDF**. Songs can have an artist and tags to search by.
 - A song can be kept in several keys; each shows in the library as "Song (in F)", and **Make this the song's key** rewrites the song itself in a new key.
 - Each song has an **Info** tab (artist, year, written by, album, source, tags, difficulty, original key, time, tempo) beside Song and Notes. A song always opens on the Song tab.

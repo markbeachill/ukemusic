@@ -39,6 +39,9 @@ const EXERCISES = [
   { id: 'downs', cat: 'rhythm', level: 'Beginner', title: 'Down-strums', aim: 'Steady downs on the beat.', mode: 'strum', set: { prStrum: 'D>DDD', prProgression: '', prChords: 'C Am F G', prTempo: 70 } },
   { id: 'down-up', cat: 'rhythm', level: 'Beginner', title: 'Down-up strumming', aim: 'Down on the beat, up in between: keep the hand moving.', mode: 'strum', set: { prStrum: 'D>UDUDUDU', prProgression: '', prChords: 'C Am F G', prTempo: 70 } },
   { id: 'island', cat: 'rhythm', level: 'Beginner', title: 'The island strum (D-DU-UDU)', aim: 'The ukulele strum: down, down-up, up-down-up.', mode: 'strum', set: { prStrum: 'D-DU-UDU', prProgression: '', prChords: 'C Am F G', prTempo: 80 } },
+  // 4.99.5: any strum (the library's, or one of My strums) learnt in steps; two strums in turn
+  { id: 'learn-strum', cat: 'rhythm', level: 'Beginner', title: 'Learn a strum', aim: 'Any strum, the library\'s or your own, in steps: hear it, copy it on muted strings, on one chord, then with the changes.', mode: 'strum', set: { prStrum: 'D-DU-UDU', prStrumSteps: true, prProgression: '', prChords: 'C Am F G', prClick: true, prTempo: 70 } },
+  { id: 'strum-switch', cat: 'rhythm', level: 'Improver', title: 'Strum switch', aim: 'Two strums in turn, two bars each: change the strum without losing the beat.', mode: 'strum', set: { prStrum: 'D-DU-UDU', prStrumB: 'D>UDUDUDU', prProgression: '', prChords: 'C Am F G', prTempo: 70 } },
   { id: 'metronome-strum', cat: 'rhythm', level: 'Beginner', title: 'Strumming to the metronome', aim: 'Any strum, any chords, locked to the click.', mode: 'strum', set: { prClick: true, prTempo: 80 } },
   { id: 'chucking', cat: 'rhythm', level: 'Improver', title: 'Chucking (muted strums)', aim: 'The percussive chuck on 2 and 4.', mode: 'strum', set: { prStrum: 'D-X-D-X-', prProgression: '', prChords: 'C Am F G', prTempo: 75 } },
   { id: 'ladder', cat: 'rhythm', level: 'Intermediate', title: 'Rhythm ladder', aim: 'Quarters, eighths, triplets, sixteenths, then syncopation: two bars each.', mode: 'strum', set: { prStrum: 'ladder', prProgression: '', prChords: 'C', prDynamics: false, prTempo: 60 } },
@@ -353,8 +356,49 @@ function exerciseFor(ex, instrumentId) {
   return { ...ex, ...o, set: { ...set, ...(o.set || {}) } };
 }
 
+// ── 4.99.5: Learn a strum, and Strum switch ──
+/** The strum with every stroke as a chuck (X): the hand's movement, on muted strings */
+function mutedPattern(pattern) {
+  return String(pattern || '').replace(/[DUMBb]/g, 'X');
+}
+/**
+ * Learn a strum in steps: [{ chords, pattern, label, level, step }]. Listen (2 bars, the app
+ * louder), copy it muted (4 bars of chucks), on one chord (4), then with the changes (8).
+ */
+const STRUM_STEPS = [
+  { step: 'listen', label: 'Listen', bars: 2, level: 'loud' },
+  { step: 'muted', label: 'Muted: copy the hand', bars: 4, level: 'soft' },
+  { step: 'one', label: 'On one chord', bars: 4, level: 'soft' },
+  { step: 'changes', label: 'With the changes', bars: 8, level: 'soft' }
+];
+function strumStepBars(pattern, chords = ['C']) {
+  const list = chords.length ? chords : ['C'];
+  const bars = [];
+  for (const st of STRUM_STEPS) {
+    for (let i = 0; i < st.bars; i += 1) {
+      bars.push({
+        chords: [st.step === 'changes' ? list[i % list.length] : list[0]],
+        pattern: st.step === 'muted' ? mutedPattern(pattern) : pattern,
+        label: st.label,
+        level: st.level,
+        step: st.step
+      });
+    }
+  }
+  return bars;
+}
+/** Two strums in turn, two bars each, over the chords: n bars */
+function switchBars(a, b, chords = ['C'], n = 16) {
+  const list = chords.length ? chords : ['C'];
+  return Array.from({ length: n }, (_, i) => {
+    const first = Math.floor(i / 2) % 2 === 0;
+    return { chords: [list[i % list.length]], pattern: first ? a : b, label: first ? 'Strum 1' : 'Strum 2' };
+  });
+}
+
 module.exports = {
   instrumentFamily, exerciseFor,
+  mutedPattern, STRUM_STEPS, strumStepBars, switchBars,
   planText,
   CATEGORIES, EXERCISES, DEFAULT_ROUTINES, exercise, PROGRESSIONS, KEY_NOTES, progressionChords,
   LADDER, strumPlan, applyDynamics, metronomeSchedule, tapTempo, drillChords,

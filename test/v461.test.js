@@ -61,7 +61,7 @@ test('Free Practice: the sheet card in Chords & changes; the desktop saves a PDF
 test('Progressions from memory: the numbers first, the chords later', () => {
   const e = PL.EXERCISES.find((x) => x.id === 'progression-memory');
   assert.ok(e && e.memory && e.mode === 'strum' && e.cat === 'chords');
-  assert.strictEqual(PL.EXERCISES.length, 40);
+  assert.strictEqual(PL.EXERCISES.length, 42);
   assert.match(html, /if \(pr\.memo\) pr\.memoryHide = pr\.from \+ barNo < pr\.memo\.hideBars;/);
   assert.match(html, /const keys = window\.ukemusic\.keyCharts\.chartKeys\(prInstrument\(\)\);/);
 });

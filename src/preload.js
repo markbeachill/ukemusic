@@ -335,6 +335,8 @@ contextBridge.exposeInMainWorld('ukemusic', {
     instrumentFamily: (id) => practiceCatalog.instrumentFamily(id),
     exerciseFor: (ex, instrumentId) => practiceCatalog.exerciseFor(ex, instrumentId),
     planText: (bars) => practiceCatalog.planText(bars),
+    strumStepBars: (pattern, chords) => practiceCatalog.strumStepBars(pattern, chords),   // 4.99.5
+    switchBars: (a, b, chords, n) => practiceCatalog.switchBars(a, b, chords, n),
     applyDynamics: (schedule, levels) => practiceCatalog.applyDynamics(schedule, levels),
     metronomeSchedule: (o) => practiceCatalog.metronomeSchedule(o),
     tapTempo: (times) => practiceCatalog.tapTempo(times),

@@ -13,6 +13,8 @@ const MODES = {
 };
 const EXTRA = {
   'island': 'Say “down, down-up, up-down-up”. Keep moving through the two missed strokes.',
+  'learn-strum': 'Four steps, one after another: Listen (the app plays it louder), Muted (rest your fretting hand lightly across the strings and copy the movement: only the rhythm sounds), On one chord, then With the changes. Choose any strum under Pattern, including My strums. When a round is clean, That was clean makes the next one faster.',
+  'strum-switch': 'Two bars of each strum in turn. Look at the next strum before the change, and keep the hand moving down-up through it.',
   'chucking': 'X means a muted, percussive stroke. Practise dampening the strings before adding chord changes.',
   'ladder': 'Each rhythm lasts two bars. Keep the beat at the same speed when the number of strokes changes.',
   'dynamics': 'Alternate two soft bars and two louder bars. Change the touch rather than gripping harder.',
@@ -50,7 +52,7 @@ const SLIDES = {
   metronome: { name: 'Metronome', steps: [['Set the speed', 'tempo'], ['Play with the click', 'metronome'], ['Tap to match a song', 'tap']], goal: 'weekpic' }
 };
 const TOUR = [
-  { title: 'Welcome to Free Practice', text: 'Forty short exercises for the things songs need: clean chords, steady strumming, picking, scales and making things up. A few minutes most days beats an hour on Sunday.', pic: 'kinds' },
+  { title: 'Welcome to Free Practice', text: 'Forty-two short exercises for the things songs need: clean chords, steady strumming, picking, scales and making things up. A few minutes most days beats an hour on Sunday.', pic: 'kinds' },
   { title: 'Start with Today’s practice', text: 'The card at the top picks three exercises for today, about eight minutes in all. Press Start and it takes you through them one after another.', pic: 'today' },
   { title: 'Getting started', text: 'New to the instrument? There’s a suggested order, one new thing at a time, from your first strum to your first tune. Nothing is locked: play whatever you like.', pic: 'path' },
   { title: 'In an exercise', text: 'Start counts you in, then you play along. Show me plays one slow round for you to watch. Slow is good: − and + set the speed.', pic: 'buttons' },
