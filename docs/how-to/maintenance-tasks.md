@@ -22,7 +22,7 @@ All commands are run in the project folder (`C:\Users\markb\Desktop\cowork\ukemu
 | `npm run build:chords` | Rebuilds the chord libraries from chords-db and the hand-checked shapes | seconds | `src/chords*.json` |
 | `npm run build` | Makes the desktop app, unpacked, to try | a few min | `dist/` |
 | `npm run package:win` | Makes a Windows installer here (`package:mac`, `package:linux` likewise) | a few min | `dist/*.exe` |
-| `node tools/release-notes.js v4.63.0` | Prints that version's CHANGELOG section (GitHub uses it for release notes) | a second | the notes, on screen |
+| `node tools/release-notes.js v4.63.0` | Prints that version's CHANGELOG section, starting with its headline (GitHub uses it for release notes) | a second | the notes, on screen |
 | `git push` | Sends your commits to GitHub: the tests run, and the website is rebuilt and published | ~5 min on GitHub | Actions → Tests, Website |
 | GitHub: Releases → Draft a new release | Builds the installers and adds them and the notes to the release | ~15 min on GitHub | the release page |
 
@@ -227,7 +227,7 @@ Don't use `git add -A` or `git add .`: the folder holds things that must stay ou
 
 1. **The version and its notes** (as in AGENTS.md):
    - raise `"version"` in `package.json`, and in both places at the top of `package-lock.json`;
-   - add a section to the top of `CHANGELOG.md`: `## v4.63.0`, then what changed in plain words (a test fails without it);
+   - add a section to the top of `CHANGELOG.md`. Its heading is the version and a headline, one line saying what's new in plain words: `## v4.63.0 · Bar lines and songbook marks in ChordPro`. If the version only fixes or tidies things, the headline is `Minor updates: fixes and small changes` (the website's What's new page shows it in grey). Under the heading, what changed in plain words (a test fails without the section, or without its headline);
    - add a row to the table in `HANDOVER.md`;
    - add `test/vNNN.test.js` for what changed, and list it in the `test` script.
 2. `npm test`, then commit and push.
@@ -262,5 +262,5 @@ After a release that changes the website, or now and then:
 | GitHub's automatic runs | `.github/workflows/` (`test.yml`, `web.yml`, `release.yml`) |
 | Which file to change for what | `AGENTS.md` |
 | The AI prompts (to change their wording) | `src/ai-prompts/` (plain text; see its README) |
-| Every version's changes, for people | `CHANGELOG.md` (also the website's What's new page) |
+| Every version's changes, for people | `CHANGELOG.md` (also the website's What's new page: one line a version, its headline, the details a click away) |
 | Every version's changes, for developers | `HANDOVER.md` |
