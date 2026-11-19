@@ -20,6 +20,8 @@ function normalise(data) {
   return { ...emptyProgress(), ...data, version: 2,
     recent: [...new Set((Array.isArray(data.recent) ? data.recent : []).filter((x) => typeof x === 'string'))].slice(0, 3),
     preferences: object(data.preferences) ? data.preferences : {},
+    // 4.99.6: Practise a song: the last six songs' plans (src/song-practice.js)
+    songPlans: (Array.isArray(data.songPlans) ? data.songPlans : []).filter((p) => p && typeof p.title === 'string' && p.routine && Array.isArray(p.routine.steps)).slice(0, 6),
     routines: data.routines.filter((r) => r && typeof r.name === 'string' && Array.isArray(r.steps)).map((r) => ({ name: r.name, steps: r.steps.filter((s) => s && typeof s.id === 'string').map((s) => ({ id: s.id, minutes: s.id === 'one-minute' ? 1 : Math.max(1, Math.min(30, Number(s.minutes) || 1)), ...(object(s.settings) ? { settings: s.settings } : {}) })) })) };
 }
 

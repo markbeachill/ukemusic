@@ -471,3 +471,10 @@
 .practice .pr-listen { font: inherit; font-weight: 700; font-size: 15px; padding: 8px 16px; border-radius: 999px; min-height: 44px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text); }
 .practice .pr-listen[aria-pressed="true"] { background: var(--pr-cat); border-color: var(--pr-cat); color: #fff; }
 .pr-count-button small { display: block; font-size: 12px; font-weight: 600; opacity: 0.85; }
+/* 4.99.6: Practise a song */
+.pr-song-plans .pr-song-plan { display: flex; gap: 6px; align-items: stretch; min-width: 0; }
+.pr-song-plans .pr-song-plan .pr-shortcut { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; padding: 8px 12px; }
+.pr-song-plans .pr-song-plan .pr-shortcut span { font-size: 12px; opacity: 0.8; }
+.pr-song-plans #prSongPlanCards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
+.pr-song-plans .pr-song-plan-remove { font-size: 12px; padding: 4px 8px; }
+.pr-song-plans #prSongPlansNote { margin: 0 0 8px; }

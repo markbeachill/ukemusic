@@ -754,6 +754,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
   </div>
   <p class="note">Karaoke with the chords fading: each part's chords the first time it comes and a <b>?</b> after that, then numbers only, then none. Tap a <b>?</b> to see the chord.</p>
   <div class="choice-list">
+    <button type="button" id="learnPracticeBtn" data-feature="songPractice"><strong>Practise this song</strong><span>A plan in Free Practice: its shapes, its two hardest changes, its strum in steps, then its chords in order, a few minutes each</span></button>
     <button type="button" id="learnQuizBtn"><strong>Next chord?</strong><span>The song's changes one at a time: which chord comes next? Hear each answer</span></button>
     <button type="button" id="learnSheetBtn"><strong>Learn sheet</strong><span>One page: the chords and how they feel, the song's parts, the chord map, the changes to practise and the circle. Print it or save it</span></button>
     <button type="button" id="learnPatternsBtn"><strong>Chord patterns</strong><span>The chords as numbers, the parts and the familiar patterns in them</span></button>
@@ -3167,6 +3168,21 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     $('quizDialog').showModal();
   }
   $('learnQuizBtn').addEventListener('click', openQuiz);
+  // 4.99.6: Practise a song: a plan of Free Practice exercises from this song (src/song-practice.js)
+  $('learnPracticeBtn').addEventListener('click', () => {
+    const L = learnSong();
+    const plan = U.songPracticePlan({
+      title: view.song?.title || 'this song',
+      ir: L.ir,
+      changes: U.learn.songChanges(L.ir, L.lib, { tuningName: L.inst.tuningName }),
+      strum: writtenStrum()?.pattern || '',
+      tempo: L.p.tempo
+    });
+    if (!plan.steps.length) { toast('This song has no chords to practise yet.'); return; }
+    $('learnDialog').close();
+    stop();
+    window.ukemusicPractiseSong(plan);
+  });
   $('quizClose').addEventListener('click', () => { if (player && player.playing) player.stop(); $('quizDialog').close(); });
 
   // The learn sheet, shown here: print it (or Save as PDF) or download the page

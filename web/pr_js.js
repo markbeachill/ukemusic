@@ -270,6 +270,7 @@
           prRenderToday();
           prRenderWeek();
           prRenderPath();
+          prRenderSongPlans();
           for (const holder of practiceEl.querySelectorAll('.pr-foot-pic[data-pic]')) if (!holder.firstChild) holder.innerHTML = PIC.named(holder.dataset.pic);
           prUpdateMobile();
           $p('prCats').replaceChildren(...PL.CATEGORIES.map((c) => {
@@ -593,6 +594,39 @@
           draw();
           holder.replaceChildren(form);
         }
+        // ── 4.99.6: Practise a song (src/song-practice.js): a song's plan runs as a routine, and is kept ──
+        function prSongPractice(plan) {
+          if (!plan || !plan.steps || !plan.steps.length) return;
+          openPractice();
+          if (!pr.progress) prLoadProgress();
+          const others = (pr.progress.songPlans || []).filter((p) => p.title !== plan.title);
+          pr.progress.songPlans = [{ title: plan.title, date: todayKey(), routine: plan }, ...others].slice(0, 6);
+          prSaveProgress();
+          pr.routine = { routine: plan, step: 0 };
+          prRoutineStep();
+        }
+        function prRenderSongPlans() {
+          const plans = (pr.progress && pr.progress.songPlans) || [];
+          $p('prSongPlanCards').replaceChildren(...plans.map((p) => {
+            const row = document.createElement('div');
+            row.className = 'pr-song-plan';
+            const go = document.createElement('button');
+            go.type = 'button';
+            go.className = 'pr-shortcut';
+            go.title = (p.routine.steps || []).map((st, i) => `${i + 1}. ${st.label || st.id}`).join('\n');
+            go.innerHTML = `<strong>${escapeHtmlText(p.title)}</strong><span>${p.routine.steps.length} steps · about ${p.routine.steps.reduce((n, st) => n + (st.minutes || 2), 0)} min${p.date ? ` · last ${p.date.slice(5).split('-').reverse().join('/')}` : ''}</span>`;
+            go.addEventListener('click', () => prSongPractice({ ...p.routine }));
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'pr-song-plan-remove';
+            remove.textContent = 'Remove';
+            remove.title = `Take ${p.title} off this list`;
+            remove.addEventListener('click', () => { pr.progress.songPlans = plans.filter((x) => x !== p); prSaveProgress(); prRenderSongPlans(); });
+            row.append(go, remove);
+            return row;
+          }));
+        }
+        window.ukemusicPractiseSong = prSongPractice;
         // A routine runs its exercises one after another, each for its minutes (counted while playing)
         function prRoutineStart(index) {
           const routine = (pr.progress.routines || [])[index];
@@ -610,6 +644,19 @@
           }
           if (!PL.EXERCISES.some((e) => e.id === step.id)) { r.step += 1; prRoutineStep(); return; }
           prOpen(step.id, { keepGoing: true, settings: step.settings || {} });
+          // 4.99.6: Practise a song: a step can bring its change (from, to) and the song's strum
+          if (step.from && step.to) {
+            prChordSelects($p('prFromRoot'), $p('prFromType'), step.from);
+            prChordSelects($p('prToRoot'), $p('prToType'), step.to);
+            for (const id of ['prFromRoot', 'prFromType', 'prToRoot', 'prToType']) $p(id).dispatchEvent(new Event('change'));
+          }
+          if (step.strum) {
+            const sel = $p('prStrum');
+            if ([...sel.options].some((o) => o.value === step.strum)) sel.value = step.strum;
+            else { sel.value = 'own'; $p('prStrumOwn').value = step.strum; }
+            sel.dispatchEvent(new Event('change'));
+          }
+          if (step.from || step.strum) prPreview();
           r.started = false;
           r.finishRound = false;
           // 4.88: a few seconds to read the new exercise and move your hand before it starts
@@ -636,7 +683,7 @@
           if (!step) return;
           const over = step.minutes * 60 - prSessionSeconds(); // below 0: time's up, finishing the round
           const left = Math.max(0, over);
-          $p('prRoutineText').textContent = `${r.routine.name} · ${r.step + 1} of ${r.routine.steps.length} · ${r.finishRound ? 'last round' : `${fmtClock(left)} left`}`;
+          $p('prRoutineText').textContent = `${r.routine.name} · ${r.step + 1} of ${r.routine.steps.length}${step.label ? `: ${step.label}` : ''} · ${r.finishRound ? 'last round' : `${fmtClock(left)} left`}`;
           // 4.88: time's up: finish the round you're in (up to half a minute more), then go on
           if (r.started && left <= 0 && pr.mode !== 'oneminute') {
             if (player?.playing && pr.schedule && over > -30 && !r.finishRound) r.finishRound = true;
@@ -657,7 +704,7 @@
           $p('prRoutineBar').hidden = true;
           if (player && player.playing) prStop();
           prShowHome();
-          if (finished && r) { const done = document.createElement('p'); done.className = 'pr-well-done'; done.setAttribute('role', 'status'); done.textContent = `Finished: ${r.routine.name}. Well done!`; $p('prTodayCard').prepend(done); $p('prHome').scrollTop = 0; }
+          if (finished && r) { const done = document.createElement('p'); done.className = 'pr-well-done'; done.setAttribute('role', 'status'); done.textContent = r.routine.after ? `Finished: ${r.routine.name}. ${r.routine.after}` : `Finished: ${r.routine.name}. Well done!`; $p('prTodayCard').prepend(done); $p('prHome').scrollTop = 0; }
         }
 
         // ── Setup (once) ──

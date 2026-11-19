@@ -2049,6 +2049,13 @@
 .practice .pr-listen { font: inherit; font-weight: 700; font-size: 15px; padding: 8px 16px; border-radius: 999px; min-height: 44px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text); }
 .practice .pr-listen[aria-pressed="true"] { background: var(--pr-cat); border-color: var(--pr-cat); color: #fff; }
 .pr-count-button small { display: block; font-size: 12px; font-weight: 600; opacity: 0.85; }
+/* 4.99.6: Practise a song */
+.pr-song-plans .pr-song-plan { display: flex; gap: 6px; align-items: stretch; min-width: 0; }
+.pr-song-plans .pr-song-plan .pr-shortcut { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; padding: 8px 12px; }
+.pr-song-plans .pr-song-plan .pr-shortcut span { font-size: 12px; opacity: 0.8; }
+.pr-song-plans #prSongPlanCards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
+.pr-song-plans .pr-song-plan-remove { font-size: 12px; padding: 4px 8px; }
+.pr-song-plans #prSongPlansNote { margin: 0 0 8px; }
       /* ── Karaoke view ─────────────────────────────────── */
       .karaoke {
         position: fixed;
@@ -2858,6 +2865,13 @@
                 <button id="learnPlayButton" class="rib-button" type="button" data-icon="karaoke" title="Play with the selected amount of chord help. Click a hidden chord (?) to reveal it and mark it for practice.">Play with fewer chords</button>
               </div>
               <span class="rib-label">Play from memory</span>
+            </div>
+            <!-- 4.99.6: Practise a song (src/song-practice.js) -->
+            <div class="rib-group" data-feature="songPractice">
+              <div class="rib-items">
+                <button id="songPracticeButton" class="rib-button rib-button-wide" type="button" data-icon="metronome" title="A practice plan from this song, in Free Practice: its shapes, its two hardest changes, its strum in steps, then its chords in order, a few minutes each">Practise this song</button>
+              </div>
+              <span class="rib-label">Practise</span>
             </div>
             <div class="rib-group" data-feature="learnQuiz">
               <div class="rib-items">
@@ -4278,6 +4292,8 @@
             <section id="prWeek" class="pr-week-card" aria-label="Your week"></section>
           </div>
           <section id="prRecent" class="pr-recent" hidden><h2>Carry on with</h2><div id="prRecentCards" class="pr-shortcuts"></div></section>
+          <!-- 4.99.6: Practise a song -->
+          <section id="prSongPlans" class="pr-recent pr-song-plans"><h2>Practise a song</h2><p class="muted" id="prSongPlansNote">Open a song, then <b>Learn → Practise this song</b>: its shapes, its hardest changes, its strum in steps, then its chords in order, one after another. Songs you've practised come back here.</p><div id="prSongPlanCards" class="pr-shortcuts"></div></section>
           <details id="prPathSection" class="pr-path-section" open>
             <summary><span class="pr-path-title">Getting started</span> <span id="prPathNote" class="pr-path-note"></span></summary>
             <p class="muted pr-path-lead">New to the instrument? Here’s a suggested order, one new thing at a time. Nothing is locked: play any exercise you like. A step is ticked when you’ve played it cleanly.</p>
@@ -4552,6 +4568,9 @@
         <div class="pr-slide-nav"><button type="button" id="prSlideBack">← Back</button><span id="prSlideDots" class="pr-slide-dots" aria-hidden="true"></span><button type="button" id="prSlideNext" class="primary" autofocus>Next →</button></div>
       </form>
     </dialog>
+
+
+
 
 
 
@@ -9384,6 +9403,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           prRenderToday();
           prRenderWeek();
           prRenderPath();
+          prRenderSongPlans();
           for (const holder of practiceEl.querySelectorAll('.pr-foot-pic[data-pic]')) if (!holder.firstChild) holder.innerHTML = PIC.named(holder.dataset.pic);
           prUpdateMobile();
           $p('prCats').replaceChildren(...PL.CATEGORIES.map((c) => {
@@ -9707,6 +9727,39 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           draw();
           holder.replaceChildren(form);
         }
+        // ── 4.99.6: Practise a song (src/song-practice.js): a song's plan runs as a routine, and is kept ──
+        function prSongPractice(plan) {
+          if (!plan || !plan.steps || !plan.steps.length) return;
+          openPractice();
+          if (!pr.progress) prLoadProgress();
+          const others = (pr.progress.songPlans || []).filter((p) => p.title !== plan.title);
+          pr.progress.songPlans = [{ title: plan.title, date: todayKey(), routine: plan }, ...others].slice(0, 6);
+          prSaveProgress();
+          pr.routine = { routine: plan, step: 0 };
+          prRoutineStep();
+        }
+        function prRenderSongPlans() {
+          const plans = (pr.progress && pr.progress.songPlans) || [];
+          $p('prSongPlanCards').replaceChildren(...plans.map((p) => {
+            const row = document.createElement('div');
+            row.className = 'pr-song-plan';
+            const go = document.createElement('button');
+            go.type = 'button';
+            go.className = 'pr-shortcut';
+            go.title = (p.routine.steps || []).map((st, i) => `${i + 1}. ${st.label || st.id}`).join('\n');
+            go.innerHTML = `<strong>${escapeHtmlText(p.title)}</strong><span>${p.routine.steps.length} steps · about ${p.routine.steps.reduce((n, st) => n + (st.minutes || 2), 0)} min${p.date ? ` · last ${p.date.slice(5).split('-').reverse().join('/')}` : ''}</span>`;
+            go.addEventListener('click', () => prSongPractice({ ...p.routine }));
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'pr-song-plan-remove';
+            remove.textContent = 'Remove';
+            remove.title = `Take ${p.title} off this list`;
+            remove.addEventListener('click', () => { pr.progress.songPlans = plans.filter((x) => x !== p); prSaveProgress(); prRenderSongPlans(); });
+            row.append(go, remove);
+            return row;
+          }));
+        }
+        window.ukemusicPractiseSong = prSongPractice;
         // A routine runs its exercises one after another, each for its minutes (counted while playing)
         function prRoutineStart(index) {
           const routine = (pr.progress.routines || [])[index];
@@ -9724,6 +9777,19 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           }
           if (!PL.EXERCISES.some((e) => e.id === step.id)) { r.step += 1; prRoutineStep(); return; }
           prOpen(step.id, { keepGoing: true, settings: step.settings || {} });
+          // 4.99.6: Practise a song: a step can bring its change (from, to) and the song's strum
+          if (step.from && step.to) {
+            prChordSelects($p('prFromRoot'), $p('prFromType'), step.from);
+            prChordSelects($p('prToRoot'), $p('prToType'), step.to);
+            for (const id of ['prFromRoot', 'prFromType', 'prToRoot', 'prToType']) $p(id).dispatchEvent(new Event('change'));
+          }
+          if (step.strum) {
+            const sel = $p('prStrum');
+            if ([...sel.options].some((o) => o.value === step.strum)) sel.value = step.strum;
+            else { sel.value = 'own'; $p('prStrumOwn').value = step.strum; }
+            sel.dispatchEvent(new Event('change'));
+          }
+          if (step.from || step.strum) prPreview();
           r.started = false;
           r.finishRound = false;
           // 4.88: a few seconds to read the new exercise and move your hand before it starts
@@ -9750,7 +9816,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           if (!step) return;
           const over = step.minutes * 60 - prSessionSeconds(); // below 0: time's up, finishing the round
           const left = Math.max(0, over);
-          $p('prRoutineText').textContent = `${r.routine.name} · ${r.step + 1} of ${r.routine.steps.length} · ${r.finishRound ? 'last round' : `${fmtClock(left)} left`}`;
+          $p('prRoutineText').textContent = `${r.routine.name} · ${r.step + 1} of ${r.routine.steps.length}${step.label ? `: ${step.label}` : ''} · ${r.finishRound ? 'last round' : `${fmtClock(left)} left`}`;
           // 4.88: time's up: finish the round you're in (up to half a minute more), then go on
           if (r.started && left <= 0 && pr.mode !== 'oneminute') {
             if (player?.playing && pr.schedule && over > -30 && !r.finishRound) r.finishRound = true;
@@ -9771,7 +9837,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           $p('prRoutineBar').hidden = true;
           if (player && player.playing) prStop();
           prShowHome();
-          if (finished && r) { const done = document.createElement('p'); done.className = 'pr-well-done'; done.setAttribute('role', 'status'); done.textContent = `Finished: ${r.routine.name}. Well done!`; $p('prTodayCard').prepend(done); $p('prHome').scrollTop = 0; }
+          if (finished && r) { const done = document.createElement('p'); done.className = 'pr-well-done'; done.setAttribute('role', 'status'); done.textContent = r.routine.after ? `Finished: ${r.routine.name}. ${r.routine.after}` : `Finished: ${r.routine.name}. Well done!`; $p('prTodayCard').prepend(done); $p('prHome').scrollTop = 0; }
         }
 
         // ── Setup (once) ──
@@ -11889,6 +11955,21 @@ function showTab(tab) {
           document.getElementById('learnChangesDialog').showModal();
         }
         document.getElementById('learnChangesButton').addEventListener('click', openLearnChanges);
+        // 4.99.6: Practise a song: a plan of Free Practice exercises from this song (src/song-practice.js)
+        document.getElementById('songPracticeButton').addEventListener('click', () => {
+          const L = learnSong();
+          const config = L.config;
+          const plan = window.ukemusic.songPracticePlan({
+            title: state.song?.title || state.song?.folder || 'this song',
+            ir: L.ir,
+            changes: window.ukemusic.learn.songChanges(L.ir, L.library, { tuningName: L.instrument.tuningName }),
+            strum: window.ukemusic.defaultStrumPattern ? window.ukemusic.defaultStrumPattern(Number(config?.song?.beats_per_bar) || 4, config?.playback?.default_strum || 'simple', config?.playback?.custom_strum || '') : '',
+            tempo: Number(config?.song?.tempo) || 90
+          });
+          if (!plan.steps.length) { setStatusMessage('This song has no chords to practise yet.'); return; }
+          if (player && player.playing) stopPlayback();
+          window.ukemusicPractiseSong(plan);
+        });
         document.getElementById('learnChangesClose').addEventListener('click', () => document.getElementById('learnChangesDialog').close());
         document.getElementById('learnChangesDrill').addEventListener('click', () => {
           document.getElementById('learnChangesDialog').close();

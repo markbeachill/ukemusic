@@ -196,6 +196,7 @@ The **Learn** tab helps you play a song without the sheet. Its buttons, from lef
 
 - **Play with fewer chords** (From memory): karaoke with the chords fading. Each part shows its chords the first time it comes, then a **?**; next time try the numbers only, then nothing. The ones you peek at become your trouble spots.
 - **Next chord?** A quiz on each change: you're playing C, what comes next? Hear each answer before you choose.
+- **Practise this song:** a plan in Free Practice made from the song, a few minutes a step, one after another: its chord shapes, its two hardest changes, its strum in steps (at 70% of its tempo), then its chords in order with the strum (85%). Then play the song itself from memory. Free Practice keeps the plan: **Practise a song**, on its home screen, starts it again.
 - **Practise trouble spots:** the places you peeked at or got wrong, looped slowly.
 - **Changes:** every chord change in the song, hardest first, with what each finger does, and a drill or a one-minute challenge for each. **Shapes** drills the song's chord shapes in Free Practice.
 - **Numbers** on the sheet (I, IV, V…), and **Play in new key** from memory.
@@ -240,6 +241,8 @@ A song with tab? **Tab in steps** teaches it in four steps: the chords strummed,
 ![One-minute changes from C to F, with Count by listening on](../site/img/one-minute.webp)
 
 **One-minute changes:** how many clean changes between two chords in a minute? Three beeps to get ready, a beep at ten seconds to go, three to stop. Turn on **Count by listening** and the microphone counts your strums; or count in your head.
+
+**Practise a song**, near the top, lists the songs you've practised with **Learn → Practise this song** (see [Learning a song by heart](#learning-a-song-by-heart)): press one to go through its plan again.
 
 **Learn a strum** (in Strumming & rhythm) takes any strum, from the library or **My strums** (see [Strums: the library and the builder](#strums-the-library-and-the-builder)), in four steps: **Listen** (2 bars), **Muted** (4 bars: rest your fretting hand lightly across the strings and copy the movement), **On one chord** (4), then **With the changes** (8). The bar shows each step as it comes. Tick **Add 5 bpm after a clean round** and each **That was clean** makes the next round faster. **Strum switch** plays two strums in turn, two bars each.
 

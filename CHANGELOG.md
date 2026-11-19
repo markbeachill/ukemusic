@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.99.6
+
+- **Practise this song** (Learn tab; the web player: Learn): a plan in Free Practice made from the song, run one step after another like a routine, a few minutes each: its chord shapes (the shapes drill), its two hardest changes (chord switching), its strum in steps (Learn a strum, at 70% of the song's tempo, on its first chords), then its chords in order with its strum (85%). The bar at the top says which step it's on; **Next ▶** skips one. At the end it says what's next: the song itself, from memory, at its own speed.
+- **Practise a song** on Free Practice's home screen lists the last six songs you've practised: press one to go through its plan again. They're kept with your practice progress.
+
 ## v4.99.5
 
 - **Learn a strum** (Free Practice → Strumming & rhythm): any strum, from the library or My strums, in four steps: **Listen** (2 bars, the app louder), **Muted** (4 bars of chucks: copy the hand's movement on muted strings), **On one chord** (4), then **With the changes** (8). The step shows under the bar as it comes. With **Add 5 bpm after a clean round**, each **That was clean** makes the next round faster. **Learn it in steps** is a setting, so it works for any strum.
