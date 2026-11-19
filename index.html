@@ -1536,6 +1536,7 @@
       [data-ribbon-panel="pick"] select { max-width: 230px; }
       #pickWritePatternNote { display: block; margin-top: 4px; }
       .pick-help-dialog { width: min(680px, 94vw); max-height: calc(100vh - 32px); }
+      .rib-strum-row { display: flex; gap: 8px; align-items: center; }   /* 4.99.8: Build a strum and what's written, on one row */
       .instrument-help-table { border-collapse: collapse; font-size: 13px; margin: 4px 0 8px; }
       .instrument-help-table th, .instrument-help-table td { text-align: left; vertical-align: top; padding: 5px 8px; border-bottom: 1px solid var(--border); }
       .table-scroll { overflow-x: auto; }
@@ -2498,7 +2499,7 @@
                   <div class="rib-field" title="The strum played where the song has no {pattern} of its own, or a picking pattern instead (Pick: …). Saved with the song; Default follows Settings → All songs.">
                     <select id="songStrumSelect" aria-label="Strum for unmarked passages" title="The strum played where the song has no {pattern} of its own, or a picking pattern instead (Pick: …). Saved with the song; Default follows Settings → All songs."></select>
                   </div>
-                  <button id="strumBuildButton" class="rib-small" type="button" data-feature="strumBuilder" title="Build your own strum, a slot at a time, hear it and keep it in My strums">Build a strum</button>
+                  <div class="rib-strum-row"><button id="strumBuildButton" class="rib-small" type="button" data-feature="strumBuilder" title="Build your own strum, a slot at a time, hear it and keep it in My strums">Build a strum</button></div>
                 </div>
               </div>
               <span class="rib-label">Strum where none is written</span>
@@ -13071,7 +13072,7 @@ function showTab(tab) {
           songStrumSelect.value = mineNow ? `mine:${mineNow.name}` : (own || '');
           songStrumSelect.disabled = !state.song;
           let written = document.getElementById('writtenAccompaniment');
-          if (!written) { written = document.createElement('small'); written.id = 'writtenAccompaniment'; (songStrumSelect.closest('.rib-col') || songStrumSelect.parentElement).append(written); }
+          if (!written) { written = document.createElement('small'); written.id = 'writtenAccompaniment'; (document.querySelector('.rib-strum-row') || songStrumSelect.closest('.rib-col') || songStrumSelect.parentElement).append(written); }
           const rhythm = window.ukemusic.parseSong(getEditorValue(), getParserOptions()).find(n => n.type === 'rhythm' && !n.stop && !n.feelOnly && n.content);
           written.textContent = rhythm ? 'As written: ' + (rhythm.strumName || rhythm.content) : 'No explicit pattern; uses fallback';
           document.getElementById('rekeyButton').disabled = !state.song || !state.transpose;

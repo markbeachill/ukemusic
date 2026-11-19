@@ -152,6 +152,8 @@ The song then sounds five semitones lower (or higher) than written, which is usu
 
 **Or let ukemusic keep the names you know** (with all features). The **Instrument** menu has **Bari, uke shapes** (your ukulele shapes on a baritone; it sounds a fourth lower) and **Uke, bari shapes** (your baritone or guitar shapes on a ukulele; it sounds a fourth higher). The sheet keeps the chord names you know, each diagram says what it sounds as (**C**, *sounds G*), and the line under the song gives the key it sounds in ("Key C · sounds in G"). More in [Instruments](../INSTRUMENTS.md#the-shapes-you-know-on-the-other-instrument-499).
 
+![Bari, uke shapes: the ukulele's chords and shapes, each saying what it sounds as on the baritone](../site/img/shapes-sounds.webp)
+
 A shape can be a slightly different chord on the other instrument: the ukulele's F shape (2010) on a baritone is C with its E at the bottom, and its D7 shape (2020) is an A7 with no A. For strumming along, that's fine.
 
 **Moving the key for other reasons:** to sing it higher or lower, or for easier shapes on the instrument you've chosen (or try **Capo → Suggest**).
@@ -163,6 +165,8 @@ A song's strum is written in it as a line like `{D-DU-UDU}` (see [Writing a song
 - **The strum library** (**Write → Strums**, or **Help → Strum Patterns**) has 27 strums by time and style, each with how to play it and what it suits: hear one, add it to the song, or make it the default. Some are for a guitar or baritone: they play the chord's bass note on its own (**B**, and **b** for the other bass note), as in **Alternating bass (boom-chick)**.
 - **The strum builder** (**Song → Build a strum**, **Help → Strum Builder**, or **Build your own…** in the library) builds your own. Choose the time (4/4, 3/4, 6/8 or 2/4) and how many slots a beat has (eighths for most strums), pick a stroke (down, up, chuck, muted, bass, other bass, rest, or an accent) and tap the slots to place it. The count (1 & 2 & …) is under the slots, and notes under the bar say how to play it: down on the numbers, up on the "&"s. **Hear it** plays a few bars on the song's instrument.
 - **My strums:** give it a name and **Save to My strums**. They're kept in your settings and show wherever you choose a strum: **Strum where none is written**, and Free Practice. **Use for this song** makes it the song's strum; **Add to the words** puts it in the song as a `{…}` line. A song that uses one keeps the pattern itself, so it plays the same on another computer.
+
+![The strum builder: Alternating bass (B-D-b-D-) built a slot at a time, with the count and how to play it](../site/img/strum-builder.webp)
 
 ## How the sheet looks
 
@@ -207,6 +211,8 @@ The **Learn** tab helps you play a song without the sheet. Its buttons, from lef
 
 ![Next chord?: four chords to choose from, each with a button to hear it](../site/img/learn-quiz.webp)
 
+![Practise this song: the plan running in Free Practice, on its first step, the song's chord shapes](../site/img/song-practice.webp)
+
 ![Changes: the hardest first, with the two shapes and finger tips for each](../site/img/changes.webp)
 
 How Learn works things out, and how far to trust it: [How Learn works](explanation/how-learn-works.md).
@@ -245,6 +251,8 @@ A song with tab? **Tab in steps** teaches it in four steps: the chords strummed,
 **Practise a song**, near the top, lists the songs you've practised with **Learn → Practise this song** (see [Learning a song by heart](#learning-a-song-by-heart)): press one to go through its plan again.
 
 **Learn a strum** (in Strumming & rhythm) takes any strum, from the library or **My strums** (see [Strums: the library and the builder](#strums-the-library-and-the-builder)), in four steps: **Listen** (2 bars), **Muted** (4 bars: rest your fretting hand lightly across the strings and copy the movement), **On one chord** (4), then **With the changes** (8). The bar shows each step as it comes. Tick **Add 5 bpm after a clean round** and each **That was clean** makes the next round faster. **Strum switch** plays two strums in turn, two bars each.
+
+![Learn a strum: the second step, the strum as chucks on muted strings](../site/img/learn-strum.webp)
 
 More: the [Free Practice guide](https://markbeachill.github.io/ukemusic/practice-guide.html), and the [list of exercises](https://markbeachill.github.io/ukemusic/practice/).
 

@@ -232,6 +232,31 @@ async function desktop() {
       await page.evaluate(() => { if (!document.getElementById('prListen').checked) document.getElementById('prListenToggle').click(); }); await page.waitForTimeout(600);
       await shot('one-minute'); await page.click('#practiceClose').catch(() => {}); await page.waitForTimeout(500);
     });
+    // 4.99.8: the strum builder, with Alternating bass built (Song → Build a strum)
+    await scene('strum-builder', async () => {
+      await open('The Wild Rover'); await tab('ThisSong'); await page.click('#strumBuildButton'); await page.waitForSelector('#strumBuilderDialog[open]');
+      await page.click('.sbd-chips button:has-text("4/4")'); await page.fill('#sbdPattern', 'B-D-b-D-'); await page.fill('#sbdName', 'Boom chick'); await page.waitForTimeout(600);
+      await shot('strum-builder'); await closeDialogs();
+    });
+    // 4.99.8: Learn a strum, at its second step (muted: copy the hand)
+    await scene('learn-strum', async () => {
+      await practiceHome();
+      await page.evaluate(() => window.ukemusicPractice('learn-strum')); await page.waitForTimeout(1200);
+      await page.evaluate(() => { const d = document.getElementById('prHelpDialog'); if (d && d.open) d.close(); });
+      await page.evaluate(() => document.getElementById('prStart').click()); await page.waitForTimeout(13000);
+      await shot('learn-strum'); await page.evaluate(() => document.getElementById('prStop').click()); await page.click('#practiceClose').catch(() => {}); await page.waitForTimeout(500);
+    });
+    // 4.99.8: Learn → Practise this song: the plan running in Free Practice (its first step, the shapes)
+    await scene('song-practice', async () => {
+      await open('The Wild Rover'); await tab('Learn'); await page.click('#songPracticeButton'); await page.waitForTimeout(2500);
+      await page.evaluate(() => { const d = document.getElementById('prHelpDialog'); if (d && d.open) d.close(); }); await page.waitForTimeout(3500);
+      await shot('song-practice'); await page.evaluate(() => document.getElementById('prRoutineEnd').click()); await page.click('#practiceClose').catch(() => {}); await page.waitForTimeout(500);
+    });
+    // 4.99.8: Bari, uke shapes: the ukulele's chords, each saying what it sounds as (changes nothing: Discard)
+    await scene('shapes-sounds', async () => {
+      await open('The Wild Rover'); await tab('ThisSong'); await page.selectOption('#instrumentSelect', 'ukeonbaritone'); await page.waitForTimeout(1800);
+      await shot('shapes-sounds'); await page.click('#barDiscard').catch(() => {}); await page.waitForTimeout(800);
+    });
     // the Session screen running a setlist: song 2 of 5
     await scene('session-setlist', async () => {
       await clubNight();

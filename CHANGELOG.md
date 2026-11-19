@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.99.8 · Minor updates: fixes and small changes
+
+- The website's feature list, its home page and the README now include 4.99's: the strum builder and My strums, Learn a strum, Practise this song, and your ukulele shapes on a baritone.
+- The user guide has pictures of each: the strum builder, Learn a strum, a Practise this song plan running, and the chords with what they sound as on a baritone. The Free Practice home and the Song tab pictures are new too.
+- Song tab: **Build a strum** and what the song's strum is as written sit on one line (they overlapped the group's name).
+
 ## v4.99.7 · What's new: a headline for each version
 
 - **What's new** (the website's changes page) is easier to look down: each version is one line, its number and a headline saying what's new in it, with the details a click away. Versions with only fixes and small changes say **Minor updates**, in grey.

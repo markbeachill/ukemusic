@@ -31,17 +31,19 @@ const SECTIONS = [
       { f: 'Any key, with a capo; slower or faster', web: true, desktop: true },
       { f: 'The tune, shown as notes and played', web: true, desktop: true },
       { f: 'Real recordings: a ukulele, and a nylon-string guitar for baritone and guitar', web: true, desktop: true },
+      { f: 'A strum library of 27 strums, with how to play each; build your own and keep it in My strums', web: true, desktop: true }, // 4.99.4
       { f: 'Loop a part', web: false, desktop: true },
       { f: 'Keep a song in several keys', web: false, desktop: true }
     ]
   },
   {
     title: 'Learn a song by heart', link: 'learn.html',
-    tone: 'amber', icon: 'bulb', card: { h: 'Learning a song by heart', p: 'Fewer chords on the sheet each time you play, quizzes on the changes, and a learn sheet.' },
+    tone: 'amber', icon: 'bulb', card: { h: 'Learning a song by heart', p: 'Fewer chords on the sheet each time you play, quizzes on the changes, a learn sheet, and a practice plan from the song.' },
     rows: [
       { f: 'Play from memory, with fewer chords each time', web: true, desktop: true, home: true },
       { f: 'Quizzes on the changes and the chord numbers', web: true, desktop: true },
-      { f: 'A learn sheet to print', web: 'Print', desktop: 'PDF' }
+      { f: 'A learn sheet to print', web: 'Print', desktop: 'PDF' },
+      { f: 'Practise this song: a plan from the song itself (its shapes, its hardest changes, its strum, its chords in order)', web: true, desktop: true, home: true } // 4.99.6
     ]
   },
   {
@@ -51,6 +53,7 @@ const SECTIONS = [
       { f: '42 exercises: warm-ups, chords, strumming, picking, scales, improvising', web: true, desktop: true, home: true },
       { f: 'Routines, and your progress (days, best tempos, scores)', web: true, desktop: true },
       { f: 'Progressions from memory, major and minor', web: true, desktop: true },
+      { f: 'Learn a strum in steps: hear it, copy it muted, on one chord, then with the changes', web: true, desktop: true }, // 4.99.5
       { f: 'Chords by key, a sheet to print', web: 'Print', desktop: 'PDF' }
     ]
   },
@@ -94,6 +97,7 @@ const SECTIONS = [
     rows: [
       { f: 'Ukulele (high or low G), baritone ukulele and guitar', web: true, desktop: true, home: true },
       { f: 'Left-handed chord diagrams', web: true, desktop: true, home: true },
+      { f: 'Your ukulele shapes on a baritone (or baritone shapes on a ukulele): the names you know, and what each sounds as', web: true, desktop: true }, // 4.99.0
       { f: 'Your own chord shape for a song', web: false, desktop: true }
     ]
   },

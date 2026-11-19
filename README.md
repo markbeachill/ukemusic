@@ -63,16 +63,19 @@
 | Any key, with a capo; slower or faster | ✓ | ✓ |
 | The tune, shown as notes and played | ✓ | ✓ |
 | Real recordings: a ukulele, and a nylon-string guitar for baritone and guitar | ✓ | ✓ |
+| A strum library of 27 strums, with how to play each; build your own and keep it in My strums | ✓ | ✓ |
 | Loop a part | — | ✓ |
 | Keep a song in several keys | — | ✓ |
 | **[Learn a song by heart](https://markbeachill.github.io/ukemusic/learn.html)** | | |
 | Play from memory, with fewer chords each time | ✓ | ✓ |
 | Quizzes on the changes and the chord numbers | ✓ | ✓ |
 | A learn sheet to print | ✓ Print | ✓ PDF |
+| Practise this song: a plan from the song itself (its shapes, its hardest changes, its strum, its chords in order) | ✓ | ✓ |
 | **[Free Practice](https://markbeachill.github.io/ukemusic/practice/)** | | |
 | 42 exercises: warm-ups, chords, strumming, picking, scales, improvising | ✓ | ✓ |
 | Routines, and your progress (days, best tempos, scores) | ✓ | ✓ |
 | Progressions from memory, major and minor | ✓ | ✓ |
+| Learn a strum in steps: hear it, copy it muted, on one chord, then with the changes | ✓ | ✓ |
 | Chords by key, a sheet to print | ✓ Print | ✓ PDF |
 | **[Print and share](https://markbeachill.github.io/ukemusic/chord-sheets.html)** | | |
 | Chord sheets with chord diagrams | ✓ Print or save a PDF | ✓ PDF |
@@ -94,6 +97,7 @@
 | **[Your instrument](https://markbeachill.github.io/ukemusic/instruments.html)** | | |
 | Ukulele (high or low G), baritone ukulele and guitar | ✓ | ✓ |
 | Left-handed chord diagrams | ✓ | ✓ |
+| Your ukulele shapes on a baritone (or baritone shapes on a ukulele): the names you know, and what each sounds as | ✓ | ✓ |
 | Your own chord shape for a song | — | ✓ |
 | **[Free, offline and private](https://markbeachill.github.io/ukemusic/phone.html)** | | |
 | Free and open source | ✓ | ✓ |
