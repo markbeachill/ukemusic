@@ -121,7 +121,7 @@
       html[data-editing] #editWordsButton { background: var(--accent); color: #fff; }
       /* 4.95.1: reading, the song's Details, Links, Exports, Notes and ChordPro stay beside the sheet,
          in a narrower column; only Words & chords waits for Edit words & chords */
-      html:not([data-editing]) .workspace { grid-template-columns: minmax(260px, 0.6fr) 6px minmax(0, 1.4fr) !important; }
+      html:not([data-editing]) .workspace { grid-template-columns: minmax(330px, 0.6fr) 6px minmax(0, 1.4fr) !important; }
       html:not([data-editing]) [data-edit-only] { display: none !important; }
       html:not([data-editing]) .preview-head, html:not([data-editing]) #cursorLabel { display: none; }
       /* 4.94: reading, a firm line between the tools and the song */
@@ -676,49 +676,68 @@
       .shape-own input { font: 600 15px Consolas, "Courier New", monospace; width: 160px; }
 
 
+      /* 4.98: the song's sections are a rail of tabs down the left edge, so the column beside it keeps
+         its width for the words; reading, the column can be hidden and the sheet has the width */
       .editor-panel {
         display: grid;
-        grid-template-rows: auto 1fr;
+        grid-template-columns: 68px minmax(0, 1fr);
+        grid-template-rows: minmax(0, 1fr);
       }
 
       .editor-tabs {
-        min-height: 37px;
-        background: var(--edit-green) !important;
-        border-bottom-color: var(--edit-green) !important;
         display: flex;
-        align-items: center;
+        flex-direction: column;
+        align-items: stretch;
         gap: 2px;
-        padding: 6px 8px 0;
-        border-bottom: 1px solid var(--border);
+        padding: 8px 0;
         background: var(--status-bg);
+        border-right: 1px solid var(--border);
+        overflow-y: auto;
+        min-height: 0;
       }
 
       .editor-tabs button {
-        border: 1px solid transparent;
-        border-bottom: 0;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        border: 0;
+        border-left: 3px solid transparent;
         background: transparent;
         color: var(--muted);
-        border-radius: 8px 8px 0 0;
-        padding: 6px 14px;
+        padding: 8px 4px 7px 1px;
         font: inherit;
+        font-size: 11px;
+        line-height: 1.2;
+        text-align: center;
         cursor: pointer;
-        margin-bottom: -1px;
       }
-
+      .editor-tabs button:hover { background: var(--accent-soft); color: var(--text); }
       .editor-tabs button.active {
         background: var(--panel-bg);
-        border-color: var(--panel-bg);
+        border-left-color: var(--edit-green);
         color: var(--edit-green);
         font-weight: 700;
       }
-      .editor-tabs button:not(.active) { color: rgba(255, 255, 255, 0.85); }
-      .editor-tabs button:not(.active):hover { color: #fff; }
-      .editor-tabs .notes-status { color: rgba(255, 255, 255, 0.8); }
+      .editor-tabs button svg { flex: none; }
+      .editor-tabs .rail-label { overflow-wrap: anywhere; }
+      /* A dot on Notes when the song has notes */
+      #tabNotes.has-notes::after { content: ""; position: absolute; top: 7px; right: 14px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+      .editor-tabs .rail-toggle { margin-top: auto; }
+      html[data-editing] .editor-tabs [data-read-only] { display: none; }
+      /* Hidden: the rail stays, and the sheet has the rest */
+      html[data-panel-closed]:not([data-editing]) .workspace { grid-template-columns: 68px 0 minmax(0, 1fr) !important; }
+      html[data-panel-closed]:not([data-editing]) .editor-body { display: none; }
+      html[data-panel-closed]:not([data-editing]) #splitter { visibility: hidden; }
+      html[data-panel-closed]:not([data-editing]) .editor-tabs button.active { background: transparent; border-left-color: transparent; color: var(--muted); font-weight: 400; }
+      html[data-panel-closed]:not([data-editing]) .rail-toggle svg { transform: scaleX(-1); }
 
       .notes-status {
-        margin-left: auto;
-        font-size: 12px;
+        font-size: 11px;
         color: var(--muted);
+        text-align: center;
+        padding: 4px 2px;
       }
 
       .editor-body {
@@ -2940,14 +2959,15 @@
 
       <div class="workspace" id="workspace">
         <section class="panel editor-panel">
-          <div class="editor-tabs" role="tablist">
-            <button id="tabSong" type="button" role="tab" class="active" data-edit-only>Words &amp; chords</button>
-            <button id="tabDetails" type="button" role="tab" title="About the song: artist, year, written by, album, source, tags, difficulty and its key">Details</button>
-            <button id="tabLinks" data-feature="songLinks" type="button" role="tab" title="Web pages for the song: the original on YouTube, a uke play-along, a lesson, Wikipedia">Links</button>
-            <button id="tabExports" data-feature="songExports" type="button" role="tab" title="Everything exported for this song: look at it, see what's out of date, delete it">Exports</button>
-            <button id="tabNotes" type="button" role="tab" title="Your notes on the song, and its history">Notes</button>
-            <button id="tabChordPro" data-feature="songChordPro" type="button" role="tab" title="The song's ChordPro fields: everything from an imported ChordPro file is kept here, and written out again in ChordPro exports">ChordPro</button>
+          <div class="editor-tabs" role="tablist" aria-orientation="vertical">
+            <button id="tabSong" type="button" role="tab" class="active" data-edit-only title="The song's words and chords, to change"><span data-icon="rename"></span><span class="rail-label">Words &amp; chords</span></button>
+            <button id="tabDetails" type="button" role="tab" title="About the song: artist, year, written by, album, source, tags, difficulty and its key"><span data-icon="info"></span><span class="rail-label">Details</span></button>
+            <button id="tabLinks" data-feature="songLinks" type="button" role="tab" title="Web pages for the song: the original on YouTube, a uke play-along, a lesson, Wikipedia"><span data-icon="link"></span><span class="rail-label">Links</span></button>
+            <button id="tabExports" data-feature="songExports" type="button" role="tab" title="Everything exported for this song: look at it, see what's out of date, delete it"><span data-icon="export"></span><span class="rail-label">Exports</span></button>
+            <button id="tabNotes" type="button" role="tab" title="Your notes on the song, and its history"><span data-icon="note"></span><span class="rail-label">Notes</span></button>
+            <button id="tabChordPro" data-feature="songChordPro" type="button" role="tab" title="The song's ChordPro fields: everything from an imported ChordPro file is kept here, and written out again in ChordPro exports"><span data-icon="cho"></span><span class="rail-label">ChordPro</span></button>
             <span id="notesStatus" class="notes-status"></span>
+            <button id="panelToggle" class="rail-toggle" type="button" data-read-only title="Hide this column, so the song has the width"><span data-icon="chevronLeft"></span><span class="rail-label">Hide</span></button>
           </div>
           <div class="editor-body">
             <div id="editorHost" class="editor-host"></div>
@@ -7127,6 +7147,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             ? 'Notes about this song: key, capo, where it came from, things to practise…'
             : 'Save the song to keep notes with it.';
           notesStatus.textContent = '';
+          // 4.98: a dot on Notes; and, until you've chosen, the column shows for a song with notes
+          const hasNotes = markSongNotes();
+          if (songPanelChoice() === null) setSongPanelClosed(!hasNotes, { remember: false });
         }
 
         async function flushNotes() {
@@ -7152,6 +7175,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           try {
             state.notes = await window.ukemusic.addImportNotes({ folder: state.song.folder, text });
             notesEditor.value = state.notes;
+            markSongNotes();
           } catch (error) {
             window.ukemusicLogError('Could not add to notes.txt', error);
           }
@@ -7163,6 +7187,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           try {
             state.notes = await window.ukemusic.appendNote({ folder: state.song.folder, line });
             notesEditor.value = state.notes;
+            markSongNotes();
           } catch (error) {
             window.ukemusicLogError('Could not add to notes.txt', error);
           }
@@ -7172,6 +7197,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           notesPending = true;
           window.ukemusic.setNotesPending(true);
           notesStatus.textContent = 'Saving…';
+          markSongNotes();
           clearTimeout(notesTimer);
           notesTimer = setTimeout(flushNotes, 800);
         });
@@ -11018,6 +11044,34 @@ function showTab(tab) {
         document.getElementById('tabExports').addEventListener('click', () => showTab('exports'));
         document.getElementById('tabChordPro').addEventListener('click', () => showTab('chordpro'));
 
+        // 4.98: reading, the song's column can be hidden so the sheet has the width. Click the open
+        // tab (or Hide) to hide it; any tab shows it again. Kept between songs; until you choose, it
+        // shows for a song with notes and hides for one without.
+        function songPanelChoice() {
+          try { return localStorage.getItem('ukemusic.songPanelClosed'); } catch (_err) { return null; }
+        }
+        function setSongPanelClosed(closed, { remember = true } = {}) {
+          const was = document.documentElement.hasAttribute('data-panel-closed');
+          document.documentElement.toggleAttribute('data-panel-closed', Boolean(closed));
+          const toggle = document.getElementById('panelToggle');
+          toggle.querySelector('.rail-label').textContent = closed ? 'Show' : 'Hide';
+          toggle.title = closed ? 'Show the column beside the song' : 'Hide this column, so the song has the width';
+          if (remember) { try { localStorage.setItem('ukemusic.songPanelClosed', closed ? '1' : '0'); } catch (_err) { /* this time only */ } }
+          if (was !== Boolean(closed) && !isEditing()) requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
+        }
+        document.querySelector('.editor-tabs').addEventListener('click', (event) => {
+          const button = event.target.closest('button[role="tab"]');
+          if (!button || isEditing()) return;
+          if (document.documentElement.hasAttribute('data-panel-closed')) setSongPanelClosed(false);
+          else if (button.classList.contains('active')) { setSongPanelClosed(true); event.stopPropagation(); }
+        }, true);
+        document.getElementById('panelToggle').addEventListener('click', () => setSongPanelClosed(!document.documentElement.hasAttribute('data-panel-closed')));
+        function markSongNotes() {
+          const has = Boolean(notesEditor.value.trim());
+          document.getElementById('tabNotes').classList.toggle('has-notes', has);
+          return has;
+        }
+
         // ── ChordPro tab (4.27): the song's ChordPro fields, kept in chordpro.txt ──
         // Linked fields show (and change) the song's own value; the rest are kept as they were.
         const CP_LINKS = {
@@ -12448,6 +12502,10 @@ function showTab(tab) {
           web: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',
           lyrics: 'M4 6h16M4 10h16M4 14h10M4 18h8',
           cho: 'M8 4L4 12l4 8M16 4l4 8-4 8',
+          info: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v6M12 7.5h.01',
+          link: 'M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1',
+          note: 'M5 3h10l4 4v14H5zM15 3v4h4M8 12h8M8 16h6',
+          chevronLeft: 'M15 5l-7 7 7 7',
           shape: 'M6 3h12v18H6zM10 3v18M14 3v18M6 8h12M6 13h12M10 10.5h.01M14 15.5h.01',
           setlist: 'M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01',
           help: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01',

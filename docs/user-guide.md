@@ -67,7 +67,10 @@ Paste a chord sheet from a website and ukemusic writes most of this for you. Eve
 
 ## A song: reading and editing
 
-A song opens as the sheet to play from. Beside it, in a narrower column, are the song's **Details** (artist, year, key, tempo, time, tags), **Notes**, **Links**, **Exports** and **ChordPro** fields. The column opens on the notes, if the song has any, or on the tab you last looked at.
+A song opens as the sheet to play from. Down the left edge is a strip of the song's tabs: **Details** (artist, year, key, tempo, time, tags), **Links**, **Exports**, **Notes** and **ChordPro** fields. Click one and it opens in a column beside the sheet; it opens on the notes, if the song has any (a dot on **Notes** says so), or on the tab you last looked at.
+
+- Click the open tab again, or **Hide** at the bottom of the strip, and the sheet has the whole width. Any tab (or **Show**) brings the column back.
+- ukemusic keeps it the way you left it, from song to song.
 
 ![A song open as the sheet, with its notes beside it and the tools above it](../site/img/guide/desktop-S1.jpg)
 
@@ -88,7 +91,7 @@ Press **✎ Edit words & chords**. The words and chords are on the left, the she
 
 - Type the words with the chords in square brackets (see [Writing a song: the basics](#writing-a-song-the-basics)); [How to write songs](../WRITING.md) has everything else you can type.
 - The **Write** tab has buttons for what's harder to type (a chord, a heading, a strum, a bar line, tab), Undo and Redo, and **How to write** (F1), which opens [How to write songs](../WRITING.md) in the app.
-- **Words & chords** joins the song's other tabs while you edit; **Done** goes back to the tab you were reading.
+- **Words & chords** joins the top of the strip while you edit, and the column is always open; **Done** goes back to the tab you were reading (or to the sheet alone, if the column was hidden).
 
 **Edit chords on the sheet** lets you move chords with the mouse instead: turn it on with **Write → On the sheet**, the **Edit chords** box over the sheet, or a right-click on the sheet. Then drag a chord to the word where it's played, click a chord to change it or take it out, or click in the words to put one there.
 

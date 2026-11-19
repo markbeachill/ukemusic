@@ -18,8 +18,8 @@ const F = require('../src/feature-levels.js');
 
 test('the song opens as the sheet: the editor, the Write tab and Tidy chords only while editing', () => {
   // 4.95.1: reading, the song's other tabs stay beside the sheet; only Words & chords waits for editing
-  assert.ok(DESKTOP.includes('html:not([data-editing]) .workspace { grid-template-columns: minmax(260px, 0.6fr) 6px minmax(0, 1.4fr) !important; }'));
-  assert.match(DESKTOP, /<button id="tabSong" type="button" role="tab" class="active" data-edit-only>Words &amp; chords<\/button>/);
+  assert.ok(DESKTOP.includes('html:not([data-editing]) .workspace { grid-template-columns: minmax(330px, 0.6fr) 6px minmax(0, 1.4fr) !important; }'));
+  assert.match(DESKTOP, /<button id="tabSong" type="button" role="tab" class="active" data-edit-only[^>]*><span data-icon="rename"><\/span><span class="rail-label">Words &amp; chords<\/span><\/button>/); // 4.98: in the rail
   assert.ok(DESKTOP.includes('html:not([data-editing]) [data-edit-only] { display: none !important; }'));
   assert.match(DESKTOP, /<button id="ribbonTabWrite" data-edit-only class="ribbon-tab"/);
   assert.match(DESKTOP, /<button id="convertLinesButton" data-feature="tidy" data-edit-only/);

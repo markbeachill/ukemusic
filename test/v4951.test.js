@@ -11,9 +11,9 @@ function test(name, fn) {
 const DESKTOP = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8').replace(/\r\n/g, '\n');
 
 test('the song\'s other tabs while reading; Words & chords while editing', () => {
-  assert.ok(DESKTOP.includes('html:not([data-editing]) .workspace { grid-template-columns: minmax(260px, 0.6fr) 6px minmax(0, 1.4fr) !important; }'));
+  assert.ok(DESKTOP.includes('html:not([data-editing]) .workspace { grid-template-columns: minmax(330px, 0.6fr) 6px minmax(0, 1.4fr) !important; }'));
   assert.ok(!DESKTOP.includes('html:not([data-editing]) .workspace > .editor-panel'), 'the column isn\'t hidden');
-  assert.ok(DESKTOP.includes('<button id="tabSong" type="button" role="tab" class="active" data-edit-only>Words &amp; chords</button>'));
+  assert.match(DESKTOP, /<button id="tabSong" [^>]*data-edit-only[^>]*>.*Words &amp; chords/); // 4.98: in the rail
   assert.ok(DESKTOP.includes("if (on && !was) showTab('song');"));
   assert.ok(DESKTOP.includes("if (!on && document.getElementById('tabSong').classList.contains('active')) showTab(state.readingTab || (notesEditor.value.trim() ? 'notes' : 'details'));"));
   assert.match(DESKTOP, /if \(!isEditing\(\)\) state\.readingTab = tab;/);

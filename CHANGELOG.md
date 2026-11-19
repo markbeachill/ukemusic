@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.98.0
+
+- **The song's tabs are a rail down the left edge.** Details, Links, Exports, Notes and ChordPro are a narrow strip of icons with their names, so the column beside the sheet keeps its width for the words (Words & chords joins the top while you edit).
+- **Hide the column while reading.** Click the open tab again, or **Hide** at the bottom of the strip, and the sheet has the whole width; any tab (or **Show**) brings it back. It stays the way you left it from song to song; until you choose, it shows for a song with notes.
+- **A dot on Notes** when the song has notes.
+- The user guide, README and pictures show the rail.
+
 ## v4.97.1
 
 - The guide to everything you can type in a song now has one name everywhere: **How to write songs**. Before, it was "the song guide" on the website, "Writing" on the Write tab, and "How to write songs" in Help and the web player. The Write tab's button is now **How to write** (F1).
