@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.99.2
+
+- **Bari, uke shapes and Uke, bari shapes:** Free Practice from such a song opens for the instrument the shapes belong to (it showed a blank instrument), and **First note** sounds and names the note as it sounds on the instrument you're holding.
+- INSTRUMENTS.md: "Bari, uke shapes" is a baritone with the key five down, named as on a ukulele; and what to know (Free Practice, string names, export names, older versions).
+
 ## v4.99.1
 
 - **User guide: Switching instruments** (under Key, capo, instrument and tempo): what changes when you switch, where the choices are (one song, every song, the web player), C–D7–F–C on each instrument, keeping the shapes you know (Bari, uke shapes and Uke, bari shapes), and moving the key yourself, and why: to sing it higher or lower, for easier shapes, or to keep your ukulele shapes on a guitar (five down, C to G). The phone guide links to it.

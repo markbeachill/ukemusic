@@ -66,3 +66,11 @@ test('in all features only; the sound, the status line and Free Practice', () =>
   assert.ok(WEB.includes('UMW.INSTRUMENTS.filter((i) => !i.shapesFrom).map((i) => {'));
   assert.ok(WEB.includes('.soundsLike || instrument; return like === \'guitar\' || like === \'baritone\' ? \'guitar\' : \'sampled\';'));
 });
+
+test('4.99.2: Free Practice drills the shapes as the instrument they belong to; the first note sounds as played', () => {
+  const PR = read('web/pr_js.js');
+  assert.ok(PR.includes("const prShapesOf = (id) => window.ukemusic.instrument?.(id)?.shapesFrom || id;"));
+  assert.ok(PR.includes("$p('prInstrument').value = prShapesOf(songInstrument(effectiveConfig()).id);"));
+  assert.ok(DESKTOP.includes("const prShapesOf = (id) => window.ukemusic.instrument?.(id)?.shapesFrom || id;"), 'synced to the desktop');
+  assert.ok(DESKTOP.includes('notes[0] = midi + (Number(songInstrument(cfg).soundShift) || 0);'));
+});

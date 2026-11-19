@@ -44,7 +44,7 @@ test('picking patterns are named with your strings', () => {
 test('Free Practice follows your instrument; it isn\'t kept with an exercise', () => {
   assert.match(html, /\.filter\(\(el\) => el\.id && el\.id !== 'prVolume' && \(withInstrument \|\| el\.id !== 'prInstrument'\)\)/);
   assert.match(html, /if \(!el \|\| id === 'prInstrument' \|\|/, 'old saved settings with an instrument are ignored');
-  assert.match(html, /const id = pr\.sessionInstrument \|\| songInstrument\(effectiveConfig\(\)\)\.id;/);
+  assert.match(html, /const id = pr\.sessionInstrument \|\| prShapesOf\(songInstrument\(effectiveConfig\(\)\)\.id\);/); // 4.99.2: as the instrument whose shapes it shows
   assert.match(html, /pr\.sessionInstrument = null; \/\/ next time: your instrument again/);
 });
 

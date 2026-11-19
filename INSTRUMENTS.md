@@ -37,6 +37,15 @@ A baritone is tuned a fourth below a ukulele, with the same four shapes on the t
 
 The status line under the song says the key it sounds in (Key C · sounds in G). A shape doesn't play the same chord on the other instrument in the same way: the ukulele's F shape (2010) on a baritone is a C with its E at the bottom (C/E), and its D7 shape (2020) is an A7 with no A. To play the song's own chords on the other instrument instead, choose that instrument.
 
+"Bari, uke shapes" plays exactly what **Baritone uke** with the key moved down 5 semitones plays: the same frets and the same sound. Only the names differ: the ukulele names you know (C D7 F) instead of what the chords are on a baritone (G A7 C). So switching between the two is a matter of which names you'd rather read.
+
+Things to know:
+
+- **Free Practice** drills the shapes, so from such a song it opens for the instrument they belong to (a ukulele for "Bari, uke shapes").
+- **Picking patterns and tab** name the strings as on the instrument whose shapes they are (A E C G for "Bari, uke shapes"): the 1st string is the 1st string on both.
+- **Exports** share their name with that instrument's (`_uke` for "Bari, uke shapes"): the sheets are the same.
+- **Older versions** of ukemusic, and a web player that hasn't updated, don't know these two: a song set to one of them follows your instrument there instead.
+
 ### Choosing the instrument
 
 - **For one song**: the **Instrument** menu on the **This song** tab. It's saved with the song.

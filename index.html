@@ -4556,6 +4556,8 @@
 
 
 
+
+
     <div id="karaoke" class="karaoke" hidden role="dialog" aria-label="Karaoke view">
       <div class="karaoke-bar">
         <div class="k-heading-block">
@@ -9044,12 +9046,15 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           }
         }
         const prChordOf = (rootSel, typeSel) => `${rootSel.value}${typeSel.value}`;
-        function prInstrument() { return $p('prInstrument')?.value || songInstrument(effectiveConfig()).id; }
+        // 4.99.2: the shapes you know on another instrument (Bari, uke shapes) practise as the instrument
+        // whose shapes they are: Free Practice drills shapes, so it's the ukulele's
+        const prShapesOf = (id) => window.ukemusic.instrument?.(id)?.shapesFrom || id;
+        function prInstrument() { return $p('prInstrument')?.value || prShapesOf(songInstrument(effectiveConfig()).id); }
         // 4.60: Free Practice is for your instrument: the open song's, else the default (Settings →
         // All songs). The menu in an exercise changes it until you close Free Practice; it isn't
         // kept with the exercise (it used to be, so Free Practice stayed on the first instrument).
         function prSyncInstrument() {
-          const id = pr.sessionInstrument || songInstrument(effectiveConfig()).id;
+          const id = pr.sessionInstrument || prShapesOf(songInstrument(effectiveConfig()).id);
           if ($p('prInstrument') && $p('prInstrument').value !== id) $p('prInstrument').value = id;
           prPickNames();
         }
@@ -9675,7 +9680,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           chips($p('prChordSets'), 'prChords', ['C Am F G', 'G C D', 'C F G7', 'A D E7', 'C G Am F', 'Am Dm E7']);
           chips($p('prDrillSets'), 'prDrillSet', ['C Am F G', 'G D Em C', 'C F G7', 'A D E7', 'Dm Bb C F', 'G7 C7 D7 A7']);
           $p('prInstrument').replaceChildren(...window.ukemusic.instruments.filter((i) => !i.shapesFrom).map((i) => new Option(i.label, i.id)));
-          $p('prInstrument').value = songInstrument(effectiveConfig()).id;
+          $p('prInstrument').value = prShapesOf(songInstrument(effectiveConfig()).id);
           // another instrument for this session: the exercise starts again for it (its chords, your changes for it)
           $p('prInstrument').addEventListener('change', () => { pr.sessionInstrument = $p('prInstrument').value; prPickNames(); if (pr.exId && pr.view === 'player') prOpen(pr.exId); });
           $p('prLeftHanded').checked = Boolean(effectiveConfig()?.diagrams?.left_handed);
@@ -12199,8 +12204,8 @@ function showTab(tab) {
           if (!player) return;
           if (player.playing) { state.userStopped = true; player.stop(); }
           const notes = [];
-          notes[0] = midi;
-          setStatusMessage(`First note: ${window.ukemusic.picking.noteName(cfg.song.first_note, state.transpose)}. Hum it, then sing from there.`);
+          notes[0] = midi + (Number(songInstrument(cfg).soundShift) || 0);   // 4.99.2: as the shapes you know sound on the other instrument
+          setStatusMessage(`First note: ${window.ukemusic.picking.noteName(cfg.song.first_note, state.transpose + (Number(songInstrument(cfg).soundShift) || 0))}. Hum it, then sing from there.`);
           await player.play({ events: [{ time: 0.05, kind: 'strum', direction: 'down', notes, velocity: 0.9, barIndex: 0, ring: true }], bars: [], duration: 2, countInDuration: 0, tempo: 100, beatsPerBar: 4, warnings: [] }, {});
         });
         // ── 4.44: change the pattern part-way through ({pick} lines), and write out one line ──
