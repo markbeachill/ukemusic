@@ -1,6 +1,6 @@
-# Writing songs in ukemusic
+# How to write songs in ukemusic
 
-A guide for anyone writing or editing songs. It covers everything you can type, with examples. In the app, it's under **Write → Writing** (or F1).
+A guide for anyone writing or editing songs. It covers everything you can type, with examples. In the app, it's under **Write → How to write** (or F1; the web player: **?**).
 
 A song is plain text. Chords go in square brackets inside the words, and a few other kinds of brackets add sections, strums and repeats. ukemusic turns that into a chord sheet, plays it, and prints it.
 

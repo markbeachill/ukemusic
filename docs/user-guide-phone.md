@@ -2,6 +2,8 @@
 
 How to use ukemusic's web player on an iPhone, iPad or Android phone or tablet: step by step, with pictures from an iPhone. On an iPad or a tablet it's the same, with more room. Using the desktop app on a computer? See the [main user guide](user-guide.md).
 
+**The guides:** [the user guide](user-guide.md) (the desktop app) · this guide, for phones and tablets · [How to write songs](../WRITING.md) (everything you can type in a song) · [ukemusic and ChordPro](../CHORDPRO.md)
+
 ## Putting it on your Home Screen
 
 The web player runs in the browser: there's nothing to install from an app store, and no account.
@@ -30,8 +32,8 @@ Tap **+ New song**. It asks how:
 ![New song: paste from a website, write your own, or add songs from files](../site/img/guide/iphone-L4.jpg)
 
 - **Paste from a website:** in the browser, copy a chord sheet from any website (from the title to the last chord), then come back and paste it in. ukemusic moves the chords into the words and finds the parts. Check the title, then **Add the song**.
-- **Write your own:** give it a title, then type the words with each chord in square brackets just before the word where it changes: `[C]Oh my [G7]darling`. The [song guide](../WRITING.md) has everything else you can type.
-- **Add songs from files:** song files (ukemusic, ChordPro, or chords above the words), a zipped songs folder from the desktop app, or a backup.
+- **Write your own:** give it a title, then type the words with the chords in square brackets (see [Writing a song: the basics](#writing-a-song-the-basics)).
+- **Add songs from files:** song files (ukemusic, ChordPro, or chords above the words), a zipped songs folder from the desktop app, or a backup. For ChordPro, see [ukemusic and ChordPro](../CHORDPRO.md).
 
 ![Paste from a website: paste the sheet, and give it a title](../site/img/guide/iphone-L6.jpg)
 
@@ -78,6 +80,24 @@ Tap **Learn** in the player.
 - **Chord patterns**, **Pick** (fingerpicking) and the **Circle of fifths**.
 
 ![From memory: the chords shown the first time, then as question marks](../site/img/guide/iphone-R2.jpg)
+
+## Writing a song: the basics
+
+A song is plain text: the words, with each chord in square brackets just before the word where it changes. A few more marks give the parts and the strum:
+
+```
+{D-DU-UDU}
+[[Verse 1]]
+I [C]come from Alabama
+with my [G7]banjo on my [C]knee
+```
+
+- `[C]word`: the chord changes on that word.
+- `[[Verse 1]]`, `[[Chorus]]` on a line of their own: a part of the song, by name.
+- `{D-DU-UDU}` on a line of its own: the strum, D for down and U for up, - for a gap. It holds until the next one.
+- In **✎ Edit**, the buttons above the words put in a chord `[ ]`, a heading `[[ ]]` or a strum `{ }`; **?** opens How to write songs.
+
+Paste a chord sheet from a website and ukemusic writes most of this for you. Everything else you can type (bars, repeats, tab, the tune, picking patterns, key changes) is in [How to write songs](../WRITING.md), with examples; songs from other apps in ChordPro are covered in [ukemusic and ChordPro](../CHORDPRO.md).
 
 ## Changing a song
 
@@ -154,5 +174,6 @@ Your songs, and any you've added or changed, are kept in the browser on this dev
 ## Where next
 
 - [The main user guide](user-guide.md), for the desktop app.
-- [The song guide](../WRITING.md): everything you can type in a song.
+- [How to write songs](../WRITING.md): everything you can type in a song.
+- [ukemusic and ChordPro](../CHORDPRO.md): what it reads from ChordPro files and writes back.
 - [Phone and tablet](https://markbeachill.github.io/ukemusic/phone.html): more on the Home Screen app and its songs.

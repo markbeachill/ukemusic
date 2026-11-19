@@ -15,7 +15,7 @@ const REPO = (() => {
 })();
 
 const PAGES = [
-  { md: 'WRITING.md', html: 'guide.html', seoTitle: "How to write a song in ukemusic: the song guide", title: 'How to write songs', nav: 'Song guide', blurb: 'Everything you can type in a ukemusic song, with examples. The same guide is in the app: Write → How to write.', ownIntro: true },
+  { md: 'WRITING.md', html: 'guide.html', seoTitle: "How to write songs in ukemusic: everything you can type", title: 'How to write songs', nav: 'How to write songs', blurb: 'Everything you can type in a ukemusic song, with examples. The same guide is in the app: Write → How to write.', ownIntro: true },
   { md: 'CHORDPRO.md', html: 'chordpro.html', seoTitle: "ukemusic and ChordPro: what it reads and writes", title: 'ukemusic and ChordPro', nav: 'ChordPro', blurb: 'What ukemusic does with ChordPro files, what it writes, and what it adds.' },
   { md: 'CHANGELOG.md', html: 'changes.html', seoTitle: "What's new in ukemusic: the changes in every version", title: "What's new", nav: "What's new", blurb: 'What changed in each version of ukemusic, the free ukulele app: new features, fixes and improvements, newest first.' },
   // 4.95: the user guide, with the website's pictures; read straight through (no folding)

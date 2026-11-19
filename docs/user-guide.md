@@ -1,8 +1,10 @@
 # The ukemusic user guide
 
+**The guides:** this user guide · [for phones and tablets](user-guide-phone.md) · [How to write songs](../WRITING.md) (everything you can type in a song) · [ukemusic and ChordPro](../CHORDPRO.md)
+
 **On a phone or tablet?** See [the guide for phones and tablets](user-guide-phone.md): the web player, step by step, with pictures from a phone.
 
-How to use ukemusic, step by step. It covers the desktop app (Windows, Mac and Linux) and the web player (any browser, on a phone, tablet or computer); where they differ, it says so. How to *write* a song (chords in square brackets, strums, tab) is in the [song guide](../WRITING.md).
+How to use ukemusic, step by step. It covers the desktop app (Windows, Mac and Linux) and the web player (any browser, on a phone, tablet or computer); where they differ, it says so. [Writing a song: the basics](#writing-a-song-the-basics) shows what to type; everything else is in [How to write songs](../WRITING.md).
 
 ## Getting started
 
@@ -37,13 +39,31 @@ Press **New song**. It asks how:
 
 - **Paste from a website:** copy a chord sheet from any website (from the title to the last chord), then paste it in. ukemusic moves the chords into the words and finds the parts.
 - **Write your own:** give it a title, then type the words with the chords in square brackets.
-- **Import a file:** a text or ChordPro (`.cho`) file from your computer. (Web player: **Add songs from files**, which also takes a zipped songs folder or a backup.)
+- **Import a file:** a text or ChordPro (`.cho`) file from your computer. (Web player: **Add songs from files**, which also takes a zipped songs folder or a backup.) A club's ChordPro songbook can come in a whole folder at once: see [ukemusic and ChordPro](../CHORDPRO.md).
 
 ![Paste from a website: the sheet as copied on the left, as ukemusic will have it on the right](../site/img/guide/desktop-L6.jpg)
 
 After pasting, check the result: the chords should sit in the words, and the parts should have headings. Press **Play** and listen; if the timing is wrong, see [Adding songs](https://markbeachill.github.io/ukemusic/songs.html) for an AI prompt that fixes difficult sheets.
 
 A new, pasted or imported song opens ready to edit. Press **Save** to keep it.
+
+## Writing a song: the basics
+
+A song is plain text: the words, with each chord in square brackets just before the word where it changes. A few more marks give the parts and the strum:
+
+```
+{D-DU-UDU}
+[[Verse 1]]
+I [C]come from Alabama
+with my [G7]banjo on my [C]knee
+```
+
+- `[C]word`: the chord changes on that word.
+- `[[Verse 1]]`, `[[Chorus]]` on a line of their own: a part of the song, by name.
+- `{D-DU-UDU}` on a line of its own: the strum, D for down and U for up, - for a gap. It holds until the next one.
+- On the desktop, the **Write** tab has buttons that put these in for you; **How to write** (F1) opens the full guide.
+
+Paste a chord sheet from a website and ukemusic writes most of this for you. Everything else you can type (bars, repeats, tab, the tune, picking patterns, key changes) is in [How to write songs](../WRITING.md), with examples; songs from other apps in ChordPro are covered in [ukemusic and ChordPro](../CHORDPRO.md).
 
 ## A song: reading and editing
 
@@ -66,8 +86,8 @@ Press **✎ Edit words & chords**. The words and chords are on the left, the she
 
 ![Editing: the words and chords on the left, the sheet on the right, and the Write tab's tools](../site/img/editor.webp)
 
-- Type the words with each chord in square brackets just before the word where it changes: `[C]Oh my [G7]darling`. The [song guide](../WRITING.md) has everything else you can type.
-- The **Write** tab has buttons for what's harder to type (a chord, a heading, a strum, a bar line, tab), Undo and Redo, and **Writing**, the song guide.
+- Type the words with the chords in square brackets (see [Writing a song: the basics](#writing-a-song-the-basics)); [How to write songs](../WRITING.md) has everything else you can type.
+- The **Write** tab has buttons for what's harder to type (a chord, a heading, a strum, a bar line, tab), Undo and Redo, and **How to write** (F1), which opens [How to write songs](../WRITING.md) in the app.
 - **Words & chords** joins the song's other tabs while you edit; **Done** goes back to the tab you were reading.
 
 **Edit chords on the sheet** lets you move chords with the mouse instead: turn it on with **Write → On the sheet**, the **Edit chords** box over the sheet, or a right-click on the sheet. Then drag a chord to the word where it's played, click a chord to change it or take it out, or click in the words to put one there.
@@ -150,7 +170,7 @@ The **Picking** tab plays a strummed song picked instead. (It's in the simple vi
 1. Choose a **Picking pattern**: five standard patterns, easiest first, from one string a beat to the alternating thumb.
 2. Press **Play**: the strip above the sheet shows each string as it's picked.
 3. **Pick sheet** makes a page to print: the pattern counted out, the chord boxes, and the song as tab with the words under it.
-4. **Play the tune** plays the song's tune quietly over the picking (when the tune is written in: see the song guide).
+4. **Play the tune** plays the song's tune quietly over the picking (when the tune is written in: see [How to write songs](../WRITING.md)).
 
 ![Brahms' Lullaby picked, with its tune drawn as notes on a staff](../site/img/tune.webp)
 
@@ -273,7 +293,8 @@ On an iPad or iPhone, the Home Screen app keeps its own songs, separate from Saf
 
 ## Where next
 
-- [The song guide](../WRITING.md): everything you can type in a song.
+- [How to write songs](../WRITING.md): everything you can type in a song.
+- [ukemusic and ChordPro](../CHORDPRO.md): what it reads from ChordPro files and writes back.
 - [Adding songs](https://markbeachill.github.io/ukemusic/songs.html), with AI prompts for difficult sheets.
 - [What's new](../CHANGELOG.md) in each version.
 - Questions and ideas: [ukemusic on GitHub](https://github.com/markbeachill/ukemusic).

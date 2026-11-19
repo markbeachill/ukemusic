@@ -110,6 +110,8 @@ One name for each thing, in both apps, the menu, the guide and the website (4.82
 | Chords above the words, moved into them | Tidy chords | Tidy chords above words |
 | Showing the words and chords to change them (a song opens as the sheet) | Edit words & chords; Done goes back | Edit mode, Edit lyrics, the editor (in the app's words) |
 | The home screen's two tabs; the songs shown as cards or rows | Songs, Free Practice; Tiles, List | Library tab, Practice tab; Cards, Grid |
+| The guide to what you can type in a song (WRITING.md, guide.html, F1 in the app) | How to write songs (the button: How to write) | the song guide, the writing guide |
+| How to use the app (docs/user-guide.md, docs/user-guide-phone.md) | the user guide; the guide for phones and tablets | the manual, the help |
 | Files out of the desktop app | Export | |
 | Files out of the web player | Download | |
 

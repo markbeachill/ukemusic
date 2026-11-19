@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.97.1
+
+- The guide to everything you can type in a song now has one name everywhere: **How to write songs**. Before, it was "the song guide" on the website, "Writing" on the Write tab, and "How to write songs" in Help and the web player. The Write tab's button is now **How to write** (F1).
+- Both user guides have a new section, **Writing a song: the basics**: chords in square brackets, parts and strums, with an example.
+- Both user guides open with a line linking to the other user guide, How to write songs and ukemusic and ChordPro. ChordPro is also linked where songs come in from files.
+
 ## v4.97.0
 
 - New: **a user guide for phones and tablets** (`user-guide-phone.html`, from `docs/user-guide-phone.md`). It covers the web player step by step, with 17 pictures from an iPhone:

@@ -54,4 +54,4 @@ The prompt is kept in one place, **`src/ai-prompts/ai-practice.txt`**, a plain t
 - **The words stay yours.** The prompt asks for no words to be added or recalled, which keeps the AI to tidying what you gave it, and keeps copyrighted words you haven't got out of the song.
 - **One song at a time** works best, with the recording to hand to check against.
 - **To change one thing later** (a new strum from your teacher, say), paste the song and ask for that change alone, with the same rules.
-- **A tune**, for **Pick → Play the tune**: ask only for a song you know well, and check every note by ear. The format is in the song guide (The tune).
+- **A tune**, for **Pick → Play the tune**: ask only for a song you know well, and check every note by ear. The format is in How to write songs (The tune).

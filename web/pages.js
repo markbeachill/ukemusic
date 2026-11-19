@@ -36,7 +36,7 @@ function siteFooter() {
   return `<footer>
   <div class="wrap">
     <span>ukemusic by Mark Beachill · MIT licence · <a class="repo-link" href="https://github.com/markbeachill/ukemusic">ukemusic on GitHub</a></span>
-    <span class="ref">Reference: <a href="user-guide.html">User guide</a> · <a href="features.html">Features</a> · <a href="gallery.html">Gallery</a> · <a href="dropbox.html">Shared Dropbox folder</a> · <a href="phone.html">Phone and tablet</a> · <a href="instruments.html">Ukulele, baritone or guitar</a> · <a href="guide.html">Song guide</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a> · <a href="practice/">Free Practice: all exercises</a></span>
+    <span class="ref">Reference: <a href="user-guide.html">User guide</a> · <a href="features.html">Features</a> · <a href="gallery.html">Gallery</a> · <a href="dropbox.html">Shared Dropbox folder</a> · <a href="phone.html">Phone and tablet</a> · <a href="instruments.html">Ukulele, baritone or guitar</a> · <a href="guide.html">How to write songs</a> · <a href="chordpro.html">ChordPro</a> · <a href="how-learn-works.html">How Learn works</a> · <a href="changes.html">What's new</a> · <a href="practice/">Free Practice: all exercises</a></span>
     <button class="theme" id="theme" type="button">Light / dark</button>
   </div>
 </footer>`;
@@ -215,7 +215,7 @@ const PAGES = [
     best: 'desktop',
     web: ['Read your songs in any key, capo or instrument', 'Download a sheet as a web page or ChordPro'],
     desk: ['Write and edit songs', 'Every export and print format', 'Libraries, setlists, versions and history'],
-    more: '<p>Everything you can type: <a href="guide.html">the song guide</a>.</p>'
+    more: '<p>Everything you can type: <a href="guide.html">How to write songs</a>.</p>'
   }
 ];
 
@@ -278,7 +278,7 @@ const SONGS_PAGE = {
     <div class="card"><h3>Your club's songbook</h3><p>A whole folder of ChordPro songs comes in at once, one song each, with tags and links; on the desktop each subfolder becomes a setlist. The web player takes the files, or the folder zipped. Sharing songs with a club or band? <a href="dropbox.html">Use a shared Dropbox folder</a>.</p></div>
     <div class="card"><h3>Difficult sheets and PDFs</h3><p>PDFs, scans and sheets where the spacing is lost: an AI chat can tidy them into ukemusic's format, or get a song ready to practise. <a href="#ai">How, with prompts to copy</a>.</p></div>
     <div class="card"><h3>Songs to start with</h3><p>Public-domain songs come with ukemusic, words, chords and strums, ready to play: Amazing Grace, Danny Boy, The Wild Rover and more.</p></div>
-    <div class="card"><h3>Change one, or write your own</h3><p>Every song is words with the chords in square brackets, <code>[C]Oh my [G7]darling</code>, so changing a chord or writing a song of your own is just typing. Or turn on <b>Edit chords on the sheet</b> and drag each chord to the word where it's played, or click it to change it. The <a href="guide.html">song guide</a> has the rest: strums, timings, tab.</p></div>
+    <div class="card"><h3>Change one, or write your own</h3><p>Every song is words with the chords in square brackets, <code>[C]Oh my [G7]darling</code>, so changing a chord or writing a song of your own is just typing. Or turn on <b>Edit chords on the sheet</b> and drag each chord to the word where it's played, or click it to change it. The <a href="guide.html">How to write songs</a> has the rest: strums, timings, tab.</p></div>
   </div>
   <div class="note-box" style="margin-top:20px"><p><b>On a phone or tablet?</b> The web player pastes from websites too, and takes song files, ChordPro, a zipped songs folder or the desktop app's file. <a href="phone.html">How to put it on your Home Screen and keep your songs safe</a>.</p></div>
 </div></section>
@@ -367,7 +367,7 @@ const PHONE_PAGE = {
 <section><div class="wrap">
   <h2>3. Write and change songs</h2>
   <div class="feature text-only"><div class="text">
-    <p><strong>New song</strong> starts one; <strong>✎ Edit words &amp; chords</strong> on any song changes it. Type the words with the chords in square brackets, as in the <a href="guide.html">song guide</a>. On an iPad the chord sheet is beside the words as you type; on a phone, press <strong>Preview</strong>.</p>
+    <p><strong>New song</strong> starts one; <strong>✎ Edit words &amp; chords</strong> on any song changes it. Type the words with the chords in square brackets, as in the <a href="guide.html">How to write songs</a>. On an iPad the chord sheet is beside the words as you type; on a phone, press <strong>Preview</strong>.</p>
     <ul>
       <li>Buttons type what touch keyboards hide: <code>[&nbsp;]</code> a chord, <code>[[&nbsp;]]</code> a heading, <code>{&nbsp;}</code> a strum, <code>|</code> a bar line, ♪ a tune line</li>
       <li><strong>Details</strong>: title, artist, year, key, capo, tempo, time and tags</li>
@@ -434,7 +434,7 @@ const PHONE_PAGE = {
     <li>It works in Safari, Chrome, Edge and Firefox; installing works in Safari, Chrome and Edge, and Firefox on Android</li>
     <li>For big jobs (a whole club songbook, printing, PDFs, setlist songbooks) the <a href="./#get">desktop app</a> does more</li>
   </ul></div></div>
-  <div class="next-pages" style="margin-top:20px"><a class="btn primary" href="app/">Open the web player</a><a class="btn" href="songs.html">Add songs from the web</a><a class="btn" href="guide.html">The song guide</a></div>
+  <div class="next-pages" style="margin-top:20px"><a class="btn primary" href="app/">Open the web player</a><a class="btn" href="songs.html">Add songs from the web</a><a class="btn" href="guide.html">How to write songs</a></div>
 </div></section>`
 };
 
