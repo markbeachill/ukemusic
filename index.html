@@ -1536,6 +1536,9 @@
       [data-ribbon-panel="pick"] select { max-width: 230px; }
       #pickWritePatternNote { display: block; margin-top: 4px; }
       .pick-help-dialog { width: min(680px, 94vw); max-height: calc(100vh - 32px); }
+      .instrument-help-table { border-collapse: collapse; font-size: 13px; margin: 4px 0 8px; }
+      .instrument-help-table th, .instrument-help-table td { text-align: left; vertical-align: top; padding: 5px 8px; border-bottom: 1px solid var(--border); }
+      .table-scroll { overflow-x: auto; }
       .pick-write-dialog { width: min(620px, 94vw); }
       .pick-write-grid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px 14px; align-items: start; margin: 10px 0; }
       .pick-write-grid > label:first-child, .pick-write-grid > label[for] { padding-top: 4px; font-weight: 600; }
@@ -2457,6 +2460,7 @@
                       <option value="baritoneonuke" data-feature="shapesAcross" title="Your baritone (or guitar) shapes on a ukulele: the chords keep their baritone names and shapes, and sound a fourth higher">Uke, bari shapes</option>
                     </select>
                   </div>
+                  <button id="instrumentHelpButton" class="rib-small" type="button" title="Playing this song on another instrument, and keeping the chord shapes you know">Your shapes?</button>
                 </div>
               </div>
               <span class="rib-label">Instrument</span>
@@ -4095,6 +4099,11 @@
       </form>
     </dialog>
 
+    <dialog id="instrumentHelpDialog" class="pick-help-dialog" aria-labelledby="instrumentHelpTitle">
+      <h2 id="instrumentHelpTitle">Playing a song on another instrument</h2>
+      <div id="instrumentHelpBody" class="pick-help"></div>
+      <div class="dialog-actions"><span></span><div class="right"><button id="instrumentHelpClose" class="primary" type="button">Close</button></div></div>
+    </dialog>
     <dialog id="pickHelpDialog" class="pick-help-dialog">
       <h2>How picking works</h2>
       <div class="pick-help">
@@ -5822,6 +5831,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             swing: config?.playback?.swing || 'auto',
             diagrams: config?.diagrams || {},
             chordLibrary: chordLibraryFor(instrument, config),
+            // 4.99.3: the shapes you know on another instrument: each diagram says what it sounds as
+            soundShift: songInstrument(config).soundShift ? songInstrument(config).soundShift + songCapo(config) : 0,
             // 4.44: the tune as notation: a strip at the top, over every line, or hidden
             tune: { notation: ['strip', 'lines', 'off'].includes(config?.export?.tune_notation) ? config.export.tune_notation : 'strip' }
           };
@@ -12275,6 +12286,12 @@ function showTab(tab) {
           focusEditor();
         });
         document.getElementById('pickHelpButton').addEventListener('click', () => document.getElementById('pickHelpDialog').showModal());
+        // 4.99.3: playing a song on another instrument: keeping the shapes you know (src/instrument-help.js)
+        document.getElementById('instrumentHelpButton').addEventListener('click', () => {
+          document.getElementById('instrumentHelpBody').innerHTML = window.ukemusic.instrumentHelpHtml({ app: 'desktop' });
+          document.getElementById('instrumentHelpDialog').showModal();
+        });
+        document.getElementById('instrumentHelpClose').addEventListener('click', () => document.getElementById('instrumentHelpDialog').close());
         document.getElementById('pickHelpClose').addEventListener('click', () => document.getElementById('pickHelpDialog').close());
         // Write the guessed names in as [[headings]] (4.24): then they show on the sheet, can be
         // corrected, and the analysis goes by them from then on

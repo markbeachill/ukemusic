@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.99.3
+
+- **Both names on the sheet.** With **Bari, uke shapes** or **Uke, bari shapes**, each chord diagram says what the shape sounds as under its name (**C**, *sounds G*): on the sheet, in prints and exports, on the Music stand and Session screen, and in the web player. A capo is counted in.
+- **Your shapes?** under the Instrument menu (the web player: **?** beside it): playing a song on another instrument, and how to keep the shapes you know by moving the key yourself, for every pair of instruments (ukulele to baritone or guitar: five down; back: five up; baritone and guitar, high and low G: nothing).
+- The user guides explain it by hand too: a table in Switching instruments, and a new section in the phone guide, Playing it on another instrument.
+
 ## v4.99.2
 
 - **Bari, uke shapes and Uke, bari shapes:** Free Practice from such a song opens for the instrument the shapes belong to (it showed a blank instrument), and **First note** sounds and names the note as it sounds on the instrument you're holding.

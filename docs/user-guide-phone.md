@@ -51,9 +51,21 @@ A song opens as the sheet to play from. From the top:
 
 ![The key moved up a tone, with a capo on the first fret](../site/img/guide/iphone-S4.jpg)
 
-The key, capo, instrument, tempo and other playing choices are kept on this device for this song; they don't change the song itself. **Settings → Reset playing choices** puts them back. Playing it on another instrument, or keeping your ukulele shapes on a baritone: see [Switching instruments](user-guide.md#switching-instruments) in the main guide.
+The key, capo, instrument, tempo and other playing choices are kept on this device for this song; they don't change the song itself. **Settings → Reset playing choices** puts them back.
 
 ![Settings for this song: playing choices, and how the song looks](../site/img/guide/iphone-S10.jpg)
+
+## Playing it on another instrument
+
+**Instrument** (on a song) draws another instrument's shapes for the same chords: the song sounds the same, and the shapes are new. To keep the shapes your fingers know, choose the instrument and move the **Key** instead:
+
+| You know | Now playing | Press | What you get |
+|---|---|---|---|
+| Ukulele | Baritone or guitar | **Key −** five times | C D7 F becomes G A7 C: your C, D7 and F shapes |
+| Baritone or guitar | Ukulele | **Key +** five times | G C D7 becomes C F G7 |
+| Baritone | Guitar, or back | nothing | the same shapes on the top four strings |
+
+It then sounds five semitones lower (or higher) than written. **?** beside Instrument shows this table. With all features, **Bari, uke shapes** and **Uke, bari shapes** do it for you and keep the chord names you know, with what each sounds as under its diagram. More in the main guide: [Switching instruments](user-guide.md#switching-instruments).
 
 ## Playing along
 

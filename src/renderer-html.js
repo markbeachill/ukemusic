@@ -102,7 +102,10 @@ function normalizeOptions(options = {}) {
       // 4.34: no diagram for the chords everyone knows (Settings → All songs → Chord diagrams)
       skip: options.diagrams?.skip_common === true || options.diagrams?.skip_common === 'true' ? chordSet(options.diagrams?.common_chords ?? COMMON_CHORDS) : null
     },
-    chordLibrary: options.chordLibrary || getBuiltInLibrary()
+    chordLibrary: options.chordLibrary || getBuiltInLibrary(),
+    // 4.99.3: the shapes you know on another instrument (src/instruments.js soundShift, plus any capo):
+    // each diagram says what the chord sounds as, under its name ("C", "sounds G")
+    soundShift: Number(options.soundShift) || 0
   };
 }
 
@@ -311,13 +314,21 @@ function getGroupChordNames(group) {
     .map((node) => node.content);
 }
 
+/** 4.99.3: what a chord shape sounds as on the instrument in your hands ('G' for a C shape a fourth down), or '' */
+function soundsAs(chordName, shift) {
+  if (!shift || !chordName) return '';
+  const { transposeChord } = require('./transpose');
+  try { return transposeChord(chordName, shift, { spelling: 'common' }); } catch (_e) { return ''; }
+}
+
 function renderDiagramForChord(chordName, options) {
   if (options.diagrams.skip && options.diagrams.skip.has(chordKey(chordName))) return '';
   const definition = getChordDefinition(options.chordLibrary, chordName);
   if (definition) {
     return renderDiagramSvg({ ...definition, name: chordName }, {
       left_handed: options.diagrams.left_handed,
-      show_fingers: options.diagrams.show_fingers
+      show_fingers: options.diagrams.show_fingers,
+      sounds: soundsAs(chordName, options.soundShift)
     });
   }
 
@@ -802,6 +813,7 @@ function renderHtml(irNodes, options = {}) {
 module.exports = renderHtml;
 module.exports.renderHtml = renderHtml;
 module.exports.sheetCss = sheetCss;
+module.exports.soundsAs = soundsAs;
 // 4.34/4.35: is this chord in the list of common chords (A# is Bb)? For the Session screen
 module.exports.isCommonChord = (name, list) => chordSet(list ?? COMMON_CHORDS).has(chordKey(name));
 module.exports.COMMON_CHORDS = COMMON_CHORDS;

@@ -138,15 +138,23 @@ Here is C–D7–F–C on each:
 | **Bari, uke shapes** | C D7 F C, your ukulele shapes | G, a fourth lower |
 | Guitar, with the key moved down 5 | G A7 C G, guitar shapes | G |
 
-**Keeping the shapes you know.** A baritone, and a guitar's top four strings, are tuned a fourth (five semitones) below a ukulele, so a shape you know plays another chord on the other instrument. With all features, the **Instrument** menu has two choices for that: **Bari, uke shapes** (your ukulele shapes on a baritone; it sounds a fourth lower) and **Uke, bari shapes** (your baritone or guitar shapes on a ukulele; it sounds a fourth higher). The sheet keeps the chord names you know, and the line under it says the key it sounds in ("Key C · sounds in G"). More in [Instruments](../INSTRUMENTS.md#the-shapes-you-know-on-the-other-instrument-499).
+**Keeping the shapes you know, by hand.** A baritone, and a guitar's top four strings, are tuned five semitones (a fourth) below a ukulele, so the same shape is a different chord on each. To keep the shapes your fingers know, choose the instrument, then move the key with **Key to play in → −** or **+** (the web player: **Key −** and **+**):
 
-**Moving the key yourself.** **Key to play in → −** and **+** (the web player: **Key −** and **+**) move the song a semitone at a time. Do it:
+| You know | Now playing | Press | What you get |
+|---|---|---|---|
+| Ukulele | Baritone | **−** five times | C D7 F becomes G A7 C: your C, D7 and F shapes |
+| Ukulele | Guitar | **−** five times | the same shapes on the top four strings; the other two add bass |
+| Baritone or guitar | Ukulele | **+** five times | G C D7 becomes C F G7: your G, C and D7 shapes |
+| Baritone | Guitar, or back | nothing | the same shapes on the top four strings |
+| Ukulele, high G | Low G, or back | nothing | the same shapes |
 
-- to sing it higher or lower;
-- for easier shapes on the instrument you've chosen (or try **Capo → Suggest**);
-- to keep your ukulele shapes on a guitar: press **−** five times (C to G). The top four strings of the guitar's G, A7 and C are your ukulele C, D7 and F shapes, with two bass strings under them. **+** five times does the opposite: baritone or guitar shapes on a ukulele.
+The song then sounds five semitones lower (or higher) than written, which is usually fine to sing. A moved key is for trying out; **Keys ▾ → Save this key as a version** keeps it (the web player keeps it for that song on that device). **Your shapes?**, under the Instrument menu (the web player: **?** beside it), shows this table in the app.
 
-A moved key is for trying out; **Save this key as a version** keeps it.
+**Or let ukemusic keep the names you know** (with all features). The **Instrument** menu has **Bari, uke shapes** (your ukulele shapes on a baritone; it sounds a fourth lower) and **Uke, bari shapes** (your baritone or guitar shapes on a ukulele; it sounds a fourth higher). The sheet keeps the chord names you know, each diagram says what it sounds as (**C**, *sounds G*), and the line under the song gives the key it sounds in ("Key C · sounds in G"). More in [Instruments](../INSTRUMENTS.md#the-shapes-you-know-on-the-other-instrument-499).
+
+A shape can be a slightly different chord on the other instrument: the ukulele's F shape (2010) on a baritone is C with its E at the bottom, and its D7 shape (2020) is an A7 with no A. For strumming along, that's fine.
+
+**Moving the key for other reasons:** to sing it higher or lower, or for easier shapes on the instrument you've chosen (or try **Capo → Suggest**).
 
 ## How the sheet looks
 

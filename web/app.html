@@ -536,7 +536,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
       <div id="tools" class="tools gutter" role="toolbar" aria-label="Playing choices for this song on this device">
         <div class="tool"><span class="lab">Key</span><button id="keyDown" type="button" aria-label="Key down">−</button><span id="keyVal" class="val"></span><button id="keyUp" type="button" aria-label="Key up">+</button></div>
         <div class="tool"><span class="lab">Capo</span><button id="capoDown" type="button" aria-label="Capo down">−</button><span id="capoVal" class="val"></span><button id="capoUp" type="button" aria-label="Capo up">+</button></div>
-        <div class="tool" data-wide data-feature="instrument"><label for="instrument">Instrument</label><select id="instrument"></select></div>
+        <div class="tool" data-wide data-feature="instrument"><label for="instrument">Instrument</label><select id="instrument"></select><button id="instrumentHelpBtn" type="button" title="Playing this song on another instrument, and keeping the chord shapes you know" aria-label="Help: playing on another instrument">?</button></div>
         <div class="tool" data-wide data-feature="accompaniment"><label for="strumSel">Strum or pick</label><select id="strumSel" title="The strum it plays: the song's own, or one from the strum library (strong strokes marked &gt;)"></select></div>
         <div class="tool" data-display data-feature="textSize"><span class="lab">Text</span><button id="textDown" type="button" aria-label="Smaller text">A−</button><button id="textUp" type="button" aria-label="Bigger text">A+</button></div>
         <div class="tool more"><button id="moreBtn" type="button" aria-expanded="false" aria-controls="moreTools">Settings <span aria-hidden="true">▾</span></button></div>
@@ -777,6 +777,11 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
   <label for="pickStrumming">Strum or pick</label><select id="pickStrumming"></select><p class="note">Choose a strum or a picking pattern. Selection changes this song on this device. Hear example stays here; Play in Karaoke opens the follow-along screen.</p><div class="dialog-actions"><button id="pickPlay" class="btn primary" type="button">Play in Karaoke</button><button id="pickHear" class="btn" type="button">Hear example</button><button id="pickClose" class="btn" type="button">Close</button></div>
 </dialog>
 
+<dialog id="instrumentHelpDialog" class="guide-dialog" aria-labelledby="instrumentHelpTitle">
+  <h2 id="instrumentHelpTitle">Playing a song on another instrument</h2>
+  <div id="instrumentHelpBody" class="guide-body"></div>
+  <div class="dialog-actions"><button id="instrumentHelpClose" class="btn primary" type="button">Close</button></div>
+</dialog>
 <dialog id="pickHelpDialog" class="guide-dialog">
   <h2>How picking works</h2>
   <div class="guide-body pick-help">
@@ -2071,6 +2076,12 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushEdit(); });
 
   // The sheet
+  // 4.99.3: the shapes you know on another instrument (src/instruments.js): how far they sound from their names
+  function soundShiftNow() {
+    const p = prefs();
+    const shift = Number(U.instrument(p.instrument).soundShift) || 0;
+    return shift ? shift + p.capo : 0;
+  }
   function library() {
     const p = prefs();
     const base = UMW.library(p.instrument);
@@ -2132,6 +2143,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
       tempo: p.tempo,
       diagrams: { enable: look.diagrams !== 'none', placement: look.diagrams, show_fingers: true, skip_common: look.hideCommon === true, left_handed: look.leftHanded === true },
       chordLibrary: library(),
+      soundShift: soundShiftNow(), // 4.99.3: the shapes you know on another instrument: what each sounds as
       maxLineChars: ['lines', 'table'].includes(look.layout) ? charsAcross(sheet) : 0, // 4.86.2: In columns too
       tune: tuneOptions()
     };
@@ -2352,12 +2364,15 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     frame.srcdoc = sheetDocument(false); document.body.append(frame);
   });
   $('dlClose').addEventListener('click', () => $('downloadDialog').close());
+  // 4.99.3: playing a song on another instrument: keeping the shapes you know (src/instrument-help.js)
+  $('instrumentHelpBtn').addEventListener('click', () => { $('instrumentHelpBody').innerHTML = U.instrumentHelpHtml({ app: 'web' }); $('instrumentHelpDialog').showModal(); });
+  $('instrumentHelpClose').addEventListener('click', () => $('instrumentHelpDialog').close());
   $('dlMarkup').checked = local.get('chordproMarkup', false) === true; // 4.63: remembered on this device
   $('dlMarkup').addEventListener('change', () => local.set('chordproMarkup', $('dlMarkup').checked));
   function sheetDocument(stage) {
     const p = prefs();
     const lib = library();
-    const base = { tune: tuneOptions(), layout: stage ? 'lines' : look.layout, strumStyle: 'compact', beatsPerBar: p.beats, tempo: p.tempo, diagrams: { enable: true, placement: 'song_start', show_fingers: true, skip_common: look.hideCommon === true, left_handed: look.leftHanded === true }, chordLibrary: lib, maxLineChars: stage ? 48 : 0 };
+    const base = { soundShift: soundShiftNow(), tune: tuneOptions(), layout: stage ? 'lines' : look.layout, strumStyle: 'compact', beatsPerBar: p.beats, tempo: p.tempo, diagrams: { enable: true, placement: 'song_start', show_fingers: true, skip_common: look.hideCommon === true, left_handed: look.leftHanded === true }, chordLibrary: lib, maxLineChars: stage ? 48 : 0 };
     const ir = currentIr(stage ? stageText(played(view.song.text)) : played(view.song.text));
     const body = U.renderHTML(ir, stage ? stageOptions(base, 48, 680, 20, false) : base) + (U.shorthandKeyHtml ? U.shorthandKeyHtml(ir) : '');
     const k = keyText();

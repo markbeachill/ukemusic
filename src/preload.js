@@ -22,6 +22,7 @@ const rekey = require('./rekey');
 const setlistTools = require('./setlists');
 const strumBox = require('./strum-box');
 const renderDiagramSvg = require('./diagram-svg');
+const instrumentHelp = require('./instrument-help');   // 4.99.3
 const guide = require('./guide');
 const about = require('./about');
 const training = require('./training');
@@ -372,6 +373,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
     stringNames: (tuning) => fingerExercises.stringNames(tuning)
   },
   diagramSvg: (definition, options) => renderDiagramSvg(definition, options),
+  instrumentHelpHtml: (options) => instrumentHelp.helpHtml(options),   // 4.99.3: playing a song on another instrument
   instrument: (id) => instruments.instrument(id),
   blankTab: (instrument, bars, width) => tabTools.blankTab(instrument, bars, width),
   buildKaraoke: (irNodes, schedule, options) => karaoke.buildKaraoke(irNodes, schedule, options),

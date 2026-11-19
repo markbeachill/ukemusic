@@ -195,15 +195,15 @@ const SESSION_CSS = `
  *   library   the chord library for the instrument (shapes for the diagrams)
  *   common    the song's common-chords list (diagrams.common_chords), or undefined for the usual
  */
-function sessionSong(shown, { title = '', sub = '', folder = '', library = null, common, leftHanded = false } = {}) {
+function sessionSong(shown, { title = '', sub = '', folder = '', library = null, common, leftHanded = false, soundShift = 0 } = {}) {
   const { getChordDefinition } = require('./chord-library');
   const renderDiagramSvg = require('./diagram-svg');
-  const { isCommonChord } = require('./renderer-html');
+  const { isCommonChord, soundsAs } = require('./renderer-html');
   const diagrams = sessionChords(shown).map((name) => {
     let svg = '';
     try {
       const def = library ? getChordDefinition(library, name) : null;
-      if (def) svg = String(renderDiagramSvg({ ...def, name }, { left_handed: leftHanded, show_fingers: true }));
+      if (def) svg = String(renderDiagramSvg({ ...def, name }, { left_handed: leftHanded, show_fingers: true, sounds: soundsAs(name, soundShift) }));   // 4.99.3: and what it sounds as
     } catch (_e) { /* no shape */ }
     return { name, common: isCommonChord(name, common), svg };
   });
@@ -241,7 +241,8 @@ function sessionSongFromText(text, { parserOptions = {}, chorusOnce = false, key
   const shown = transposeIR(ir, semitones - capo, { spelling: 'key', key: songKey, instrument: inst.id });
   const keyNow = songKey ? keys.transposeKey(songKey, semitones) : null;
   const sub = [credit, keyNow ? keys.describeKey(keyNow) : '', capo ? `Capo ${capo}` : '', inst.id !== 'soprano' ? inst.name : ''].filter(Boolean).join(' · ');
-  const song = sessionSong(shown, { title, sub, folder, library, common, leftHanded });
+  const soundShift = inst.soundShift ? inst.soundShift + capo : 0;   // 4.99.3: the shapes you know on another instrument
+  const song = sessionSong(shown, { title, sub, folder, library, common, leftHanded, soundShift });
   if (once) for (const mode of Object.keys(song.html)) song.html[mode] = String(song.html[mode]).replace(/ data-line="\d+"/g, '');
   return song;
 }

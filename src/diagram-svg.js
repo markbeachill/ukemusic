@@ -50,6 +50,9 @@ function renderDiagramSvg(chordDefinition, options = {}) {
   const bottomGridY = top + fretGap * fretRows;
   const indicatorY = 16;
   const nameY = bottomGridY + 32;
+  // 4.99.3: a second line under the name: what the shape sounds as (the shapes you know on another instrument)
+  const sounds = options && options.sounds ? String(options.sounds) : '';
+  const bottomY = sounds ? nameY + 17 : nameY;
   const stringXs = definition.frets.map((_, index) => left + index * stringGap);
   const dotRadius = stringCount <= 4 ? 7 : 6;
   const parts = [];
@@ -102,7 +105,9 @@ function renderDiagramSvg(chordDefinition, options = {}) {
 
   parts.push(`<text class="name" x="${(stringXs[0] + stringXs[stringXs.length - 1]) / 2}" y="${nameY}" text-anchor="middle" font-size="18" font-weight="600" fill="var(--chord-color)">${escapeHtml(definition.name)}</text>`);
 
-  return `<div class="chord-diagram${definition.custom ? ' custom-shape' : ''}" data-chord="${escapeHtml(definition.name)}"><svg viewBox="0 0 100 ${nameY + 7}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${escapeHtml(definition.name)} chord diagram" style="width: var(--diagram-size); height: auto;">${parts.join('')}</svg></div>`;
+  if (sounds) parts.push(`<text class="sounds" x="${(stringXs[0] + stringXs[stringXs.length - 1]) / 2}" y="${bottomY}" text-anchor="middle" font-size="12" fill="var(--text-color)" opacity="0.75">sounds ${escapeHtml(sounds)}</text>`);
+
+  return `<div class="chord-diagram${definition.custom ? ' custom-shape' : ''}" data-chord="${escapeHtml(definition.name)}"${sounds ? ` data-sounds="${escapeHtml(sounds)}"` : ''}><svg viewBox="0 0 100 ${bottomY + 7}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${escapeHtml(definition.name)} chord diagram${sounds ? `, sounds ${escapeHtml(sounds)}` : ''}" style="width: var(--diagram-size); height: auto;">${parts.join('')}</svg></div>`;
 }
 
 function createPlaceholderDiagram(chordName, strings = 4) {
