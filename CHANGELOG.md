@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.99.1
+
+- **User guide: Switching instruments** (under Key, capo, instrument and tempo): what changes when you switch, where the choices are (one song, every song, the web player), C–D7–F–C on each instrument, keeping the shapes you know (Bari, uke shapes and Uke, bari shapes), and moving the key yourself, and why: to sing it higher or lower, for easier shapes, or to keep your ukulele shapes on a guitar (five down, C to G). The phone guide links to it.
+
 ## v4.99.0
 
 - **The shapes you know, on the other instrument** (all features). A song's **Instrument** menu has two more: **Bari, uke shapes** plays your ukulele shapes on a baritone (the sheet keeps the ukulele chords and shapes, and it sounds a fourth lower: C–D7–F–C sounds as G–A7–C–G), and **Uke, bari shapes** plays your baritone (or guitar) shapes on a ukulele, a fourth higher. Playback sounds as the instrument you're holding, the tune too, and the line under the song says the key it sounds in (Key C · sounds in G). Settings → Your instrument has them too; the first-time question and Free Practice keep to the four instruments.

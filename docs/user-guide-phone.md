@@ -51,7 +51,7 @@ A song opens as the sheet to play from. From the top:
 
 ![The key moved up a tone, with a capo on the first fret](../site/img/guide/iphone-S4.jpg)
 
-The key, capo, instrument, tempo and other playing choices are kept on this device for this song; they don't change the song itself. **Settings → Reset playing choices** puts them back.
+The key, capo, instrument, tempo and other playing choices are kept on this device for this song; they don't change the song itself. **Settings → Reset playing choices** puts them back. Playing it on another instrument, or keeping your ukulele shapes on a baritone: see [Switching instruments](user-guide.md#switching-instruments) in the main guide.
 
 ![Settings for this song: playing choices, and how the song looks](../site/img/guide/iphone-S10.jpg)
 

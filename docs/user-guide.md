@@ -13,7 +13,7 @@ How to use ukemusic, step by step. It covers the desktop app (Windows, Mac and L
 
 The first time, ukemusic asks what you play: ukulele (high or low G), baritone ukulele or guitar. Chord shapes, tab, playback and Free Practice follow your answer. You can change it later in Settings.
 
-Moving between a ukulele and a baritone? With all features, a song's **Instrument** menu also has **Bari, uke shapes** (your ukulele shapes on a baritone: the sheet shows the ukulele chords, and it sounds a fourth lower) and **Uke, bari shapes** (the other way). See [Instruments](../INSTRUMENTS.md#the-shapes-you-know-on-the-other-instrument-499).
+Playing a song on another instrument, or moving between a ukulele and a baritone? See [Switching instruments](#switching-instruments).
 
 ukemusic comes with songs that are out of copyright, ready to play. Open one and press **Play** to hear it.
 
@@ -121,6 +121,32 @@ The **Song** tab has the song's own settings:
 - **Capo:** play with a capo; the sheet shows the shapes to finger. **Suggest** offers capo positions with easier shapes.
 - **Instrument:** this song for another instrument. **Default** means it follows yours.
 - **Tempo and time,** and **Strum where none is written**: the strum played where the song has none of its own.
+
+### Switching instruments
+
+A song is written once, as chord names. The instrument decides the shapes drawn for them, the tab and the sound. So switching keeps the song's chords and key and changes the shapes: C is drawn 0003 on a ukulele, 2010 on a baritone and x32010 on a guitar. Nothing in the song itself changes, and switching back puts everything back.
+
+- **One song:** **Song → Instrument** (the web player: the song's **Settings**). It's kept with the song when you **Save**; **Default (…)** at the top makes it follow yours again.
+- **Every song:** **Settings → Your instrument** (the web player: **Your instrument**, under your songs).
+
+Here is C–D7–F–C on each:
+
+| Instrument | The sheet shows | It sounds in |
+|---|---|---|
+| Ukulele | C D7 F C, ukulele shapes | C |
+| Baritone uke, or Guitar | C D7 F C, baritone or guitar shapes | C |
+| **Bari, uke shapes** | C D7 F C, your ukulele shapes | G, a fourth lower |
+| Guitar, with the key moved down 5 | G A7 C G, guitar shapes | G |
+
+**Keeping the shapes you know.** A baritone, and a guitar's top four strings, are tuned a fourth (five semitones) below a ukulele, so a shape you know plays another chord on the other instrument. With all features, the **Instrument** menu has two choices for that: **Bari, uke shapes** (your ukulele shapes on a baritone; it sounds a fourth lower) and **Uke, bari shapes** (your baritone or guitar shapes on a ukulele; it sounds a fourth higher). The sheet keeps the chord names you know, and the line under it says the key it sounds in ("Key C · sounds in G"). More in [Instruments](../INSTRUMENTS.md#the-shapes-you-know-on-the-other-instrument-499).
+
+**Moving the key yourself.** **Key to play in → −** and **+** (the web player: **Key −** and **+**) move the song a semitone at a time. Do it:
+
+- to sing it higher or lower;
+- for easier shapes on the instrument you've chosen (or try **Capo → Suggest**);
+- to keep your ukulele shapes on a guitar: press **−** five times (C to G). The top four strings of the guitar's G, A7 and C are your ukulele C, D7 and F shapes, with two bass strings under them. **+** five times does the opposite: baritone or guitar shapes on a ukulele.
+
+A moved key is for trying out; **Save this key as a version** keeps it.
 
 ## How the sheet looks
 
