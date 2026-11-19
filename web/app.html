@@ -846,7 +846,8 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
 const state = { config: { playback: { sound: 'sampled' }, song: {}, library: { songs_folder: '/songs' } }, userStopped: false };
 // 4.72: real recordings for each instrument: the tenor ukulele; the nylon-string guitar for the
 // guitar and the baritone (nylon strings, tuned like a guitar's top four). Free Practice uses it too.
-const soundFor = (instrument) => (instrument === 'guitar' || instrument === 'baritone' ? 'guitar' : 'sampled');
+// 4.99: the shapes you know on another instrument (src/instruments.js) sound like that instrument
+const soundFor = (instrument) => { const like = (((typeof UMW !== 'undefined') && UMW.INSTRUMENTS.find((i) => i.id === instrument)) || {}).soundsLike || instrument; return like === 'guitar' || like === 'baritone' ? 'guitar' : 'sampled'; };
 const player = window.UkePlayer ? new window.UkePlayer() : null;
 const songsFolder = () => '/songs';
 function effectiveConfig() { return state.config; }
@@ -1672,8 +1673,10 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   })();
   state.config.diagrams = { ...(state.config.diagrams || {}), left_handed: look.leftHanded === true }; // 4.64: Free Practice's starting point
   // 4.65: first, "Default (Guitar)": the song follows your instrument; the others are the song's own on this device
-  const INSTRUMENT_SHORT = { soprano: 'Uke', lowg: 'Low G', baritone: 'Baritone', guitar: 'Guitar' };
-  $('instrument').innerHTML = '<option value="">Default (Uke)</option>' + UMW.INSTRUMENTS.map((i) => `<option value="${i.id}">${esc(i.name)}</option>`).join('');
+  const INSTRUMENT_SHORT = { soprano: 'Uke', lowg: 'Low G', baritone: 'Baritone', guitar: 'Guitar', ukeonbaritone: 'Uke→Bar', baritoneonuke: 'Bar→Uke' };
+  // 4.99: the shapes you know on another instrument are in all features (data-feature)
+  const instrumentOption = (i) => `<option value="${i.id}"${i.shapesFrom ? ' data-feature="shapesAcross"' : ''}>${esc(i.name)}</option>`;
+  $('instrument').innerHTML = '<option value="">Default (Uke)</option>' + UMW.INSTRUMENTS.map(instrumentOption).join('');
   // Key, capo, instrument and tempo: the song's own settings (from the desktop), changed here per device
   const devicePrefs = local.get('prefs', {});
   // 4.62: your instrument (as the desktop's Settings → All songs → Your instrument): for songs without
@@ -1687,10 +1690,10 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     if (!view.song) state.config.song.instrument = id;
     renderLibrary();
   }
-  $('myInstrument').innerHTML = UMW.INSTRUMENTS.map((i) => `<option value="${i.id}">${esc(i.name)}</option>`).join('');
+  $('myInstrument').innerHTML = UMW.INSTRUMENTS.map(instrumentOption).join('');
   $('myInstrument').value = myInstrument();
   $('myInstrument').addEventListener('change', () => setMyInstrument($('myInstrument').value));
-  $('instrumentAskButtons').replaceChildren(...UMW.INSTRUMENTS.map((i) => {
+  $('instrumentAskButtons').replaceChildren(...UMW.INSTRUMENTS.filter((i) => !i.shapesFrom).map((i) => {   // 4.99: what you play, first
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'btn'; b.textContent = i.name;
     b.addEventListener('click', () => setMyInstrument(i.id));
@@ -1835,7 +1838,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     copyPrompt(e.currentTarget, U.aiPracticePrompt({
       title: $('fTitle').value || song.title || '',
       artist: $('fArtist').value || '',
-      instrument: inst === 'baritone' ? 'baritone ukulele (DGBE)' : inst === 'guitar' ? 'guitar (EADGBE)' : '',
+      instrument: ((UMW.INSTRUMENTS.find((i) => i.id === inst) || {}).sameShapesAs || inst) === 'baritone' ? 'baritone ukulele (DGBE)' : inst === 'guitar' ? 'guitar (EADGBE)' : '',   // 4.99: by the shapes
       text: editorText()
     }), 'Copy prompt: ready to practise');
   });

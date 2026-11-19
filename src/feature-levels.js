@@ -35,6 +35,7 @@
     { id: 'capo', app: 'desktop', where: 'Song', name: 'Capo', level: 'simple' },
     { id: 'capoSuggest', app: 'desktop', where: 'Song', name: 'Suggest a capo', level: 'simple' },
     { id: 'instrument', app: 'both', where: 'Song; web: the song page', name: 'Instrument', level: 'simple' },
+    { id: 'shapesAcross', app: 'both', where: 'Song → Instrument, and Settings; web: the song page, and Settings', name: 'The shapes you know on another instrument: ukulele shapes on a baritone, baritone shapes on a ukulele', level: 'all' }, // 4.99
     { id: 'tempoTime', app: 'desktop', where: 'Song', name: 'Tempo and time', level: 'simple' },
     { id: 'songStrum', app: 'desktop', where: 'Song', name: 'Strum where none is written', level: 'all' },
     // ── Desktop: Display ──

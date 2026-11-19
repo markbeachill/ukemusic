@@ -23,6 +23,20 @@ The order (ukulele, low-G ukulele, baritone, guitar) is the order of every menu.
 
 **Low G**: many concert and tenor players tune the G string an octave lower. Chord shapes and tab are written exactly as for a high-G ukulele, so only playback changes: chords and tab notes on the G string sound an octave lower. Tab written for a high-G ukulele keeps its fingering.
 
+### The shapes you know, on the other instrument (4.99)
+
+A baritone is tuned a fourth below a ukulele, with the same four shapes on the top strings, so a shape you know on one plays a chord a fourth away on the other. Some players moving between them keep the shapes they know: a ukulele player plays the song's C, D7, F and C shapes on a baritone, and it sounds as G, A7, C and G. Two more instruments, in **all features**, do just that:
+
+| | Baritone, ukulele shapes | Ukulele, baritone shapes |
+|---|---|---|
+| You play | your ukulele shapes on a baritone | your baritone (or guitar) shapes on a ukulele |
+| The sheet shows | the ukulele's chord names and shapes, as the song is written | the baritone's chord names and shapes |
+| It sounds | a fourth lower (C shape: G) | a fourth higher (G shape: C) |
+| Playback | the baritone's sound | a low-G ukulele (on a high-G one, only the 4th string differs) |
+| Export name code | `_uke` (the same sheet) | `_bar` |
+
+The status line under the song says the key it sounds in (Key C · sounds in G). A shape doesn't play the same chord on the other instrument in the same way: the ukulele's F shape (2010) on a baritone is a C with its E at the bottom (C/E), and its D7 shape (2020) is an A7 with no A. To play the song's own chords on the other instrument instead, choose that instrument.
+
 ### Choosing the instrument
 
 - **For one song**: the **Instrument** menu on the **This song** tab. It's saved with the song.

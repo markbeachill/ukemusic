@@ -2453,6 +2453,8 @@
                       <option value="lowg">Ukulele (low G)</option>
                       <option value="baritone">Baritone uke</option>
                       <option value="guitar">Guitar</option>
+                      <option value="ukeonbaritone" data-feature="shapesAcross" title="Your ukulele shapes on a baritone: the chords keep their ukulele names and shapes, and sound a fourth lower">Bari, uke shapes</option>
+                      <option value="baritoneonuke" data-feature="shapesAcross" title="Your baritone (or guitar) shapes on a ukulele: the chords keep their baritone names and shapes, and sound a fourth higher">Uke, bari shapes</option>
                     </select>
                   </div>
                 </div>
@@ -3161,6 +3163,8 @@
                           <option value="lowg">Ukulele with low G (concert, tenor)</option>
                           <option value="baritone">Baritone ukulele (DGBE)</option>
                           <option value="guitar">Guitar (EADGBE)</option>
+                          <option value="ukeonbaritone" data-feature="shapesAcross">Baritone ukulele, playing your ukulele shapes</option>
+                          <option value="baritoneonuke" data-feature="shapesAcross">Ukulele, playing your baritone shapes</option>
                         </select>
                         <p class="help">New songs are made for this instrument, and so is every song that hasn't been given one of its own (Song → Instrument, on the ribbon). It decides the chord diagrams, how tab is shown (tab written for another instrument is converted), the notes played back, and the code in export names: _uke, _bar or _gtr.</p>
                       </div>
@@ -4551,6 +4555,7 @@
 
 
 
+
     <div id="karaoke" class="karaoke" hidden role="dialog" aria-label="Karaoke view">
       <div class="karaoke-bar">
         <div class="k-heading-block">
@@ -4668,7 +4673,7 @@
 
         // The instrument profile for the song (src/instruments.js): ukulele, baritone uke or guitar
         // 4.65: short names for "Default (…)" in the Instrument menu (kept short so the menu doesn't widen)
-        const INSTRUMENT_SHORT = { soprano: 'Uke', lowg: 'Low G', baritone: 'Baritone', guitar: 'Guitar' };
+        const INSTRUMENT_SHORT = { soprano: 'Uke', lowg: 'Low G', baritone: 'Baritone', guitar: 'Guitar', ukeonbaritone: 'Uke→Bar', baritoneonuke: 'Bar→Uke' };
         const defaultInstrumentLabel = () => `Default (${INSTRUMENT_SHORT[window.ukemusic.instrument(state.config?.song?.instrument).id] || 'Uke'})`;
 
         function songInstrument(config = effectiveConfig()) {
@@ -6010,7 +6015,9 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const pb = state.config?.playback || {};
           if (instrument === 'guitar') return ['steel', 'nylon'].includes(pb.guitar_sound) ? pb.guitar_sound : 'guitar';
           const sound = ['hollow', 'sampled', 'standard'].includes(pb.sound) ? pb.sound : 'sampled';
-          if (instrument === 'baritone' && sound === 'sampled') return 'guitar';
+          const like = globalThis.ukemusic?.instrument?.(instrument)?.soundsLike || instrument;   // 4.99: the shapes you know on another instrument sound like it
+          if (like === 'guitar') return ['steel', 'nylon'].includes(pb.guitar_sound) ? pb.guitar_sound : 'guitar';
+          if (like === 'baritone' && sound === 'sampled') return 'guitar';
           return sound;
         }
         // 4.71: Easy to read text: song sheets and Stage copies in Atkinson Hyperlegible (Display → Style)
@@ -7745,7 +7752,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           const prompt = window.ukemusic.aiPracticePrompt({
             title: state.song?.title || '',
             artist: state.song ? (cfg?.song?.artist || '') : '',
-            instrument: inst === 'baritone' ? 'baritone ukulele (DGBE)' : inst === 'guitar' ? 'guitar (EADGBE)' : '',
+            instrument: shapesKey(inst) === 'baritone' ? 'baritone ukulele (DGBE)' : shapesKey(inst) === 'guitar' ? 'guitar (EADGBE)' : '',   // 4.99: by the shapes on the sheet
             text: pasted.trim() ? pasted : (state.song ? getEditorValue() : '')
           });
           let done = window.ukemusic.copyText(prompt);
@@ -9667,7 +9674,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           }));
           chips($p('prChordSets'), 'prChords', ['C Am F G', 'G C D', 'C F G7', 'A D E7', 'C G Am F', 'Am Dm E7']);
           chips($p('prDrillSets'), 'prDrillSet', ['C Am F G', 'G D Em C', 'C F G7', 'A D E7', 'Dm Bb C F', 'G7 C7 D7 A7']);
-          $p('prInstrument').replaceChildren(...window.ukemusic.instruments.map((i) => new Option(i.label, i.id)));
+          $p('prInstrument').replaceChildren(...window.ukemusic.instruments.filter((i) => !i.shapesFrom).map((i) => new Option(i.label, i.id)));
           $p('prInstrument').value = songInstrument(effectiveConfig()).id;
           // another instrument for this session: the exercise starts again for it (its chords, your changes for it)
           $p('prInstrument').addEventListener('change', () => { pr.sessionInstrument = $p('prInstrument').value; prPickNames(); if (pr.exId && pr.view === 'player') prOpen(pr.exId); });
@@ -12843,6 +12850,10 @@ function showTab(tab) {
           // 4.40.1: the song's key (Info → Written in) if it's set, else the guess (it always guessed)
           const shown = keyAfter(state.transpose);
           if (shown) bits.unshift(`Key ${shown.name}`);
+          // 4.99: the shapes you know on another instrument: the key it sounds in
+          const soundShift = Number(songInstrument(config).soundShift) || 0;
+          const sounds = soundShift && shown ? keyAfter(state.transpose + soundShift) : null;
+          if (sounds) bits.splice(1, 0, `sounds in ${sounds.name}`);
           songInfoLabel.textContent = bits.join(' · ');
         }
 

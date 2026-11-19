@@ -13,8 +13,8 @@ const app = read('web/app.html');
 
 test('desktop: the menu starts with Default (…), short names so it doesn\'t widen', () => {
   assert.match(html, /<select id="instrumentSelect"[^>]*data-follow-default="1"[^>]*>\s*<option value="">Default \(Uke\)<\/option>/);
-  assert.match(html, /const INSTRUMENT_SHORT = \{ soprano: 'Uke', lowg: 'Low G', baritone: 'Baritone', guitar: 'Guitar' \};/);
-  for (const label of ['Uke', 'Low G', 'Baritone', 'Guitar']) assert.ok(`Default (${label})`.length <= 18, label);
+  assert.match(html, /const INSTRUMENT_SHORT = \{ soprano: 'Uke', lowg: 'Low G', baritone: 'Baritone', guitar: 'Guitar', ukeonbaritone: 'Uke→Bar', baritoneonuke: 'Bar→Uke' \};/); // 4.99: and the shapes you know on another
+  for (const label of ['Uke', 'Low G', 'Baritone', 'Guitar', 'Uke→Bar', 'Bar→Uke']) assert.ok(`Default (${label})`.length <= 18, label);
 });
 
 test('desktop: it shows the song\'s own instrument, and Default removes it', () => {

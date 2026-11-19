@@ -11,6 +11,8 @@
 //   * ">" after a stroke accents it (played harder); the other strokes are played lighter.
 //   * options.capo: the chords and tab are shapes played with a capo, so every note sounds
 //     that many semitones higher (the song's real key)
+//   * 4.99: an instrument with a soundShift (your ukulele shapes on a baritone) plays every note,
+//     the tune too, that many semitones away: the shapes as they sound on that instrument
 //   * a ```tab block plays its notes (picked, one at a time or together) and takes as many
 //     whole bars as it needs; tab has no rhythm, so timing comes from the spacing (src/tab.js)
 // Pure function: no audio, no DOM, so it can be unit tested.
@@ -521,6 +523,13 @@ function buildSchedule(irNodes, options = {}) {
   });
 
   if (tunes.size) events.sort((a, b) => a.time - b.time);
+  // 4.99: the shapes you know on another instrument sound a fourth away (src/instruments.js)
+  const soundShift = Number(profile(options.instrument).soundShift) || 0;
+  if (soundShift) {
+    for (const event of events) {
+      if (Array.isArray(event.notes)) event.notes = event.notes.map((n) => (typeof n === 'number' ? n + soundShift : n));
+    }
+  }
   return { events, bars, duration: time, countInDuration, tempo, beatsPerBar, warnings };
 }
 

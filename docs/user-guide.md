@@ -13,6 +13,8 @@ How to use ukemusic, step by step. It covers the desktop app (Windows, Mac and L
 
 The first time, ukemusic asks what you play: ukulele (high or low G), baritone ukulele or guitar. Chord shapes, tab, playback and Free Practice follow your answer. You can change it later in Settings.
 
+Moving between a ukulele and a baritone? With all features, a song's **Instrument** menu also has **Bari, uke shapes** (your ukulele shapes on a baritone: the sheet shows the ukulele chords, and it sounds a fourth lower) and **Uke, bari shapes** (the other way). See [Instruments](../INSTRUMENTS.md#the-shapes-you-know-on-the-other-instrument-499).
+
 ukemusic comes with songs that are out of copyright, ready to play. Open one and press **Play** to hear it.
 
 ## The home screen: Songs and Free Practice

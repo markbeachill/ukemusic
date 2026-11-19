@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.99.0
+
+- **The shapes you know, on the other instrument** (all features). A song's **Instrument** menu has two more: **Bari, uke shapes** plays your ukulele shapes on a baritone (the sheet keeps the ukulele chords and shapes, and it sounds a fourth lower: C–D7–F–C sounds as G–A7–C–G), and **Uke, bari shapes** plays your baritone (or guitar) shapes on a ukulele, a fourth higher. Playback sounds as the instrument you're holding, the tune too, and the line under the song says the key it sounds in (Key C · sounds in G). Settings → Your instrument has them too; the first-time question and Free Practice keep to the four instruments.
+- INSTRUMENTS.md explains it, with what the familiar shapes become (the ukulele's F shape on a baritone is C with E at the bottom).
+
 ## v4.98.0
 
 - **The song's tabs are a rail down the left edge.** Details, Links, Exports, Notes and ChordPro are a narrow strip of icons with their names, so the column beside the sheet keeps its width for the words (Words & chords joins the top while you edit).

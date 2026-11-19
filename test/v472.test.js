@@ -75,7 +75,7 @@ test('desktop: soundFor picks the sound; guitar defaults to the recordings; Stee
 
 test('web player: the recordings for every instrument, Free Practice too; WAVs beside the page', () => {
   const app = read('web/app.html');
-  assert.match(app, /const soundFor = \(instrument\) => \(instrument === 'guitar' \|\| instrument === 'baritone' \? 'guitar' : 'sampled'\);/);
+  assert.ok(app.includes("return like === 'guitar' || like === 'baritone' ? 'guitar' : 'sampled'; };"), 'guitar and baritone: the guitar recordings (4.99: or what the instrument sounds like)');
   assert.strictEqual((app.match(/player\.setSound\(soundFor\(/g) || []).length, 3);
   assert.match(read('web/pr_js.js'), /player\.setSound\(soundFor\(instrument\)\);/);
   const build = read('web/build.js');

@@ -328,7 +328,7 @@ function planText(bars) {
 // Ukulele (and low G) use the exercises as written. On a baritone ukulele and a guitar, F is a
 // barre, so the beginner chords are the G family (G C D Em), the first barre is F, and the blues
 // is in E. Your own changes to an exercise are kept for each of these separately.
-const FAMILIES = { soprano: 'uke', lowg: 'uke', baritone: 'baritone', guitar: 'guitar' };
+const FAMILIES = { soprano: 'uke', lowg: 'uke', baritone: 'baritone', guitar: 'guitar', ukeonbaritone: 'uke', baritoneonuke: 'baritone' }; // 4.99: by the shapes
 function instrumentFamily(instrumentId) { return FAMILIES[instrumentId] || 'uke'; }
 const G_FAMILY_SETS = { 'C Am F G': 'G Em C D', 'C G Am F': 'G D Em C', C: 'G' };
 const G_FAMILY = {

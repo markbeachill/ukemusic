@@ -673,7 +673,7 @@
           }));
           chips($p('prChordSets'), 'prChords', ['C Am F G', 'G C D', 'C F G7', 'A D E7', 'C G Am F', 'Am Dm E7']);
           chips($p('prDrillSets'), 'prDrillSet', ['C Am F G', 'G D Em C', 'C F G7', 'A D E7', 'Dm Bb C F', 'G7 C7 D7 A7']);
-          $p('prInstrument').replaceChildren(...window.ukemusic.instruments.map((i) => new Option(i.label, i.id)));
+          $p('prInstrument').replaceChildren(...window.ukemusic.instruments.filter((i) => !i.shapesFrom).map((i) => new Option(i.label, i.id)));
           $p('prInstrument').value = songInstrument(effectiveConfig()).id;
           // another instrument for this session: the exercise starts again for it (its chords, your changes for it)
           $p('prInstrument').addEventListener('change', () => { pr.sessionInstrument = $p('prInstrument').value; prPickNames(); if (pr.exId && pr.view === 'player') prOpen(pr.exId); });

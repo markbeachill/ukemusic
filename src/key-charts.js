@@ -12,7 +12,7 @@ const CHART_KEYS = {
   baritone: ['G', 'C', 'D', 'A', 'E', 'F'],
   guitar: ['G', 'C', 'D', 'A', 'E', 'F']
 };
-const FAMILIES = { soprano: 'uke', lowg: 'uke', baritone: 'baritone', guitar: 'guitar' };
+const FAMILIES = { soprano: 'uke', lowg: 'uke', baritone: 'baritone', guitar: 'guitar', ukeonbaritone: 'uke', baritoneonuke: 'baritone' }; // 4.99: by the shapes
 const chartKeys = (instrumentId) => CHART_KEYS[FAMILIES[instrumentId] || 'uke'];
 
 // A major key's chords: I ii iii IV V vi and V7 (vii° is left out, as most songs leave it out).
