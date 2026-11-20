@@ -660,7 +660,7 @@ const FEATURES_PAGE = {
  *  web/features.js. Returns the text with them filled in (unchanged if already up to date). */
 function withFeatures(text, kind) {
   // 4.67: the home page has a card for each section (the README keeps the whole table)
-  const table = kind === 'readme' ? FEATURES.tableMarkdown(SITE_URL) : `      ${FEATURES.cardsHtml()}`;
+  const table = kind === 'readme' ? FEATURES.tableMarkdown(SITE_URL) : `      ${FEATURES.routesHtml()}`;   // 4.99.13: four routes
   let out = text.replace(/(<!-- features:start[^>]*-->)[\s\S]*?(\n[ \t]*<!-- features:end -->)/, (_m, a, b) => `${a}\n${table}${b}`);
   // 4.99.10: the sentence that says what the desktop app adds, from web/features.js
   out = out.replace(/<!-- adds -->[\s\S]*?<!-- \/adds -->/g, `<!-- adds -->${FEATURES.desktopAdds()}<!-- /adds -->`);

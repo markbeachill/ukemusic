@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.99.13 · The home page starts from what you want to do
+
+- **Website:** the home page is shorter at the top, and its nine feature cards are now four routes, each with its links: **Play along**, **Practise**, **Run a club night** and **Print a chord sheet**. Everything else is still on the Features page and further down.
+
 ## v4.99.12 · Gig check: a setlist's keys, capos and problems before the gig
 
 - **Setlists → Gig check** (desktop): the set in order with each song's key and capo. It marks what to look at before the gig: a song no longer in the songs folder, one in the set twice, one written for another instrument, one that needs a page turn (or the smallest text) on the Session screen. Capo changes between songs are noted. **Next to look at** goes through them; **Open** opens a song in the setlist's key.

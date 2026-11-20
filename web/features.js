@@ -160,6 +160,24 @@ function tableHtml({ prefix = '' } = {}) {
 }
 
 /** The home page's list (4.95: plain, as the website's style asks): each section's heading, linked, and one line */
+// 4.99.13: the home page starts from what you want to do: four routes, each with a way straight in
+const ROUTES = [
+  { tone: 'coral', h: 'Play along', p: 'Pick a song and press Play: the chords and the strum play while the words light up, at any speed and in any key.',
+    go: [['Open the web player', 'app/'], ['Playing along', 'practise.html']] },
+  { tone: 'amber', h: 'Practise', p: 'Learn a song by heart a step at a time, or warm up with 42 exercises: chord changes, strumming, picking and scales.',
+    go: [['The 42 exercises', 'practice/'], ['Learning a song', 'learn.html']] },
+  { tone: 'blue', h: 'Run a club night', p: 'The night\'s songs in a setlist, on the TV for the whole room with the Session screen, or on a tablet on your stand.',
+    go: [['Playing together', 'perform.html'], ['Teaching a group', 'teach.html']] },
+  { tone: 'teal', h: 'Print a chord sheet', p: 'Paste a song from any website: the chords go into the words with their shapes, in any key, ready to print or play from.',
+    go: [['Adding songs', 'songs.html'], ['Chord sheets', 'chord-sheets.html']] }
+];
+
+/** The home page's four routes (4.99.13) */
+function routesHtml({ prefix = '' } = {}) {
+  const items = ROUTES.map((r) => `<div class="tone-${r.tone}"><h3>${esc(r.h)}</h3><p>${esc(r.p)}</p><p class="f-go">${r.go.map(([t, href]) => `<a href="${prefix}${href}">${esc(t)}</a>`).join(' · ')}</p></div>`).join('\n');
+  return `<div class="f-list f-routes">\n${items}\n</div>`;
+}
+
 function cardsHtml({ prefix = '' } = {}) {
   const items = SECTIONS.map((s) => `<div class="tone-${s.tone}"><h3><a href="${prefix}${s.link}">${esc(s.card.h)}</a></h3><p>${esc(s.card.p)}</p></div>`).join('\n');
   return `<div class="f-list">\n${items}\n</div>`;
@@ -200,6 +218,8 @@ const CSS = `
 @media (max-width: 700px) { .f-list { grid-template-columns: 1fr; } }
 .f-list h3 { margin: 12px 0 2px; }
 .f-list h3 a { color: var(--tone); }
+.f-routes h3 { color: var(--tone); }
+.f-list p.f-go { margin: 4px 0 0; color: var(--ink); }
 .f-list p { margin: 0; color: var(--muted); }
 .f-both { margin: 0 0 16px; color: var(--muted); }
 .f-both b { color: var(--ink); }
@@ -219,4 +239,4 @@ table.features tr.section a:hover { text-decoration: underline; }
 @media (max-width: 600px) { table.features { font-size: 14px; } table.features th, table.features td { padding: 6px 4px; } table.features td { width: 25%; } }
 `;
 
-module.exports = { SECTIONS, WHAT_IT_ISNT, tableHtml, cardsHtml, tableMarkdown, featureList, desktopAdds, CSS, ICONS };
+module.exports = { SECTIONS, WHAT_IT_ISNT, ROUTES, tableHtml, cardsHtml, routesHtml, tableMarkdown, featureList, desktopAdds, CSS, ICONS };

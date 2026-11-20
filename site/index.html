@@ -235,6 +235,8 @@ footer a { color: var(--muted); }
 @media (max-width: 700px) { .f-list { grid-template-columns: 1fr; } }
 .f-list h3 { margin: 12px 0 2px; }
 .f-list h3 a { color: var(--tone); }
+.f-routes h3 { color: var(--tone); }
+.f-list p.f-go { margin: 4px 0 0; color: var(--ink); }
 .f-list p { margin: 0; color: var(--muted); }
 .f-both { margin: 0 0 16px; color: var(--muted); }
 .f-both b { color: var(--ink); }
@@ -279,11 +281,10 @@ table.features tr.section a:hover { text-decoration: underline; }
     <div class="wrap">
       <h1>ukemusic: chord sheets, play-along and practice for the ukulele</h1>
       <p class="for-who"><a href="instruments.html">For ukulele, baritone ukulele and guitar, left- or right-handed</a></p>
-      <p class="lede">Paste a chord sheet from a website, or import your club's songbook. ukemusic puts the chords into the words, shows the chord shapes and the strum, plays the song with you, helps you learn it by heart and prints it for the gig.</p>
+      <p class="lede">Chord sheets that play along with you. Paste a song from any website, see the shapes and the strum, learn it by heart and print it for the gig.</p>
       <div class="cta">
         <a class="btn primary" href="app/">Try it in your browser</a>
         <a id="heroDownload" class="btn" href="#get">Download for free</a>
-        <a class="btn" href="user-guide.html">User guide</a>
         <span class="note">Free and open source. Works offline. No account and no adverts.<br>Windows, Mac, Linux, phones and tablets.</span>
       </div>
       <p class="straight-in">Or straight in: <a href="app/#song=amazing-grace">▶ Play Amazing Grace</a> · <a href="app/#practice">Start Free Practice</a></p>
@@ -293,18 +294,13 @@ table.features tr.section a:hover { text-decoration: underline; }
 
   <section id="what-it-does">
     <div class="wrap">
-      <h2>What it does</h2>
+      <h2>What do you want to do?</h2>
       <!-- features:start (made by web/pages.js from web/features.js: change it there) -->
-      <div class="f-list">
-<div class="tone-teal"><h3><a href="songs.html">Adding songs</a></h3><p>Paste it from any website, or bring in your club's songbook. The chords go into the words for you.</p></div>
-<div class="tone-coral"><h3><a href="practise.html">Playing along</a></h3><p>It plays the chords and the strum while the words light up. Any key, slower or faster.</p></div>
-<div class="tone-amber"><h3><a href="learn.html">Learning a song by heart</a></h3><p>Fewer chords on the sheet each time you play, quizzes on the changes, a learn sheet, and a practice plan from the song.</p></div>
-<div class="tone-blue"><h3><a href="practice/">Free Practice</a></h3><p>42 exercises: warm-ups, chord switching, strumming, picking, scales and improvising, with routines.</p></div>
-<div class="tone-teal"><h3><a href="chord-sheets.html">Printing chord sheets</a></h3><p>The chord shapes beside the words, in any key. Stage copies big enough to read at a gig.</p></div>
-<div class="tone-blue"><h3><a href="perform.html#music-stand">Reading from a tablet</a></h3><p>Your songs a page at a time on an iPad or laptop on your stand. A tap turns the page; a setlist goes song by song.</p></div>
-<div class="tone-coral"><h3><a href="perform.html">Playing together</a></h3><p>The Session screen puts the song on the TV for the whole room, and goes through the night's setlist.</p></div>
-<div class="tone-amber"><h3><a href="instruments.html">Your instrument</a></h3><p>High or low G, baritone or guitar, each with its own chord shapes. Left-handed too.</p></div>
-<div class="tone-blue"><h3><a href="phone.html">Free and private</a></h3><p>Open source, no adverts, works without the internet, and your songs stay on your device.</p></div>
+      <div class="f-list f-routes">
+<div class="tone-coral"><h3>Play along</h3><p>Pick a song and press Play: the chords and the strum play while the words light up, at any speed and in any key.</p><p class="f-go"><a href="app/">Open the web player</a> · <a href="practise.html">Playing along</a></p></div>
+<div class="tone-amber"><h3>Practise</h3><p>Learn a song by heart a step at a time, or warm up with 42 exercises: chord changes, strumming, picking and scales.</p><p class="f-go"><a href="practice/">The 42 exercises</a> · <a href="learn.html">Learning a song</a></p></div>
+<div class="tone-blue"><h3>Run a club night</h3><p>The night's songs in a setlist, on the TV for the whole room with the Session screen, or on a tablet on your stand.</p><p class="f-go"><a href="perform.html">Playing together</a> · <a href="teach.html">Teaching a group</a></p></div>
+<div class="tone-teal"><h3>Print a chord sheet</h3><p>Paste a song from any website: the chords go into the words with their shapes, in any key, ready to print or play from.</p><p class="f-go"><a href="songs.html">Adding songs</a> · <a href="chord-sheets.html">Chord sheets</a></p></div>
 </div>
       <!-- features:end -->
       <p class="f-both"><b>In your browser and on your computer.</b> <!-- adds -->The desktop app adds a song kept in several keys, songbook PDFs of a setlist, every song exported at once, a gig check of a setlist, the Session screen on a second screen or TV and your own chord shapes.<!-- /adds --> <a href="features.html">Compare the two, feature by feature</a>.</p>

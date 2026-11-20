@@ -22,8 +22,9 @@ test('every section has a heading, one line and a colour (4.95: no icons on the 
 });
 
 test('home page: the cards, linking to each section\'s page, and the shared styles', () => {
-  assert.strictEqual((home.match(/<div class="tone-[a-z]+"><h3><a href=/g) || []).length, FEATURES.SECTIONS.length); // 4.95: a plain list
-  for (const s of FEATURES.SECTIONS) assert.ok(home.includes(`href="${s.link}">`), s.link);
+  // 4.99.13: four routes (what you want to do), each with its links
+  assert.strictEqual((home.match(/<div class="tone-[a-z]+"><h3>[^<]+<\/h3>/g) || []).length, FEATURES.ROUTES.length);
+  for (const r of FEATURES.ROUTES) for (const [, href] of r.go) assert.ok(home.includes(`href="${href}">`), href);
   assert.ok(home.includes(FEATURES.CSS), 'the styles come from web/features.js');
   assert.strictEqual(pages.withFeatures(home, 'home'), home, 'run node web/make.js');
   assert.strictEqual((home.match(/id="features"/g) || []).length, 1, 'one section with that id');
