@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.99.11 · One row of play buttons on a phone, and Repeat a section in the web player
+
+- **Web player, on a phone:** the player is one row: **Play**, **Karaoke**, **Learn**, **⋯** and the tempo. **⋯** shows the rest (Restart, Strum or pick, Music stand, + Setlist, Session screen) on a row below. More of the song shows above it.
+- **Web player:** **Repeat it**, beside **Jump to section** (all features): Play plays that section round and round until Stop, like the desktop's Loop current section.
+- **Web player:** **More** (in your songs) says whether it works offline on this device.
+- The phone guide, its pictures and the website's phone picture show the new player.
+
 ## v4.99.10 · Straight into a song from the home page
 
 - **Website:** the home page and the Features page said the desktop app adds setlists, Stage copies and learn sheets, which the web player has too. The sentence is now written from the features list itself, so it can't drift: looping a part, songs kept in several keys, songbook PDFs, exporting every song, the Session screen on a second screen and your own chord shapes.

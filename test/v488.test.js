@@ -69,7 +69,7 @@ test('the desktop copy of Free Practice matches the web one', () => {
 // 4.88.1
 test('4.88.1: the web player counts in wherever Play starts (a tapped line too), but not on a restart mid-song', () => {
   const WEB = read('web/app.html');
-  assert.match(WEB, /async function start\(fromLine = 0, \{ countIn = true \} = \{\}\) \{\n[^\n]*\n\s*const schedule = U\.buildSchedule\(currentIr\(\), \{ \.\.\.scheduleOptions\(countIn\), startLine: fromLine \}\);/);
+  assert.match(WEB, /async function start\(fromLine = 0, \{ countIn = true \} = \{\}\) \{\n(?:[^\n]*\n){1,4}\s*const schedule = U\.buildSchedule\(currentIr\(\), \{ \.\.\.scheduleOptions\(countIn\), startLine: fromLine[ ,}]/);   // 4.99.11: Repeat it's lines before it
   assert.match(WEB, /setTimeout\(\(\) => start\(line, \{ countIn: false \}\), 80\);/);
   assert.ok(!/scheduleOptions\(fromLine === 0\)/.test(WEB));
   // the desktop counts in from any line already

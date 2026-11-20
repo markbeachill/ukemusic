@@ -34,8 +34,9 @@ test('the web player\'s learn sheet names the web player\'s menus', () => {
   assert.ok(require('../src/learn').learnSheetHtml({ title: 'T' }).includes(' (Learn → Changes)'), 'the text it replaces is still there');
 });
 
-test('on a phone the play bar wraps (Learn made it too wide)', () => {
-  assert.ok(/@media \(max-width: 600px\) \{\s*\.player-row \{ flex-wrap: wrap/.test(app));
+test('on a phone the play bar fits (4.99.11: one row, the rest behind ⋯)', () => {
+  assert.ok(/@media \(max-width: 600px\) \{\s*\.player-row \{ flex-wrap: nowrap/.test(app));
+  assert.ok(/\.player-row > \.player-extra \{ display: none; \}/.test(app));
 });
 
 // ── The website: a page for each purpose, Your songs, and the AI prompt ──

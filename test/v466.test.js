@@ -37,7 +37,8 @@ test('features: works offline and no account are features, and on the home page'
 
 test('features: what the web player lacks is marked, not hidden', () => {
   const rows = FEATURES.SECTIONS.flatMap((s) => s.rows);
-  for (const f of ['Loop a part', 'Songbook PDFs of a setlist, with a cover and contents']) assert.strictEqual(rows.find((r) => r.f === f).web, false, f);
+  for (const f of ['Songbook PDFs of a setlist, with a cover and contents'])   // 4.99.11: Loop a part is in the web player too (Repeat it)
+  assert.strictEqual(rows.find((r) => r.f === f).web, false, f);
   // 4.90: setlists are in the web player too
   assert.ok(FEATURES.featureList('web').some((f) => f.startsWith('Setlists')));
   assert.ok(FEATURES.featureList('desktop').some((f) => f.startsWith('Setlists')));

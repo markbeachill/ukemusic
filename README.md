@@ -64,7 +64,7 @@
 | The tune, shown as notes and played | ✓ | ✓ |
 | Real recordings: a ukulele, and a nylon-string guitar for baritone and guitar | ✓ | ✓ |
 | A strum library of 27 strums, with how to play each; build your own and keep it in My strums | ✓ | ✓ |
-| Loop a part | — | ✓ |
+| Loop a part | ✓ | ✓ |
 | Keep a song in several keys | — | ✓ |
 | **[Learn a song by heart](https://markbeachill.github.io/ukemusic/learn.html)** | | |
 | Play from memory, with fewer chords each time | ✓ | ✓ |

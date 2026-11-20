@@ -48,7 +48,7 @@ test('taps: the right half on, the left half back, the top the bar (which hides 
 });
 
 test('web player: Music stand in the simple view, through the songs as listed; its size kept', () => {
-  assert.match(WEB, /<button id="standBtn" data-feature="musicStand" class="btn" type="button" title="Music stand:/);
+  assert.match(WEB, /<button id="standBtn" data-feature="musicStand" class="btn player-extra" type="button" title="Music stand:/);
   assert.match(WEB, /\$\('standBtn'\)\.addEventListener\('click', \(\) => openSession\(\{ stand: true \}\)\);/);
   assert.match(WEB, /if \(stand\) \{ if \(st\.bookPx && look\.standPx !== st\.bookPx\) \{ look\.standPx = st\.bookPx; local\.set\('look', look\); \} return; \}/, 'and not the Session screen\'s size');
   assert.match(WEB, /size: stand \? 'book' : \(look\.sessionSize \|\| 'fit'\)[^\n]*bookPx: look\.standPx \|\| 0, showTaps: stand && !look\.standSeen \}\);/);

@@ -92,7 +92,7 @@
     { id: 'setPrint', app: 'desktop', where: 'Settings', name: 'Settings: fonts, colours and printing', level: 'all', grey: true },
     { id: 'setStage', app: 'desktop', where: 'Settings', name: 'Settings: Stage copies', level: 'all', grey: true },
     // ── Web player only ──
-    { id: 'sectionJump', app: 'web', where: 'the song page', name: 'Jump to section', level: 'all' },
+    { id: 'sectionJump', app: 'web', where: 'the song page', name: 'Jump to section, and Repeat it', level: 'all' },
     { id: 'playingReset', app: 'web', where: 'Settings', name: 'Reset playing choices', level: 'simple' },
     { id: 'restart', app: 'web', where: 'the player', name: 'Restart', level: 'simple' },
     { id: 'downloadMore', app: 'web', where: 'Download', name: 'More downloads: words only, ChordPro, club logo, date', level: 'all' },

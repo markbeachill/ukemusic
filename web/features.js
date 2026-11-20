@@ -33,7 +33,7 @@ const SECTIONS = [
       { f: 'The tune, shown as notes and played', web: true, desktop: true },
       { f: 'Real recordings: a ukulele, and a nylon-string guitar for baritone and guitar', web: true, desktop: true },
       { f: 'A strum library of 27 strums, with how to play each; build your own and keep it in My strums', web: true, desktop: true }, // 4.99.4
-      { f: 'Loop a part', web: false, desktop: true, adds: 'looping a part' },
+      { f: 'Loop a part', web: true, desktop: true },   // 4.99.11: Jump to section → Repeat it
       { f: 'Keep a song in several keys', web: false, desktop: true, adds: 'a song kept in several keys' }
     ]
   },

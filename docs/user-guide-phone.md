@@ -45,9 +45,10 @@ A song opens as the sheet to play from. From the top:
 
 - **‹** goes back to your songs. **✎ Edit** changes the song (see [Changing a song](#changing-a-song)). **Settings** has this song's playing choices; **⤓** downloads it (see [Downloading and printing](#downloading-and-printing)).
 - **Key** (**−** and **+**) moves the song up or down; **Capo** plays it with a capo and shows the shapes to finger.
-- **Jump to section** goes to a verse or chorus.
+- **Jump to section** goes to a verse or chorus. Tick **Repeat it** beside it, and **Play** plays that section round and round until **Stop**: for the part you keep getting wrong.
 - **Song overview** shows the song's chord shapes, its tune and its strum.
-- The **player** at the bottom: **Play**, **Restart**, **Strum or pick**, **Karaoke**, **Learn**, **Music stand**, **+ Setlist**, **Session screen**, and the tempo.
+- The **player** at the bottom, on one row: **Play**, **Karaoke**, **Learn**, **⋯** and the tempo (**−** and **+**). **⋯** shows the rest: **Restart**, **Strum or pick**, **Music stand**, **+ Setlist** and **Session screen**.
+- **More** (in your songs) says whether the web player works offline on this device.
 
 ![The key moved up a tone, with a capo on the first fret](../site/img/guide/iphone-S4.jpg)
 

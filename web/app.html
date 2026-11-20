@@ -178,6 +178,7 @@ button { cursor: pointer; }
 .lib-more > summary::-webkit-details-marker { display: none; }
 .lib-more-items { position: absolute; z-index: 30; top: calc(100% + 6px); left: 0; display: flex; flex-direction: column; gap: 6px; padding: 8px; min-width: 230px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
 .lib-more-items .btn { justify-content: flex-start; width: 100%; box-sizing: border-box; }
+.lib-more-note { margin: 2px 4px 0; font-size: 13px; color: var(--muted); max-width: 240px; }
 .library:has(#instrumentAsk:not([hidden])) .my-instrument { display: none; } /* asked once, not twice */
 .app-settings { max-width: 560px; }
 .app-settings #displaySettings { margin: 10px 0; }
@@ -402,12 +403,24 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
   .practice-stage { padding: 16px 12px; }
 }
 
-/* a phone: the buttons on one row, the chord now and the tempo below (with Learn, they didn't fit) */
+/* 4.99.11: a phone: one row (Play, Karaoke, Learn, ⋯ and the tempo); ⋯ shows Restart, Music stand,
+   + Setlist and the rest on a second row. On a bigger screen ⋯ isn't needed: everything fits */
+#playerMore { display: none; }
+.player-extras { display: flex; flex-wrap: wrap; gap: 8px; padding-block: 8px 0; }
+.player-extras[hidden] { display: none; }
+.player-extras > .btn { flex: 1 1 auto; }
 @media (max-width: 600px) {
-  .player-row { flex-wrap: wrap; row-gap: 8px; }
-  .player-row > .btn { flex: 1 1 auto; padding-inline: 10px; }
+  .player-row { flex-wrap: nowrap; row-gap: 8px; }
+  .player-row > .btn { flex: 1 1 auto; padding-inline: 8px; min-width: 0; }
   .player-row .now { flex: 1 1 60%; }
+  #playerMore { display: inline-flex; flex: none; justify-content: center; }
+  #playerMore[aria-expanded="true"] { background: var(--ink); color: var(--surface); }
+  .player-row > .player-extra { display: none; }
+  .player:not(.active) .tempo .val { display: none; }
+  .player.active #playerMore { display: none; }
 }
+.section-repeat { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 14px 10px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.section-repeat[hidden] { display: none; }
 @media (max-width: 420px) {
   .now-chord { font-size: 28px; }
   #libTitle { font-size: 24px; }
@@ -497,6 +510,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
           <label class="btn" for="updateInput" title="Song files (ukemusic, ChordPro, or chords above the words), a zipped songs folder, or a backup">Add songs from files…</label>
           <button id="cloudBtn" class="btn" type="button" hidden title="Keep your songs in Dropbox, in the desktop app's songs folder: changes here go there, and changes there come here">Dropbox…</button>
           <button id="backupBtn" class="btn" type="button" title="Every song in one file, to keep somewhere safe (iCloud Drive, Google Drive, your computer) and to bring changes back into the desktop app">Back up all songs</button>
+          <p id="offlineNote" class="lib-more-note" hidden></p>
         </div></details>
         <input id="updateInput" type="file" multiple hidden>
       </div>
@@ -560,7 +574,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
     </header>
 
     <main id="songPanel" class="panel gutter">
-      <p id="songMeta" class="song-meta"></p><label class="section-jump" data-feature="sectionJump">Jump to section <select id="sectionJump"><option value="">Choose a section</option></select></label><button id="playHere" class="btn" type="button" hidden>Play from here</button>
+      <p id="songMeta" class="song-meta"></p><label class="section-jump" data-feature="sectionJump">Jump to section <select id="sectionJump"><option value="">Choose a section</option></select></label><label id="sectionRepeatRow" class="section-repeat" data-feature="sectionJump" hidden title="Play only this section, round and round, until you press Stop"><input id="sectionRepeat" type="checkbox"> Repeat it</label><button id="playHere" class="btn" type="button" hidden>Play from here</button>
       <div id="sheet" class="sheet"></div>
     </main>
 
@@ -568,14 +582,16 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
       <div class="gutter">
         <div class="player-row">
           <button id="playBtn" data-feature="play" class="btn primary" type="button">▶ Play</button>
-          <button id="restartBtn" data-feature="restart" class="btn" type="button">Restart</button><button id="stopBtn" class="btn" type="button" hidden>Stop</button><button id="accompanimentBtn" data-feature="accompaniment" class="btn" type="button">Strum or pick</button><button id="karaokeButton" data-feature="karaoke" class="btn" type="button" title="Full screen, big words that light up as you sing, with the chord shapes">Karaoke</button>
+          <button id="restartBtn" data-feature="restart" class="btn player-extra" type="button">Restart</button><button id="stopBtn" class="btn" type="button" hidden>Stop</button><button id="accompanimentBtn" data-feature="accompaniment" class="btn player-extra" type="button">Strum or pick</button><button id="karaokeButton" data-feature="karaoke" class="btn" type="button" title="Full screen, big words that light up as you sing, with the chord shapes">Karaoke</button>
           <button id="learnBtn" data-feature="learn" class="btn" type="button" title="Learn the song by heart: play from memory, a quiz on the changes, the learn sheet, its chord patterns and the circle of fifths">Learn</button>
-          <button id="standBtn" data-feature="musicStand" class="btn" type="button" title="Music stand: the song full screen at one steady size, for reading from an iPad on a stand. Tap the right half for the next page or song, the left half to go back, the top for the menu. It goes through the songs as listed in your library.">Music stand</button>
-          <button id="addToSetlistBtn" data-feature="setlists" class="btn" type="button" title="Put this song in a setlist (the songs for a gig, in order): then Music stand goes through them">+ Setlist</button>
-          <button id="sessionBtn" data-feature="session" class="btn" type="button" title="Session screen: the whole song on one screen for a group to play from (a TV or projector). Arrow keys, a clicker or a tap go to the next song in the list">Session screen</button>
+          <button id="standBtn" data-feature="musicStand" class="btn player-extra" type="button" title="Music stand: the song full screen at one steady size, for reading from an iPad on a stand. Tap the right half for the next page or song, the left half to go back, the top for the menu. It goes through the songs as listed in your library.">Music stand</button>
+          <button id="addToSetlistBtn" data-feature="setlists" class="btn player-extra" type="button" title="Put this song in a setlist (the songs for a gig, in order): then Music stand goes through them">+ Setlist</button>
+          <button id="sessionBtn" data-feature="session" class="btn player-extra" type="button" title="Session screen: the whole song on one screen for a group to play from (a TV or projector). Arrow keys, a clicker or a tap go to the next song in the list">Session screen</button>
+          <button id="playerMore" data-feature="play" class="btn icon" type="button" aria-expanded="false" aria-label="More: Restart, Music stand, + Setlist" title="More: Restart, Music stand, + Setlist">⋯</button>
           <div class="now"><div id="nowChord" class="now-chord"></div><div id="nowShapes" class="now-shapes"></div></div>
           <div class="tempo" data-feature="tempo"><button id="slower" type="button" aria-label="Slower">−</button><span id="tempoVal" class="val"></span><button id="faster" type="button" aria-label="Faster">+</button></div>
         </div>
+        <div id="playerExtras" class="player-extras" hidden></div>
         <div id="strip" class="strip" aria-hidden="true"></div>
         <div id="status" class="status"></div>
       </div>
@@ -1749,6 +1765,19 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   $('appAbout').addEventListener('click', () => { $('appSettingsDialog').close(); $('aboutBtn').click(); });
   // the library's More ▾ closes when something in it is chosen, or on a click elsewhere
   $('libMore').addEventListener('click', (e) => { if (e.target.closest('.lib-more-items .btn')) $('libMore').open = false; });
+  // 4.99.11: one line under More: whether the web player works offline here (its service worker is
+  // looking after this page), so no one has to wonder
+  $('libMore').addEventListener('toggle', () => {
+    if (!$('libMore').open) return;
+    const sw = 'serviceWorker' in navigator ? navigator.serviceWorker : null;
+    $('offlineNote').hidden = true;
+    if (!sw) return;
+    sw.getRegistration().then((reg) => {
+      if (!reg) return;   // not where it's kept for offline (a preview, a file)
+      $('offlineNote').textContent = sw.controller ? '✓ Works offline on this device: your songs, playing and Free Practice.' : 'Open it once more while online, and it works offline here too.';
+      $('offlineNote').hidden = false;
+    }, () => {});
+  });
   document.addEventListener('click', (e) => { if (!e.target.closest('#libMore')) $('libMore').open = false; });
   $('featuresBtn').addEventListener('click', () => { $('featuresTable').innerHTML = F.tableHtml('web', look.featureLevels || {}); $('featuresDialog').showModal(); });
   $('featuresClose').addEventListener('click', () => $('featuresDialog').close());
@@ -2791,7 +2820,10 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
   // while it plays) carries straight on.
   async function start(fromLine = 0, { countIn = true } = {}) {
     if (!player) { $('status').textContent = 'Sound isn’t available in this browser.'; return; }
-    const schedule = U.buildSchedule(currentIr(), { ...scheduleOptions(countIn), startLine: fromLine });
+    const range = repeatRange();   // 4.99.11: Repeat it
+    if (range) fromLine = range.from;
+    play.repeat = range;
+    const schedule = U.buildSchedule(currentIr(), { ...scheduleOptions(countIn), startLine: fromLine, ...(range && range.to ? { endLine: range.to } : {}) });
     if (!schedule.bars.length) { $('status').textContent = 'Nothing to play: the song has no chords.'; return; }
     play.schedule = schedule;
     // 4.45: the words' timing (as karaoke has it), to colour them as they're sung
@@ -2802,6 +2834,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     player.setSound(soundFor(prefs().instrument));
     $('playBtn').textContent = 'Pause';
     $('player').classList.add('active'); $('stopBtn').hidden = false;
+    showPlayerExtras(false);
     $('status').textContent = schedule.countInDuration ? 'Count-in…' : '';
     play.wake = null;
     try { navigator.wakeLock?.request('screen').then((w) => { play.wake = w; }, () => {}); } catch (_e) { /* the screen may sleep */ }
@@ -2829,7 +2862,9 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     try { play.wake?.release(); } catch (_e) { /* fine */ }
     play.wake = null;
     if (!play.userStopped && play.schedule) $('status').textContent = 'The end. Play to go again.';
+    const again = !play.userStopped && play.schedule && play.repeat && repeatRange();
     play.schedule = null;
+    if (again) { $('status').textContent = 'Round again…'; setTimeout(() => { if (!play.schedule) start(again.from, { countIn: false }); }, 60); }   // 4.99.11: Repeat it
   }
   function stop() {
     play.userStopped = true;
@@ -2852,6 +2887,19 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     } catch (error) { toast(error.message); }
   });
   $('stopBtn').addEventListener('click', () => { stop(); showFirstChords(); });
+  // 4.99.11: ⋯ on a phone: the rest of the player's buttons, on a second row
+  // (they move to a row of their own below, and back to their places when it closes)
+  const extraPlaces = [...$('player').querySelectorAll('.player-extra')].map((b) => { const mark = document.createComment(b.id); b.before(mark); return [b, mark]; });
+  function showPlayerExtras(on) {
+    $('player').classList.toggle('extras-open', on);
+    $('playerMore').setAttribute('aria-expanded', on ? 'true' : 'false');
+    if (on) $('playerExtras').append(...extraPlaces.map(([b]) => b));
+    else for (const [b, mark] of extraPlaces) mark.after(b);
+    $('playerExtras').hidden = !on;
+  }
+  matchMedia('(max-width: 600px)').addEventListener('change', (e) => { if (!e.matches) showPlayerExtras(false); });
+  $('playerMore').addEventListener('click', () => showPlayerExtras(!$('player').classList.contains('extras-open')));
+  for (const b of $('player').querySelectorAll('.player-extra')) b.addEventListener('click', () => showPlayerExtras(false));
   $('restartBtn').addEventListener('click', () => { stop(); start(0); });
   $('playHere').addEventListener('click', () => { stop(); start(play.selectedLine || 0); });
   function selectLine(group) {
@@ -2869,6 +2917,22 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
   $('sectionJump').addEventListener('change', () => {
     const group = $('sheet').querySelector('[data-line="' + $('sectionJump').value + '"]');
     if (group) { selectLine(group); group.scrollIntoView({block:'center'}); group.focus({preventScroll:true}); }
+    $('sectionRepeatRow').hidden = !group;
+    if (!group) $('sectionRepeat').checked = false;
+    else if ($('sectionRepeat').checked) { stop(); start(play.selectedLine || 0); }
+  });
+  // 4.99.11: Repeat it: the section chosen in Jump to section, round and round until Stop (as the
+  // desktop's Loop current section). Its lines: from its first line to the line before the next section.
+  function repeatRange() {
+    if (!$('sectionRepeat').checked || $('sectionRepeatRow').hidden) return null;
+    const from = Number($('sectionJump').value);
+    if (!from) return null;
+    const starts = [...$('sectionJump').options].map((o) => Number(o.value)).filter((n) => n > from).sort((a, b) => a - b);
+    return { from, to: starts.length ? starts[0] - 1 : 0 };
+  }
+  $('sectionRepeat').addEventListener('change', () => {
+    if ($('sectionRepeat').checked) { const r = repeatRange(); if (r) { play.selectedLine = r.from; $('playHere').textContent = 'Play this section'; } }
+    if (player?.playing && play.schedule) { stop(); setTimeout(() => start(play.selectedLine || 0), 80); }
   });
   function tick() {
     const schedule = play.schedule;

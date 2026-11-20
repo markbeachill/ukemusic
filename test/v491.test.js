@@ -35,7 +35,7 @@ test('the way out is never hidden: ☰ Menu in the corner; Close named; the song
 test('setlists: in the simple view, and + Setlist on a song in the web player', () => {
   const { FEATURES } = require('../src/feature-levels');
   assert.strictEqual(FEATURES.find((f) => f.id === 'setlists').level, 'simple');
-  assert.match(WEB, /<button id="addToSetlistBtn" data-feature="setlists" class="btn" type="button"/);
+  assert.match(WEB, /<button id="addToSetlistBtn" data-feature="setlists" class="btn player-extra" type="button"/);
   assert.match(WEB, /<dialog id="addToSetlistDialog" class="setlist-dialog" aria-labelledby="addToSetlistTitle">/);
   assert.match(WEB, /if \(k >= 0\) lines\.splice\(k, 1\); else lines\.push\(\{ title: song\.title, shift: 0 \}\);/, 'in and out again');
   assert.match(WEB, /editSetlist\(null\); slEdit\.lines = \[\{ title: view\.song\.title, shift: 0 \}\];/, 'a new setlist with this song');
