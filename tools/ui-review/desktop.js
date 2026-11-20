@@ -373,6 +373,13 @@ async function launch() {
     await page.click('#setlistPdf'); await page.waitForTimeout(900);
     await shot('X3', 'Songbook PDF from a setlist'); await closeDialogs();
   });
+  // 4.99.12: Gig check of the same setlist
+  await safe('X4', async () => {
+    await library(); await page.click('#libTabSetlists'); await page.waitForTimeout(400);
+    await page.locator('#setlistList >> text=Club night').first().click(); await page.waitForTimeout(600);
+    await page.click('#setlistGigCheck'); await page.waitForSelector('#gigCheckDialog[open]', { timeout: 30000 }); await page.waitForTimeout(500);
+    await shot('X4', 'Gig check: the set\'s keys and capos, and what to look at'); await closeDialogs();
+  });
 
   // ── G: Settings ──
   await safe('G1', async () => {

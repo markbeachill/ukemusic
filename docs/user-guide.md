@@ -269,6 +269,8 @@ From a setlist: **Music stand** to read it yourself, **Session screen** for the 
 
 Before a gig, **Gig check** (desktop) lists the set in order with each song's key and capo, and marks what to look at: a song no longer in the songs folder, one in the set twice, one written for another instrument, one that needs a page turn on the Session screen. Capo changes between songs are noted too. **Next to look at** goes through them; **Open** opens a song in the setlist's key.
 
+![Gig check: each song's key and capo in order, with what to look at marked](../site/img/guide/desktop-X4.jpg)
+
 ## Reading at a gig: Music stand and Session screen
 
 Which to use:

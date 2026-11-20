@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.99.15 · Minor updates: fixes and small changes
+
+- **User guide:** a picture of **Gig check** (the UI review takes it: step X4).
+- **Website:** the Perform page lists Gig check under the desktop app; the Features page's first line read wrongly ("runs on Windows, Mac and Linux" without saying what did).
+
 ## v4.99.14 · Minor updates: fixes and small changes
 
 - **Desktop:** the tools, once hidden (the arrow at the right of the tabs), stay hidden, next time too, until you click a tab or the arrow. Opening the app and **Done** editing used to bring them back.

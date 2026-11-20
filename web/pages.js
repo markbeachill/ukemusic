@@ -179,7 +179,7 @@ const PAGES = [
     ],
     best: 'desktop',
     web: ['The Music stand, the Session screen and karaoke from a tablet or laptop', 'Setlists, synced with the desktop app through Dropbox'],
-    desk: ['Songbook PDFs of a setlist', 'Stage copies in every format, and the gig folder', 'The Session screen on a second display, with what\'s next on the laptop'],
+    desk: ['Songbook PDFs of a setlist', 'A gig check of a setlist: keys, capos, and what to look at first', 'Stage copies in every format, and the gig folder', 'The Session screen on a second display, with what\'s next on the laptop'],
     more: ''
   },
   {
@@ -646,7 +646,7 @@ const FEATURES_PAGE = {
   body: () => `
 <div class="page-hero"><div class="wrap">
   <h1>Features: the web player and the desktop app</h1>
-  <p class="lede">The web player runs on phones, tablets and any computer; runs on Windows, Mac and Linux. ${esc(FEATURES.desktopAdds())} Both are free, work offline and need no account. Each heading links to more about it.</p>
+  <p class="lede">The web player runs on phones, tablets and any computer; the desktop app on Windows, Mac and Linux. ${esc(FEATURES.desktopAdds())} Both are free, work offline and need no account. Each heading links to more about it.</p>
   <div class="cta"><a class="btn primary" href="app/">Try it in your browser</a><a class="btn" href="./#get">Download the desktop app</a></div>
 </div></div>
 <section><div class="wrap">
