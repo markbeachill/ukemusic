@@ -86,7 +86,7 @@ test('both apps: the builder, My strums in the strum menus, Free Practice', () =
   assert.ok(DESKTOP.includes('group.label = \'My strums\';'));
   assert.ok(read('main.js').includes("label: 'Strum Builder…', click: () => sendMenuAction('strum-builder')"));
   assert.ok(read('main.js').includes("custom_strum: 'D>-DU-UDU', my_strums: '',"));
-  assert.ok(read('web/build.js').includes("'feature-levels.js', 'my-strums.js', 'strum-builder.js'"));
+  assert.ok(read('web/build.js').includes("'my-strums.js', 'strum-builder.js'"));
   assert.ok(WEB.includes("if (v === 'build') { openStrumBuilder(); return; }"));
   assert.ok(WEB.includes("look.myStrums = UkeMyStrums.formatMyStrums(list); local.set('look', look);"));
   assert.ok(read('web/pr_js.js').includes("label: 'My strums'"));

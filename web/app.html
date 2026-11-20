@@ -279,6 +279,8 @@ button { cursor: pointer; }
 .strip span { flex: 1; min-width: 0; max-width: 40px; height: 34px; border-radius: 7px; border: 1px solid var(--line); display: grid; place-items: center; font-weight: 700; font-size: 17px; color: var(--muted); }
 .strip span.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .strip span.rest { opacity: 0.45; }
+.strip span.accent { color: var(--chord); text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 3px; font-size: 20px; } /* 4.99.16: as the sheet's strum box */
+.strip span.on.accent { color: var(--accent-ink); }
 .tempo { display: flex; align-items: center; gap: 2px; }
 .tempo .val { min-width: 3.6em; text-align: center; font-size: 13px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
 .tempo button { width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); font-weight: 700; }
@@ -882,19 +884,7 @@ const songsFolder = () => '/songs';
 function effectiveConfig() { return state.config; }
 function songInstrument() { return window.ukemusic.instrument(state.config.song.instrument || 'soprano'); }
 function chordLibraryFor(id) { return UMW.library(id || 'soprano'); }
-function stripSteps(pattern, beatsPerBar) {
-  const steps = [];
-  for (const ch of String(pattern || '')) {
-    if (ch === '>') { if (steps.length) steps[steps.length - 1].accent = true; } else steps.push({ stroke: ch, accent: false });
-  }
-  const perBeat = steps.length / beatsPerBar;
-  steps.forEach((step, i) => {
-    if (Number.isInteger(perBeat) && perBeat > 0 && i % perBeat === 0) step.num = String(i / perBeat + 1);
-    else if (perBeat === 2) step.num = '&';
-    else step.num = perBeat < 1 ? String(i + 1) : '';
-  });
-  return steps;
-}
+function stripSteps(pattern, beatsPerBar) { return window.UkeStrumSymbols.steps(pattern, beatsPerBar); }   // 4.99.16: src/strum-symbols.js
 function stopPlayback() { if (player && player.playing) player.stop(); }
 // Safari (iPhone, iPad, Mac) only lets sound start inside the tap itself, not after the app has
 // waited for anything: so every tap wakes the audio until it's running.
@@ -2780,7 +2770,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
 
   // ── Play along ──
   const play = { schedule: null, raf: null, line: null, barKey: null, wake: null, userStopped: false };
-  const ARROWS = { D: '↓', U: '↑', X: '✕', '-': '·' };
+  const ARROWS = window.UkeStrumSymbols.SYMBOLS;   // 4.99.16: the one list (src/strum-symbols.js)
   function diagram(name, lib) {
     const def = U.chordDefinition(lib, name);
     return def ? U.diagramSvg({ ...def, name }, { show_fingers: true }) : '';
@@ -2955,7 +2945,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
             ? bar.pickSteps.map((sym) => ({ stroke: sym === '·' ? '-' : 'P', symbol: sym }))   // picked (4.44): the strings in order
             : stripSteps(bar.pattern, bar.beats || schedule.beatsPerBar);
           const steps = (bar.share || 1) < 1 ? all.slice(0, Math.max(1, Math.round(all.length * bar.share))) : all;
-          $('strip').innerHTML = bar.tab || bar.rest ? '' : steps.map((s) => `<span class="${s.stroke === '-' ? 'rest' : ''}">${s.symbol || ARROWS[s.stroke] || s.stroke}</span>`).join('');
+          $('strip').innerHTML = bar.tab || bar.rest ? '' : steps.map((s) => `<span class="${[s.stroke === '-' ? 'rest' : '', s.accent ? 'accent' : ''].filter(Boolean).join(' ')}">${s.symbol || ARROWS[s.stroke] || s.stroke}</span>`).join('');   // 4.99.16: accents too
           $('status').textContent = `Bar ${index + 1} of ${schedule.bars.length} · tap a line to jump there`;
           if (bar.line !== play.line) {
             play.line = bar.line;

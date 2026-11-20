@@ -13,23 +13,10 @@
 
         // The strum strip: during the count-in the beats 1 2 3 4; then, for every bar, the
         // chord and its strokes (↓ ↑ ✕, · for a rest), with the one being played lit.
-        const STROKE_SYMBOLS = { D: '↓', U: '↑', X: '✕', '-': '·' };
+        // 4.99.16: the symbols and the reading (accents, the count) are src/strum-symbols.js, as everywhere
+        const STROKE_SYMBOLS = window.UkeStrumSymbols.SYMBOLS;
         function stripSteps(pattern, beatsPerBar) {
-          const steps = [];
-          for (const ch of String(pattern || '')) {
-            if (ch === '>') {
-              if (steps.length) steps[steps.length - 1].accent = true;
-            } else {
-              steps.push({ stroke: ch, accent: false });
-            }
-          }
-          const perBeat = steps.length / beatsPerBar;
-          steps.forEach((step, i) => {
-            if (Number.isInteger(perBeat) && perBeat > 0 && i % perBeat === 0) step.num = String(i / perBeat + 1);
-            else if (perBeat === 2) step.num = '&'; // the "and" between beats
-            else step.num = perBeat < 1 ? String(i + 1) : '';
-          });
-          return steps;
+          return window.UkeStrumSymbols.steps(pattern, beatsPerBar);
         }
         function drawStrip(key, chordText, counting, steps) {
           if (karaokeView.stripKey === key) return;

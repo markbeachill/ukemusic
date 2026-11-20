@@ -63,11 +63,12 @@ function renderChordLine(nodes) {
 }
 
 // Same mapping as the HTML renderer: one character in, one character out, so alignment is unaffected
-const ARROW_MAP = { D: '↓', d: '↓', U: '↑', u: '↑', X: '✕', x: '✕' };
+// 4.99.16: palm-muted (M) too, from the one list (src/strum-symbols.js)
+const { SYMBOLS } = require('./strum-symbols');
 
 function transformRhythmNotation(text, notation) {
   if (notation !== 'arrows') return text;
-  return text.replace(/[DdUuXx]/g, (ch) => ARROW_MAP[ch] || ch);
+  return text.replace(/[DdUuXxMm]/g, (ch) => SYMBOLS[ch.toUpperCase()] || ch);
 }
 
 // {A: …} / {A} / {stop}

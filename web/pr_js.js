@@ -1285,7 +1285,7 @@
             $p('prSteps').replaceChildren(...shown.map((s) => {
               const cell = document.createElement('span');
               cell.className = `k-step${s.accent ? ' accent' : ''}${s.stroke === '-' ? ' rest' : ''}`;
-              cell.innerHTML = `<span class="sym">${{ D: '↓', U: '↑', X: '✕', '-': '·' }[s.stroke] || s.stroke}</span><span class="num">${s.num || ''}</span>`;
+              cell.innerHTML = `<span class="sym">${window.UkeStrumSymbols ? window.UkeStrumSymbols.symbol(s.stroke) : s.stroke}</span><span class="num">${s.num || ''}</span>`;   // 4.99.16: ⇣ for palm-muted too
               return cell;
             }));
           }

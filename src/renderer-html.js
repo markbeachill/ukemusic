@@ -109,11 +109,11 @@ function normalizeOptions(options = {}) {
   };
 }
 
-const ARROW_MAP = { D: '\u2193', d: '\u2193', U: '\u2191', u: '\u2191', X: '\u2715', x: '\u2715' };
+const { SYMBOLS: STRUM_SYMBOLS } = require('./strum-symbols');   // 4.99.16: the one list (⇣ for palm-muted too)
 
 function transformRhythmNotation(text, notation) {
   if (notation !== 'arrows') return text;
-  return text.replace(/[DdUuXx]/g, (ch) => ARROW_MAP[ch] || ch);
+  return text.replace(/[DdUuXxMm]/g, (ch) => STRUM_SYMBOLS[ch.toUpperCase()] || ch);
 }
 
 /**

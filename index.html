@@ -1780,7 +1780,8 @@
       }
       .k-step .sym { font-size: 26px; line-height: 1; }
       .k-step .num { font-size: 12px; color: var(--muted); padding-bottom: 4px; min-height: 16px; }
-      .k-step.accent .sym { font-weight: 800; font-size: 30px; }
+      .k-step.accent .sym { font-weight: 800; font-size: 30px; color: var(--chord, #b22222); text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 4px; } /* 4.99.16: as the sheet's strum box */
+      .k-step.on.accent .sym { color: inherit; }
       .k-step.rest .sym { color: var(--muted); }
       .k-step.past { opacity: 0.55; }
       .k-step.on { background: var(--accent); border-color: var(--accent); color: #fff; opacity: 1; }
@@ -2139,7 +2140,8 @@
       @media (max-width: 900px) { .k-shapes { flex-basis: 140px; } .k-shape.now .chord-diagram { --diagram-size: 110px; } .k-shape .chord-diagram { --diagram-size: 76px; } }
       #karaokeShapesToggle[aria-pressed="false"] { opacity: 0.6; }
       .k-step .num { font-size: 12px; color: var(--muted); padding-bottom: 4px; min-height: 16px; }
-      .k-step.accent .sym { font-weight: 800; font-size: 30px; }
+      .k-step.accent .sym { font-weight: 800; font-size: 30px; color: var(--chord, #b22222); text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 4px; } /* 4.99.16: as the sheet's strum box */
+      .k-step.on.accent .sym { color: inherit; }
       .k-step.rest .sym { color: var(--muted); }
       .k-step.past { opacity: 0.55; }
       .k-step.on { background: var(--accent); border-color: var(--accent); color: #fff; opacity: 1; }
@@ -4630,6 +4632,7 @@
 
 
 
+
     <div id="karaoke" class="karaoke" hidden role="dialog" aria-label="Karaoke view">
       <div class="karaoke-bar">
         <div class="k-heading-block">
@@ -4668,6 +4671,7 @@
     <script src="src/sheet-extras.js"></script>
     <script src="src/sheet-chord-editor.js"></script>
     <script src="src/feature-levels.js"></script>
+    <script src="src/strum-symbols.js"></script>
     <script src="src/my-strums.js"></script>
     <script src="src/strum-builder.js"></script>
     <script src="src/playback-audio.js"></script>
@@ -8598,23 +8602,10 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
 
         // The strum strip: during the count-in the beats 1 2 3 4; then, for every bar, the
         // chord and its strokes (↓ ↑ ✕, · for a rest), with the one being played lit.
-        const STROKE_SYMBOLS = { D: '↓', U: '↑', X: '✕', '-': '·' };
+        // 4.99.16: the symbols and the reading (accents, the count) are src/strum-symbols.js, as everywhere
+        const STROKE_SYMBOLS = window.UkeStrumSymbols.SYMBOLS;
         function stripSteps(pattern, beatsPerBar) {
-          const steps = [];
-          for (const ch of String(pattern || '')) {
-            if (ch === '>') {
-              if (steps.length) steps[steps.length - 1].accent = true;
-            } else {
-              steps.push({ stroke: ch, accent: false });
-            }
-          }
-          const perBeat = steps.length / beatsPerBar;
-          steps.forEach((step, i) => {
-            if (Number.isInteger(perBeat) && perBeat > 0 && i % perBeat === 0) step.num = String(i / perBeat + 1);
-            else if (perBeat === 2) step.num = '&'; // the "and" between beats
-            else step.num = perBeat < 1 ? String(i + 1) : '';
-          });
-          return steps;
+          return window.UkeStrumSymbols.steps(pattern, beatsPerBar);
         }
         function drawStrip(key, chordText, counting, steps) {
           if (karaokeView.stripKey === key) return;
@@ -10446,7 +10437,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             $p('prSteps').replaceChildren(...shown.map((s) => {
               const cell = document.createElement('span');
               cell.className = `k-step${s.accent ? ' accent' : ''}${s.stroke === '-' ? ' rest' : ''}`;
-              cell.innerHTML = `<span class="sym">${{ D: '↓', U: '↑', X: '✕', '-': '·' }[s.stroke] || s.stroke}</span><span class="num">${s.num || ''}</span>`;
+              cell.innerHTML = `<span class="sym">${window.UkeStrumSymbols ? window.UkeStrumSymbols.symbol(s.stroke) : s.stroke}</span><span class="num">${s.num || ''}</span>`;   // 4.99.16: ⇣ for palm-muted too
               return cell;
             }));
           }
@@ -13127,7 +13118,7 @@ function showTab(tab) {
             const option = document.createElement('option');
             option.value = id;
             const found = window.ukemusic.strums.find((s) => s.id === id);
-            option.textContent = found ? `${found.name}  ${window.ukemusic.strumArrows(found.pattern).replace(/>/g, '')}` : strumLabel(id);
+            option.textContent = found ? `${found.name}  ${window.ukemusic.strumArrows(found.pattern)}` : strumLabel(id);   // 4.99.16: with its accents (↓>↓↓)
             songStrumSelect.appendChild(option);
           }
           // 4.99.4: My strums (the strum builder): choosing one keeps its pattern with the song
@@ -13136,7 +13127,7 @@ function showTab(tab) {
           if (mine.length) {
             const group = document.createElement('optgroup');
             group.label = 'My strums';
-            for (const s of mine) group.append(new Option(`${s.name}  ${window.ukemusic.strumArrows(s.pattern).replace(/>/g, '')}`, `mine:${s.name}`));
+            for (const s of mine) group.append(new Option(`${s.name}  ${window.ukemusic.strumArrows(s.pattern)}`, `mine:${s.name}`));
             songStrumSelect.appendChild(group);
           }
           const mineNow = own === 'custom' && songCustom ? mine.find((s) => s.pattern === songCustom) : null;

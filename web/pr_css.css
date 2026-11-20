@@ -191,7 +191,8 @@
       }
       .k-step .sym { font-size: 26px; line-height: 1; }
       .k-step .num { font-size: 12px; color: var(--muted); padding-bottom: 4px; min-height: 16px; }
-      .k-step.accent .sym { font-weight: 800; font-size: 30px; }
+      .k-step.accent .sym { font-weight: 800; font-size: 30px; color: var(--chord, #b22222); text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 4px; } /* 4.99.16: as the sheet's strum box */
+      .k-step.on.accent .sym { color: inherit; }
       .k-step.rest .sym { color: var(--muted); }
       .k-step.past { opacity: 0.55; }
       .k-step.on { background: var(--accent); border-color: var(--accent); color: #fff; opacity: 1; }

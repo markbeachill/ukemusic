@@ -315,7 +315,8 @@ function strumsFor(beats) {
 
 /** Arrows for display: ↓ ↑ ✕ and · for a rest; accented strokes stay marked with ">". */
 function arrows(pattern) {
-  return String(pattern).replace(/D/g, '↓').replace(/U/g, '↑').replace(/X/g, '✕').replace(/M/g, '⇣').replace(/-/g, '·');
+  const { symbol } = require('./strum-symbols');   // 4.99.16: the one list (B and b stay letters, > stays an accent)
+  return String(pattern).replace(/[DUXM-]/g, symbol);
 }
 
 module.exports = { STRUMS, strum, strumsFor, strokeCount, arrows };

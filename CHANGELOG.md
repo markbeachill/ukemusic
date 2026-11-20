@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.99.16 · Accents and palm mutes show in every strum display
+
+- **Strums, everywhere they're drawn:** the player's strip (desktop and web), karaoke, the Music stand, Free Practice, the strum menus and the sheet now share one list of symbols (`src/strum-symbols.js`). A palm-muted stroke shows as ⇣ everywhere, not the letter M.
+- **Accents** (a `>` after a stroke: Amazing Grace's `D>DD`, the heavy first strum of a waltz) look as they do in the sheet's strum box: in the chord colour and underlined. The web player's strip didn't show them at all; the others only made the arrow a little bolder.
+- The strum menus keep the accent: Waltz (simple) is ↓>↓↓.
+- A test draws `B>-bDM>UX` (every kind of stroke) in each of them.
+
 ## v4.99.15 · Minor updates: fixes and small changes
 
 - **User guide:** a picture of **Gig check** (the UI review takes it: step X4).
