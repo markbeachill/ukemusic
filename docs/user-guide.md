@@ -217,7 +217,7 @@ The **Learn** tab helps you play a song without the sheet. Its buttons, from lef
 
 ### A song's own practice plan
 
-With all features, a song has a **Practice** tab (beside Notes). It shows the plan **Practise this song** runs, step by step, and the plan as text to change. Until you change it, ukemusic makes it from the song each time. Change a line, or press **Keep this plan**, and it's yours: kept in the song's folder (learn/practice-plan.txt), so it goes wherever the song goes, and never rewritten unless you press **Start again from the song**. A club leader can write one for the group; an advanced player can make it harder. It goes with the song: through Dropbox to and from the web player, in library packs (so a club's songs come with the leader's plans), in the web player's backups and Songs for the web, and when you copy a song to another library.
+With all features, a song has a **Practice** tab (beside Notes). It shows the plan **Practise this song** runs, step by step, and the plan as text to change. Until you change it, ukemusic makes it from the song each time. Change any line and it's yours, saved as you type: kept in the song's folder (learn/practice-plan.txt), so it goes wherever the song goes, and never rewritten unless you press **Start again from the song**. A club leader can write one for the group; an advanced player can make it harder. It goes with the song: through Dropbox to and from the web player, in library packs (so a club's songs come with the leader's plans), in the web player's backups and Songs for the web, and when you copy a song to another library.
 
 ![The Practice tab: the song's plan as steps, with a note on one, and the plan as text below](../site/img/guide/desktop-R14.jpg)
 
@@ -249,6 +249,8 @@ Then: the song from memory
 **Shapes**, **Hard changes**, **Strum** and **Chords in order** on their own follow the song: change its chords and they change too. Chords you write stay as written, in the song's own key; play the song in another key or with a capo and they move with it. A chord the song no longer has, or a line ukemusic can't read, is marked under the text. **+ Add step** puts in a ready-made line, filled from the song: its own chords, each of its hardest changes, its strum and its sections, as well as every Free Practice exercise.
 
 The **learn sheet** prints your plan, with its notes and how long it takes, in place of the usual steps for learning a song: a handout for the group.
+
+**Running a plan.** **Practise this song** first shows the plan: how many steps, about how long, and each step (choose one to start there), with **Edit plan**. While it runs, the step is the heading (**Hard change: Am → G7**), and the line under it says the step, its time left and **Step back**, **Next step** and **End plan**. The help slides don't open in the middle of a plan; **?** has them. At the end: **Play it from memory**, **Play it with the chords**, or **Do one step again**, which comes back to the end afterwards.
 
 How Learn works things out, and how far to trust it: [How Learn works](explanation/how-learn-works.md).
 

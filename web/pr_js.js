@@ -477,6 +477,7 @@
         // The first time Free Practice opens, and the first time each kind of exercise does: its slides
         function prIntro(key) {
           if (!pr.progress || pr.restoring) return;
+          if (pr.routine || pr.songPlanOpening) return;   // 4.99.20: not in the middle of a plan (a line above the exercise says ? explains it)
           pr.progress.seen = pr.progress.seen || {};
           if (pr.progress.seen[key]) return;
           pr.progress.seen[key] = true;
@@ -595,15 +596,46 @@
           holder.replaceChildren(form);
         }
         // ── 4.99.6: Practise a song (src/song-practice.js): a song's plan runs as a routine, and is kept ──
-        function prSongPractice(plan) {
+        // 4.99.20: first a preview (what it is, how long, start at any step, Edit plan), unless
+        // { preview: false } (the Practice tab's own Practise this plan)
+        function prSongPractice(plan, { preview = true, step = 0 } = {}) {
           if (!plan || !plan.steps || !plan.steps.length) return;
-          openPractice();
+          pr.songPlanOpening = true;   // Free Practice's own first-time tour waits for another time
+          try { openPractice(); } finally { pr.songPlanOpening = false; }
           if (!pr.progress) prLoadProgress();
+          if (preview) { prPlanPreview(plan); return; }
           const others = (pr.progress.songPlans || []).filter((p) => p.title !== plan.title);
           pr.progress.songPlans = [{ title: plan.title, date: todayKey(), routine: plan }, ...others].slice(0, 6);
           prSaveProgress();
-          pr.routine = { routine: plan, step: 0 };
+          pr.routine = { routine: plan, step: Math.max(0, Math.min(plan.steps.length - 1, step)) };
           prRoutineStep();
+        }
+        const prPlanMinutes = (plan) => plan.steps.reduce((n, st) => n + (Number(st.minutes) || 2), 0);
+        function prPlanPreview(plan) {
+          const d = $p('prPlanPreview');
+          $p('prPlanPreviewTitle').textContent = plan.name || 'Practice plan';
+          $p('prPlanPreviewWhat').textContent = `${plan.steps.length} step${plan.steps.length === 1 ? '' : 's'} · about ${prPlanMinutes(plan)} minutes${plan.own ? ' · this song\'s own plan' : ' · made from the song'}`;
+          $p('prPlanPreviewIntro').hidden = !plan.intro;
+          $p('prPlanPreviewIntro').textContent = plan.intro || '';
+          const start = (i) => { d.close(); prSongPractice(plan, { preview: false, step: i }); };
+          $p('prPlanPreviewSteps').replaceChildren(...plan.steps.map((st, i) => {
+            const li = document.createElement('li');
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.title = `Begin at step ${i + 1}`;
+            b.append(st.label || prExerciseFor(PL.EXERCISES.find((x) => x.id === st.id) || { title: st.id }).title, Object.assign(document.createElement('span'), { className: 'min', textContent: ` · ${st.minutes} min${st.settings?.prTempo ? ` at ${st.settings.prTempo}` : ''}` }));
+            if (st.note) b.appendChild(Object.assign(document.createElement('span'), { className: 'note', textContent: st.note }));
+            b.addEventListener('click', () => start(i));
+            li.appendChild(b);
+            return li;
+          }));
+          const canEdit = Boolean(plan.song && window.ukemusicEditSongPlan && (!window.ukemusicCanEditSongPlan || window.ukemusicCanEditSongPlan()));
+          $p('prPlanPreviewEdit').hidden = !canEdit;
+          $p('prPlanPreviewEdit').onclick = () => { d.close(); window.ukemusicEditSongPlan(plan.song); };
+          $p('prPlanPreviewStart').onclick = () => start(0);
+          $p('prPlanPreviewCancel').onclick = () => d.close();
+          if (!d.open) d.showModal();
+          $p('prPlanPreviewStart').focus();
         }
         function prRenderSongPlans() {
           const plans = (pr.progress && pr.progress.songPlans) || [];
@@ -615,7 +647,7 @@
             go.className = 'pr-shortcut';
             go.title = (p.routine.steps || []).map((st, i) => `${i + 1}. ${st.label || st.id}`).join('\n');
             go.innerHTML = `<strong>${escapeHtmlText(p.title)}</strong><span>${p.routine.steps.length} steps · about ${p.routine.steps.reduce((n, st) => n + (st.minutes || 2), 0)} min${p.date ? ` · last ${p.date.slice(5).split('-').reverse().join('/')}` : ''}</span>`;
-            go.addEventListener('click', () => prSongPractice({ ...p.routine }));
+            go.addEventListener('click', () => prSongPractice({ ...p.routine }));   // its preview first (4.99.20)
             const remove = document.createElement('button');
             remove.type = 'button';
             remove.className = 'pr-song-plan-remove';
@@ -644,6 +676,8 @@
           }
           if (!PL.EXERCISES.some((e) => e.id === step.id)) { r.step += 1; prRoutineStep(); return; }
           prOpen(step.id, { keepGoing: true, settings: step.settings || {} });
+          if (step.label) $p('prTitle').textContent = step.heading || step.label;   // 4.99.20: the step (G7 → C), not the exercise's name
+          if (step.label) prSettingsOpen(false);   // 4.99.20: a song's step: the exercise's settings out of the way (Settings shows them)
           prShowPlanNote(r, step);   // 4.99.17
           // 4.99.6: Practise a song: a step can bring its change (from, to) and the song's strum
           if (step.from && step.to) {
@@ -661,7 +695,7 @@
           r.started = false;
           r.finishRound = false;
           // 4.88: a few seconds to read the new exercise and move your hand before it starts
-          if (r.step > 0) $p('prWhere').textContent = `Next: ${prExerciseFor(PL.EXERCISES.find((x) => x.id === step.id)).title}. It starts in a moment.`;
+          if (r.step > 0) $p('prWhere').textContent = `Next: ${step.label || prExerciseFor(PL.EXERCISES.find((x) => x.id === step.id)).title}. It starts in a moment.`;
           $p('prRoutineBar').hidden = false;
           $p('prRoutineBack').disabled = r.step === 0;   // 4.99.9
           prRoutineTick();
@@ -683,6 +717,8 @@
           if (r && r.step === 0 && r.routine.intro) lines.push([r.routine.intro, '']);
           if (step && step.note) lines.push([step.note, '']);
           if (step && step.warning) lines.push([`Note: ${step.warning}.`, 'warn']);
+          // 4.99.20: help isn't opened in the middle of a plan: a line says where it is instead
+          if (r && step && pr.mode && pr.progress && !(pr.progress.seen || {})[pr.mode]) lines.push(['New to this exercise? The ? button explains it.', 'pr-plan-hint']);
           box.replaceChildren(...lines.map(([text, cls]) => Object.assign(document.createElement('p'), { textContent: text, className: cls })));
           box.hidden = !lines.length;
         }
@@ -696,7 +732,13 @@
           if (!step) return;
           const over = step.minutes * 60 - prSessionSeconds(); // below 0: time's up, finishing the round
           const left = Math.max(0, over);
-          $p('prRoutineText').textContent = `${r.routine.name} · ${r.step + 1} of ${r.routine.steps.length}${step.label ? `: ${step.label}` : ''} · ${r.finishRound ? 'last round' : `${fmtClock(left)} left`}`;
+          // 4.99.20: its own line: the plan, the step (its name is the heading), the time left
+          const when = r.finishRound ? 'last round' : `${fmtClock(left)} left`;
+          $p('prRoutineText').textContent = r.only
+            ? `Step ${r.step + 1} again${step.kind ? ` · ${step.kind}` : ''} · ${when}`
+            : step.label
+              ? `Step ${r.step + 1} of ${r.routine.steps.length}${step.kind ? ` · ${step.kind}` : ''} · ${when}`
+              : `${r.routine.name} · ${r.step + 1} of ${r.routine.steps.length}: ${prExerciseFor(PL.EXERCISES.find((x) => x.id === step.id)).title} · ${when}`;
           // 4.88: time's up: finish the round you're in (up to half a minute more), then go on
           if (r.started && left <= 0 && pr.mode !== 'oneminute') {
             if (player?.playing && pr.schedule && over > -30 && !r.finishRound) r.finishRound = true;
@@ -708,6 +750,7 @@
           if (!r) return;
           prCancelAttempt();
           prSessionEnd();
+          if (r.only) { prRoutineEnd(true); return; }   // 4.99.20: one step again, then back to the end
           r.step += 1;
           prRoutineStep();
         }
@@ -726,7 +769,8 @@
           prShowPlanNote(null, null);
           $p('prRoutineBar').hidden = true;
           if (player && player.playing) prStop();
-          prShowHome();
+          pr.songPlanOpening = Boolean(r);   // 4.99.20: the end of a plan isn't the moment for Free Practice's tour
+          try { prShowHome(); } finally { pr.songPlanOpening = false; }
           if (finished && r) {
             const done = document.createElement('div'); done.className = 'pr-well-done'; done.setAttribute('role', 'status');
             const say = document.createElement('p');
@@ -738,10 +782,14 @@
               const play = Object.assign(document.createElement('button'), { type: 'button', className: 'primary', textContent: `Play ${r.routine.title || 'the song'} from memory` });
               play.title = 'Back to the song, in the key you practised it in: karaoke with the chords shown the first time each part comes, then ?';
               play.addEventListener('click', () => window.ukemusicPlayFromMemory(r.routine.song));
-              const again = document.createElement('select'); again.setAttribute('aria-label', 'Go through a step again');
-              again.append(new Option('Go through a step again…', ''), ...r.routine.steps.map((st, i) => new Option(`${i + 1}. ${st.label || st.id}`, String(i))));
-              again.addEventListener('change', () => { if (again.value === '') return; done.remove(); pr.routine = { routine: r.routine, step: Number(again.value) }; prRoutineStep(); });
-              row.append(play, again);
+              // 4.99.20: and with the chords, for when it isn't in your memory yet
+              const chords = Object.assign(document.createElement('button'), { type: 'button', textContent: 'Play it with the chords' });
+              chords.title = 'Back to the song: karaoke with all the chords shown';
+              chords.addEventListener('click', () => window.ukemusicPlayFromMemory(r.routine.song, { chords: true }));
+              const again = document.createElement('select'); again.setAttribute('aria-label', 'Do one step again');
+              again.append(new Option('Do one step again…', ''), ...r.routine.steps.map((st, i) => new Option(`${i + 1}. ${st.label || st.id}`, String(i))));
+              again.addEventListener('change', () => { if (again.value === '') return; done.remove(); pr.routine = { routine: r.routine, step: Number(again.value), only: true }; prRoutineStep(); });
+              row.append(play, chords, again);
               done.append(row);
             }
             $p('prTodayCard').prepend(done); $p('prHome').scrollTop = 0;
@@ -2059,7 +2107,7 @@
           // stays as it is (taking it again would keep it inert after Close)
           const already = !practiceEl.hidden;
           if (!already) pr.returnFocus = document.activeElement;
-          if (!already) pr.inertElements = [...document.body.children].filter((el) => el !== practiceEl && el !== $p('prHelpDialog') && el.id !== 'askDialog' && !['SCRIPT','STYLE'].includes(el.tagName) && !el.contains(practiceEl)).map((el) => ({ el, inert: el.inert }));
+          if (!already) pr.inertElements = [...document.body.children].filter((el) => el !== practiceEl && el !== $p('prHelpDialog') && el !== $p('prPlanPreview') && el.id !== 'askDialog' && !['SCRIPT','STYLE'].includes(el.tagName) && !el.contains(practiceEl)).map((el) => ({ el, inert: el.inert }));
           if (!already) for (const item of pr.inertElements) item.el.inert = true;
           practiceEl.hidden = false;
           practiceEl.focus();

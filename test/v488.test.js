@@ -56,7 +56,7 @@ test('a page-turner pedal works like Space; the screen stays on in an exercise',
 test('a routine finishes the round in play (up to half a minute), then gives three seconds to get ready', () => {
   assert.match(JS, /if \(player\?\.playing && pr\.schedule && over > -30 && !r\.finishRound\) r\.finishRound = true;\n\s*else if \(!player\?\.playing \|\| over <= -30\) prRoutineNext\(\);/);
   assert.match(JS, /if \(pr\.routine\?\.finishRound && !pr\.userStopped && !demo\) \{ prRoutineNext\(\); return; \}/);
-  assert.match(JS, /Next: \$\{prExerciseFor\(PL\.EXERCISES\.find\(\(x\) => x\.id === step\.id\)\)\.title\}\. It starts in a moment\./);
+  assert.match(JS, /Next: \$\{step\.label \|\| prExerciseFor\(PL\.EXERCISES\.find\(\(x\) => x\.id === step\.id\)\)\.title\}\. It starts in a moment\./);
   assert.match(JS, /setTimeout\(go, r\.step > 0 \? 3000 : 600\);/);
   assert.match(JS, /r\.finishRound \? 'last round' :/);
 });

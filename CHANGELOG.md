@@ -1,5 +1,14 @@
 # Changelog
 
+## v4.99.20 · Practise this song: a preview, clearer steps, and the right trouble spot
+
+- **Your trouble spot's own change:** a trouble spot now practises the change at the line you marked (an F marked in the chorus after G is G → F, though the verse comes to F from C).
+- **A preview first:** Practise this song shows the plan before it starts (how many steps, about how long, each step), with **Start**, a step to begin at, and **Edit plan** (with all features: the song's Practice tab, or ✎ Edit → Practice).
+- **While it runs:** the step is the heading (**Am → G7**, **Practise the chord shapes**, **Learn the strum**, **Strum the chord sequence**); under it, on its own line, the step, what kind it is and its time left, with **Step back**, **Next step** and **End plan**. The exercise's settings stay tucked away (Settings shows them). Fits a phone.
+- **No help slides in the middle of a plan** (or at its end): a line says **?** explains a new exercise.
+- **At the end:** **Play it from memory**, **Play it with the chords**, or **Do one step again**, which comes back to the end.
+- **The Practice tab:** no **Keep this plan** button (a change is saved as you type); **+ Add step** lists the song's own steps first, Free Practice's exercises behind **More exercises…** (not the noodling ones).
+
 ## v4.99.19 · Practice plans travel with their songs
 
 - **A song's own practice plan goes wherever the song goes:** through **Dropbox** between the web player and the desktop app (learn/practice-plan.txt in the song's folder), in the web player's **backups** and the desktop's **Songs for the web**, in a **zipped songs folder** brought in, in **library packs** (a club's songs come with the leader's plans; the learn sheets stay behind), and when a song is **copied to another library**.

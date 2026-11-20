@@ -41,12 +41,18 @@ function songStrum(ir) {
  * stumbled first): [{ from, to, line }], each change once
  */
 function troubleChanges(ir, trouble = []) {
-  const seq = chordSequence(ir);
+  // 4.99.20: the change at the marked line (an F marked in the chorus after G is G to F, though
+  // the verse comes to F from C): that chord on that line, or the line's first chord
+  const chords = (ir || []).filter((n) => n.type === 'chord' && !n.noChord && !n.hidden && n.content);
   const out = [];
   for (const t of [...(trouble || [])].filter((x) => x && x.chord && !x.gone).sort((a, b) => (b.count || 1) - (a.count || 1))) {
-    const i = seq.findIndex((c, k) => k > 0 && c === t.chord);
-    if (i < 1) continue;
-    const change = { from: seq[i - 1], to: t.chord, line: t.line };
+    let i = chords.findIndex((n) => n.line === t.line && n.content === t.chord);
+    if (i < 0) i = chords.findIndex((n) => n.line === t.line);
+    if (i < 0) i = chords.findIndex((n, k) => k > 0 && n.content === t.chord);   // the line's gone: where the chord first comes
+    let j = i - 1;
+    while (j >= 0 && chords[j].content === chords[i].content) j -= 1;
+    if (i < 0 || j < 0) continue;
+    const change = { from: chords[j].content, to: chords[i].content, line: t.line };
     if (!out.some((c) => c.from === change.from && c.to === change.to)) out.push(change);
   }
   return out;
@@ -203,38 +209,39 @@ function resolvePlan(parsed, { title = 'this song', ir = [], changes = [], strum
     if (gone.length) warnings.push({ line: st.line, message: `${gone.join(', ')} ${gone.length > 1 ? 'aren\'t' : 'isn\'t'} in the song any more` });
     return gone.length ? `${gone.join(', ')} not in the song any more` : '';
   };
-  const change = (st, from, to, label) => {
+  // 4.99.20: a change's heading is the change itself (Am → G7); what kind it is goes with the step count
+  const change = (st, from, to, label, kind) => {
     used.push(`${from}>${to}`);
-    steps.push({ id: 'chord-change', minutes: st.minutes, label, from, to, note: st.note, settings: { prEvery: 'bar', prTempo: at(st) } });
+    steps.push({ id: 'chord-change', minutes: st.minutes, label, heading: `${from} → ${to}`, kind, from, to, note: st.note, settings: { prEvery: 'bar', prTempo: at(st) } });
   };
   for (const st of parsed.steps) {
     if (st.kind === 'shapes') {
       const chords = st.chords.length ? st.chords.map(move) : shapes.slice(0, MAX_SHAPES);
       if (!chords.length) continue;
       const gone = st.chords.length ? warn(st, chords) : '';
-      steps.push({ id: 'shape-drill', minutes: st.minutes, label: st.chords.length ? `Shapes: ${chords.join(' ')}` : 'The shapes', note: st.note, warning: gone, settings: { prDrillSet: chords.join(' '), prDrillOrder: 'mix', prTempo: at(st) } });
+      steps.push({ id: 'shape-drill', minutes: st.minutes, label: st.chords.length ? `Practise the shapes: ${chords.join(' ')}` : 'Practise the chord shapes', note: st.note, warning: gone, settings: { prDrillSet: chords.join(' '), prDrillOrder: 'mix', prTempo: at(st) } });
     } else if (st.kind === 'trouble') {
       for (const c of troubleChanges(ir, trouble).filter((c) => !used.includes(`${c.from}>${c.to}`)).slice(0, 2)) {
-        change(st, c.from, c.to, `Your trouble spot${c.line ? ` (line ${c.line})` : ''}: ${c.from} to ${c.to}`);
+        change(st, c.from, c.to, `Trouble spot: ${c.from} → ${c.to}${c.line ? ` (line ${c.line})` : ''}`, `Trouble spot${c.line ? ` (line ${c.line})` : ''}`);
       }
     } else if (st.kind === 'hard') {
       const hard = (changes || []).filter((c) => c && c.from && c.to && !c.missing && c.from !== c.to && !used.includes(`${c.from}>${c.to}`)).slice(0, st.count);
-      hard.forEach((c, i) => change(st, c.from, c.to, `Hard change${hard.length > 1 ? ` ${i + 1}` : ''}: ${c.from} to ${c.to}`));
+      hard.forEach((c) => change(st, c.from, c.to, `Hard change: ${c.from} → ${c.to}`, 'Hard change'));
     } else if (st.kind === 'change') {
       const from = move(st.from);
       const to = move(st.to);
       const gone = warn(st, [from, to]);
-      change(st, from, to, `Change: ${from} to ${to}`);
+      change(st, from, to, `Change: ${from} → ${to}`, 'Change');
       if (gone) steps[steps.length - 1].warning = gone;
     } else if (st.kind === 'strum') {
       if (!shapes.length) continue;
       const p = st.pattern || pattern;
-      steps.push({ id: 'learn-strum', minutes: st.minutes, label: st.pattern ? `Strum: ${p}` : 'The strum', strum: p, note: st.note, settings: { prStrumSteps: true, prStrumB: '', prProgression: '', prChords: shapes.slice(0, 4).join(' '), prClick: true, prTempo: at(st) } });
+      steps.push({ id: 'learn-strum', minutes: st.minutes, label: st.pattern ? `Learn the strum: ${p}` : 'Learn the strum', strum: p, note: st.note, settings: { prStrumSteps: true, prStrumB: '', prProgression: '', prChords: shapes.slice(0, 4).join(' '), prClick: true, prTempo: at(st) } });
     } else if (st.kind === 'order' || st.kind === 'section') {
       const seq = st.kind === 'order' ? sequence : sectionSequence(ir, st.name);
       if (!seq) { warnings.push({ line: st.line, message: `The song has no section called "${st.name}"` }); continue; }
       if (!seq.length) continue;
-      steps.push({ id: 'metronome-strum', minutes: st.minutes, label: st.kind === 'order' ? 'The chords in order' : `Section: ${st.name}`, strum: pattern, note: st.note, settings: { prStrumSteps: false, prStrumB: '', prProgression: '', prChords: seq.slice(0, MAX_BARS).join(' '), prClick: true, prTempo: at(st) } });
+      steps.push({ id: 'metronome-strum', minutes: st.minutes, label: st.kind === 'order' ? 'Strum the chord sequence' : `Play the ${st.name}`, strum: pattern, note: st.note, settings: { prStrumSteps: false, prStrumB: '', prProgression: '', prChords: seq.slice(0, MAX_BARS).join(' '), prClick: true, prTempo: at(st) } });
     } else if (st.kind === 'exercise') {
       const tp = at(st);
       steps.push({ id: st.id, minutes: st.id === 'one-minute' ? 1 : st.minutes, label: st.title, note: st.note, settings: tp ? { prTempo: tp } : {} });
@@ -284,7 +291,7 @@ function stepChoices({ ir = [], changes = [], strum = '' } = {}) {
   add('Words', 'Words at the start', 'Before you start: …');
   add('Words', 'The ending (Then:)', 'Then: the song from memory');
   const catalog = require('./practice-catalog');
-  for (const c of catalog.CATEGORIES.filter((x) => x.id !== 'routine')) {
+  for (const c of catalog.CATEGORIES.filter((x) => x.id !== 'routine' && x.id !== 'noodle')) {   // 4.99.20: noodling isn't about one song
     for (const e of catalog.EXERCISES.filter((x) => x.cat === c.id)) add(`Free Practice: ${c.name}`, e.title, `3 min  Exercise: ${e.title.replace(/\s*\(.*?\)\s*/g, ' ').trim()}`);
   }
   return out;

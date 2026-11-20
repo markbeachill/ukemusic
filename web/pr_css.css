@@ -486,5 +486,31 @@
 .pr-song-plans #prSongPlansNote { margin: 0 0 8px; }
 /* 4.99.9: a song's plan ends at the song */
 .pr-well-done p { margin: 0; }
+/* 4.99.20: a running plan: its own line under the title (step, time left, and the plan's buttons) */
+.practice-bar:has(.pr-routine-bar:not([hidden])) { flex-wrap: wrap; }
+.practice-bar .pr-routine-bar { order: 10; flex: 1 0 100%; flex-wrap: wrap; row-gap: 4px; }
+.practice-bar .pr-routine-bar #prRoutineText { flex: 1 1 auto; }
+@media (max-width: 600px) {
+  .practice-bar .pr-routine-bar #prRoutineText { flex: 1 0 100%; white-space: normal; }
+  .practice-bar .pr-routine-bar button { flex: 1 1 0; }
+}
+/* a song plan's preview */
+.pr-plan-preview { max-width: 520px; width: calc(100vw - 32px); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; }
+.pr-plan-preview h2 { margin: 0 0 4px; font-size: 20px; }
+.pr-plan-preview-what { margin: 0 0 8px; color: var(--muted); }
+.pr-plan-preview-intro { font-style: italic; margin: 0 0 8px; }
+.pr-plan-preview-steps { margin: 0; padding-left: 26px; }
+.pr-plan-preview-steps li { margin: 2px 0; }
+.pr-plan-preview-steps button { all: unset; cursor: pointer; display: block; padding: 4px 6px; border-radius: 6px; width: 100%; box-sizing: border-box; }
+.pr-plan-preview-steps button:hover, .pr-plan-preview-steps button:focus-visible { background: rgba(37, 99, 235, 0.1); outline: 2px solid rgba(37, 99, 235, 0.4); }
+.pr-plan-preview-steps .min { color: var(--muted); font-size: 13px; }
+.pr-plan-preview-steps .note { display: block; color: var(--muted); font-size: 13px; }
+.pr-plan-preview-hint { font-size: 13px; color: var(--muted); margin: 6px 0 12px; }
+.pr-plan-preview-actions { display: flex; gap: 8px; align-items: center; }
+.pr-plan-preview::backdrop { background: rgba(0, 0, 0, 0.35); }
+.pr-plan-preview { background: var(--panel-bg); color: var(--text); }
+.pr-plan-preview-actions button { min-height: 40px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text); font: inherit; font-weight: 600; cursor: pointer; }
+.pr-plan-preview-actions .primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.pr-plan-hint { font-size: 14px; color: var(--muted); }
 .pr-well-done-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; font-weight: 400; }
 .pr-well-done-actions button.primary { background: #15803d; border-color: #15803d; color: #fff; font-weight: 700; }

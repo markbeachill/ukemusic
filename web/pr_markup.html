@@ -7,9 +7,9 @@
         </div>
         <div id="prRoutineBar" class="pr-routine-bar" hidden>
           <span id="prRoutineText"></span>
-          <button id="prRoutineBack" type="button" title="Back to the step before, to go through it again">◀ Back</button>
-          <button id="prRoutineSkip" type="button" title="Go on to the next exercise">Next ▶</button>
-          <button id="prRoutineEnd" type="button" title="Stop here and go back to the exercises">End</button>
+          <button id="prRoutineBack" type="button" title="Back to the step before, to go through it again">◀ Step back</button>
+          <button id="prRoutineSkip" type="button" title="Go on to the next step of the plan">Next step ▶</button>
+          <button id="prRoutineEnd" type="button" title="Stop the plan here and go back to the exercises">End plan</button>
         </div>
         <span class="k-spacer"></span>
         <span id="prToday" class="pr-today" title="Practice today, and how many days in a row"></span>
@@ -298,6 +298,20 @@
       </div>
 <div id="prMobileGo" class="pr-mobile-go" hidden><span class="pr-mobile-tempo"><button id="prMobileSlower" type="button" aria-label="5 bpm slower">−</button><span id="prMobileTempo"></span><button id="prMobileFaster" type="button" aria-label="5 bpm faster">+</button></span><button id="prMobileStart" type="button" class="primary">▶ Start</button><button id="prMobileStop" type="button">■ Stop</button></div>
     </div>
+    <!-- 4.99.20: a song's plan, before it starts: what it is, how long, and where to start -->
+    <dialog id="prPlanPreview" class="pr-plan-preview" aria-labelledby="prPlanPreviewTitle">
+      <h2 id="prPlanPreviewTitle"></h2>
+      <p id="prPlanPreviewWhat" class="pr-plan-preview-what"></p>
+      <p id="prPlanPreviewIntro" class="pr-plan-preview-intro" hidden></p>
+      <ol id="prPlanPreviewSteps" class="pr-plan-preview-steps"></ol>
+      <p class="pr-plan-preview-hint">Start at any step by choosing it.</p>
+      <div class="pr-plan-preview-actions">
+        <button id="prPlanPreviewEdit" type="button" title="Change the plan: its steps, minutes, tempos and notes">Edit plan</button>
+        <span class="k-spacer"></span>
+        <button id="prPlanPreviewCancel" type="button">Cancel</button>
+        <button id="prPlanPreviewStart" type="button" class="primary">Start</button>
+      </div>
+    </dialog>
     <dialog id="prHelpDialog" class="pr-help" aria-labelledby="prHelpTitle">
       <form method="dialog"><div class="pr-help-head"><h2 id="prHelpTitle">How it works</h2><button type="submit" id="prHelpClose">Close</button></div>
         <div id="prHelpContent" class="pr-slide" aria-live="polite"></div>

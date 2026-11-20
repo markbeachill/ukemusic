@@ -53,10 +53,10 @@ test('the last six songs\' plans are kept with your practice', () => {
 test('both apps: Learn → Practise this song; Free Practice runs it and lists it', () => {
   const desk = read('index.html');
   assert.ok(desk.includes('<button id="songPracticeButton" class="rib-button rib-button-wide" type="button" data-icon="metronome"'));
-  assert.ok(desk.includes('window.ukemusicPractiseSong(plan);'));
+  assert.ok(desk.includes('window.ukemusicPractiseSong(plan, { preview });'));
   const web = read('web/app.html');
   assert.ok(web.includes('<button type="button" id="learnPracticeBtn" data-feature="songPractice">'));
-  assert.ok(web.includes('window.ukemusicPractiseSong(plan);'));
+  assert.ok(web.includes('window.ukemusicPractiseSong(plan, { preview });'));
   const pr = read('web/pr_js.js');
   assert.ok(pr.includes('window.ukemusicPractiseSong = prSongPractice;'));
   assert.ok(pr.includes("if (step.from && step.to) {"));

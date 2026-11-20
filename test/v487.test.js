@@ -173,7 +173,7 @@ test('an exercise: one bar, the settings a panel that opens, Start at the bottom
 test('slides in the app: the first visit, the first time for each kind, and from "How it works"', () => {
   assert.match(MARKUP, /<dialog id="prHelpDialog" class="pr-help" aria-labelledby="prHelpTitle">/);
   for (const id of ['prHelpContent', 'prSlideBack', 'prSlideDots', 'prSlideNext']) assert.ok(MARKUP.includes(`id="${id}"`), id);
-  assert.match(JS, /function prIntro\(key\) \{\n\s*if \(!pr\.progress \|\| pr\.restoring\) return;\n\s*pr\.progress\.seen = pr\.progress\.seen \|\| \{\};\n\s*if \(pr\.progress\.seen\[key\]\) return;\n\s*pr\.progress\.seen\[key\] = true;\n\s*prSaveProgress\(\);\n\s*prHelp\(\);/);
+  assert.match(JS, /function prIntro\(key\) \{\n\s*if \(!pr\.progress \|\| pr\.restoring\) return;\n(?:[^\n]*pr\.routine[^\n]*\n)?\s*pr\.progress\.seen = pr\.progress\.seen \|\| \{\};\n\s*if \(pr\.progress\.seen\[key\]\) return;\n\s*pr\.progress\.seen\[key\] = true;\n\s*prSaveProgress\(\);\n\s*prHelp\(\);/);
   assert.match(JS, /prIntro\('tour'\);/);
   assert.match(JS, /prIntro\(e\.mode\);/);
   assert.match(JS, /if \(\$p\('prHelpDialog'\)\.open\) \{ \$p\('prHelpDialog'\)\.addEventListener\('close', \(\) => setTimeout\(go, 400\), \{ once: true \}\); return; \}/, 'a timed session waits while you read');
