@@ -21,6 +21,7 @@ const SONG_SETTINGS_FILE = 'song.ini';
 const NOTES_FILE = 'notes.txt';
 const EXPORTS_DIR = 'exports';
 const LEARN_DIR = 'learn'; // 4.39: the song's learn sheet
+const PLAN_FILE = 'practice-plan.txt'; // 4.99.19: in learn/: the song's own practice plan
 const MAX_TITLE_LENGTH = 100;
 
 // What song.ini holds:
@@ -444,6 +445,7 @@ function readSong(folder) {
     content: fs.readFileSync(info.songFile, 'utf8'),
     settings: readSongSettings(folder),
     notes: readNotes(folder),
+    practicePlan: readLearn(folder, PLAN_FILE),   // 4.99.19: its own practice plan ('' when it has none)
     links: require('./links').readLinks(folder),
     chordPro: readChordPro(folder)
   };
@@ -706,6 +708,7 @@ module.exports = {
   writeLearn,
   readLearn,
   LEARN_DIR,
+  PLAN_FILE,
   HISTORY_DIR,
   songHistory,
   renameBusy,

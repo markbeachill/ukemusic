@@ -130,6 +130,7 @@ async function songsFromFiles(files) {
       const bytes = f.bytes || new TextEncoder().encode(f.text || '');
       try {
         for (const e of await readZip(bytes)) {
+          if (/(^|\/)learn\/practice-plan\.txt$/i.test(e.name)) { flat.push({ name: e.name, text: decode(e.data) }); continue; }   // 4.99.19: a song's own practice plan
           if (/(^|\/)(__MACOSX|\.history|exports|learn)\//i.test(e.name) || /(^|\/)\.[^/]*$/.test(e.name)) continue;
           flat.push({ name: e.name, text: TEXT_EXT.test(e.name) || /\.(ini|json)$/i.test(e.name) ? decode(e.data) : null });
         }
@@ -150,6 +151,8 @@ async function songsFromFiles(files) {
     used.add(songFile);
     const iniFile = list.find((f) => /(^|\/)song\.ini$/i.test(f.name));
     const notesFile = list.find((f) => /(^|\/)notes\.txt$/i.test(f.name));
+    const planFile = byDir.get(`${dir ? `${dir}/` : ''}learn`)?.find((f) => /(^|\/)practice-plan\.txt$/i.test(f.name));   // 4.99.19
+    if (planFile) used.add(planFile);
     for (const extra of [iniFile, notesFile, ...list.filter((f) => /(^|\/)(links|chordpro)\.txt$/i.test(f.name))]) if (extra) used.add(extra);
     const folderTitle = dir.split('/').pop();
     const fileTitle = titleFromFile(songFile.name);
@@ -158,6 +161,7 @@ async function songsFromFiles(files) {
       text: songFile.text.replace(/^﻿/, '').replace(/\r\n?/g, '\n'),
       settings: iniFile ? settingsFromIni(iniFile.text) : {},
       notes: notesFile ? notesFile.text.replace(/\r\n?/g, '\n') : '',
+      ...(planFile && planFile.text.trim() ? { practicePlan: planFile.text.replace(/\r\n?/g, '\n') } : {}),
       from: 'ukemusic'
     });
   }
@@ -181,6 +185,7 @@ function sameSong(a, b) {
   const t = (s) => String(s || '').replace(/\r\n?/g, '\n').replace(/\s+$/, '');
   if (t(a.text) !== t(b.text)) return false;
   if (t(a.notes) !== t(b.notes)) return false;
+  if (t(a.practicePlan) !== t(b.practicePlan)) return false;   // 4.99.19
   for (const k of FACTS) {
     const x = a.settings?.song?.[k];
     const y = b.settings?.song?.[k];
@@ -195,6 +200,7 @@ function differences(a, b) {
   const out = [];
   if (t(a.text) !== t(b.text)) out.push('words and chords');
   if (t(a.notes) !== t(b.notes)) out.push('notes');
+  if (t(a.practicePlan) !== t(b.practicePlan)) out.push('practice plan');   // 4.99.19
   if (FACTS.some((k) => String(a.settings?.song?.[k] ?? '') !== String(b.settings?.song?.[k] ?? ''))) out.push('details');
   return out;
 }

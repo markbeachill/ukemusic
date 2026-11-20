@@ -217,7 +217,7 @@ The **Learn** tab helps you play a song without the sheet. Its buttons, from lef
 
 ### A song's own practice plan
 
-With all features, a song has a **Practice** tab (beside Notes). It shows the plan **Practise this song** runs, step by step, and the plan as text to change. Until you change it, ukemusic makes it from the song each time. Change a line, or press **Keep this plan**, and it's yours: kept in the song's folder (learn/practice-plan.txt), so it goes wherever the song goes, and never rewritten unless you press **Start again from the song**. A club leader can write one for the group; an advanced player can make it harder.
+With all features, a song has a **Practice** tab (beside Notes). It shows the plan **Practise this song** runs, step by step, and the plan as text to change. Until you change it, ukemusic makes it from the song each time. Change a line, or press **Keep this plan**, and it's yours: kept in the song's folder (learn/practice-plan.txt), so it goes wherever the song goes, and never rewritten unless you press **Start again from the song**. A club leader can write one for the group; an advanced player can make it harder. It goes with the song: through Dropbox to and from the web player, in library packs (so a club's songs come with the leader's plans), in the web player's backups and Songs for the web, and when you copy a song to another library.
 
 ![The Practice tab: the song's plan as steps, with a note on one, and the plan as text below](../site/img/guide/desktop-R14.jpg)
 

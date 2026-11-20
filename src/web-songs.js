@@ -20,6 +20,7 @@ function buildWebSongs(songs, { appVersion = '', exported = new Date().toISOStri
     const settings = JSON.parse(JSON.stringify(song.settings || {}));
     if (settings.song) delete settings.song.settings_format;
     const entry = { id, title: song.title, text: song.content ?? song.text ?? '', settings, notes: song.notes || '' };
+    if (String(song.practicePlan || '').trim()) entry.practicePlan = String(song.practicePlan);   // 4.99.19: its own practice plan
     // 4.45: a backup from the web player says which songs were changed there, and when
     if (song.edited) entry.edited = true;
     if (song.updated) entry.updated = String(song.updated);
@@ -42,7 +43,7 @@ function readWebSongs(text) {
   }
   const songs = data.songs
     .filter((s) => s && typeof s.title === 'string' && typeof s.text === 'string')
-    .map((s) => ({ id: songId(s.id || s.title), title: s.title, text: s.text, settings: s.settings && typeof s.settings === 'object' ? s.settings : {}, notes: typeof s.notes === 'string' ? s.notes : '', ...(s.edited === true ? { edited: true } : {}), ...(typeof s.updated === 'string' ? { updated: s.updated } : {}) }));
+    .map((s) => ({ id: songId(s.id || s.title), title: s.title, text: s.text, settings: s.settings && typeof s.settings === 'object' ? s.settings : {}, notes: typeof s.notes === 'string' ? s.notes : '', ...(typeof s.practicePlan === 'string' && s.practicePlan.trim() ? { practicePlan: s.practicePlan } : {}), ...(s.edited === true ? { edited: true } : {}), ...(typeof s.updated === 'string' ? { updated: s.updated } : {}) }));
   return { ok: true, songs, exported: data.exported || '' };
 }
 

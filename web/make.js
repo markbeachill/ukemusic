@@ -51,7 +51,7 @@ if (fs.existsSync(root)) {
   // songs with words to play (not the ones still waiting for their words)
   const songs = lib.listSongs(root).filter((s) => !/needs words/i.test(String(s.tags || ''))).map((s) => {
     const r = lib.readSong(s.folder);
-    return { title: s.title, content: r.content, settings: r.settings, notes: r.notes };
+    return { title: s.title, content: r.content, settings: r.settings, notes: r.notes, practicePlan: r.practicePlan };   // 4.99.19: a starter song's own plan too
   });
   const version = require(path.join(APP, 'package.json')).version;
   fs.writeFileSync(path.join(WEB, 'out', 'public-domain-songs.json'), JSON.stringify(web.buildWebSongs(songs, { appVersion: version })));

@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.99.19 · Practice plans travel with their songs
+
+- **A song's own practice plan goes wherever the song goes:** through **Dropbox** between the web player and the desktop app (learn/practice-plan.txt in the song's folder), in the web player's **backups** and the desktop's **Songs for the web**, in a **zipped songs folder** brought in, in **library packs** (a club's songs come with the leader's plans; the learn sheets stay behind), and when a song is **copied to another library**.
+- Bringing songs in from the web player, a different plan is a change like the notes ("practice plan"), and comes in when you choose it.
+- A song with no plan of its own syncs exactly as before.
+
 ## v4.99.18 · + Add step from the song; your plan on the learn sheet
 
 - **+ Add step** (the Practice tab; web: ✎ Edit → Practice) now offers the song itself: its first chords as a Shapes line, each of its hardest changes (Change Am to G7…), its strum, and each of its sections, written in the song's own key; as well as every Free Practice exercise.

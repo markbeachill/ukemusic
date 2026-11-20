@@ -12077,8 +12077,7 @@ function showTab(tab) {
         let planCache = { folder: undefined, text: '' };
         async function loadPlanText() {
           const folder = state.song ? state.song.folder : null;
-          if (planCache.folder === folder) return planCache.text;
-          let text = '';
+          let text = '';   // read each time: Dropbox, a library pack or the web player may have brought a new one
           if (folder) { try { text = await window.ukemusic.learnRead({ folder, fileName: PLAN_FILE }) || ''; } catch (_e) { text = ''; } }
           planCache = { folder, text };
           return text;

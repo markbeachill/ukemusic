@@ -136,6 +136,9 @@ function copySong(songFolder, library, { move = false, keepBoth = false } = {}) 
     }
   } else {
     copyFolder(songFolder, target, { skip: (e) => e.isDirectory() && ['exports', 'learn', '.history'].includes(e.name.toLowerCase()) });
+    // 4.99.19: the song's own practice plan goes with it (the learn sheets don't)
+    const plan = path.join(songFolder, songs.LEARN_DIR, songs.PLAN_FILE);
+    if (fs.existsSync(plan)) { fs.mkdirSync(path.join(target, songs.LEARN_DIR), { recursive: true }); fs.copyFileSync(plan, path.join(target, songs.LEARN_DIR, songs.PLAN_FILE)); }
   }
   matchSongFile(target);
   return { folder: target };
@@ -166,6 +169,9 @@ function exportPack(library, file, { names = null, notes = false, setlists = tru
       if (!SONG_FILES.test(entry.name) && !(notes && entry.name.toLowerCase() === 'notes.txt')) continue;
       entries.push({ name: `songs/${name}/${entry.name}`, data: fs.readFileSync(path.join(folder, entry.name)) });
     }
+    // 4.99.19: its own practice plan (a club leader's plan goes with the club's songs)
+    const plan = path.join(folder, songs.LEARN_DIR, songs.PLAN_FILE);
+    if (fs.existsSync(plan) && fs.readFileSync(plan, 'utf8').trim()) entries.push({ name: `songs/${name}/${songs.LEARN_DIR}/${songs.PLAN_FILE}`, data: fs.readFileSync(plan) });
   }
   if (setlists) {
     const dir = path.join(library, SETLISTS_DIR);
@@ -193,6 +199,9 @@ function packFiles(file) {
     } else if (parts.length === 3 && parts[0] === 'songs' && parts.every(safePart)) {
       if (!songsIn.has(parts[1])) songsIn.set(parts[1], []);
       songsIn.get(parts[1]).push({ name: parts[2], data: e.data });
+    } else if (parts.length === 4 && parts[0] === 'songs' && parts.every(safePart) && parts[2].toLowerCase() === songs.LEARN_DIR && parts[3].toLowerCase() === songs.PLAN_FILE) {
+      if (!songsIn.has(parts[1])) songsIn.set(parts[1], []);
+      songsIn.get(parts[1]).push({ name: `${songs.LEARN_DIR}/${songs.PLAN_FILE}`, data: e.data });   // 4.99.19
     } else if (parts.length === 2 && parts[0] === SETLISTS_DIR && safePart(parts[1]) && /\.txt$/i.test(parts[1])) {
       setlists.push({ name: parts[1], data: e.data });
     }
@@ -223,7 +232,10 @@ function importPack(file, { parent = null, into = null } = {}) {
     if (have.has(title.toLowerCase())) { skipped.push(title); continue; }
     const dir = path.join(folder, title);
     fs.mkdirSync(dir, { recursive: true });
-    for (const f of files) fs.writeFileSync(path.join(dir, f.name), f.data);
+    for (const f of files) {
+      if (f.name.includes('/')) fs.mkdirSync(path.join(dir, path.dirname(f.name)), { recursive: true });   // learn/practice-plan.txt
+      fs.writeFileSync(path.join(dir, f.name), f.data);
+    }
     added.push(title);
   }
   if (p.setlists.length) {

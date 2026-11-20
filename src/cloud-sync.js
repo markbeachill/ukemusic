@@ -7,6 +7,7 @@
 //   <songs folder>/<Title>/<Title>-song.txt   the words and chords (the folder's name is the title)
 //                          song.ini           key, tempo, artist… (the song's settings)
 //                          notes.txt          the notes
+//                          learn/practice-plan.txt   4.99.19: the song's own practice plan
 // Everything else (exports, .history, learn, Archived songs, Setlists) is left alone.
 //
 // Each song here remembers what it was when it last matched the drive (song.cloud: the folder,
@@ -19,6 +20,9 @@ const { settingsFromIni } = require('./song-files');
 const SONG_SUFFIX = '-song.txt';
 const SKIP_FOLDERS = new Set(['archived songs', 'setlists', 'exports']);
 const ARCHIVE = 'Archived songs';
+const PLAN_FILE = 'learn/practice-plan.txt';   // 4.99.19: a song's own practice plan
+/** The drive's files of a song, by kind: where each lives in its folder */
+const FILE_KINDS = ['song', 'ini', 'notes', 'plan'];
 
 const lower = (p) => String(p || '').toLowerCase();
 const baseName = (p) => String(p || '').split('/').filter(Boolean).pop() || '';
@@ -50,7 +54,9 @@ const clean = (t) => String(t || '').replace(/\r\n?/g, '\n');
 function songHash(song) {
   const settings = JSON.parse(JSON.stringify(song.settings || {}));
   if (settings.song) delete settings.song.settings_format;
-  return hashText(`${clean(song.text)}\u0000${clean(song.notes).replace(/\s+$/, '')}\u0000${stableJson(settings)}`);
+  // 4.99.19: its own practice plan too, when it has one (a song without one keeps its fingerprint)
+  const plan = clean(song.practicePlan).replace(/\s+$/, '');
+  return hashText(`${clean(song.text)}\u0000${clean(song.notes).replace(/\s+$/, '')}\u0000${stableJson(settings)}${plan ? `\u0000plan\u0000${plan}` : ''}`);
 }
 
 /** song.ini as the desktop writes it (settings_format 2: only the song's own settings) */
@@ -70,6 +76,8 @@ function songToFiles(song, root) {
     ini: { path: `${folder}/song.ini`, text: iniText(song.settings) }
   };
   if (String(song.notes || '').trim()) out.notes = { path: `${folder}/notes.txt`, text: clean(song.notes) };
+  // 4.99.19: the practice plan (an empty file when it's been taken back to ukemusic's own)
+  if (String(song.practicePlan || '').trim() || (song.cloud && song.cloud.revs && song.cloud.revs.plan)) out.plan = { path: `${folder}/${PLAN_FILE}`, text: clean(song.practicePlan) };
   return { folder, files: out };
 }
 
@@ -79,7 +87,8 @@ function filesToSong(info, texts) {
     title: info.title,
     text: clean(texts.song),
     settings: texts.ini ? settingsFromIni(texts.ini) : {},
-    notes: texts.notes !== undefined ? clean(texts.notes) : ''
+    notes: texts.notes !== undefined ? clean(texts.notes) : '',
+    practicePlan: texts.plan !== undefined && texts.plan.trim() ? clean(texts.plan) : ''   // 4.99.19
   };
 }
 
@@ -96,19 +105,22 @@ function songFolders(entries, root) {
   for (const e of entries || []) {
     if (e.tag !== 'file') continue;
     const p = String(e.path);
-    if (!lower(p).startsWith(`${lower(rootPath)}/`) || depthOf(p) !== rootDepth + 2) continue;
+    if (!lower(p).startsWith(`${lower(rootPath)}/`)) continue;
     const parts = p.split('/').filter(Boolean);
+    // a song folder's own files, and (4.99.19) its learn/practice-plan.txt
+    const isPlan = depthOf(p) === rootDepth + 3 && lower(parts[rootDepth + 1]) === 'learn' && lower(parts[rootDepth + 2]) === 'practice-plan.txt';
+    if (depthOf(p) !== rootDepth + 2 && !isPlan) continue;
     const folderName = parts[rootDepth];
     if (SKIP_FOLDERS.has(lower(folderName)) || folderName.startsWith('.')) continue;
     const folder = joinPath(rootPath, folderName);
     const key = lower(folder);
     if (!folders.has(key)) folders.set(key, { folder, title: folderName, files: [] });
-    folders.get(key).files.push({ name: parts[parts.length - 1], path: p, rev: e.rev || '' });
+    folders.get(key).files.push({ name: isPlan ? PLAN_FILE : parts[parts.length - 1], path: p, rev: e.rev || '' });
   }
   const out = new Map();
   for (const [key, f] of folders) {
     // the desktop's rule: the first "…-song.txt" in the folder, by name
-    const songFiles = f.files.filter((x) => lower(x.name).endsWith(SONG_SUFFIX)).sort((a, b) => a.name.localeCompare(b.name));
+    const songFiles = f.files.filter((x) => !x.name.includes('/') && lower(x.name).endsWith(SONG_SUFFIX)).sort((a, b) => a.name.localeCompare(b.name));
     if (!songFiles.length) continue;
     const pick = (name) => f.files.find((x) => lower(x.name) === name);
     const info = { folder: f.folder, title: f.title, song: songFiles[0] };
@@ -116,17 +128,21 @@ function songFolders(entries, root) {
     const notesFile = pick('notes.txt');
     if (iniFile) info.ini = iniFile;
     if (notesFile) info.notes = notesFile;
+    const planFile = pick(PLAN_FILE);
+    if (planFile) info.plan = planFile;
     info.revs = revsOf(info);
     out.set(key, info);
   }
   return out;
 }
 
-/** The revisions of a song folder's files: { song, ini, notes } */
+/** The revisions of a song folder's files: { song, ini, notes, plan? } */
 function revsOf(info) {
-  return { song: info.song ? info.song.rev : '', ini: info.ini ? info.ini.rev : '', notes: info.notes ? info.notes.rev : '' };
+  const out = { song: info.song ? info.song.rev : '', ini: info.ini ? info.ini.rev : '', notes: info.notes ? info.notes.rev : '' };
+  if (info.plan) out.plan = info.plan.rev;   // 4.99.19
+  return out;
 }
-const sameRevs = (a, b) => Boolean(a && b) && a.song === b.song && (a.ini || '') === (b.ini || '') && (a.notes || '') === (b.notes || '');
+const sameRevs = (a, b) => Boolean(a && b) && a.song === b.song && (a.ini || '') === (b.ini || '') && (a.notes || '') === (b.notes || '') && (a.plan || '') === (b.plan || '');
 
 /**
  * What to do, song by song.
@@ -189,4 +205,4 @@ function archivePath(root, folder) {
   return joinPath(root, ARCHIVE, baseName(folder));
 }
 
-module.exports = { hashText, stableJson, songHash, iniText, songToFiles, filesToSong, songFolders, revsOf, sameRevs, planSync, archivePath, joinPath, baseName, SONG_SUFFIX, ARCHIVE };
+module.exports = { PLAN_FILE, FILE_KINDS, hashText, stableJson, songHash, iniText, songToFiles, filesToSong, songFolders, revsOf, sameRevs, planSync, archivePath, joinPath, baseName, SONG_SUFFIX, ARCHIVE };

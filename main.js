@@ -709,7 +709,7 @@ function registerIpc() {
     const { buildWebSongs } = require('./src/web-songs');
     const list = songs.listSongs(songsFolder).map((s) => {
       const song = songs.readSong(s.folder);
-      return { title: song.title, content: song.content, settings: song.settings, notes: song.notes };
+      return { title: song.title, content: song.content, settings: song.settings, notes: song.notes, practicePlan: song.practicePlan };   // 4.99.19: and its practice plan
     });
     const bundle = buildWebSongs(list, { appVersion: require('./package.json').version });
     const result = await dialog.showSaveDialog(mainWindow, {
@@ -740,7 +740,7 @@ function registerIpc() {
     if (!r.ok) throw new Error(r.error);
     const current = songs.listSongs(songsFolder).map((s) => {
       const song = songs.readSong(s.folder);
-      return { title: song.title, text: song.content, settings: song.settings || {}, notes: song.notes || '', folder: s.folder, songFile: song.songFile };
+      return { title: song.title, text: song.content, settings: song.settings || {}, notes: song.notes || '', practicePlan: song.practicePlan || '', folder: s.folder, songFile: song.songFile };
     });
     const plan = planImport(current, r.songs.map((s) => ({ ...s, from: 'backup' })));
     const add = plan.add.filter((s) => s.edited);
@@ -772,6 +772,7 @@ function registerIpc() {
       try {
         const song = songs.createSong(songsFolder, s.title, s.text, s.settings || {});
         if (String(s.notes || '').trim()) songs.writeNotes(song.folder, s.notes);
+        if (String(s.practicePlan || '').trim()) songs.writeLearn(song.folder, songs.PLAN_FILE, s.practicePlan);   // 4.99.19
         songs.appendNoteLine(song.folder, 'Brought in from the web player');
         done.added.push(song.title);
       } catch (error) { done.errors.push(`${s.title}: ${error.message}`); }
@@ -783,6 +784,7 @@ function registerIpc() {
         if (u.what.includes('words and chords')) songs.saveSong(u.current.songFile, u.song.text);
         if (u.what.includes('details')) songs.writeSongSettings(folder, merge(songs.readSongSettings(folder) || {}, u.song.settings || {}));
         if (u.what.includes('notes')) songs.writeNotes(folder, u.song.notes || '');
+        if (u.what.includes('practice plan')) songs.writeLearn(folder, songs.PLAN_FILE, u.song.practicePlan || '');   // 4.99.19
         songs.appendNoteLine(folder, `Changed on the web player (${u.what.join(', ')}), brought in`);
         done.updated.push(u.song.title);
       } catch (error) { done.errors.push(`${u.song.title}: ${error.message}`); }

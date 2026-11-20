@@ -1314,14 +1314,14 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     let done = 0;
     const tick = () => { done += 1; $('updateText').textContent = `Bringing them in… ${done} of ${total}`; };
     for (const x of plan.add) {
-      await store.save({ id: uniqueId(x.title), title: x.title, text: x.text, settings: x.settings || {}, notes: x.notes || '' }, { edited: editedFrom(x) });
+      await store.save({ id: uniqueId(x.title), title: x.title, text: x.text, settings: x.settings || {}, notes: x.notes || '', ...(x.practicePlan ? { practicePlan: x.practicePlan } : {}) }, { edited: editedFrom(x) });
       tick();
     }
     const replaceMine = $('updateEdited').checked;
     let kept = 0;
     for (const u of plan.update) {
       if (u.editedHere && !replaceMine) { kept += 1; continue; }
-      await store.save({ ...u.current, title: u.current.title, text: u.song.text, settings: mergeSettings(u.current.settings, u.song.settings), notes: u.song.notes !== undefined ? u.song.notes : u.current.notes }, { edited: editedFrom(u.song) });
+      await store.save({ ...u.current, title: u.current.title, text: u.song.text, settings: mergeSettings(u.current.settings, u.song.settings), notes: u.song.notes !== undefined ? u.song.notes : u.current.notes, practicePlan: u.song.practicePlan !== undefined ? u.song.practicePlan : (u.what.includes('practice plan') ? '' : u.current.practicePlan) }, { edited: editedFrom(u.song) });
       tick();
     }
     // the same as the desktop app's copy now (it took your changes): no longer "changed here"
@@ -1347,7 +1347,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   $('backupBtn').addEventListener('click', async () => {
     const list = [...songs.values()];
     if (!list.length) { toast('No songs to back up yet.'); return; }
-    const data = JSON.stringify(U.webSongs.build(list.map((x) => ({ title: x.title, text: x.text, settings: x.settings, notes: x.notes, edited: x.edited, updated: x.updated })), { appVersion: U.appVersion }));
+    const data = JSON.stringify(U.webSongs.build(list.map((x) => ({ title: x.title, text: x.text, settings: x.settings, notes: x.notes, practicePlan: x.practicePlan, edited: x.edited, updated: x.updated })), { appVersion: U.appVersion }));
     const ok = await saveFile({ filename: `ukemusic songs ${new Date().toISOString().slice(0, 10)}.json`, data, type: 'application/json' });
     if (ok) toast(`${count(list.length, 'song')} backed up.`);
   });
@@ -1481,7 +1481,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   }
   const partsOf = (song) => {
     const { files } = CS.songToFiles(song, cloudConf.root);
-    return { song: CS.hashText(files.song.text), ini: CS.hashText(files.ini.text), notes: CS.hashText(files.notes ? files.notes.text : '') };
+    return { song: CS.hashText(files.song.text), ini: CS.hashText(files.ini.text), notes: CS.hashText(files.notes ? files.notes.text : ''), plan: CS.hashText(files.plan ? files.plan.text : '') };   // 4.99.19: and the practice plan
   };
   function linkSong(song, folder, revs) {
     song.cloud = { folder, revs, hash: CS.songHash(song), parts: partsOf(song) };
@@ -1490,7 +1490,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   async function pullSong(info, existing) {
     const texts = {};
     const revs = { song: '', ini: '', notes: '' };
-    for (const k of ['song', 'ini', 'notes']) {
+    for (const k of CS.FILE_KINDS) {
       if (!info[k]) continue;
       const d = await dbxDownload(info[k].path);
       texts[k] = d.text;
@@ -1519,10 +1519,10 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
     const { files } = CS.songToFiles(song, root);
     const parts = partsOf(song);
     const before = (song.cloud && info && !overwrite) ? song.cloud.parts || {} : {};
-    for (const k of ['song', 'ini', 'notes']) {
-      const path = `${folder}/${k === 'song' ? `${CS.baseName(folder)}${CS.SONG_SUFFIX}` : k === 'ini' ? 'song.ini' : 'notes.txt'}`;
+    for (const k of CS.FILE_KINDS) {
+      const path = `${folder}/${k === 'song' ? `${CS.baseName(folder)}${CS.SONG_SUFFIX}` : { ini: 'song.ini', notes: 'notes.txt', plan: CS.PLAN_FILE }[k]}`;
       const text = files[k] ? files[k].text : '';
-      if (!files[k] && !(info && info[k])) continue;          // no notes here or there
+      if (!files[k] && !(info && info[k])) continue;          // no notes (or plan) here or there
       if (before[k] && before[k] === parts[k] && revs[k]) continue;   // this file hasn't changed
       revs[k] = await dbxUpload(path, text, { rev: overwrite ? '' : revs[k], overwrite });
     }
@@ -1562,7 +1562,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
       for (const m of plan.match) {
         await attempt(m.song.title, async () => {
           const texts = {};
-          for (const k of ['song', 'ini', 'notes']) if (m.info[k]) texts[k] = (await dbxDownload(m.info[k].path)).text;
+          for (const k of CS.FILE_KINDS) if (m.info[k]) texts[k] = (await dbxDownload(m.info[k].path)).text;
           const there = CS.filesToSong(m.info, texts);
           if (CS.songHash(there) === CS.songHash(m.song)) { linkSong(m.song, m.info.folder, m.info.revs); await store.save(m.song, { edited: false, cloud: false }); return; }
           plan.conflict.push({ song: m.song, info: m.info });

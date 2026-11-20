@@ -93,7 +93,7 @@ Tap **Learn** in the player.
 
 - **Play with fewer chords:** karaoke with the chords fading. Each part shows its chords the first time it comes, then a **?** (tap it to see the chord). Choose **Chord numbers** or **No chords** when you're ready.
 - **Next chord?** A quiz on each change: you're playing C, what comes next? Hear each answer before you choose.
-- **Practise this song:** a plan in Free Practice from the song: its shapes, its two hardest changes, its strum in steps, then its chords in order. Free Practice keeps it under **Practise a song**. With all features, **✎ Edit → Practice** shows the plan and lets you change it, a line per step (minutes, what to do, **at** a tempo, **;** a note to show while you practise it): see [A song's own practice plan](user-guide.md#a-songs-own-practice-plan).
+- **Practise this song:** a plan in Free Practice from the song: its shapes, its two hardest changes, its strum in steps, then its chords in order. Free Practice keeps it under **Practise a song**. With all features, **✎ Edit → Practice** shows the plan and lets you change it, a line per step (minutes, what to do, **at** a tempo, **;** a note to show while you practise it): see [A song's own practice plan](user-guide.md#a-songs-own-practice-plan). The plan is kept with the song: in your backups, and through Dropbox with the desktop app.
 - **Learn sheet:** one page with the chords and how each feels, the parts and the hardest changes. Print it or save it as a PDF.
 - **Chord patterns**, **Pick** (fingerpicking) and the **Circle of fifths**.
 
