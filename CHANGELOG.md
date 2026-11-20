@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.99.22 · Change a practice plan row by row
+
+- **The plan as rows** (the Practice tab; web: ✎ Edit → Practice): each step is a row with its minutes, its tempo (60, or 70% of the song's; empty for the usual) and its note, and **▲ ▼ ✕** to move it up, down or remove it. **+ Add step** puts one in at the end. Fits a phone.
+- **Edit as text** shows the whole plan as text, for writing or pasting one in. A row's change rewrites its own line, so plans written by hand, sharing a song and the learn sheet are as they were.
+- The user guide's picture of the Practice tab shows the rows.
+
 ## v4.99.21 · Plan steps play the song itself, until it's clean
 
 - **A section, as the song plays it:** a plan's **Section Chorus** and **Chords in order** steps now play that part of the song itself: its own bars, strum and timing (a chord held for two bars stays held; two changes in a bar stay two), with its words, round and round. They used to turn it into a list of chords, a bar each.

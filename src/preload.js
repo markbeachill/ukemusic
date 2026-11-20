@@ -380,6 +380,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
   instrumentHelpHtml: (options) => instrumentHelp.helpHtml(options),   // 4.99.3: playing a song on another instrument
   songPracticePlan: (options) => songPractice.songPlan(options),   // 4.99.6: Practise a song
   songPlanAutoText: songPractice.AUTO_TEXT,
+  songPlanParse: (text) => songPractice.parsePlan(text),   // 4.99.22: the Practice tab's rows
   songPlanStepChoices: (options) => songPractice.stepChoices(options),   // 4.99.18: + Add step, from the song   // 4.99.17: the plan ukemusic makes, as text (the Practice tab)
   gigCheck: (options) => gigChecks.gigCheck(options),   // 4.99.12: Setlists → Gig check
   instrument: (id) => instruments.instrument(id),

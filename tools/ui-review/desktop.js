@@ -319,8 +319,10 @@ async function launch() {
   // 4.99.17: the Practice tab: a song's own plan, with a note and a change written in
   await safe('R14', async () => {
     await page.evaluate(() => document.getElementById('tabPractice').click()); await page.waitForTimeout(1000);
+    await page.evaluate(() => { document.getElementById('planTextBox').open = true; });   // 4.99.22: the text is behind Edit as text
     await page.fill('#planText', 'Keep the beat steady, and sing as you play.\n2 min  Shapes\n2 min  Trouble spots\n2 min  Change G7 to C at 60   ; the one we always rush\n3 min  Strum at 70%\n3 min  Chords in order at 85%\nThen: the song from memory');
     await page.waitForTimeout(1500);
+    await page.evaluate(() => { document.getElementById('planTextBox').open = false; document.querySelector('#planPane .plan-head').scrollIntoView(); });
     await shot('R14', 'Practice: the song\'s own plan, as steps and as text');
     await page.evaluate(() => document.getElementById('planReset').click()); await page.waitForTimeout(400);
     await page.click('#askOk').catch(() => {}); await page.waitForTimeout(600);

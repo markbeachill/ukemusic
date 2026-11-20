@@ -163,7 +163,7 @@ function parsePlan(text) {
       problems.push({ line, message: `Not a step ukemusic knows: "${body || trimmed}"` });
       return;
     }
-    steps.push({ line, minutes: minutes || DEFAULT_MINUTES[step.kind], tempo, note, ...step });
+    steps.push({ line, minutes: minutes || DEFAULT_MINUTES[step.kind], tempo, note, what: body, ...step });   // 4.99.22: what (the words between the minutes and the tempo), for the plan's rows
   });
   return { intro: intro.join(' '), steps, after, problems };
 }
@@ -241,14 +241,14 @@ function resolvePlan(parsed, { title = 'this song', ir = [], changes = [], strum
   // 4.99.20: a change's heading is the change itself (Am → G7); what kind it is goes with the step count
   const change = (st, from, to, label, kind) => {
     used.push(`${from}>${to}`);
-    steps.push({ id: 'chord-change', minutes: st.minutes, label, heading: `${from} → ${to}`, kind, from, to, note: st.note, settings: { prEvery: 'bar', prTempo: at(st) } });
+    steps.push({ line: st.line, id: 'chord-change', minutes: st.minutes, label, heading: `${from} → ${to}`, kind, from, to, note: st.note, settings: { prEvery: 'bar', prTempo: at(st) } });
   };
   for (const st of parsed.steps) {
     if (st.kind === 'shapes') {
       const chords = st.chords.length ? st.chords.map(move) : shapes.slice(0, MAX_SHAPES);
       if (!chords.length) continue;
       const gone = st.chords.length ? warn(st, chords) : '';
-      steps.push({ id: 'shape-drill', minutes: st.minutes, label: st.chords.length ? `Practise the shapes: ${chords.join(' ')}` : 'Practise the chord shapes', note: st.note, warning: gone, settings: { prDrillSet: chords.join(' '), prDrillOrder: 'mix', prTempo: at(st) } });
+      steps.push({ line: st.line, id: 'shape-drill', minutes: st.minutes, label: st.chords.length ? `Practise the shapes: ${chords.join(' ')}` : 'Practise the chord shapes', note: st.note, warning: gone, settings: { prDrillSet: chords.join(' '), prDrillOrder: 'mix', prTempo: at(st) } });
     } else if (st.kind === 'trouble') {
       for (const c of troubleChanges(ir, trouble).filter((c) => !used.includes(`${c.from}>${c.to}`)).slice(0, 2)) {
         change(st, c.from, c.to, `Trouble spot: ${c.from} → ${c.to}${c.line ? ` (line ${c.line})` : ''}`, `Trouble spot${c.line ? ` (line ${c.line})` : ''}`);
@@ -265,7 +265,7 @@ function resolvePlan(parsed, { title = 'this song', ir = [], changes = [], strum
     } else if (st.kind === 'strum') {
       if (!shapes.length) continue;
       const p = st.pattern || pattern;
-      steps.push({ id: 'learn-strum', minutes: st.minutes, label: st.pattern ? `Learn the strum: ${p}` : 'Learn the strum', strum: p, note: st.note, settings: { prStrumSteps: true, prStrumB: '', prProgression: '', prChords: shapes.slice(0, 4).join(' '), prClick: true, prTempo: at(st) } });
+      steps.push({ line: st.line, id: 'learn-strum', minutes: st.minutes, label: st.pattern ? `Learn the strum: ${p}` : 'Learn the strum', strum: p, note: st.note, settings: { prStrumSteps: true, prStrumB: '', prProgression: '', prChords: shapes.slice(0, 4).join(' '), prClick: true, prTempo: at(st) } });
     } else if (st.kind === 'order' || st.kind === 'section') {
       const seq = st.kind === 'order' ? sequence : sectionSequence(ir, st.name);
       if (!seq) { warnings.push({ line: st.line, message: `The song has no section called "${st.name}"` }); continue; }
@@ -275,13 +275,13 @@ function resolvePlan(parsed, { title = 'this song', ir = [], changes = [], strum
       // strum, two changes in a bar, a chord held for two): round and round until it's clean
       const lines = text ? passageLines(ir, st.kind === 'order' ? null : st.name) : null;
       if (lines) {
-        steps.push({ id: 'metronome-strum', minutes: st.minutes, label, note: st.note, untilClean: true, passage: { text, shift, from: lines.from, to: lines.to, ...(parse ? { parse } : {}) }, settings: { prStrumSteps: false, prStrumB: '', prClick: true, prTempo: at(st) } });
+        steps.push({ line: st.line, id: 'metronome-strum', minutes: st.minutes, label, note: st.note, untilClean: true, passage: { text, shift, from: lines.from, to: lines.to, ...(parse ? { parse } : {}) }, settings: { prStrumSteps: false, prStrumB: '', prClick: true, prTempo: at(st) } });
         continue;
       }
-      steps.push({ id: 'metronome-strum', minutes: st.minutes, label, strum: pattern, note: st.note, settings: { prStrumSteps: false, prStrumB: '', prProgression: '', prChords: seq.slice(0, MAX_BARS).join(' '), prClick: true, prTempo: at(st) } });
+      steps.push({ line: st.line, id: 'metronome-strum', minutes: st.minutes, label, strum: pattern, note: st.note, settings: { prStrumSteps: false, prStrumB: '', prProgression: '', prChords: seq.slice(0, MAX_BARS).join(' '), prClick: true, prTempo: at(st) } });
     } else if (st.kind === 'exercise') {
       const tp = at(st);
-      steps.push({ id: st.id, minutes: st.id === 'one-minute' ? 1 : st.minutes, label: st.title, note: st.note, settings: tp ? { prTempo: tp } : {} });
+      steps.push({ line: st.line, id: st.id, minutes: st.id === 'one-minute' ? 1 : st.minutes, label: st.title, note: st.note, settings: tp ? { prTempo: tp } : {} });
     }
   }
   // the ending: "Then: …", with the song's tempo when it speaks of its speed

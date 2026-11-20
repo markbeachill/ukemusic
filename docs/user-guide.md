@@ -221,6 +221,8 @@ With all features, a song has a **Practice** tab (beside Notes). It shows the pl
 
 ![The Practice tab: the song's plan as steps, with a note on one, and the plan as text below](../site/img/guide/desktop-R14.jpg)
 
+Each step is a row: change its minutes, its tempo (60, or 70% of the song's; empty for the usual) and its note, move it up or down, or remove it. **+ Add step** puts in another. **Edit as text** shows the whole plan as text, for writing or pasting one in: a club leader's way in.
+
 One line per step: the minutes, what to do, **at** a tempo (60, or 70% of the song's), and **;** a note shown in Free Practice while you do that step. Words before the first step show when the plan starts; **Then:** is what it says at the end. **#** starts a line ukemusic ignores.
 
 ```

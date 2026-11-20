@@ -249,6 +249,32 @@ button { cursor: pointer; }
 .plan-steps .warn, .plan-problems li { color: var(--warn); font-size: 13px; }
 .plan-intro { font-style: italic; }
 .plan-text.notes-box { min-height: 260px; font: 14px/1.5 ui-monospace, Menlo, Consolas, monospace; }
+/* 4.99.22: the plan as rows */
+.plan-rows { list-style: none; margin: 8px 0; padding: 0; display: grid; gap: 6px; max-width: 760px; }
+.plan-row { display: grid; gap: 4px; border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+.plan-row.warn { border-color: #d97706; }
+.plan-row-head { display: flex; gap: 8px; align-items: flex-start; }
+      .plan-row-what { flex: 1; min-width: 0; font-weight: 600; font-size: 14px; }
+.plan-row-n { color: var(--muted); margin-right: 6px; }
+.plan-row-none { color: var(--muted); font-weight: 400; }
+.plan-row-warn { color: #b45309; font-weight: 400; font-size: 13px; }
+.plan-row-edit { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 13px; color: var(--muted); }
+.plan-row-edit input { font: inherit; color: var(--ink); padding: 3px 6px; border: 1px solid var(--line); border-radius: 6px; background: transparent; }
+.plan-row-min input { width: 3.5em; }
+.plan-row-note { flex: 1 1 200px; display: flex; }
+.plan-row-note input { flex: 1; min-width: 0; }
+.plan-row-tools { flex: none; display: flex; gap: 4px; }
+.plan-row-tools button { padding: 2px 8px; min-width: 30px; }
+.plan-row-empty { color: var(--muted); }
+.plan-text-box { max-width: 760px; margin-top: 10px; }
+.plan-text-box summary { cursor: pointer; font-weight: 600; font-size: 14px; }
+.plan-row-tools button { min-height: 36px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.plan-row-edit input { min-height: 34px; font-size: 16px; }
+.plan-row { min-width: 0; }
+.plan-row-min input { width: 3.2em; }
+.plan-row-tempo input { width: 4.2em; }
+.plan-row-note input { width: auto; }
+
 #planAdd { min-height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 0 8px; max-width: 100%; }
 
 /* The chord sheet (the desktop app's renderer and stylesheet) */
@@ -666,11 +692,14 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <div class="plan-head"><strong>Practice plan</strong> <span id="planWhose" class="note"></span><span class="spacer"></span><button id="planPractise" class="btn primary" type="button">Practise this plan</button></div>
         <p id="planHint" class="note"></p>
         <p id="planIntro" class="plan-intro" hidden></p>
-        <ol id="planSteps" class="plan-steps"></ol>
+        <div id="planRows" class="plan-rows-holder"></div>
+        <div class="plan-head"><select id="planAdd" aria-label="Add a step"><option value="">+ Add step</option></select></div>
         <p id="planAfter" class="plan-after"></p>
-        <div class="plan-head"><strong>The plan as text</strong><span class="spacer"></span><select id="planAdd" aria-label="Add a step"><option value="">+ Add step</option></select></div>
-        <textarea id="planText" class="notes-box plan-text" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="The plan as text"></textarea>
         <ul id="planProblems" class="plan-problems"></ul>
+        <details id="planTextBox" class="plan-text-box">
+          <summary>Edit as text</summary>
+          <textarea id="planText" class="notes-box plan-text" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="The plan as text"></textarea>
+        </details>
         <div class="add-row"><button id="planReset" class="btn" type="button">Start again from the song</button></div>
         <p class="note">One line per step: minutes, what to do, <b>at</b> a tempo (60, or 70% of the song's), and <b>;</b> a note shown while you practise it. Words before the steps are shown when the plan starts; <b>Then:</b> at the end. <b>Shapes</b>, <b>Hard changes</b>, <b>Strum</b> and <b>Chords in order</b> on their own follow the song; with chords or a strum they stay as you write them.</p>
       </div>
@@ -3300,14 +3329,11 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     $('planHint').textContent = own ? 'This song\'s own plan: changes are saved with the song as you type. Learn → Practise this song runs it.' : 'ukemusic makes this from the song each time: its shapes, its hardest changes and its strum. Change any line below and it\'s saved as this song\'s own plan.';
     let plan;
     try { plan = songPlanFor($('planText').value); } catch (_e) { return; }
-    $('planSteps').replaceChildren(...(plan.steps.length ? plan.steps : [{ label: 'No steps yet.' }]).map((st) => {
-      const li = document.createElement('li');
-      li.append(st.label || st.id);
-      if (st.minutes) li.appendChild(Object.assign(document.createElement('span'), { className: 'min', textContent: ` · ${st.minutes} min${st.settings?.prTempo ? ` at ${st.settings.prTempo}` : ''}` }));
-      if (st.note) li.appendChild(Object.assign(document.createElement('span'), { className: 'pnote', textContent: st.note }));
-      if (st.warning) li.appendChild(Object.assign(document.createElement('span'), { className: 'pnote warn', textContent: st.warning }));
-      return li;
-    }));
+    // 4.99.22: a row for each step (src/plan-rows.js): its minutes, tempo and note, up, down, remove
+    window.UkePlanRows.render($('planRows'), {
+      text: $('planText').value, parsed: U.songPlanParse($('planText').value), plan,
+      onText: (next) => { $('planText').value = next; clearTimeout(planTimer); setPlan(next); }
+    });
     $('planIntro').hidden = !plan.intro;
     $('planIntro').textContent = plan.intro || '';
     $('planAfter').textContent = `Then: ${plan.after}`;
@@ -3358,7 +3384,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       const box = $('planText');
       if (line === '__more' || line === '__song') { fillPlanAdd(line === '__more'); add.focus(); try { add.showPicker(); } catch (_e) { /* fine */ } return; }
       if (!line) return;
-      const at = box.selectionStart;
+      const at = $('planTextBox').open ? box.selectionStart : box.value.length;   // 4.99.22: rows: at the end
       const lineStart = box.value.lastIndexOf('\n', at - 1) + 1;
       const lineEnd = box.value.indexOf('\n', at);
       const end = lineEnd < 0 ? box.value.length : lineEnd;
