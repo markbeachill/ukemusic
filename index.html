@@ -5035,7 +5035,7 @@
           button.title = on
             ? 'Back to the sheet (F2). Your changes stay until you Save or Discard them'
             : 'Show the words and chords to change them (F2). Done goes back to the sheet; Save keeps your changes';
-          if (!on && document.querySelector('.ribbon-tab.active[data-edit-only]')) showRibbon('song');
+          if (!on && document.querySelector('.ribbon-tab.active[data-edit-only]')) showRibbon('song', { open: false });
           // 4.95.1: editing shows the words; reading, the tab you last read (the notes, if the song has any)
           if (on && !was) showTab('song');
           if (!on && document.getElementById('tabSong').classList.contains('active')) showTab(state.readingTab || (notesEditor.value.trim() ? 'notes' : 'details'));
@@ -12867,22 +12867,23 @@ function showTab(tab) {
         // ── Ribbon tabs ──
         const RIBBON_KEY = 'ukemusic.ribbonTab';
         const RIBBON_HIDDEN_KEY = 'ukemusic.ribbonHidden';
+        // 4.99.14: hidden stays hidden (next time too) until you show the tools: only your own click on a
+        // tab, or on this button, shows them. Opening the app, or Done editing, no longer does.
         function setRibbonHidden(hidden) {
           document.querySelector('nav.ribbon').classList.toggle('collapsed', hidden);
           try { localStorage.setItem(RIBBON_HIDDEN_KEY, hidden ? '1' : ''); } catch (_err) { /* fine */ }
+          const button = document.getElementById('ribbonHide');
+          button.title = hidden ? 'Show the tools' : 'Hide the tools, for more room (click any tab, or this again, to show them)';
+          button.setAttribute('aria-label', hidden ? 'Show the tools' : 'Hide the tools');
         }
         document.getElementById('ribbonHide').addEventListener('click', () => {
-          const hide = !document.querySelector('nav.ribbon').classList.contains('collapsed');
-          setRibbonHidden(hide);
-          const button = document.getElementById('ribbonHide');
-          button.title = hide ? 'Show the tools' : 'Hide the tools, for more room (click any tab, or this again, to show them)';
-          button.setAttribute('aria-label', hide ? 'Show the tools' : 'Hide the tools');
+          setRibbonHidden(!document.querySelector('nav.ribbon').classList.contains('collapsed'));
         });
         document.getElementById('backToSongs').addEventListener('click', () => document.getElementById('closeSongButton').click());
         document.getElementById('closeSongX').addEventListener('click', () => document.getElementById('closeSongButton').click()); // 4.94
         try { if (localStorage.getItem(RIBBON_HIDDEN_KEY) === '1') setRibbonHidden(true); } catch (_err) { /* shown */ }
-        function showRibbon(name) {
-          if (document.querySelector('nav.ribbon.collapsed')) setRibbonHidden(false);
+        function showRibbon(name, { open = true } = {}) {
+          if (open && document.querySelector('nav.ribbon.collapsed')) setRibbonHidden(false);
           // 4.93: the Write tab is for editing: going to it (from Help, say) shows the words
           if (!isEditing() && (state.song || state.dirty) && document.querySelector(`.ribbon-tab[data-ribbon="${name}"][data-edit-only]`)) setEditing(true);
           for (const tab of document.querySelectorAll('.ribbon-tab[data-ribbon]')) {
@@ -12905,7 +12906,7 @@ function showTab(tab) {
         }
         let firstRibbon = 'song';
         try { firstRibbon = localStorage.getItem(RIBBON_KEY) || 'song'; } catch (_err) { /* default */ }
-        showRibbon(document.querySelector(`.ribbon-tab[data-ribbon="${firstRibbon}"]`) ? firstRibbon : 'song');
+        showRibbon(document.querySelector(`.ribbon-tab[data-ribbon="${firstRibbon}"]`) ? firstRibbon : 'song', { open: false });
 
         // 4.53: when a tab's tools don't fit the window, fold groups into their ▾ buttons, from the
         // right, rather than wrapping them onto a second row

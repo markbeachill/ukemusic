@@ -83,7 +83,7 @@ Along the top:
 - **✎ Edit words & chords** (or F2) shows the words and chords beside the sheet, to change them. It turns into **Done**, which puts them away again.
 - **Play**, **Stop** and **Play from section**.
 
-Under that, the tabs hold the tools: **File**, **Song**, **Display**, **Export**, **Play**, **Learn** and **Picking**. The line under the tabs says what the button under your mouse does.
+Under that, the tabs hold the tools: **File**, **Song**, **Display**, **Export**, **Play**, **Learn** and **Picking**. The line under the tabs says what the button under your mouse does. The arrow at the right of the tabs hides the tools for more room; they stay hidden, next time too, until you click a tab or the arrow again.
 
 ### Editing
 

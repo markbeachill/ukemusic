@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.99.14 · Minor updates: fixes and small changes
+
+- **Desktop:** the tools, once hidden (the arrow at the right of the tabs), stay hidden, next time too, until you click a tab or the arrow. Opening the app and **Done** editing used to bring them back.
+
 ## v4.99.13 · The home page starts from what you want to do
 
 - **Website:** the home page is shorter at the top, and its nine feature cards are now four routes, each with its links: **Play along**, **Practise**, **Run a club night** and **Print a chord sheet**. Everything else is still on the Features page and further down.
