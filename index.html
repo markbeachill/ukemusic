@@ -2057,6 +2057,10 @@
 .pr-song-plans #prSongPlanCards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
 .pr-song-plans .pr-song-plan-remove { font-size: 12px; padding: 4px 8px; }
 .pr-song-plans #prSongPlansNote { margin: 0 0 8px; }
+/* 4.99.9: a song's plan ends at the song */
+.pr-well-done p { margin: 0; }
+.pr-well-done-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; font-weight: 400; }
+.pr-well-done-actions button.primary { background: #15803d; border-color: #15803d; color: #fff; font-weight: 700; }
       /* ── Karaoke view ─────────────────────────────────── */
       .karaoke {
         position: fixed;
@@ -4274,6 +4278,7 @@
         </div>
         <div id="prRoutineBar" class="pr-routine-bar" hidden>
           <span id="prRoutineText"></span>
+          <button id="prRoutineBack" type="button" title="Back to the step before, to go through it again">◀ Back</button>
           <button id="prRoutineSkip" type="button" title="Go on to the next exercise">Next ▶</button>
           <button id="prRoutineEnd" type="button" title="Stop here and go back to the exercises">End</button>
         </div>
@@ -4569,6 +4574,7 @@
         <div class="pr-slide-nav"><button type="button" id="prSlideBack">← Back</button><span id="prSlideDots" class="pr-slide-dots" aria-hidden="true"></span><button type="button" id="prSlideNext" class="primary" autofocus>Next →</button></div>
       </form>
     </dialog>
+
 
 
 
@@ -9796,6 +9802,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           // 4.88: a few seconds to read the new exercise and move your hand before it starts
           if (r.step > 0) $p('prWhere').textContent = `Next: ${prExerciseFor(PL.EXERCISES.find((x) => x.id === step.id)).title}. It starts in a moment.`;
           $p('prRoutineBar').hidden = false;
+          $p('prRoutineBack').disabled = r.step === 0;   // 4.99.9
           prRoutineTick();
           const stepIndex = r.step;
           const go = () => {
@@ -9832,13 +9839,40 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           r.step += 1;
           prRoutineStep();
         }
+        // 4.99.9: back a step, to go through it again
+        function prRoutineBack() {
+          const r = pr.routine;
+          if (!r) return;
+          prCancelAttempt();
+          prSessionEnd();
+          r.step = Math.max(0, r.step - 1);
+          prRoutineStep();
+        }
         function prRoutineEnd(finished = false) {
           const r = pr.routine;
           pr.routine = null;
           $p('prRoutineBar').hidden = true;
           if (player && player.playing) prStop();
           prShowHome();
-          if (finished && r) { const done = document.createElement('p'); done.className = 'pr-well-done'; done.setAttribute('role', 'status'); done.textContent = r.routine.after ? `Finished: ${r.routine.name}. ${r.routine.after}` : `Finished: ${r.routine.name}. Well done!`; $p('prTodayCard').prepend(done); $p('prHome').scrollTop = 0; }
+          if (finished && r) {
+            const done = document.createElement('div'); done.className = 'pr-well-done'; done.setAttribute('role', 'status');
+            const say = document.createElement('p');
+            say.textContent = r.routine.after ? `Finished: ${r.routine.name}. ${r.routine.after}` : `Finished: ${r.routine.name}. Well done!`;
+            done.append(say);
+            // 4.99.9: a song's plan ends at the song: play it from memory, or go through a step again
+            if (r.routine.song && window.ukemusicPlayFromMemory) {
+              const row = document.createElement('div'); row.className = 'pr-well-done-actions';
+              const play = Object.assign(document.createElement('button'), { type: 'button', className: 'primary', textContent: `Play ${r.routine.title || 'the song'} from memory` });
+              play.title = 'Back to the song, in the key you practised it in: karaoke with the chords shown the first time each part comes, then ?';
+              play.addEventListener('click', () => window.ukemusicPlayFromMemory(r.routine.song));
+              const again = document.createElement('select'); again.setAttribute('aria-label', 'Go through a step again');
+              again.append(new Option('Go through a step again…', ''), ...r.routine.steps.map((st, i) => new Option(`${i + 1}. ${st.label || st.id}`, String(i))));
+              again.addEventListener('change', () => { if (again.value === '') return; done.remove(); pr.routine = { routine: r.routine, step: Number(again.value) }; prRoutineStep(); });
+              row.append(play, again);
+              done.append(row);
+            }
+            $p('prTodayCard').prepend(done); $p('prHome').scrollTop = 0;
+          }
         }
 
         // ── Setup (once) ──
@@ -9940,6 +9974,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           $p('prHelpButton2').addEventListener('click', () => prHelp());
           $p('prClean').addEventListener('click', prMarkClean);
           $p('prRoutineSkip').addEventListener('click', prRoutineNext);
+          $p('prRoutineBack').addEventListener('click', prRoutineBack);   // 4.99.9
           $p('prRoutineEnd').addEventListener('click', () => prRoutineEnd());
           $p('prNoodleSave').addEventListener('click', prNoodleSave);
           const taps = [];
@@ -11957,10 +11992,15 @@ function showTab(tab) {
         }
         document.getElementById('learnChangesButton').addEventListener('click', openLearnChanges);
         // 4.99.6: Practise a song: a plan of Free Practice exercises from this song (src/song-practice.js)
-        document.getElementById('songPracticeButton').addEventListener('click', () => {
+        document.getElementById('songPracticeButton').addEventListener('click', async () => {
           const L = learnSong();
           const config = L.config;
+          // 4.99.9: your trouble spots come first, and the plan ends back at this song, in this key
+          let trouble = [];
+          try { trouble = window.ukemusic.learn.placeTrouble(await learnLoadTrouble(), getEditorValue()); } catch (_e) { trouble = []; }
           const plan = window.ukemusic.songPracticePlan({
+            trouble,
+            song: state.song ? { folder: state.song.folder, transpose: state.transpose } : null,
             title: state.song?.title || state.song?.folder || 'this song',
             ir: L.ir,
             changes: window.ukemusic.learn.songChanges(L.ir, L.library, { tuningName: L.instrument.tuningName }),
@@ -11971,6 +12011,18 @@ function showTab(tab) {
           if (player && player.playing) stopPlayback();
           window.ukemusicPractiseSong(plan);
         });
+        // 4.99.9: the end of a song's plan: back to the song, in the key it was practised in, and play it from memory
+        window.ukemusicPlayFromMemory = async (song) => {
+          closePractice();
+          if (song && song.folder && state.song?.folder !== song.folder) {
+            try { await loadSong(song.folder); } catch (_e) { setStatusMessage('That song isn\'t in this library any more.'); return; }
+          }
+          if (song && Number.isFinite(song.transpose) && song.transpose !== state.transpose) await setTranspose(song.transpose);
+          await new Promise((r) => setTimeout(r, 300));
+          document.getElementById('learnStage').value = 'repeats';
+          document.getElementById('learnStage').dispatchEvent(new Event('change'));
+          playSong({ karaoke: true, learn: { stage: 'repeats' } });
+        };
         document.getElementById('learnChangesClose').addEventListener('click', () => document.getElementById('learnChangesDialog').close());
         document.getElementById('learnChangesDrill').addEventListener('click', () => {
           document.getElementById('learnChangesDialog').close();

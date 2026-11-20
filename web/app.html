@@ -3176,13 +3176,24 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       ir: L.ir,
       changes: U.learn.songChanges(L.ir, L.lib, { tuningName: L.inst.tuningName }),
       strum: writtenStrum()?.pattern || '',
-      tempo: L.p.tempo
+      tempo: L.p.tempo,
+      song: view.song ? { id: view.song.id } : null   // 4.99.9: the plan ends back at this song (its key is kept with it here)
     });
     if (!plan.steps.length) { toast('This song has no chords to practise yet.'); return; }
     $('learnDialog').close();
     stop();
     window.ukemusicPractiseSong(plan);
   });
+  // 4.99.9: the end of a song's plan: back to the song and play it from memory
+  window.ukemusicPlayFromMemory = (song) => {
+    const close = document.getElementById('practiceClose');
+    if (close) close.click();
+    if (song && song.id && view.song?.id !== song.id) {
+      if (!songs.has(song.id)) { toast('That song isn\'t on this device any more.'); return; }
+      openSong(song.id);
+    }
+    setTimeout(() => { const L = learnSong(); window.__playSong({ karaoke: true, learn: { stage: 'repeats', key: L.key } }); }, 400);
+  };
   $('quizClose').addEventListener('click', () => { if (player && player.playing) player.stop(); $('quizDialog').close(); });
 
   // The learn sheet, shown here: print it (or Save as PDF) or download the page

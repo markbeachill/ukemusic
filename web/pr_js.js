@@ -662,6 +662,7 @@
           // 4.88: a few seconds to read the new exercise and move your hand before it starts
           if (r.step > 0) $p('prWhere').textContent = `Next: ${prExerciseFor(PL.EXERCISES.find((x) => x.id === step.id)).title}. It starts in a moment.`;
           $p('prRoutineBar').hidden = false;
+          $p('prRoutineBack').disabled = r.step === 0;   // 4.99.9
           prRoutineTick();
           const stepIndex = r.step;
           const go = () => {
@@ -698,13 +699,40 @@
           r.step += 1;
           prRoutineStep();
         }
+        // 4.99.9: back a step, to go through it again
+        function prRoutineBack() {
+          const r = pr.routine;
+          if (!r) return;
+          prCancelAttempt();
+          prSessionEnd();
+          r.step = Math.max(0, r.step - 1);
+          prRoutineStep();
+        }
         function prRoutineEnd(finished = false) {
           const r = pr.routine;
           pr.routine = null;
           $p('prRoutineBar').hidden = true;
           if (player && player.playing) prStop();
           prShowHome();
-          if (finished && r) { const done = document.createElement('p'); done.className = 'pr-well-done'; done.setAttribute('role', 'status'); done.textContent = r.routine.after ? `Finished: ${r.routine.name}. ${r.routine.after}` : `Finished: ${r.routine.name}. Well done!`; $p('prTodayCard').prepend(done); $p('prHome').scrollTop = 0; }
+          if (finished && r) {
+            const done = document.createElement('div'); done.className = 'pr-well-done'; done.setAttribute('role', 'status');
+            const say = document.createElement('p');
+            say.textContent = r.routine.after ? `Finished: ${r.routine.name}. ${r.routine.after}` : `Finished: ${r.routine.name}. Well done!`;
+            done.append(say);
+            // 4.99.9: a song's plan ends at the song: play it from memory, or go through a step again
+            if (r.routine.song && window.ukemusicPlayFromMemory) {
+              const row = document.createElement('div'); row.className = 'pr-well-done-actions';
+              const play = Object.assign(document.createElement('button'), { type: 'button', className: 'primary', textContent: `Play ${r.routine.title || 'the song'} from memory` });
+              play.title = 'Back to the song, in the key you practised it in: karaoke with the chords shown the first time each part comes, then ?';
+              play.addEventListener('click', () => window.ukemusicPlayFromMemory(r.routine.song));
+              const again = document.createElement('select'); again.setAttribute('aria-label', 'Go through a step again');
+              again.append(new Option('Go through a step again…', ''), ...r.routine.steps.map((st, i) => new Option(`${i + 1}. ${st.label || st.id}`, String(i))));
+              again.addEventListener('change', () => { if (again.value === '') return; done.remove(); pr.routine = { routine: r.routine, step: Number(again.value) }; prRoutineStep(); });
+              row.append(play, again);
+              done.append(row);
+            }
+            $p('prTodayCard').prepend(done); $p('prHome').scrollTop = 0;
+          }
         }
 
         // ── Setup (once) ──
@@ -806,6 +834,7 @@
           $p('prHelpButton2').addEventListener('click', () => prHelp());
           $p('prClean').addEventListener('click', prMarkClean);
           $p('prRoutineSkip').addEventListener('click', prRoutineNext);
+          $p('prRoutineBack').addEventListener('click', prRoutineBack);   // 4.99.9
           $p('prRoutineEnd').addEventListener('click', () => prRoutineEnd());
           $p('prNoodleSave').addEventListener('click', prNoodleSave);
           const taps = [];

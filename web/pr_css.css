@@ -478,3 +478,7 @@
 .pr-song-plans #prSongPlanCards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
 .pr-song-plans .pr-song-plan-remove { font-size: 12px; padding: 4px 8px; }
 .pr-song-plans #prSongPlansNote { margin: 0 0 8px; }
+/* 4.99.9: a song's plan ends at the song */
+.pr-well-done p { margin: 0; }
+.pr-well-done-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; font-weight: 400; }
+.pr-well-done-actions button.primary { background: #15803d; border-color: #15803d; color: #fff; font-weight: 700; }

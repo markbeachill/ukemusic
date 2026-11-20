@@ -200,7 +200,7 @@ The **Learn** tab helps you play a song without the sheet. Its buttons, from lef
 
 - **Play with fewer chords** (From memory): karaoke with the chords fading. Each part shows its chords the first time it comes, then a **?**; next time try the numbers only, then nothing. The ones you peek at become your trouble spots.
 - **Next chord?** A quiz on each change: you're playing C, what comes next? Hear each answer before you choose.
-- **Practise this song:** a plan in Free Practice made from the song, a few minutes a step, one after another: its chord shapes, its two hardest changes, its strum in steps (at 70% of its tempo), then its chords in order with the strum (85%). Then play the song itself from memory. Free Practice keeps the plan: **Practise a song**, on its home screen, starts it again.
+- **Practise this song:** a plan in Free Practice made from the song, a few minutes a step, one after another: its chord shapes, its two hardest changes, its strum in steps (at 70% of its tempo), then its chords in order with the strum (85%). If the song has trouble spots, their changes come first. **◀ Back** goes through a step again. At the end, **Play it from memory** takes you back to the song, in the key you practised it in. Free Practice keeps the plan: **Practise a song**, on its home screen, starts it again.
 - **Practise trouble spots:** the places you peeked at or got wrong, looped slowly.
 - **Changes:** every chord change in the song, hardest first, with what each finger does, and a drill or a one-minute challenge for each. **Shapes** drills the song's chord shapes in Free Practice.
 - **Numbers** on the sheet (I, IV, V…), and **Play in new key** from memory.

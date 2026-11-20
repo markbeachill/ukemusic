@@ -37,7 +37,7 @@ test('the plan: shapes, two hard changes, the strum in steps, the chords in orde
   assert.strictEqual(plan.steps[3].settings.prTempo, 70, '70% of the song\'s tempo');
   assert.strictEqual(plan.steps[4].settings.prChords, 'C F G7 C Am F G7 C');
   assert.strictEqual(plan.steps[4].settings.prTempo, 85);
-  assert.match(plan.after, /Learn → Play from memory/);
+  assert.match(plan.after, /from memory/); // 4.99.9: and a button for it
   assert.deepStrictEqual(SP.songPlan({ title: 'x', ir: parse('no chords') }).steps, []);
   assert.strictEqual(SP.songPlan({ title: 'x', ir: parse('[C]x'), strum: 'D>DDD' }).steps.find((s) => s.strum).strum, 'D>DDD', 'no strum in the song: the default');
 });

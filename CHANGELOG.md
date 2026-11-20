@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.99.9 · Practise a song ends at the song: play it from memory; your trouble spots come first
+
+- **Practise this song** ends at the song: **Play it from memory** takes you back to it, in the key you practised it in, and starts Play from memory (chords the first time each part comes). **Go through a step again** picks any step to do once more.
+- **◀ Back** on the plan's bar goes back a step.
+- On the desktop, a song's **trouble spots** (Learn → Trouble spots) come first in its plan: the changes into the chords you stumbled on, before its hardest changes.
+
 ## v4.99.8 · Minor updates: fixes and small changes
 
 - The website's feature list, its home page and the README now include 4.99's: the strum builder and My strums, Learn a strum, Practise this song, and your ukulele shapes on a baritone.

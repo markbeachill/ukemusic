@@ -35,10 +35,26 @@ function songStrum(ir) {
     .trim();
 }
 
+/**
+ * 4.99.9: the changes into the chords of your trouble spots (Learn → Trouble spots, the most
+ * stumbled first): [{ from, to, line }], each change once
+ */
+function troubleChanges(ir, trouble = []) {
+  const seq = chordSequence(ir);
+  const out = [];
+  for (const t of [...(trouble || [])].filter((x) => x && x.chord && !x.gone).sort((a, b) => (b.count || 1) - (a.count || 1))) {
+    const i = seq.findIndex((c, k) => k > 0 && c === t.chord);
+    if (i < 1) continue;
+    const change = { from: seq[i - 1], to: t.chord, line: t.line };
+    if (!out.some((c) => c.from === change.from && c.to === change.to)) out.push(change);
+  }
+  return out;
+}
+
 const round5 = (n) => Math.round(n / 5) * 5;
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
 
-function songPlan({ title = 'this song', ir = [], changes = [], strum = '', tempo = 90 } = {}) {
+function songPlan({ title = 'this song', ir = [], changes = [], strum = '', tempo = 90, trouble = [], song = null } = {}) {
   const shapes = chordSet(ir).slice(0, MAX_SHAPES);
   const sequence = chordSequence(ir).slice(0, MAX_BARS);
   const pattern = songStrum(ir) || strum || 'D-DU-UDU';
@@ -49,9 +65,14 @@ function songPlan({ title = 'this song', ir = [], changes = [], strum = '', temp
   if (shapes.length) {
     steps.push({ id: 'shape-drill', minutes: 2, label: 'The shapes', settings: { prDrillSet: shapes.join(' '), prDrillOrder: 'mix', prTempo: 60 } });
   }
-  const hard = (changes || []).filter((c) => c && c.from && c.to && !c.missing && c.from !== c.to).slice(0, 2);
+  // 4.99.9: your trouble spots' changes first (up to two), then the hardest changes, two or three in all
+  const mine = troubleChanges(ir, trouble).slice(0, 2);
+  mine.forEach((c) => {
+    steps.push({ id: 'chord-change', minutes: 2, label: `Your trouble spot${c.line ? ` (line ${c.line})` : ''}: ${c.from} to ${c.to}`, from: c.from, to: c.to, settings: { prEvery: 'bar', prTempo: 60 } });
+  });
+  const hard = (changes || []).filter((c) => c && c.from && c.to && !c.missing && c.from !== c.to && !mine.some((m) => m.from === c.from && m.to === c.to)).slice(0, mine.length ? 1 : 2);
   hard.forEach((c, i) => {
-    steps.push({ id: 'chord-change', minutes: 2, label: `Hard change ${i + 1}: ${c.from} to ${c.to}`, from: c.from, to: c.to, settings: { prEvery: 'bar', prTempo: 60 } });
+    steps.push({ id: 'chord-change', minutes: 2, label: `Hard change${hard.length > 1 ? ` ${i + 1}` : ''}: ${c.from} to ${c.to}`, from: c.from, to: c.to, settings: { prEvery: 'bar', prTempo: 60 } });
   });
   if (shapes.length) {
     steps.push({ id: 'learn-strum', minutes: 3, label: 'The strum', strum: pattern, settings: { prStrumSteps: true, prStrumB: '', prProgression: '', prChords: shapes.slice(0, 4).join(' '), prClick: true, prTempo: slow } });
@@ -61,8 +82,9 @@ function songPlan({ title = 'this song', ir = [], changes = [], strum = '', temp
     name: `Practise: ${title}`,
     title,
     steps,
-    after: `Now the song itself: open "${title}", then Learn → Play from memory, and play along at its own speed (${t} bpm).`
+    after: `Now the song itself, from memory, at its own speed (${t} bpm).`,
+    song   // 4.99.9: which song to go back to: { folder } on the desktop, { id } in the web player, and the key it was in
   };
 }
 
-module.exports = { songPlan, chordSequence, chordSet, songStrum, MAX_SHAPES, MAX_BARS };
+module.exports = { songPlan, chordSequence, chordSet, songStrum, troubleChanges, MAX_SHAPES, MAX_BARS };
