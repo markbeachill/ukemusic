@@ -44,7 +44,8 @@ const SECTIONS = [
       { f: 'Play from memory, with fewer chords each time', web: true, desktop: true, home: true },
       { f: 'Quizzes on the changes and the chord numbers', web: true, desktop: true },
       { f: 'A learn sheet to print', web: 'Print', desktop: 'PDF' },
-      { f: 'Practise this song: a plan from the song itself (its shapes, its hardest changes, its strum, its chords in order)', web: true, desktop: true, home: true } // 4.99.6
+      { f: 'Practise this song: a plan from the song itself (its shapes, its hardest changes, its strum, its chords in order)', web: true, desktop: true, home: true }, // 4.99.6
+      { f: 'A song\'s own practice plan: change the steps, add notes, keep it with the song', web: true, desktop: true } // 4.99.17
     ]
   },
   {

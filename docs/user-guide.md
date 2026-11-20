@@ -215,6 +215,39 @@ The **Learn** tab helps you play a song without the sheet. Its buttons, from lef
 
 ![Changes: the hardest first, with the two shapes and finger tips for each](../site/img/changes.webp)
 
+### A song's own practice plan
+
+With all features, a song has a **Practice** tab (beside Notes). It shows the plan **Practise this song** runs, step by step, and the plan as text to change. Until you change it, ukemusic makes it from the song each time. Change a line, or press **Keep this plan**, and it's yours: kept in the song's folder (learn/practice-plan.txt), so it goes wherever the song goes, and never rewritten unless you press **Start again from the song**. A club leader can write one for the group; an advanced player can make it harder.
+
+![The Practice tab: the song's plan as steps, with a note on one, and the plan as text below](../site/img/guide/desktop-R14.jpg)
+
+One line per step: the minutes, what to do, **at** a tempo (60, or 70% of the song's), and **;** a note shown in Free Practice while you do that step. Words before the first step show when the plan starts; **Then:** is what it says at the end. **#** starts a line ukemusic ignores.
+
+```
+Count three in every bar, and sing as you play.
+2 min  Shapes
+2 min  Trouble spots
+2 min  Change G7 to C at 60     ; the one we always rush
+3 min  Strum at 70%
+3 min  Section Chorus at 85%
+3 min  Exercise: Chucking
+3 min  Chords in order at 85%
+Then: the song from memory
+```
+
+| Step | What it practises |
+|---|---|
+| **Shapes** | the song's chord shapes; **Shapes C F G7**: those |
+| **Trouble spots** | the changes into your trouble spots, if you have any |
+| **Hard changes 2** | the song's two hardest changes (any number up to 6) |
+| **Change G7 to C** | that change |
+| **Strum** | the song's strum, in steps; **Strum D-DU-UDU**: that one |
+| **Chords in order** | the song's chords, in order, with its strum |
+| **Section Chorus** | that section's chords, in order |
+| **Exercise:** *name* | any Free Practice exercise, by its name (**+ Add step** lists them) |
+
+**Shapes**, **Hard changes**, **Strum** and **Chords in order** on their own follow the song: change its chords and they change too. Chords you write stay as written, in the song's own key; play the song in another key or with a capo and they move with it. A chord the song no longer has, or a line ukemusic can't read, is marked under the text. **+ Add step** puts in a ready-made line.
+
 How Learn works things out, and how far to trust it: [How Learn works](explanation/how-learn-works.md).
 
 ## Fingerpicking

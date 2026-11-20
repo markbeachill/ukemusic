@@ -84,6 +84,7 @@
     // ── Desktop: song tabs ──
     { id: 'detailsMore', app: 'desktop', where: 'the song: Details tab', name: 'Album, source, difficulty, licence', level: 'simple' },
     { id: 'songLinks', app: 'desktop', where: 'the song: Links tab', name: 'Links', level: 'simple' },
+    { id: 'songPracticePlan', app: 'both', where: 'the song: Practice tab; web: Edit → Practice', name: 'A song\'s own practice plan, to change', level: 'all' }, // 4.99.17
     { id: 'songExports', app: 'desktop', where: 'the song: Exports tab', name: 'Exports', level: 'simple' },
     { id: 'songChordPro', app: 'desktop', where: 'the song: ChordPro tab', name: 'ChordPro fields', level: 'simple' },
     // ── Settings (greyed in the simple view, not hidden) ──

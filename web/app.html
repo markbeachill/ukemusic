@@ -240,6 +240,16 @@ button { cursor: pointer; }
 .fields input, .fields select, .notes-box { min-height: 42px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); padding: 0 10px; width: 100%; box-sizing: border-box; }
 .fields h2 { margin: 12px 0 0; font-size: 15px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
 .notes-box { min-height: 50vh; padding: 12px; line-height: 1.5; resize: vertical; }
+/* 4.99.17: Edit → Practice */
+.plan-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
+.plan-steps { margin: 6px 0; padding-left: 24px; }
+.plan-steps li { margin: 3px 0; }
+.plan-steps .min, .plan-steps .pnote { color: var(--muted); font-size: 13px; }
+.plan-steps .pnote { display: block; }
+.plan-steps .warn, .plan-problems li { color: var(--warn); font-size: 13px; }
+.plan-intro { font-style: italic; }
+.plan-text.notes-box { min-height: 260px; font: 14px/1.5 ui-monospace, Menlo, Consolas, monospace; }
+#planAdd { min-height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 0 8px; max-width: 100%; }
 
 /* The chord sheet (the desktop app's renderer and stylesheet) */
 .sheet {
@@ -616,6 +626,7 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
         <button id="editTabWords" type="button" role="tab" aria-selected="true">Words &amp; chords</button>
         <button id="editTabInfo" type="button" role="tab" aria-selected="false">Details</button>
         <button id="editTabNotes" type="button" role="tab" aria-selected="false">Notes</button>
+        <button id="editTabPlan" data-feature="songPracticePlan" type="button" role="tab" aria-selected="false" title="How to practise this song: the plan Learn → Practise this song runs. Change it to make it your own">Practice</button>
       </div>
     </header>
     <main class="panel gutter edit-main"><p id="autosaveNote" class="note">Changes save automatically on this device. Dropbox-linked songs also sync to the shared folder.</p><div id="saveRecovery" role="alert" hidden><p>Your changes have not been saved. Keep this editor open, retry, or save a local copy.</p><button id="retrySave" class="btn" type="button">Retry save</button> <button id="saveLocalCopy" class="btn" type="button">Save a local copy</button></div>
@@ -649,6 +660,19 @@ dialog h2 { margin: 0 0 8px; font-size: 20px; }
       </div>
       <div id="editNotesPanel" hidden>
         <textarea id="fNotes" class="notes-box" aria-label="Notes" placeholder="Anything about the song: where it's from, how you play it…"></textarea>
+      </div>
+      <!-- 4.99.17: the song's practice plan (src/song-practice.js), kept with the song -->
+      <div id="editPlanPanel" class="plan-panel" hidden>
+        <div class="plan-head"><strong>Practice plan</strong> <span id="planWhose" class="note"></span><span class="spacer"></span><button id="planPractise" class="btn primary" type="button">Practise this plan</button></div>
+        <p id="planHint" class="note"></p>
+        <p id="planIntro" class="plan-intro" hidden></p>
+        <ol id="planSteps" class="plan-steps"></ol>
+        <p id="planAfter" class="plan-after"></p>
+        <div class="plan-head"><strong>The plan as text</strong><span class="spacer"></span><select id="planAdd" aria-label="Add a step"><option value="">+ Add step</option></select></div>
+        <textarea id="planText" class="notes-box plan-text" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="The plan as text"></textarea>
+        <ul id="planProblems" class="plan-problems"></ul>
+        <div class="add-row"><button id="planKeep" class="btn" type="button">Keep this plan</button><button id="planReset" class="btn" type="button">Start again from the song</button></div>
+        <p class="note">One line per step: minutes, what to do, <b>at</b> a tempo (60, or 70% of the song's), and <b>;</b> a note shown while you practise it. Words before the steps are shown when the plan starts; <b>Then:</b> at the end. <b>Shapes</b>, <b>Hard changes</b>, <b>Strum</b> and <b>Chords in order</b> on their own follow the song; with chords or a strum they stay as you write them.</p>
       </div>
     </main>
   </section>
@@ -1070,7 +1094,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
       local.set('songs', []);
     }
   };
-  function clean(song) { return JSON.parse(JSON.stringify({ title: song.title, text: song.text, settings: song.settings || {}, notes: song.notes || '', updated: song.updated || '', ...(song.edited ? { edited: true } : {}), ...(song.cloud ? { cloud: song.cloud } : {}), ...(song.cloudSkip ? { cloudSkip: true } : {}), ...(song.from ? { from: song.from } : {}) })); }
+  function clean(song) { return JSON.parse(JSON.stringify({ title: song.title, text: song.text, settings: song.settings || {}, notes: song.notes || '', ...(song.practicePlan ? { practicePlan: song.practicePlan } : {}), updated: song.updated || '', ...(song.edited ? { edited: true } : {}), ...(song.cloud ? { cloud: song.cloud } : {}), ...(song.cloudSkip ? { cloudSkip: true } : {}), ...(song.from ? { from: song.from } : {}) })); }
   function setSync(text, warn = false) {
     for (const el of [$('syncState'), $('saveState')]) { el.textContent = text; el.classList.toggle('warn', warn); }
   }
@@ -1918,7 +1942,7 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
   U.onEditorUpdate(onEditorChange);
   $('editorFallback').addEventListener('input', onEditorChange);
   function showEditTab(name) {
-    for (const [tab, panel] of [['editTabWords', 'editWordsPanel'], ['editTabInfo', 'editInfoPanel'], ['editTabNotes', 'editNotesPanel']]) {
+    for (const [tab, panel] of [['editTabWords', 'editWordsPanel'], ['editTabInfo', 'editInfoPanel'], ['editTabNotes', 'editNotesPanel'], ['editTabPlan', 'editPlanPanel']]) {
       const on = tab === name;
       $(tab).setAttribute('aria-selected', String(on));
       $(panel).hidden = !on;
@@ -1927,16 +1951,18 @@ window.__k = { learnOpts: () => (karaokeView.learn ? karaokeView.learn.opts : nu
       $(panel).setAttribute('role', 'tabpanel');
       $(panel).setAttribute('aria-labelledby', tab);
     }
+    if (name === 'editTabPlan') renderPlanTab();
   }
   document.querySelector('#editView [role="tablist"]').addEventListener('keydown', event => {
-    const tabs = ['editTabWords','editTabInfo','editTabNotes']; const i = tabs.indexOf(document.activeElement.id);
+    const tabs = ['editTabWords','editTabInfo','editTabNotes','editTabPlan']; const i = tabs.indexOf(document.activeElement.id);
     if (i < 0 || !['ArrowRight','ArrowLeft','Home','End'].includes(event.key)) return;
-    event.preventDefault(); const n = event.key === 'Home' ? 0 : event.key === 'End' ? 2 : (i + (event.key === 'ArrowRight' ? 1 : 2)) % 3;
+    event.preventDefault(); const n = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : (i + (event.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length;
     showEditTab(tabs[n]); $(tabs[n]).focus();
   });
   $('editTabWords').addEventListener('click', () => showEditTab('editTabWords'));
   $('editTabInfo').addEventListener('click', () => showEditTab('editTabInfo'));
   $('editTabNotes').addEventListener('click', () => showEditTab('editTabNotes'));
+  $('editTabPlan').addEventListener('click', () => showEditTab('editTabPlan'));
   // the details: the song's own facts (song.ini in the desktop app)
   $('fKey').innerHTML = '<option value="auto">Work it out</option>' + U.keys.choices().map((k) => `<option value="${esc(k)}">${esc(k)}</option>`).join('');
   $('fCapo').innerHTML = Array.from({ length: 12 }, (_, i) => `<option value="${i}">${i ? i : 'None'}</option>`).join('');
@@ -3223,9 +3249,12 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
   }
   $('learnQuizBtn').addEventListener('click', openQuiz);
   // 4.99.6: Practise a song: a plan of Free Practice exercises from this song (src/song-practice.js)
-  $('learnPracticeBtn').addEventListener('click', () => {
+  // 4.99.17: the song's own plan (Edit → Practice) if it has one
+  function songPlanFor(planText) {
     const L = learnSong();
-    const plan = U.songPracticePlan({
+    return U.songPracticePlan({
+      planText: planText === undefined ? (view.song?.practicePlan || '') : planText,
+      shift: L.p.transpose - L.p.capo,   // the plan's own chords are in the song's key
       title: view.song?.title || 'this song',
       ir: L.ir,
       changes: U.learn.songChanges(L.ir, L.lib, { tuningName: L.inst.tuningName }),
@@ -3233,11 +3262,97 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       tempo: L.p.tempo,
       song: view.song ? { id: view.song.id } : null   // 4.99.9: the plan ends back at this song (its key is kept with it here)
     });
-    if (!plan.steps.length) { toast('This song has no chords to practise yet.'); return; }
-    $('learnDialog').close();
+  }
+  function practiseSongPlan(planText) {
+    const plan = songPlanFor(planText);
+    if (!plan.steps.length) { toast(plan.own ? 'This plan has no steps to practise.' : 'This song has no chords to practise yet.'); return; }
+    if ($('learnDialog').open) $('learnDialog').close();
     stop();
     window.ukemusicPractiseSong(plan);
+  }
+  $('learnPracticeBtn').addEventListener('click', () => practiseSongPlan());
+  // 4.99.17: Edit → Practice: the plan as steps, and as text to change; yours once you change it
+  // (kept with the song), ukemusic's own until then
+  let planTimer = 0;
+  function renderPlanTab() {
+    if (!view.song) return;
+    const own = Boolean(String(view.song.practicePlan || '').trim());
+    if (document.activeElement !== $('planText')) $('planText').value = own ? view.song.practicePlan : U.songPlanAutoText;
+    drawPlan();
+  }
+  function drawPlan() {
+    if (!view.song) return;
+    const own = Boolean(String(view.song.practicePlan || '').trim());
+    $('planKeep').disabled = own;
+    $('planReset').disabled = !own;
+    $('planWhose').textContent = own ? 'Your plan' : 'Made from the song';
+    $('planHint').textContent = own ? 'Kept with the song as you wrote it. Learn → Practise this song runs it.' : 'ukemusic makes this from the song each time: its shapes, its hardest changes and its strum. Change it below to make it yours.';
+    let plan;
+    try { plan = songPlanFor($('planText').value); } catch (_e) { return; }
+    $('planSteps').replaceChildren(...(plan.steps.length ? plan.steps : [{ label: 'No steps yet.' }]).map((st) => {
+      const li = document.createElement('li');
+      li.append(st.label || st.id);
+      if (st.minutes) li.appendChild(Object.assign(document.createElement('span'), { className: 'min', textContent: ` · ${st.minutes} min${st.settings?.prTempo ? ` at ${st.settings.prTempo}` : ''}` }));
+      if (st.note) li.appendChild(Object.assign(document.createElement('span'), { className: 'pnote', textContent: st.note }));
+      if (st.warning) li.appendChild(Object.assign(document.createElement('span'), { className: 'pnote warn', textContent: st.warning }));
+      return li;
+    }));
+    $('planIntro').hidden = !plan.intro;
+    $('planIntro').textContent = plan.intro || '';
+    $('planAfter').textContent = `Then: ${plan.after}`;
+    $('planPractise').disabled = !plan.steps.length;
+    $('planProblems').replaceChildren(...[...plan.problems, ...plan.warnings].sort((a, b) => a.line - b.line).map((p) => Object.assign(document.createElement('li'), { textContent: `Line ${p.line}: ${p.message}` })));
+  }
+  function setPlan(text) {
+    view.song.practicePlan = text.trim() ? text : '';
+    editChanged();
+    drawPlan();
+  }
+  $('planText').addEventListener('input', () => {
+    clearTimeout(planTimer);
+    planTimer = setTimeout(() => setPlan($('planText').value), 400);   // a change makes it yours
   });
+  $('planKeep').addEventListener('click', () => setPlan($('planText').value));
+  $('planReset').addEventListener('click', async () => {
+    if (!(await askConfirm('Start again from the song? Your plan for this song is replaced by the one ukemusic makes from it.', { ok: 'Start again' }))) return;
+    clearTimeout(planTimer);
+    $('planText').value = U.songPlanAutoText;
+    setPlan('');
+  });
+  $('planPractise').addEventListener('click', () => { clearTimeout(planTimer); if ($('planText').value !== (view.song.practicePlan || U.songPlanAutoText)) setPlan($('planText').value); practiseSongPlan($('planText').value); });
+  // + Add step: a ready-made line, after the line the cursor is on
+  (function fillPlanAdd() {
+    const add = $('planAdd');
+    const group = (label, lines) => { const g = document.createElement('optgroup'); g.label = label; for (const [t, line] of lines) g.appendChild(new Option(t, line)); add.appendChild(g); };
+    group('From the song', [
+      ['Shapes (the song\'s)', '2 min  Shapes'], ['Shapes you choose', '2 min  Shapes C F G7'],
+      ['Your trouble spots', '2 min  Trouble spots'], ['Hard changes', '2 min  Hard changes 2'],
+      ['A change you choose', '2 min  Change G7 to C at 60'],
+      ['The strum (the song\'s)', '3 min  Strum at 70%'], ['A strum you choose', '3 min  Strum D-DU-UDU at 70%'],
+      ['The chords in order', '3 min  Chords in order at 85%'], ['A section\'s chords', '3 min  Section Chorus at 85%'],
+      ['A note at the start', 'Before you start: …'], ['The ending', 'Then: the song from memory']
+    ]);
+    for (const c of U.practiceLib.CATEGORIES.filter((x) => x.id !== 'routine')) {
+      const list = U.practiceLib.EXERCISES.filter((e) => e.cat === c.id);
+      if (list.length) group(`Free Practice: ${c.name}`, list.map((e) => [e.title, `3 min  Exercise: ${e.title.replace(/\s*\(.*?\)\s*/g, ' ').trim()}`]));
+    }
+    add.addEventListener('change', () => {
+      const line = add.value; add.value = '';
+      const box = $('planText');
+      if (!line) return;
+      const at = box.selectionStart;
+      const lineStart = box.value.lastIndexOf('\n', at - 1) + 1;
+      const lineEnd = box.value.indexOf('\n', at);
+      const end = lineEnd < 0 ? box.value.length : lineEnd;
+      let insertAt = box.value.slice(lineStart, end).trim() ? end : lineStart;
+      const thenAt = box.value.search(/^then\b.*$/im);   // at the end, a step goes before the Then: line
+      if (thenAt >= 0 && insertAt > thenAt && !/^then\b/i.test(line)) insertAt = thenAt;
+      const atLineStart = insertAt === 0 || box.value[insertAt - 1] === '\n';
+      box.setRangeText(atLineStart ? `${line}\n` : `\n${line}`, insertAt, insertAt, 'end');
+      box.focus();
+      box.dispatchEvent(new Event('input'));
+    });
+  })();
   // 4.99.9: the end of a song's plan: back to the song and play it from memory
   window.ukemusicPlayFromMemory = (song) => {
     const close = document.getElementById('practiceClose');

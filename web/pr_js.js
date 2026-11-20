@@ -644,6 +644,7 @@
           }
           if (!PL.EXERCISES.some((e) => e.id === step.id)) { r.step += 1; prRoutineStep(); return; }
           prOpen(step.id, { keepGoing: true, settings: step.settings || {} });
+          prShowPlanNote(r, step);   // 4.99.17
           // 4.99.6: Practise a song: a step can bring its change (from, to) and the song's strum
           if (step.from && step.to) {
             prChordSelects($p('prFromRoot'), $p('prFromType'), step.from);
@@ -673,6 +674,17 @@
             else prStart();
           };
           setTimeout(go, r.step > 0 ? 3000 : 600);
+        }
+        // 4.99.17: a song plan's words, shown above the exercise: the plan's opening words (with its
+        // first step), the step's note, and a chord the song no longer has
+        function prShowPlanNote(r, step) {
+          const box = $p('prPlanNote');
+          const lines = [];
+          if (r && r.step === 0 && r.routine.intro) lines.push([r.routine.intro, '']);
+          if (step && step.note) lines.push([step.note, '']);
+          if (step && step.warning) lines.push([`Note: ${step.warning}.`, 'warn']);
+          box.replaceChildren(...lines.map(([text, cls]) => Object.assign(document.createElement('p'), { textContent: text, className: cls })));
+          box.hidden = !lines.length;
         }
         function prRoutineTick() {
           const r = pr.routine;
@@ -711,6 +723,7 @@
         function prRoutineEnd(finished = false) {
           const r = pr.routine;
           pr.routine = null;
+          prShowPlanNote(null, null);
           $p('prRoutineBar').hidden = true;
           if (player && player.playing) prStop();
           prShowHome();

@@ -71,6 +71,7 @@
 | Quizzes on the changes and the chord numbers | ✓ | ✓ |
 | A learn sheet to print | ✓ Print | ✓ PDF |
 | Practise this song: a plan from the song itself (its shapes, its hardest changes, its strum, its chords in order) | ✓ | ✓ |
+| A song's own practice plan: change the steps, add notes, keep it with the song | ✓ | ✓ |
 | **[Free Practice](https://markbeachill.github.io/ukemusic/practice/)** | | |
 | 42 exercises: warm-ups, chords, strumming, picking, scales, improvising | ✓ | ✓ |
 | Routines, and your progress (days, best tempos, scores) | ✓ | ✓ |

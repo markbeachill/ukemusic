@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.99.17 · A song's own practice plan, to change and keep with the song
+
+- **A Practice tab on a song** (all features; in the web player, **✎ Edit → Practice**): the plan **Learn → Practise this song** runs, as steps and as text to change. Until you change it, ukemusic makes it from the song each time. Change a line, or press **Keep this plan**, and it's yours: kept with the song (learn/practice-plan.txt in its folder) and never rewritten unless you press **Start again from the song**.
+- **One line per step:** minutes, what to do, **at** a tempo (60, or 70% of the song's) and **;** a note. **Shapes**, **Trouble spots**, **Hard changes 2**, **Change G7 to C**, **Strum** (or **Strum D-DU-UDU**), **Chords in order**, **Section Chorus**, and **Exercise:** any of Free Practice's 42 exercises by name. **+ Add step** puts in a ready-made line.
+- **Following the song:** Shapes, Hard changes, Strum and Chords in order on their own follow the song as it is; chords you write stay as written, in the song's key, and move with it when you play it in another key or with a capo. A chord the song no longer has, or a line ukemusic can't read, is marked.
+- **Notes while you practise:** the words before the first step show when the plan starts, each step's note shows above that exercise in Free Practice, and **Then:** is what it says at the end.
+- Still to come: the plan in Dropbox sync, library packs and the web player's backups (for now the web player keeps it on the device), and the plan printed on the learn sheet.
+
 ## v4.99.16 · Accents and palm mutes show in every strum display
 
 - **Strums, everywhere they're drawn:** the player's strip (desktop and web), karaoke, the Music stand, Free Practice, the strum menus and the sheet now share one list of symbols (`src/strum-symbols.js`). A palm-muted stroke shows as ⇣ everywhere, not the letter M.
