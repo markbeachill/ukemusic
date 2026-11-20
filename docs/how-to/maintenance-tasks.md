@@ -6,39 +6,41 @@ All commands are run in the project folder (`C:\Users\markb\Desktop\cowork\ukemu
 
 ## Commands at a glance
 
-| Command | What it does | Time | Result |
-|---|---|---|---|
-| `npm start` | Runs the desktop app from the code, with your own songs and settings | seconds | the app opens |
-| `npm test` | Runs every test | ~20 s | `✓` per test; a `✗` names any that fail |
-| `npm run build:web` | Builds the web player and the website's generated pages | 1–2 min | `web/out/`, pages and sitemap in `site/` |
-| `npx serve web/out` | Serves the built web player so you can try it in a browser | until Ctrl+C | http://localhost:3000 |
-| `npm run site-check` | Checks every website page as search engines do (titles, descriptions, addresses, headings, alt text, links, sitemap) | seconds | `all 19 pages pass`, or a list of problems |
-| `npm run site-pictures` | Retakes every website picture and the gallery from the app as it is now | ~10 min | `site/img/`, `site/gallery/` |
-| `npm run site-pictures -- img editor` | Retakes just those pictures (names without `.webp`) | 1–2 min | those files in `site/img/` |
-| `npm run ui-review` | Pictures of every screen (desktop, iPad, iPhone) in one review page | 20–30 min | `UI review/index.html` |
-| `npm run ui-review -- desktop R` | Just one app and section of the UI review | a few min | the same page, those screens retaken |
-| `node tools/sync-practice.js` | Checks Free Practice is the same in the desktop app and the web player | a second | `Desktop/web practice parity checked.` |
-| `node tools/sync-practice.js --from-web` | Copies Free Practice changes made in the web files into `index.html` | a second | `index.html` updated |
-| `npm run build:chords` | Rebuilds the chord libraries from chords-db and the hand-checked shapes | seconds | `src/chords*.json` |
-| `npm run build` | Makes the desktop app, unpacked, to try | a few min | `dist/` |
-| `npm run package:win` | Makes a Windows installer here (`package:mac`, `package:linux` likewise) | a few min | `dist/*.exe` |
-| `node tools/release-notes.js v4.63.0` | Prints that version's CHANGELOG section, starting with its headline (GitHub uses it for release notes) | a second | the notes, on screen |
-| `git push` | Sends your commits to GitHub: the tests run, and the website is rebuilt and published | ~5 min on GitHub | Actions → Tests, Website |
-| GitHub: Releases → Draft a new release | Builds the installers and adds them and the notes to the release | ~15 min on GitHub | the release page |
+| Command                                  | What it does                                                                                                         | Time               | Result                                     |
+|------------------------------------------|----------------------------------------------------------------------------------------------------------------------|--------------------|--------------------------------------------|
+| `npm start`                              | Runs the desktop app from the code, with your own songs and settings                                                 | seconds            | the app opens                              |
+| `npm test`                               | Runs every test                                                                                                      | \~20 s             | `✓` per test; a `✗` names any that fail    |
+| `npm run build:web`                      | Builds the web player and the website's generated pages                                                              | 1–2 min            | `web/out/`, pages and sitemap in `site/`   |
+| `npx serve web/out`                      | Serves the built web player so you can try it in a browser                                                           | until Ctrl+C       | http://localhost:3000                      |
+| `npm run site-check`                     | Checks every website page as search engines do (titles, descriptions, addresses, headings, alt text, links, sitemap) | seconds            | `all 19 pages pass`, or a list of problems |
+| `npm run site-pictures`                  | Retakes every website picture and the gallery from the app as it is now                                              | \~10 min           | `site/img/`, `site/gallery/`               |
+| `npm run site-pictures -- img editor`    | Retakes just those pictures (names without `.webp`)                                                                  | 1–2 min            | those files in `site/img/`                 |
+| `npm run ui-review`                      | Pictures of every screen (desktop, iPad, iPhone) in one review page                                                  | 20–30 min          | `UI review/index.html`                     |
+| `npm run ui-review -- desktop R`         | Just one app and section of the UI review                                                                            | a few min          | the same page, those screens retaken       |
+| `node tools/sync-practice.js`            | Checks Free Practice is the same in the desktop app and the web player                                               | a second           | `Desktop/web practice parity checked.`     |
+| `node tools/sync-practice.js --from-web` | Copies Free Practice changes made in the web files into `index.html`                                                 | a second           | `index.html` updated                       |
+| `npm run build:chords`                   | Rebuilds the chord libraries from chords-db and the hand-checked shapes                                              | seconds            | `src/chords*.json`                         |
+| `npm run build`                          | Makes the desktop app, unpacked, to try                                                                              | a few min          | `dist/`                                    |
+| `npm run package:win`                    | Makes a Windows installer here (`package:mac`, `package:linux` likewise)                                             | a few min          | `dist/*.exe`                               |
+| `node tools/release-notes.js v4.63.0`    | Prints that version's CHANGELOG section, starting with its headline (GitHub uses it for release notes)               | a second           | the notes, on screen                       |
+| `git push`                               | Sends your commits to GitHub: the tests run, and the website is rebuilt and published                                | \~5 min on GitHub  | Actions → Tests, Website                   |
+| GitHub: Releases → Draft a new release   | Builds the installers and adds them and the notes to the release                                                     | \~15 min on GitHub | the release page                           |
+
+npm run guide-pictures
 
 ## Which task, when
 
-| You've… | Run | Section |
-|---|---|---|
-| changed any code | `npm test` | [Tests](#tests) |
-| changed the web player, Free Practice or anything in `src/` the web uses | `npm run build:web`, then try it | [Build the web player](#build-the-web-player) |
-| changed the website (`site/`, `web/pages.js`, `web/docs.js`) | `npm run build:web`, then `npm run site-check` | [Website check](#website-check) |
-| changed what a screen looks like | `npm run ui-review` (or just that part) | [UI review](#ui-review) |
-| changed a screen that the website shows | `npm run site-pictures` (or just that picture) | [Website pictures](#website-pictures) |
-| changed Free Practice's screens | `node tools/sync-practice.js` | [Free Practice: desktop and web the same](#free-practice-desktop-and-web-the-same) |
-| changed the hand-checked chord shapes | `npm run build:chords` | [Chord library](#chord-library) |
-| finished a version | the release steps | [Making a release](#making-a-release) |
-| pushed to GitHub | nothing: the tests and the website run by themselves | [What GitHub does by itself](#what-github-does-by-itself) |
+| You've…                                                                  | Run                                                  | Section                                                                            |
+|--------------------------------------------------------------------------|------------------------------------------------------|------------------------------------------------------------------------------------|
+| changed any code                                                         | `npm test`                                           | [Tests](#tests)                                                                    |
+| changed the web player, Free Practice or anything in `src/` the web uses | `npm run build:web`, then try it                     | [Build the web player](#build-the-web-player)                                      |
+| changed the website (`site/`, `web/pages.js`, `web/docs.js`)             | `npm run build:web`, then `npm run site-check`       | [Website check](#website-check)                                                    |
+| changed what a screen looks like                                         | `npm run ui-review` (or just that part)              | [UI review](#ui-review)                                                            |
+| changed a screen that the website shows                                  | `npm run site-pictures` (or just that picture)       | [Website pictures](#website-pictures)                                              |
+| changed Free Practice's screens                                          | `node tools/sync-practice.js`                        | [Free Practice: desktop and web the same](#free-practice-desktop-and-web-the-same) |
+| changed the hand-checked chord shapes                                    | `npm run build:chords`                               | [Chord library](#chord-library)                                                    |
+| finished a version                                                       | the release steps                                    | [Making a release](#making-a-release)                                              |
+| pushed to GitHub                                                         | nothing: the tests and the website run by themselves | [What GitHub does by itself](#what-github-does-by-itself)                          |
 
 ## Before the first time
 
@@ -63,7 +65,7 @@ npm install --no-save --prefix web esbuild@0.24.0
 
 The web player's sounds are converted with **ffmpeg**. Without it the build still works and says `ffmpeg not found: skipped` for each sound; GitHub has ffmpeg, so the published web player always has its sounds.
 
-`--no-save` means these extras aren't added to `package.json`. **`npm install` can remove them again**, so if a task later says it can't find Playwright, pdf.js or esbuild, run its install line again. After Playwright is installed or updated, `npx playwright install chromium` is needed once more (the UI review checks for this before it starts).
+`--no-save` means these extras aren't added to `package.json`. `npm install` **can remove them again**, so if a task later says it can't find Playwright, pdf.js or esbuild, run its install line again. After Playwright is installed or updated, `npx playwright install chromium` is needed once more (the UI review checks for this before it starts).
 
 ## Run the app
 
@@ -94,8 +96,9 @@ npm run build:web
 **When:** after changing the web player (`web/app.html`), Free Practice, the website's pages, or anything in `src/` that the web player uses. A minute or two.
 
 It writes:
-- `web/out/`: the web player (`index.html`, its offline copy, the sounds, the public-domain songs);
-- the website's generated pages in `site/` (the guide, ChordPro, What's new, How Learn works, Learn, Practise, Perform, Teach, Chord sheets, Bring your songs, Phone and tablet, Dropbox, Gallery, `practice/`) and `site/sitemap.xml`.
+
+-   `web/out/`: the web player (`index.html`, its offline copy, the sounds, the public-domain songs);
+-   the website's generated pages in `site/` (the guide, ChordPro, What's new, How Learn works, Learn, Practise, Perform, Teach, Chord sheets, Bring your songs, Phone and tablet, Dropbox, Gallery, `practice/`) and `site/sitemap.xml`.
 
 These are all made again on every build, so they're kept out of git (`.gitignore`). GitHub builds them itself when it publishes the website.
 
@@ -117,12 +120,13 @@ npm run site-check
 **When:** after changing the website. A few seconds (after the build).
 
 It checks every page of the finished website the way search engines do (Bing's Site Scan, Google Search Console):
-- a title of 25 to 70 characters, and a description of 50 to 160, with no two pages the same;
-- a canonical address (the page's own) and a language;
-- one main heading;
-- alt text on every picture;
-- every link and file on the site that a page points to is there;
-- the sitemap lists every page, and nothing that isn't a page.
+
+-   a title of 25 to 70 characters, and a description of 50 to 160, with no two pages the same;
+-   a canonical address (the page's own) and a language;
+-   one main heading;
+-   alt text on every picture;
+-   every link and file on the site that a page points to is there;
+-   the sitemap lists every page, and nothing that isn't a page.
 
 `Site check: all 19 pages pass` means it's fine. Otherwise each problem is listed with its page, for example `perform.html: title too short (18 characters, at least 25)`.
 
@@ -188,8 +192,9 @@ node tools/sync-practice.js
 **When:** after changing Free Practice. A second.
 
 Free Practice's screens are written once, in `index.html`, and the web player uses a copy: `web/pr_markup.html`, `web/pr_css.css` and `web/pr_js.js`. This checks the copy is the same as the desktop's; the web build and the tests run it too. `Desktop/web practice parity checked.` means they match. If they differ:
-- after changing the web copies: `node tools/sync-practice.js --from-web` brings the change into `index.html`;
-- after changing `index.html`: make the same change in the web copy (it's the Free Practice part of `index.html` without the Learn shortcuts).
+
+-   after changing the web copies: `node tools/sync-practice.js --from-web` brings the change into `index.html`;
+-   after changing `index.html`: make the same change in the web copy (it's the Free Practice part of `index.html` without the Learn shortcuts).
 
 ## Chord library
 
@@ -225,42 +230,43 @@ Don't use `git add -A` or `git add .`: the folder holds things that must stay ou
 
 ## Making a release
 
-1. **The version and its notes** (as in AGENTS.md):
-   - raise `"version"` in `package.json`, and in both places at the top of `package-lock.json`;
-   - add a section to the top of `CHANGELOG.md`. Its heading is the version and a headline, one line saying what's new in plain words: `## v4.63.0 · Bar lines and songbook marks in ChordPro`. If the version only fixes or tidies things, the headline is `Minor updates: fixes and small changes` (the website's What's new page shows it in grey). Under the heading, what changed in plain words (a test fails without the section, or without its headline);
-   - add a row to the table in `HANDOVER.md`;
-   - add `test/vNNN.test.js` for what changed, and list it in the `test` script.
-2. `npm test`, then commit and push.
-3. On GitHub: **Releases → Draft a new release**. Tag and title: `v` and the version (`v4.63.0`), created from `main`. The notes can be left empty: that version's CHANGELOG section is added by itself. **Publish release**.
-4. About 15 minutes later the release has the Windows installer, the Mac disk images and the Linux AppImage, and the website's download buttons point at them. Its progress is under Actions → Installers.
+1.  **The version and its notes** (as in AGENTS.md):
+    -   raise `"version"` in `package.json`, and in both places at the top of `package-lock.json`;
+    -   add a section to the top of `CHANGELOG.md`. Its heading is the version and a headline, one line saying what's new in plain words: `## v4.63.0 · Bar lines and songbook marks in ChordPro`. If the version only fixes or tidies things, the headline is `Minor updates: fixes and small changes` (the website's What's new page shows it in grey). Under the heading, what changed in plain words (a test fails without the section, or without its headline);
+    -   add a row to the table in `HANDOVER.md`;
+    -   add `test/vNNN.test.js` for what changed, and list it in the `test` script.
+2.  `npm test`, then commit and push.
+3.  On GitHub: **Releases → Draft a new release**. Tag and title: `v` and the version (`v4.63.0`), created from `main`. The notes can be left empty: that version's CHANGELOG section is added by itself. **Publish release**.
+4.  About 15 minutes later the release has the Windows installer, the Mac disk images and the Linux AppImage, and the website's download buttons point at them. Its progress is under Actions → Installers.
 
 If the release is wrong (for example made from a commit that still had the old version number): delete it on GitHub, delete its tag (`git push origin --delete v4.63.0`), fix and push, then make it again.
 
 ## What GitHub does by itself
 
-| When | What | Where to see it |
-|---|---|---|
-| every push | the tests (`npm test`) | Actions → Tests |
-| every push to `main` | builds the website and the web player, runs the tests and the website check, and publishes the site at https://markbeachill.github.io/ukemusic/ (a failing test or check stops it) | Actions → Website |
-| a release is published | builds the installers on Windows, Mac and Linux and adds them and the CHANGELOG notes to the release | Actions → Installers |
+| When                   | What                                                                                                                                                                               | Where to see it      |
+|------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|
+| every push             | the tests (`npm test`)                                                                                                                                                             | Actions → Tests      |
+| every push to `main`   | builds the website and the web player, runs the tests and the website check, and publishes the site at https://markbeachill.github.io/ukemusic/ (a failing test or check stops it) | Actions → Website    |
+| a release is published | builds the installers on Windows, Mac and Linux and adds them and the CHANGELOG notes to the release                                                                               | Actions → Installers |
 
 A red cross on a run means it stopped: open the run, then the step with the cross, to see why. The live website stays as it was until a run succeeds.
 
 ## Search engines
 
 After a release that changes the website, or now and then:
-- **Google Search Console** and **Bing Webmaster Tools**: the sitemap is `https://markbeachill.github.io/ukemusic/sitemap.xml`. Both show pages they couldn't read and what they found.
-- **Bing Site Scan**: run a new scan every month or two. Anything it lists that `npm run site-check` doesn't catch can be added to `tools/site-check.js`.
+
+-   **Google Search Console** and **Bing Webmaster Tools**: the sitemap is `https://markbeachill.github.io/ukemusic/sitemap.xml`. Both show pages they couldn't read and what they found.
+-   **Bing Site Scan**: run a new scan every month or two. Anything it lists that `npm run site-check` doesn't catch can be added to `tools/site-check.js`.
 
 `docs/discoverability-checklist.md` has the step-by-step checks and the GitHub About text.
 
 ## Where things are
 
-| | |
-|---|---|
-| The tasks themselves | `package.json` (`scripts`) and `tools/` |
-| GitHub's automatic runs | `.github/workflows/` (`test.yml`, `web.yml`, `release.yml`) |
-| Which file to change for what | `AGENTS.md` |
-| The AI prompts (to change their wording) | `src/ai-prompts/` (plain text; see its README) |
-| Every version's changes, for people | `CHANGELOG.md` (also the website's What's new page: one line a version, its headline, the details a click away) |
-| Every version's changes, for developers | `HANDOVER.md` |
+|                                          |                                                                                                                 |
+|------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
+| The tasks themselves                     | `package.json` (`scripts`) and `tools/`                                                                         |
+| GitHub's automatic runs                  | `.github/workflows/` (`test.yml`, `web.yml`, `release.yml`)                                                     |
+| Which file to change for what            | `AGENTS.md`                                                                                                     |
+| The AI prompts (to change their wording) | `src/ai-prompts/` (plain text; see its README)                                                                  |
+| Every version's changes, for people      | `CHANGELOG.md` (also the website's What's new page: one line a version, its headline, the details a click away) |
+| Every version's changes, for developers  | `HANDOVER.md`                                                                                                   |
