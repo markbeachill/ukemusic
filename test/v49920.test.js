@@ -23,7 +23,7 @@ t('a trouble spot is the change at its marked line', () => {
 t('steps are named for what you do, the change in the heading', () => {
   const ir = parse('{D>DD}\n[C]one [F]two [G7]three [C]four');
   const plan = SP.songPlan({ ir, changes: [{ from: 'G7', to: 'C' }] });
-  assert.deepStrictEqual(plan.steps.map((s) => s.label), ['Practise the chord shapes', 'Hard change: G7 → C', 'Learn the strum', 'Strum the chord sequence']);
+  assert.deepStrictEqual(plan.steps.map((s) => s.label), ['Practise the chord shapes', 'Hard change: G7 → C', 'Learn the strum', 'Play the chords in order']);
   assert.deepStrictEqual([plan.steps[1].heading, plan.steps[1].kind], ['G7 → C', 'Hard change']);
 });
 

@@ -187,8 +187,37 @@ function sectionSequence(ir, name) {
   return found ? out : null;
 }
 
+/**
+ * 4.99.21: the lines of a passage of the song, for playing it as the song plays (its own bars,
+ * strum and timing): a section ("Chorus": from its heading to the next), or the song from its
+ * first chord for about MAX_BARS chords ("Chords in order"). -> { from, to } (1-based lines) or null
+ */
+function passageLines(ir, name = null) {
+  const nodes = ir || [];
+  const lastLine = nodes.reduce((m, n) => Math.max(m, Number(n.line) || 0), 0);
+  if (name === null) {
+    const chords = nodes.filter((n) => n.type === 'chord' && !n.noChord && !n.hidden && n.content && n.line);
+    if (!chords.length) return null;
+    let changes = 0;
+    let to = chords[chords.length - 1].line;
+    for (let i = 1; i < chords.length; i += 1) {
+      if (chords[i].content !== chords[i - 1].content) changes += 1;
+      if (changes >= MAX_BARS) { to = chords[i - 1].line; break; }
+    }
+    return { from: chords[0].line, to };
+  }
+  const want = String(name).trim().toLowerCase();
+  const heads = nodes.filter((n) => n.type === 'structure' && n.line);
+  const label = (n) => String(n.content || '').replace(/[:：]\s*$/, '').trim().toLowerCase();
+  let i = heads.findIndex((n) => label(n) === want);
+  if (i < 0) i = heads.findIndex((n) => label(n).replace(/\s+\d+$/, '') === want);
+  if (i < 0) return null;
+  const next = heads.slice(i + 1).find((n) => n.line > heads[i].line);
+  return { from: heads[i].line, to: next ? next.line - 1 : lastLine };
+}
+
 /** The plan, ready for Free Practice: { name, title, intro, steps, after, song, problems, warnings } */
-function resolvePlan(parsed, { title = 'this song', ir = [], changes = [], strum = '', tempo = 90, trouble = [], song = null, shift = 0 } = {}) {
+function resolvePlan(parsed, { title = 'this song', ir = [], changes = [], strum = '', tempo = 90, trouble = [], song = null, shift = 0, text = '', parse = null } = {}) {
   const { transposeChord } = require('./transpose');
   const move = (c) => (shift ? transposeChord(c, shift) : c);
   const shapes = chordSet(ir);
@@ -241,7 +270,15 @@ function resolvePlan(parsed, { title = 'this song', ir = [], changes = [], strum
       const seq = st.kind === 'order' ? sequence : sectionSequence(ir, st.name);
       if (!seq) { warnings.push({ line: st.line, message: `The song has no section called "${st.name}"` }); continue; }
       if (!seq.length) continue;
-      steps.push({ id: 'metronome-strum', minutes: st.minutes, label: st.kind === 'order' ? 'Strum the chord sequence' : `Play the ${st.name}`, strum: pattern, note: st.note, settings: { prStrumSteps: false, prStrumB: '', prProgression: '', prChords: seq.slice(0, MAX_BARS).join(' '), prClick: true, prTempo: at(st) } });
+      const label = st.kind === 'order' ? 'Play the chords in order' : /\d/.test(st.name) ? `Play ${st.name}` : `Play the ${st.name}`;
+      // 4.99.21: with the song's text, the passage itself, as the song plays it (its bars, its
+      // strum, two changes in a bar, a chord held for two): round and round until it's clean
+      const lines = text ? passageLines(ir, st.kind === 'order' ? null : st.name) : null;
+      if (lines) {
+        steps.push({ id: 'metronome-strum', minutes: st.minutes, label, note: st.note, untilClean: true, passage: { text, shift, from: lines.from, to: lines.to, ...(parse ? { parse } : {}) }, settings: { prStrumSteps: false, prStrumB: '', prClick: true, prTempo: at(st) } });
+        continue;
+      }
+      steps.push({ id: 'metronome-strum', minutes: st.minutes, label, strum: pattern, note: st.note, settings: { prStrumSteps: false, prStrumB: '', prProgression: '', prChords: seq.slice(0, MAX_BARS).join(' '), prClick: true, prTempo: at(st) } });
     } else if (st.kind === 'exercise') {
       const tp = at(st);
       steps.push({ id: st.id, minutes: st.id === 'one-minute' ? 1 : st.minutes, label: st.title, note: st.note, settings: tp ? { prTempo: tp } : {} });
@@ -297,11 +334,11 @@ function stepChoices({ ir = [], changes = [], strum = '' } = {}) {
   return out;
 }
 
-function songPlan({ title = 'this song', ir = [], changes = [], strum = '', tempo = 90, trouble = [], song = null, planText = '', shift = 0 } = {}) {
+function songPlan({ title = 'this song', ir = [], changes = [], strum = '', tempo = 90, trouble = [], song = null, planText = '', shift = 0, text = '', parse = null } = {}) {
   // 4.99.17: the song's own plan (learn/practice-plan.txt), or the one ukemusic makes (AUTO_TEXT)
-  const plan = resolvePlan(parsePlan(planText || AUTO_TEXT), { title, ir, changes, strum, tempo, trouble, song, shift });
+  const plan = resolvePlan(parsePlan(planText || AUTO_TEXT), { title, ir, changes, strum, tempo, trouble, song, shift, text, parse });
   plan.own = Boolean(String(planText || '').trim());
   return plan;
 }
 
-module.exports = { songPlan, stepChoices, parsePlan, resolvePlan, checkPlan, findExercise, sectionSequence, AUTO_TEXT, chordSequence, chordSet, songStrum, troubleChanges, MAX_SHAPES, MAX_BARS };
+module.exports = { songPlan, stepChoices, passageLines, parsePlan, resolvePlan, checkPlan, findExercise, sectionSequence, AUTO_TEXT, chordSequence, chordSet, songStrum, troubleChanges, MAX_SHAPES, MAX_BARS };

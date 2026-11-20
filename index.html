@@ -2116,6 +2116,12 @@
 .pr-plan-preview-actions button { min-height: 40px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text); font: inherit; font-weight: 600; cursor: pointer; }
 .pr-plan-preview-actions .primary { background: var(--accent); color: #fff; border-color: var(--accent); }
 .pr-plan-hint { font-size: 14px; color: var(--muted); }
+/* 4.99.21: a song passage: Again, Slower, That was clean */
+.pr-passage-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.pr-plan-note p + .pr-passage-actions, .pr-plan-note .pr-passage-actions:first-child { margin-top: 6px; }
+.pr-passage-actions button { min-height: 36px; padding: 0 14px; border-radius: 9px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text); font: inherit; font-weight: 600; cursor: pointer; }
+.pr-passage-actions .primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.pr-passage-say { align-self: center; font-size: 14px; font-weight: 600; }
 .pr-well-done-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; font-weight: 400; }
 .pr-well-done-actions button.primary { background: #15803d; border-color: #15803d; color: #fff; font-weight: 700; }
       /* ── Karaoke view ─────────────────────────────────── */
@@ -4685,6 +4691,12 @@
         <div class="pr-slide-nav"><button type="button" id="prSlideBack">← Back</button><span id="prSlideDots" class="pr-slide-dots" aria-hidden="true"></span><button type="button" id="prSlideNext" class="primary" autofocus>Next →</button></div>
       </form>
     </dialog>
+
+
+
+
+
+
 
 
 
@@ -9649,6 +9661,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         // Open an exercise: its trainer, with its preset (and your last tempo)
         function prOpen(exId, { keepGoing = false, settings = null, reset = false } = {}) {
           if (!PL.EXERCISES.some((x) => x.id === exId)) return;
+          pr.passage = null;   // 4.99.21: a song's passage is only for its plan step
           if (!reset) prSaveSettings();
           prCancelAttempt();
           prSessionEnd();
@@ -9926,6 +9939,8 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           if (!PL.EXERCISES.some((e) => e.id === step.id)) { r.step += 1; prRoutineStep(); return; }
           prOpen(step.id, { keepGoing: true, settings: step.settings || {} });
           if (step.label) $p('prTitle').textContent = step.heading || step.label;   // 4.99.20: the step (G7 → C), not the exercise's name
+          pr.passage = step.passage || null;   // 4.99.21: a passage of the song
+          if (step.passage) { prPreview(); $p('prGoal').textContent = 'Play it as the song does, with its words. Go round until it\'s clean.'; }
           if (step.label) prSettingsOpen(false);   // 4.99.20: a song's step: the exercise's settings out of the way (Settings shows them)
           prShowPlanNote(r, step);   // 4.99.17
           // 4.99.6: Practise a song: a step can bring its change (from, to) and the song's strum
@@ -9967,9 +9982,26 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
           if (step && step.note) lines.push([step.note, '']);
           if (step && step.warning) lines.push([`Note: ${step.warning}.`, 'warn']);
           // 4.99.20: help isn't opened in the middle of a plan: a line says where it is instead
-          if (r && step && pr.mode && pr.progress && !(pr.progress.seen || {})[pr.mode]) lines.push(['New to this exercise? The ? button explains it.', 'pr-plan-hint']);
+          if (r && step && !step.passage && pr.mode && pr.progress && !(pr.progress.seen || {})[pr.mode]) lines.push(['New to this exercise? The ? button explains it.', 'pr-plan-hint']);
           box.replaceChildren(...lines.map(([text, cls]) => Object.assign(document.createElement('p'), { textContent: text, className: cls })));
-          box.hidden = !lines.length;
+          // 4.99.21: a passage goes round until it's clean: Again, Slower, That was clean
+          if (step && step.passage) {
+            const row = document.createElement('div'); row.className = 'pr-passage-actions';
+            const button = (text, title, fn, cls = '') => { const b = Object.assign(document.createElement('button'), { type: 'button', textContent: text, title, className: cls }); b.addEventListener('click', fn); return b; };
+            row.append(
+              button('↺ Again', 'From the top of the passage', () => { pr.userStopped = true; if (player?.playing) { pr.stopping = true; player.stop(); } prStart({ fromBar: 0 }); }),
+              button('Slower', '5 bpm slower', () => $p('prSlower').click()),
+              button('✓ That was clean', 'It went cleanly: mark it, then go on (Next step) or a little faster', () => {
+                if (!pr.cleanReady) { say.textContent = 'Play it right through once, then mark it clean.'; return; }
+                prMarkClean();
+                say.textContent = 'Clean! Go on with Next step, or try it a little faster (+).';
+              }, 'primary'));
+            const say = Object.assign(document.createElement('span'), { className: 'pr-passage-say', role: 'status' });
+            row.appendChild(say);
+            if (!lines.length) box.replaceChildren();
+            box.appendChild(row);
+            box.hidden = false;
+          }
         }
         function prRoutineTick() {
           const r = pr.routine;
@@ -9989,6 +10021,10 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               ? `Step ${r.step + 1} of ${r.routine.steps.length}${step.kind ? ` · ${step.kind}` : ''} · ${when}`
               : `${r.routine.name} · ${r.step + 1} of ${r.routine.steps.length}: ${prExerciseFor(PL.EXERCISES.find((x) => x.id === step.id)).title} · ${when}`;
           // 4.88: time's up: finish the round you're in (up to half a minute more), then go on
+          if (step.untilClean && left <= 0) {   // 4.99.21: a passage: the time is a guide; you say when it's clean
+            $p('prRoutineText').textContent = `Step ${r.step + 1} of ${r.routine.steps.length} · time's up: Next step when it's clean`;
+            return;
+          }
           if (r.started && left <= 0 && pr.mode !== 'oneminute') {
             if (player?.playing && pr.schedule && over > -30 && !r.finishRound) r.finishRound = true;
             else if (!player?.playing || over <= -30) prRoutineNext();
@@ -10271,7 +10307,33 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
         // ── Exercises: what the controls describe ──
         // Chord trainers: { kind: 'chords', barList: [{ chords, pattern, label?, level? }], beats, … }
         // Note trainers:  { kind: 'notes', notes, names, tuning, beats: 4, key, tip }
+        // 4.99.21: a song's passage (a song plan's step: Play the Chorus, Play the chords in order):
+        // the song's own lines, played as the song plays them (its bars, strum and timing)
+        function prPassageSchedule(P, { countIn = false } = {}) {
+          let ir = window.ukemusic.parseSong(P.text, (P.parse && P.parse.options) || {});
+          if (P.shift) ir = window.ukemusic.transposeIR(ir, P.shift, (P.parse && P.parse.transpose) || {});
+          const schedule = window.ukemusic.buildSchedule(ir, { library: prLibrary(), instrument: prInstrument(), tempo: prTempo(), countIn, startLine: P.from, endLine: P.to, swing: state.config?.playback?.swing || 'auto' });
+          return { ir, schedule };
+        }
+        function prPassageExercise() {
+          const P = pr.passage;
+          const { schedule } = prPassageSchedule(P);
+          const beats = schedule.beatsPerBar || schedule.bars[0]?.beats || 4;
+          const barLen = (60 / schedule.tempo) * beats;
+          const n = Math.max(1, Math.round((schedule.duration - schedule.countInDuration) / barLen));
+          const barList = [];
+          for (let k = 0; k < n; k += 1) {
+            const at = schedule.countInDuration + k * barLen + 1e-6;
+            let slot = schedule.bars[0];
+            for (const b of schedule.bars) if (b.time <= at) slot = b;
+            barList.push({ chords: [slot ? slot.chord : ''], pattern: slot ? slot.pattern : 'D', line: slot ? slot.line : 0 });
+          }
+          const words = {};
+          String(P.text).split(/\r?\n/).forEach((l, i) => { words[i + 1] = l.replace(/\[[^\]]*\]/g, '').replace(/\{[^}]*\}/g, '').replace(/\s+/g, ' ').trim(); });
+          return { kind: 'chords', pattern: barList[0].pattern, beats, barList, passage: { ...P, words }, endless: false };
+        }
         function prExercise() {
+          if (pr.passage && pr.mode === 'strum') return prPassageExercise();
           const count = Number($p('prBars').value);
           const endless = count === 0;
           const mode = pr.mode;
@@ -10923,6 +10985,10 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               click: $p('prClick').checked,
               countIn
             });
+          } else if (ex.passage) {
+            pr.from = 0;   // a passage plays from its top
+            schedule = prPassageSchedule(ex.passage, { countIn }).schedule;
+            if ($p('prClick').checked) schedule = { ...schedule, events: T.addClicks(schedule) };
           } else {
             pr.from = fromBar;
             const text = PL.planText(ex.barList.slice(fromBar));
@@ -10947,6 +11013,7 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
             pr.cleanReady = false; $p('prClean').disabled = true;
             const steps = ex.kind === 'notes' ? ex.notes.filter((n) => n.round === ex.notes[0]?.round).length : 16;
             pr.cleanAfter = schedule.countInDuration + (ex.kind === 'notes' ? steps * schedule.step : 16 * 60 / prTempo());
+            if (ex.passage) pr.cleanAfter = Math.max(0, schedule.duration - (60 / schedule.tempo) * (ex.beats || 4));   // the whole passage, once (into its last bar)
           }
           pr.demoPlaying = demo;
           prUpdateMobile();
@@ -10957,11 +11024,14 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               if (pr.stopping) return;            // restarting at a new tempo
               cancelAnimationFrame(pr.raf);
               if (pr.routine?.finishRound && !pr.userStopped && !demo) { prRoutineNext(); return; }
+              const through = Boolean(ex.passage && !pr.userStopped && !demo);   // 4.99.21: once right through
               if ((ex.endless || pr.routine) && !pr.userStopped && !demo) {
                 if (ex.kind === 'chords') pr.barBase += ex.barList.length - fromBar;
                 prStart({ fromBar: 0, countIn: false });
+                if (through) { pr.cleanReady = true; $p('prClean').disabled = false; }   // (after Start, which clears it)
                 return;
               }
+              if (through) { pr.cleanReady = true; $p('prClean').disabled = false; }
               prEnded();
             }
           });
@@ -11155,6 +11225,11 @@ The [F]curly brackets at the top set the [C]strum: D down, U up.
               }
               if (pr.mode === 'change') where += ` · changes: ${pr.changesBase + changes}`;
               if (planBar.label && pr.mode === 'strum') where += ` · ${planBar.label}`;
+              if (ex.passage) {   // 4.99.21: the words, the bar, and which time round
+                const n = ex.barList.length;
+                const round = Math.floor(absolute / n) + 1;
+                where = `${slot.line && ex.passage.words[slot.line] ? `${ex.passage.words[slot.line]} · ` : ''}bar ${(absolute % n) + 1} of ${n}${round > 1 ? ` · time ${round}` : ''}`;
+              }
               if (planBar.level && !planBar.step) where += ` · ${planBar.level === 'loud' ? 'LOUD' : 'soft'}`;
               pr.lastWhere = where;
               $p('prWhere').textContent = where;
@@ -12186,6 +12261,9 @@ function showTab(tab) {
           return window.ukemusic.songPracticePlan({
             planText: planText === undefined ? await loadPlanText() : planText,
             shift: transpose - L.capo,   // the plan's own chords are in the song's key
+            // 4.99.21: the song itself, for steps that play a passage of it as it plays
+            text: getEditorValue(),
+            parse: { options: getParserOptions(), transpose: transposeOptions() },
             trouble,
             song: state.song ? { folder: state.song.folder, transpose: state.transpose } : null,
             title: state.song?.title || state.song?.folder || 'this song',

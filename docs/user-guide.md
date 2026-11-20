@@ -242,13 +242,15 @@ Then: the song from memory
 | **Hard changes 2** | the song's two hardest changes (any number up to 6) |
 | **Change G7 to C** | that change |
 | **Strum** | the song's strum, in steps; **Strum D-DU-UDU**: that one |
-| **Chords in order** | the song's chords, in order, with its strum |
-| **Section Chorus** | that section's chords, in order |
+| **Chords in order** | the song itself from its first chord (about 16 changes), as it plays: its bars, strum and timing |
+| **Section Chorus** | that section, as the song plays it, with its words |
 | **Exercise:** *name* | any Free Practice exercise, by its name (**+ Add step** lists them) |
 
 **Shapes**, **Hard changes**, **Strum** and **Chords in order** on their own follow the song: change its chords and they change too. Chords you write stay as written, in the song's own key; play the song in another key or with a capo and they move with it. A chord the song no longer has, or a line ukemusic can't read, is marked under the text. **+ Add step** puts in a ready-made line, filled from the song: its own chords, each of its hardest changes, its strum and its sections, as well as every Free Practice exercise.
 
 The **learn sheet** prints your plan, with its notes and how long it takes, in place of the usual steps for learning a song: a handout for the group.
+
+**Playing a passage.** **Section** and **Chords in order** steps play that part of the song as the song does (a chord held for two bars stays held; two changes in a bar stay two), with its words, round and round. **↺ Again** starts it from the top, **Slower** takes 5 bpm off, and **✓ That was clean** marks a clean time round. The step's minutes are a guide: when they're up it doesn't move on by itself; press **Next step** when it's clean.
 
 **Running a plan.** **Practise this song** first shows the plan: how many steps, about how long, and each step (choose one to start there), with **Edit plan**. While it runs, the step is the heading (**Hard change: Am → G7**), and the line under it says the step, its time left and **Step back**, **Next step** and **End plan**. The help slides don't open in the middle of a plan; **?** has them. At the end: **Play it from memory**, **Play it with the chords**, or **Do one step again**, which comes back to the end afterwards.
 

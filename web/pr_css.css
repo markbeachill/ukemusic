@@ -512,5 +512,11 @@
 .pr-plan-preview-actions button { min-height: 40px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text); font: inherit; font-weight: 600; cursor: pointer; }
 .pr-plan-preview-actions .primary { background: var(--accent); color: #fff; border-color: var(--accent); }
 .pr-plan-hint { font-size: 14px; color: var(--muted); }
+/* 4.99.21: a song passage: Again, Slower, That was clean */
+.pr-passage-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.pr-plan-note p + .pr-passage-actions, .pr-plan-note .pr-passage-actions:first-child { margin-top: 6px; }
+.pr-passage-actions button { min-height: 36px; padding: 0 14px; border-radius: 9px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text); font: inherit; font-weight: 600; cursor: pointer; }
+.pr-passage-actions .primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.pr-passage-say { align-self: center; font-size: 14px; font-weight: 600; }
 .pr-well-done-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; font-weight: 400; }
 .pr-well-done-actions button.primary { background: #15803d; border-color: #15803d; color: #fff; font-weight: 700; }

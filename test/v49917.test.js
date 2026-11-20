@@ -52,7 +52,7 @@ t('lines it can\'t read are named, with their line', () => {
 t('the plan ukemusic makes is its own text, and follows the song', () => {
   const plan = SP.songPlan({ title: 'Test', ir, changes, tempo: 100 });
   assert.strictEqual(plan.own, false);
-  assert.deepStrictEqual(plan.steps.map((s) => s.label), ['Practise the chord shapes', 'Hard change: G7 → C', 'Hard change: C → F', 'Learn the strum', 'Strum the chord sequence']);
+  assert.deepStrictEqual(plan.steps.map((s) => s.label), ['Practise the chord shapes', 'Hard change: G7 → C', 'Hard change: C → F', 'Learn the strum', 'Play the chords in order']);
   assert.deepStrictEqual(plan.steps.map((s) => s.settings.prTempo), [60, 60, 60, 70, 85]);
   assert.strictEqual(plan.steps[3].strum, 'D>DD');
   // a chord changed in the song: the following words follow it

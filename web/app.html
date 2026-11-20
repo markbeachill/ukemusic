@@ -3255,6 +3255,9 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     return U.songPracticePlan({
       planText: planText === undefined ? (view.song?.practicePlan || '') : planText,
       shift: L.p.transpose - L.p.capo,   // the plan's own chords are in the song's key
+      // 4.99.21: the song itself, for steps that play a passage of it as it plays
+      text: played(view.song.text),
+      parse: { options: parserOptions, transpose: { spelling: 'key', key: songKey(view.song), instrument: L.p.instrument } },
       title: view.song?.title || 'this song',
       ir: L.ir,
       changes: U.learn.songChanges(L.ir, L.lib, { tuningName: L.inst.tuningName }),

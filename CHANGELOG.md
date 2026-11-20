@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.99.21 · Plan steps play the song itself, until it's clean
+
+- **A section, as the song plays it:** a plan's **Section Chorus** and **Chords in order** steps now play that part of the song itself: its own bars, strum and timing (a chord held for two bars stays held; two changes in a bar stay two), with its words, round and round. They used to turn it into a list of chords, a bar each.
+- **Again, Slower, That was clean:** under the passage, **↺ Again** starts it from the top, **Slower** takes 5 bpm off, and **✓ That was clean** marks a clean time round (once it's been right through).
+- **The time is a guide:** when a passage step's minutes are up it doesn't move on by itself; **Next step** when it's clean.
+- In the desktop app and the web player. Plans kept from before (without the song's text) work as they did.
+
 ## v4.99.20 · Practise this song: a preview, clearer steps, and the right trouble spot
 
 - **Your trouble spot's own change:** a trouble spot now practises the change at the line you marked (an F marked in the chorus after G is G → F, though the verse comes to F from C).
