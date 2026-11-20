@@ -255,6 +255,41 @@ function checkPlan(text, context) {
   return [...parsed.problems, ...r.warnings].sort((a, b) => a.line - b.line);
 }
 
+/**
+ * 4.99.18: the lines + Add step offers, filled from the song (in its own key): its chords, its
+ * hardest changes one by one, its strum, its sections; then every Free Practice exercise.
+ *   -> [{ group, label, line }]
+ */
+function stepChoices({ ir = [], changes = [], strum = '' } = {}) {
+  const out = [];
+  const add = (group, label, line) => out.push({ group, label, line });
+  const chords = chordSet(ir);
+  const G = 'From the song';
+  add(G, 'Shapes (all the song\'s)', '2 min  Shapes');
+  if (chords.length > 2) add(G, `Shapes: ${chords.slice(0, 3).join(' ')}`, `2 min  Shapes ${chords.slice(0, 3).join(' ')}`);
+  add(G, 'Your trouble spots', '2 min  Trouble spots');
+  add(G, 'Hard changes (the two hardest)', '2 min  Hard changes 2');
+  for (const c of (changes || []).filter((x) => x && x.from && x.to && !x.missing && x.from !== x.to).slice(0, 4)) add(G, `Change ${c.from} to ${c.to}`, `2 min  Change ${c.from} to ${c.to} at 60`);
+  add(G, 'The strum (the song\'s)', '3 min  Strum at 70%');
+  const own = songStrum(ir) || strum;
+  if (own) add(G, `Strum ${own}`, `3 min  Strum ${own} at 70%`);
+  add(G, 'The chords in order', '3 min  Chords in order at 85%');
+  const sections = [];
+  for (const n of ir || []) {
+    if (n.type !== 'structure') continue;
+    const name = String(n.content || '').replace(/[:：]\s*$/, '').trim();
+    if (name && !sections.includes(name)) sections.push(name);
+  }
+  for (const name of sections.slice(0, 8)) add(G, `Section: ${name}`, `3 min  Section ${name} at 85%`);
+  add('Words', 'Words at the start', 'Before you start: …');
+  add('Words', 'The ending (Then:)', 'Then: the song from memory');
+  const catalog = require('./practice-catalog');
+  for (const c of catalog.CATEGORIES.filter((x) => x.id !== 'routine')) {
+    for (const e of catalog.EXERCISES.filter((x) => x.cat === c.id)) add(`Free Practice: ${c.name}`, e.title, `3 min  Exercise: ${e.title.replace(/\s*\(.*?\)\s*/g, ' ').trim()}`);
+  }
+  return out;
+}
+
 function songPlan({ title = 'this song', ir = [], changes = [], strum = '', tempo = 90, trouble = [], song = null, planText = '', shift = 0 } = {}) {
   // 4.99.17: the song's own plan (learn/practice-plan.txt), or the one ukemusic makes (AUTO_TEXT)
   const plan = resolvePlan(parsePlan(planText || AUTO_TEXT), { title, ir, changes, strum, tempo, trouble, song, shift });
@@ -262,4 +297,4 @@ function songPlan({ title = 'this song', ir = [], changes = [], strum = '', temp
   return plan;
 }
 
-module.exports = { songPlan, parsePlan, resolvePlan, checkPlan, findExercise, sectionSequence, AUTO_TEXT, chordSequence, chordSet, songStrum, troubleChanges, MAX_SHAPES, MAX_BARS };
+module.exports = { songPlan, stepChoices, parsePlan, resolvePlan, checkPlan, findExercise, sectionSequence, AUTO_TEXT, chordSequence, chordSet, songStrum, troubleChanges, MAX_SHAPES, MAX_BARS };

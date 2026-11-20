@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.99.18 · + Add step from the song; your plan on the learn sheet
+
+- **+ Add step** (the Practice tab; web: ✎ Edit → Practice) now offers the song itself: its first chords as a Shapes line, each of its hardest changes (Change Am to G7…), its strum, and each of its sections, written in the song's own key; as well as every Free Practice exercise.
+- **The learn sheet prints your plan:** a song with its own plan has it on the learn sheet, under **Practising it**, in place of the usual steps: the opening words, each step with its minutes, tempo and note, the ending, and how long it takes. A handout for the group.
+
 ## v4.99.17 · A song's own practice plan, to change and keep with the song
 
 - **A Practice tab on a song** (all features; in the web player, **✎ Edit → Practice**): the plan **Learn → Practise this song** runs, as steps and as text to change. Until you change it, ukemusic makes it from the song each time. Change a line, or press **Keep this plan**, and it's yours: kept with the song (learn/practice-plan.txt in its folder) and never rewritten unless you press **Start again from the song**.

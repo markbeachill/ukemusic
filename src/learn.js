@@ -814,6 +814,12 @@ table.map .n{color:#5b6662;font-size:12px;white-space:nowrap}
 .trouble{margin:0 0 6px;padding-left:18px}
 .trouble li{margin:2px 0}
 .trouble b{color:#b22222}
+.ptime{font-weight:400;font-size:13px;color:#5b6662}
+.pintro{font-style:italic;margin:4px 0}
+.steps.plan li{margin:4px 0}
+.pmin{font-size:12.5px;color:#5b6662}
+.pnote{font-size:13px;color:#3d4743}
+.pafter{margin:4px 0}
 @media print{body{padding:0}}
 `;
 
@@ -965,8 +971,17 @@ function wordsText(each) {
   return { same: ', the same words each time', mostly: ', mostly the same words', some: ', new words, with some coming back', new: ', new words each time' }[each] || '';
 }
 
+/** 4.99.18: the song's own practice plan, on the learn sheet in place of the usual steps (a club
+ *  leader's plan, printed for the group): its opening words, each step with its minutes, tempo and
+ *  note, its ending, and how long it takes */
+function planHtml(plan) {
+  const total = plan.steps.reduce((n, s) => n + (Number(s.minutes) || 0), 0);
+  const steps = plan.steps.map((s) => `<li><b>${esc(s.label || s.id)}</b> <span class="pmin">${esc(s.minutes)} min${s.settings && s.settings.prTempo ? ` at ${esc(s.settings.prTempo)} bpm` : ''}</span>${s.note ? `<br><span class="pnote">${esc(s.note)}</span>` : ''}</li>`).join('');
+  return `<h2>Practising it <span class="ptime">(about ${total} minutes: Learn → Practise this song)</span></h2>${plan.intro ? `<p class="pintro">${esc(plan.intro)}</p>` : ''}<ol class="steps plan">${steps}</ol>${plan.after ? `<p class="pafter">Then: ${esc(plan.after)}</p>` : ''}<p class="pafter">Come back to it in a day or two, and again in a week.</p>`;
+}
+
 function learnSheetHtml(info) {
-  const { title = 'Song', sub = '', facts = [], map = { route: [], parts: [] }, shapes = [], changes = [], patterns = [], made = '', circle = '', circleNotes: cNotes = [], trouble = [], summary = [], picking = [] } = info || {};
+  const { title = 'Song', sub = '', facts = [], map = { route: [], parts: [] }, shapes = [], changes = [], patterns = [], made = '', circle = '', circleNotes: cNotes = [], trouble = [], summary = [], picking = [], plan = null } = info || {};
   // 4.40.3: each step with its first words, as Chord patterns shows it
   const route = map.route.map((r, i) => `${i ? '<span class="arrow">→</span>' : ''}<span class="step"><b>${esc(r.letter)}</b> ${esc(r.name)}${r.times > 1 ? ` ×${r.times}` : ''}${r.words ? `<small>${esc(r.words)}</small>` : ''}</span>`).join('');
   const CIRCLED = '①②③④⑤⑥⑦⑧⑨';
@@ -1038,12 +1053,12 @@ ${changesHtml ? `<h2>Changes to practise</h2><ol class="changes">${changesHtml}<
 ${patternsHtml && !marked ? `<h2>Patterns in it</h2><ul class="changes">${patternsHtml}</ul>` : ''}
 ${pickingHtml}
 ${circleHtml}
-<h2>Learning it</h2><ol class="steps">
+${plan && plan.own && plan.steps && plan.steps.length ? planHtml(plan) : `<h2>Learning it</h2><ol class="steps">
 <li>Practise the hardest changes above until they're smooth (Learn → Changes).</li>
 <li>Play along with the chords, then <b>from memory</b>: the chords hidden after the first time each part comes, then as numbers only, then none (Learn → Play from memory).</li>
 <li>Play it in another key, thinking in numbers. If you can, you know the song, not just the shapes.</li>
 <li>Come back to it in a day or two, and again in a week.</li>
-</ol>
+</ol>`}
 <h2>Trouble spots</h2>${troubleHtml ? `<ol class="trouble">${troubleHtml}</ol>` : ''}<div class="notes"></div>
 <p class="foot">Made with ukemusic${made ? ` on ${esc(made)}` : ''}.</p>
 </body></html>`;

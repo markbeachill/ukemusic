@@ -103,4 +103,29 @@ t('both apps: a Practice tab (all features), Practise this song runs the song\'s
   assert.deepStrictEqual([row.app, row.level], ['both', 'all']);
 });
 
+t('4.99.18: + Add step offers the song\'s own chords, changes, strum and sections', () => {
+  const list = SP.stepChoices({ ir, changes });
+  const lines = list.map((c) => c.line);
+  assert.ok(lines.includes('2 min  Shapes C F G7'));
+  assert.ok(lines.includes('2 min  Change G7 to C at 60'));
+  assert.ok(lines.includes('3 min  Strum D>DD at 70%'));
+  assert.ok(lines.includes('3 min  Section Chorus at 85%'));
+  assert.ok(lines.includes('3 min  Exercise: Spider walk'));
+  for (const c of list.filter((x) => x.group !== 'Words')) assert.deepStrictEqual(SP.parsePlan(c.line).problems, [], c.line);
+  assert.ok(SP.stepChoices({}).length > 40, 'with no song: the exercises still');
+});
+
+t('4.99.18: the learn sheet prints the song\'s own plan in place of the usual steps', () => {
+  const L = require('../src/learn');
+  const own = SP.songPlan({ title: 'T', ir, changes, planText: 'Sing as you play.\n2 min Change G7 to C ; the one we rush\nThen: the song from memory' });
+  const html = L.learnSheetHtml({ title: 'T', plan: own });
+  assert.match(html, /<h2>Practising it <span class="ptime">\(about 2 minutes/);
+  assert.match(html, /<p class="pintro">Sing as you play\.<\/p>/);
+  assert.match(html, /<b>Change: G7 to C<\/b> <span class="pmin">2 min at 60 bpm<\/span><br><span class="pnote">the one we rush<\/span>/);
+  assert.match(html, /Then: The song from memory\./);
+  assert.doesNotMatch(html, /<h2>Learning it<\/h2>/);
+  // ukemusic's own plan: the usual steps
+  assert.match(L.learnSheetHtml({ title: 'T', plan: SP.songPlan({ ir, changes }) }), /<h2>Learning it<\/h2>/);
+});
+
 console.log(`v4.99.17: ${n} tests passed`);

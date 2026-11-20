@@ -246,7 +246,9 @@ Then: the song from memory
 | **Section Chorus** | that section's chords, in order |
 | **Exercise:** *name* | any Free Practice exercise, by its name (**+ Add step** lists them) |
 
-**Shapes**, **Hard changes**, **Strum** and **Chords in order** on their own follow the song: change its chords and they change too. Chords you write stay as written, in the song's own key; play the song in another key or with a capo and they move with it. A chord the song no longer has, or a line ukemusic can't read, is marked under the text. **+ Add step** puts in a ready-made line.
+**Shapes**, **Hard changes**, **Strum** and **Chords in order** on their own follow the song: change its chords and they change too. Chords you write stay as written, in the song's own key; play the song in another key or with a capo and they move with it. A chord the song no longer has, or a line ukemusic can't read, is marked under the text. **+ Add step** puts in a ready-made line, filled from the song: its own chords, each of its hardest changes, its strum and its sections, as well as every Free Practice exercise.
+
+The **learn sheet** prints your plan, with its notes and how long it takes, in place of the usual steps for learning a song: a handout for the group.
 
 How Learn works things out, and how far to trust it: [How Learn works](explanation/how-learn-works.md).
 

@@ -12083,15 +12083,15 @@ function showTab(tab) {
           planCache = { folder, text };
           return text;
         }
-        async function songPlanFor(planText) {
-          const L = learnSong();
+        async function songPlanFor(planText, transpose = state.transpose) {
+          const L = learnSong(transpose);
           const config = L.config;
           // 4.99.9: your trouble spots come first, and the plan ends back at this song, in this key
           let trouble = [];
           try { trouble = window.ukemusic.learn.placeTrouble(await learnLoadTrouble(), getEditorValue()); } catch (_e) { trouble = []; }
           return window.ukemusic.songPracticePlan({
             planText: planText === undefined ? await loadPlanText() : planText,
-            shift: state.transpose - L.capo,   // the plan's own chords are in the song's key
+            shift: transpose - L.capo,   // the plan's own chords are in the song's key
             trouble,
             song: state.song ? { folder: state.song.folder, transpose: state.transpose } : null,
             title: state.song?.title || state.song?.folder || 'this song',
@@ -12119,6 +12119,7 @@ function showTab(tab) {
           const saved = await loadPlanText();
           const own = Boolean(saved.trim());
           if (document.activeElement !== planText) planText.value = own ? saved : window.ukemusic.songPlanAutoText;
+          fillPlanAdd();
           drawPlan();
         }
         async function drawPlan() {
@@ -12180,26 +12181,24 @@ function showTab(tab) {
           drawPlan();
         });
         document.getElementById('planPractise').addEventListener('click', () => practiseSongPlan(planText.value));
-        // + Add step: a ready-made line at the cursor
-        (function fillPlanAdd() {
+        // + Add step: a ready-made line at the cursor, filled from the song (4.99.18: its own
+        // chords, changes, strum and sections, in its own key; src/song-practice.js stepChoices)
+        function fillPlanAdd() {
           const add = document.getElementById('planAdd');
-          const group = (label, lines) => {
-            const g = document.createElement('optgroup'); g.label = label;
-            for (const [text, line] of lines) g.appendChild(new Option(text, line));
-            add.appendChild(g);
-          };
-          group('From the song', [
-            ['Shapes (the song\'s)', '2 min  Shapes'], ['Shapes you choose', '2 min  Shapes C F G7'],
-            ['Your trouble spots', '2 min  Trouble spots'], ['Hard changes', '2 min  Hard changes 2'],
-            ['A change you choose', '2 min  Change G7 to C at 60'],
-            ['The strum (the song\'s)', '3 min  Strum at 70%'], ['A strum you choose', '3 min  Strum D-DU-UDU at 70%'],
-            ['The chords in order', '3 min  Chords in order at 85%'], ['A section\'s chords', '3 min  Section Chorus at 85%'],
-            ['A note at the start', 'Before you start: …'], ['The ending', 'Then: the song from memory']
-          ]);
-          for (const c of window.ukemusic.practiceLib.CATEGORIES.filter((x) => x.id !== 'routine')) {
-            const list = window.ukemusic.practiceLib.EXERCISES.filter((e) => e.cat === c.id);
-            if (list.length) group(`Free Practice: ${c.name}`, list.map((e) => [e.title, `3 min  Exercise: ${e.title.replace(/\s*\(.*?\)\s*/g, ' ').trim()}`]));
+          let choices = [];
+          try {
+            const L = learnSong(songCapo(effectiveConfig()));   // the song as written (no shift): the plan's chords are in its own key
+            choices = window.ukemusic.songPlanStepChoices({ ir: L.ir, changes: window.ukemusic.learn.songChanges(L.ir, L.library, { tuningName: L.instrument.tuningName }) });
+          } catch (_e) { choices = window.ukemusic.songPlanStepChoices({}); }
+          add.replaceChildren(new Option('+ Add step', ''));
+          const groups = new Map();
+          for (const c of choices) {
+            if (!groups.has(c.group)) { const g = document.createElement('optgroup'); g.label = c.group; groups.set(c.group, g); add.appendChild(g); }
+            groups.get(c.group).appendChild(new Option(c.label, c.line));
           }
+        }
+        (function wirePlanAdd() {
+          const add = document.getElementById('planAdd');
           add.addEventListener('change', () => {
             const line = add.value;
             add.value = '';
@@ -12458,6 +12457,7 @@ function showTab(tab) {
             picking: learn.pickingSummary(L.ir, L.library, { instrument: L.instrument.id }),
             circleNotes: learn.circleNotes(L.ir, key),
             trouble: learn.placeTrouble(await learnLoadTrouble(), getEditorValue()).filter((t) => !t.gone).sort((a, b) => a.line - b.line),
+            plan: await songPlanFor(undefined, transpose).catch(() => null),   // 4.99.18: the song's own practice plan, when it has one
             made: new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
           });
           const keyPart = transpose && key ? ` in ${key.name}` : '';
