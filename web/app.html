@@ -3325,6 +3325,20 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     }
   }
   showBuiltIn = local.get('showBuiltIn', true) !== false;
+  // The website's links straight in: app/#practice opens Free Practice; 4.99.10: app/#song=amazing-grace
+  // opens a built-in song, ready to play (what you play is asked back in the library, after the song)
+  let linkOpened = false;
+  function openFromLink() {
+    if (linkOpened) return;
+    const h = location.hash;
+    if (/^#practice$/i.test(h)) { linkOpened = true; setTimeout(() => { const b = $('libPractice'); if (b) b.click(); }, 0); return; }
+    const m = h.match(/^#song=([a-z0-9-]{1,80})$/i);
+    if (m && getSong(m[1].toLowerCase())) {
+      linkOpened = true;
+      try { history.replaceState(null, '', location.pathname + location.search); } catch (_e) { /* fine */ }
+      openSong(m[1].toLowerCase());
+    }
+  }
 
   // ── Start: connect to the store, load the songs (and practice progress) ──
   const capability = window.claude && typeof window.claude.use === 'function' ? window.claude.use('db') : Promise.resolve(null);
@@ -3361,7 +3375,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
       first = false;
       if (!view.song) renderLibrary();
     }, () => { setSync('Not syncing', true); });
-    loadBuiltins().then(() => { showLibraryWords(); if (!view.song) renderLibrary(); }); // 4.69
+    loadBuiltins().then(() => { showLibraryWords(); if (!view.song) renderLibrary(); openFromLink(); }); // 4.69
   } else {
     store.mode = 'local';
     if (await idb.open()) {
@@ -3379,8 +3393,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
     await loadBuiltins();
     showLibraryWords();
     renderLibrary();
-    // app/#practice opens Free Practice (the website's "Start free practice" links here)
-    if (/^#practice$/i.test(location.hash)) setTimeout(() => { const b = $('libPractice'); if (b) b.click(); }, 0);
+    openFromLink();
     // 4.47: Dropbox: back from signing in, and a sync to start
     showCloudMode();
     await cloudReturn();

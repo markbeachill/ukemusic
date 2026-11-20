@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.99.10 · Straight into a song from the home page
+
+- **Website:** the home page and the Features page said the desktop app adds setlists, Stage copies and learn sheets, which the web player has too. The sentence is now written from the features list itself, so it can't drift: looping a part, songs kept in several keys, songbook PDFs, exporting every song, the Session screen on a second screen and your own chord shapes.
+- **Website:** "Or straight in: ▶ Play Amazing Grace · Start Free Practice" under the home page's buttons. The song opens in the web player, ready to play; what you play is asked afterwards, back in the song list.
+- **Web player:** `app/#song=<song>` opens one of the built-in songs.
+
 ## v4.99.9 · Practise a song ends at the song: play it from memory; your trouble spots come first
 
 - **Practise this song** ends at the song: **Play it from memory** takes you back to it, in the key you practised it in, and starts Play from memory (chords the first time each part comes). **Go through a step again** picks any step to do once more.

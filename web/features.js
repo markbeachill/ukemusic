@@ -6,6 +6,7 @@
 // A cell is true (✓), false (—), or text: a tick with a note ("Print"; "On this device").
 // Each section is also a card on the home page (card: its heading and one line; tone: its colour).
 // home: true marks the main rows (kept for the README and anyone who wants the short list).
+// adds: what the desktop app adds, in a few words, for the sentence that compares the two (4.99.10).
 
 const SECTIONS = [
   {
@@ -32,8 +33,8 @@ const SECTIONS = [
       { f: 'The tune, shown as notes and played', web: true, desktop: true },
       { f: 'Real recordings: a ukulele, and a nylon-string guitar for baritone and guitar', web: true, desktop: true },
       { f: 'A strum library of 27 strums, with how to play each; build your own and keep it in My strums', web: true, desktop: true }, // 4.99.4
-      { f: 'Loop a part', web: false, desktop: true },
-      { f: 'Keep a song in several keys', web: false, desktop: true }
+      { f: 'Loop a part', web: false, desktop: true, adds: 'looping a part' },
+      { f: 'Keep a song in several keys', web: false, desktop: true, adds: 'a song kept in several keys' }
     ]
   },
   {
@@ -66,9 +67,9 @@ const SECTIONS = [
       { f: 'Pick sheets: tab for fingerpicking', web: true, desktop: true },
       { f: 'Easy-to-read text for low vision (Atkinson Hyperlegible)', web: true, desktop: true },
       { f: 'ChordPro, web page and lyrics files', web: true, desktop: 'And Markdown' },
-      { f: 'Songbook PDFs of a setlist, with a cover and contents', web: false, desktop: true },
+      { f: 'Songbook PDFs of a setlist, with a cover and contents', web: false, desktop: true, adds: 'songbook PDFs of a setlist' },
       { f: 'Your club\'s logo and an "Updated" date on sheets', web: true, desktop: true }, // 4.76
-      { f: 'Export every song at once', web: false, desktop: true }
+      { f: 'Export every song at once', web: false, desktop: true, adds: 'every song exported at once' }
     ]
   },
   // 4.92: reading from a screen on your own stand is its own section, apart from printing (paper)
@@ -87,7 +88,7 @@ const SECTIONS = [
     tone: 'coral', icon: 'group', card: { h: 'Playing together', p: "The Session screen puts the song on the TV for the whole room, and goes through the night's setlist." },
     rows: [
       { f: 'Setlists: the night\'s songs in order, for the Music stand, the Session screen or a songbook PDF', web: true, desktop: true },
-      { f: 'The Session screen: big words and chords for a group', web: 'On this device', desktop: 'On a second screen or TV' },
+      { f: 'The Session screen: big words and chords for a group', web: 'On this device', desktop: 'On a second screen or TV', adds: 'the Session screen on a second screen or TV' },
       { f: 'Songs from the desktop to a phone or tablet, in one file', web: 'Takes it in', desktop: true }
     ]
   },
@@ -98,7 +99,7 @@ const SECTIONS = [
       { f: 'Ukulele (high or low G), baritone ukulele and guitar', web: true, desktop: true, home: true },
       { f: 'Left-handed chord diagrams', web: true, desktop: true, home: true },
       { f: 'Your ukulele shapes on a baritone (or baritone shapes on a ukulele): the names you know, and what each sounds as', web: true, desktop: true }, // 4.99.0
-      { f: 'Your own chord shape for a song', web: false, desktop: true }
+      { f: 'Your own chord shape for a song', web: false, desktop: true, adds: 'your own chord shapes' }
     ]
   },
   {
@@ -133,6 +134,13 @@ const ICONS = {
   heart: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>'
 };
 const icon = (name) => `<svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[name] || ''}</svg>`;
+
+/** 4.99.10: what the desktop app adds, as one sentence, from the rows (so it can't drift from the table) */
+function desktopAdds() {
+  const bits = SECTIONS.flatMap((s) => s.rows.filter((r) => r.adds).map((r) => r.adds));
+  const list = bits.length > 1 ? `${bits.slice(0, -1).join(', ')} and ${bits[bits.length - 1]}` : bits.join('');
+  return `The desktop app adds ${list}.`;
+}
 
 function cellHtml(value) {
   if (value === true) return '<td class="yes"><span class="mark" aria-label="Yes">✓</span></td>';
@@ -210,4 +218,4 @@ table.features tr.section a:hover { text-decoration: underline; }
 @media (max-width: 600px) { table.features { font-size: 14px; } table.features th, table.features td { padding: 6px 4px; } table.features td { width: 25%; } }
 `;
 
-module.exports = { SECTIONS, WHAT_IT_ISNT, tableHtml, cardsHtml, tableMarkdown, featureList, CSS, ICONS };
+module.exports = { SECTIONS, WHAT_IT_ISNT, tableHtml, cardsHtml, tableMarkdown, featureList, desktopAdds, CSS, ICONS };

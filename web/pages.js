@@ -646,7 +646,7 @@ const FEATURES_PAGE = {
   body: () => `
 <div class="page-hero"><div class="wrap">
   <h1>Features: the web player and the desktop app</h1>
-  <p class="lede">The web player runs on phones, tablets and any computer; the desktop app adds songbooks and every kind of printing. Both are free, work offline and need no account. Each heading links to more about it.</p>
+  <p class="lede">The web player runs on phones, tablets and any computer; runs on Windows, Mac and Linux. ${esc(FEATURES.desktopAdds())} Both are free, work offline and need no account. Each heading links to more about it.</p>
   <div class="cta"><a class="btn primary" href="app/">Try it in your browser</a><a class="btn" href="./#get">Download the desktop app</a></div>
 </div></div>
 <section><div class="wrap">
@@ -662,6 +662,8 @@ function withFeatures(text, kind) {
   // 4.67: the home page has a card for each section (the README keeps the whole table)
   const table = kind === 'readme' ? FEATURES.tableMarkdown(SITE_URL) : `      ${FEATURES.cardsHtml()}`;
   let out = text.replace(/(<!-- features:start[^>]*-->)[\s\S]*?(\n[ \t]*<!-- features:end -->)/, (_m, a, b) => `${a}\n${table}${b}`);
+  // 4.99.10: the sentence that says what the desktop app adds, from web/features.js
+  out = out.replace(/<!-- adds -->[\s\S]*?<!-- \/adds -->/g, `<!-- adds -->${FEATURES.desktopAdds()}<!-- /adds -->`);
   if (kind === 'home') {
     out = out.replace(/(\/\* features-css:start[^*]*\*\/)[\s\S]*?(\/\* features-css:end \*\/)/, (_m, a, b) => `${a}${FEATURES.CSS}${b}`);
     const list = (app) => JSON.stringify(FEATURES.featureList(app));

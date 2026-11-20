@@ -68,7 +68,7 @@ test('the web player has a title, description, canonical address and words witho
   assert.match(build, /<link rel="canonical" href="https:\/\/markbeachill\.github\.io\/ukemusic\/app\/">/);
   assert.match(build, /<noscript>/);
   assert.match(build, /if \(!page\.includes\(noscript\)\) throw/);
-  assert.match(read('web/app.html'), /\^#practice\$\/i\.test\(location\.hash\)/);
+  assert.match(read('web/app.html'), /\^#practice\$\/i\.test\(h\)/);   // 4.99.10: in openFromLink()
 });
 
 test('the README and home page say what it is and link to Free Practice', () => {
