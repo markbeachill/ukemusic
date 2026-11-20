@@ -24,6 +24,7 @@ const strumBox = require('./strum-box');
 const renderDiagramSvg = require('./diagram-svg');
 const instrumentHelp = require('./instrument-help');   // 4.99.3
 const songPractice = require('./song-practice');   // 4.99.6
+const gigChecks = require('./gig-check');   // 4.99.12
 const guide = require('./guide');
 const about = require('./about');
 const training = require('./training');
@@ -378,6 +379,7 @@ contextBridge.exposeInMainWorld('ukemusic', {
   diagramSvg: (definition, options) => renderDiagramSvg(definition, options),
   instrumentHelpHtml: (options) => instrumentHelp.helpHtml(options),   // 4.99.3: playing a song on another instrument
   songPracticePlan: (options) => songPractice.songPlan(options),   // 4.99.6: Practise a song
+  gigCheck: (options) => gigChecks.gigCheck(options),   // 4.99.12: Setlists → Gig check
   instrument: (id) => instruments.instrument(id),
   blankTab: (instrument, bars, width) => tabTools.blankTab(instrument, bars, width),
   buildKaraoke: (irNodes, schedule, options) => karaoke.buildKaraoke(irNodes, schedule, options),

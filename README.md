@@ -92,6 +92,7 @@
 | A Bluetooth page-turner pedal, or the arrow keys | ✓ | ✓ |
 | **[Play together](https://markbeachill.github.io/ukemusic/perform.html)** | | |
 | Setlists: the night's songs in order, for the Music stand, the Session screen or a songbook PDF | ✓ | ✓ |
+| Gig check: a setlist's keys and capos, and what to look at before the gig | — | ✓ |
 | The Session screen: big words and chords for a group | ✓ On this device | ✓ On a second screen or TV |
 | Songs from the desktop to a phone or tablet, in one file | ✓ Takes it in | ✓ |
 | **[Your instrument](https://markbeachill.github.io/ukemusic/instruments.html)** | | |

@@ -1537,6 +1537,16 @@
       #pickWritePatternNote { display: block; margin-top: 4px; }
       .pick-help-dialog { width: min(680px, 94vw); max-height: calc(100vh - 32px); }
       .rib-strum-row { display: flex; gap: 8px; align-items: center; }   /* 4.99.8: Build a strum and what's written, on one row */
+      /* 4.99.12: Gig check */
+      .gig-check { max-height: 60vh; overflow: auto; }
+      .gig-check table { border-collapse: collapse; width: 100%; font-size: 14px; }
+      .gig-check th, .gig-check td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+      .gig-check th { font-size: 13px; color: var(--muted); font-weight: 600; }
+      .gig-check td.n { color: var(--muted); width: 2em; }
+      .gig-check tr.problem td { background: color-mix(in srgb, #b91c1c 8%, transparent); }
+      .gig-check tr.focus td { background: color-mix(in srgb, var(--accent) 16%, transparent); }
+      .gig-check .notes { margin: 2px 0 0; padding-left: 18px; font-size: 13px; }
+      .gig-check .notes li.problem { color: #b91c1c; }
       .instrument-help-table { border-collapse: collapse; font-size: 13px; margin: 4px 0 8px; }
       .instrument-help-table th, .instrument-help-table td { text-align: left; vertical-align: top; padding: 5px 8px; border-bottom: 1px solid var(--border); }
       .table-scroll { overflow-x: auto; }
@@ -3634,6 +3644,7 @@
               <span class="appbar-spacer"></span>
               <button id="setlistSession" class="appbar-button session-cta" type="button" data-icon="screen" title="Run the session: each song on one screen, in order, on the TV or projector if one is plugged in. → or a clicker for the next song">Session screen</button>
               <button id="setlistStand" class="appbar-button" type="button" data-icon="screen" title="Music stand: read the setlist yourself, song after song, full screen at one steady size. Click or tap the right half for the next page, the left half to go back.">Music stand</button>
+              <button id="setlistGigCheck" class="appbar-button" type="button" data-icon="setlist" title="The set in order with each song's key and capo, and anything to look at before the gig: missing songs, capo changes, songs that need a page turn on the Session screen">Gig check</button>
               <button id="setlistPdf" class="appbar-button" type="button" data-icon="export" title="One PDF with every song in this setlist, in order">Songbook PDF…</button>
               <button id="setlistFolder" class="appbar-button" type="button" data-icon="folder" title="A folder with one PDF per song, numbered in setlist order (in the gig folder, if you've chosen one): for a tablet, or to print">Setlist folder…</button>
               <button id="setlistDelete" class="appbar-button" type="button" title="Delete this setlist (the songs stay in your library)">Delete</button>
@@ -4197,6 +4208,16 @@
       <div class="dialog-actions">
         <button id="learnTroubleClear" type="button">Clear them all</button>
         <div class="right"><button id="learnTroubleClose" class="primary" type="button">Close</button></div>
+      </div>
+    </dialog>
+
+    <dialog id="gigCheckDialog" class="learn-changes-dialog gig-check-dialog" aria-labelledby="gigCheckTitle">
+      <h2 id="gigCheckTitle">Gig check</h2>
+      <p id="gigCheckSummary" class="dialog-note"></p>
+      <div id="gigCheckList" class="gig-check"></div>
+      <div class="dialog-actions">
+        <button id="gigCheckNext" type="button" title="Go to the next song with something to look at">Next to look at</button>
+        <div class="right"><button id="gigCheckClose" class="primary" type="button">Close</button></div>
       </div>
     </dialog>
 
@@ -13560,6 +13581,77 @@ function showTab(tab) {
         }
         document.getElementById('standButton').addEventListener('click', () => sessionThisSong({ stand: true }));
         document.getElementById('setlistStand').addEventListener('click', () => sessionSetlist({ stand: true }));
+        // 4.99.12: Gig check: the set in order, each song's key and capo, and what to look at first
+        // (src/gig-check.js). Each song is opened and laid out as the Session screen would.
+        async function gigCheck() {
+          const setlist = setlistView.current;
+          if (!setlist || !setlist.songs.length) return;
+          showToast('Checking the set…', { busy: true });
+          const entries = [];
+          const laid = [];
+          for (const line of setlist.songs) {
+            const e = entryOf(line);
+            const lib = songOf(line);
+            const entry = { title: entryLabel(line), shift: e.shift || 0, song: lib, capo: 0, instrument: '', at: -1 };
+            if (lib) {
+              try {
+                const song = await window.ukemusic.openSong(lib.folder);
+                const config = mergeConfig(clone(state.config), song.settings || {});
+                entry.capo = songCapo(config);
+                entry.instrument = song.settings?.song?.instrument || '';
+                entry.at = laid.push(sessionSong({ title: entry.title, content: song.content, config, semitones: entry.shift, folder: lib.folder })) - 1;
+              } catch (_e) { /* listed without its capo */ }
+            }
+            entries.push(entry);
+          }
+          let fit = null;
+          try { if (laid.length) fit = await window.ukemusic.session.check({ songs: laid, ...sessionOptions() }); } catch (_e) { /* no Session screen check */ }
+          for (const x of entries) x.fit = fit && x.at >= 0 ? fit.songs[x.at] : null;
+          const r = window.ukemusic.gigCheck({ entries, instrument: state.config?.song?.instrument || 'soprano', instruments: window.ukemusic.instruments || [], minPx: fit?.minPx || 0 });
+          hideToast();
+          document.getElementById('gigCheckSummary').textContent = `${setlist.name}. ${r.summary}${fit ? '' : ' (The Session screen check couldn\'t run.)'}`;
+          const table = document.createElement('table');
+          table.innerHTML = '<thead><tr><th>#</th><th>Song</th><th>Key</th><th>Capo</th><th></th></tr></thead>';
+          const body = document.createElement('tbody');
+          for (const row of r.rows) {
+            const tr = document.createElement('tr');
+            if (row.problem) tr.className = 'problem';
+            const cell = (text, cls) => { const td = document.createElement('td'); if (cls) td.className = cls; td.textContent = text; return td; };
+            const song = cell(row.title);
+            if (row.notes.length) {
+              const ul = document.createElement('ul'); ul.className = 'notes';
+              for (const t of row.notes) { const li = document.createElement('li'); li.textContent = t; if (!/^Capo change/.test(t)) li.className = 'problem'; ul.appendChild(li); }
+              song.appendChild(ul);
+            }
+            const open = document.createElement('td');
+            if (row.folder) {
+              const b = document.createElement('button');
+              b.type = 'button'; b.textContent = 'Open';
+              b.title = 'Open this song (in this key)';
+              b.addEventListener('click', () => { document.getElementById('gigCheckDialog').close(); openFromLibrary(row.folder, row.shift); });
+              open.appendChild(b);
+            }
+            tr.append(cell(String(row.n), 'n'), song, cell(row.key || '?'), cell(row.capo === null ? '' : (row.capo ? String(row.capo) : 'none')), open);
+            body.appendChild(tr);
+          }
+          table.appendChild(body);
+          document.getElementById('gigCheckList').replaceChildren(table);
+          document.getElementById('gigCheckNext').disabled = !r.problems;
+          gigCheckAt = -1;
+          document.getElementById('gigCheckDialog').showModal();
+        }
+        let gigCheckAt = -1;
+        // Next to look at: the next song with a problem, scrolled to and outlined
+        document.getElementById('gigCheckNext').addEventListener('click', () => {
+          const rows = [...document.querySelectorAll('#gigCheckList tbody tr')];
+          const problems = rows.map((tr, i) => (tr.classList.contains('problem') ? i : -1)).filter((i) => i >= 0);
+          if (!problems.length) return;
+          gigCheckAt = problems.find((i) => i > gigCheckAt) ?? problems[0];
+          rows.forEach((tr, i) => tr.classList.toggle('focus', i === gigCheckAt));
+          rows[gigCheckAt].scrollIntoView({ block: 'center' });
+        });
+        document.getElementById('setlistGigCheck').addEventListener('click', () => gigCheck());
+        document.getElementById('gigCheckClose').addEventListener('click', () => document.getElementById('gigCheckDialog').close());
         document.getElementById('sessionButton').addEventListener('click', () => sessionThisSong());
         document.getElementById('setlistSession').addEventListener('click', () => sessionSetlist());
         document.getElementById('sessionPrev').addEventListener('click', () => window.ukemusic.session.key('ArrowLeft'));
@@ -14711,6 +14803,7 @@ function showTab(tab) {
           if (document.activeElement !== name) name.value = current.name;
           document.getElementById('setlistCount').textContent = `(${current.songs.length})`;
           document.getElementById('setlistPdf').disabled = !current.songs.length;
+          document.getElementById('setlistGigCheck').disabled = !current.songs.length;
           const ol = document.getElementById('setlistSongs');
           ol.replaceChildren();
           if (!current.songs.length) {

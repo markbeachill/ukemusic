@@ -88,6 +88,7 @@ const SECTIONS = [
     tone: 'coral', icon: 'group', card: { h: 'Playing together', p: "The Session screen puts the song on the TV for the whole room, and goes through the night's setlist." },
     rows: [
       { f: 'Setlists: the night\'s songs in order, for the Music stand, the Session screen or a songbook PDF', web: true, desktop: true },
+      { f: 'Gig check: a setlist\'s keys and capos, and what to look at before the gig', web: false, desktop: true, adds: 'a gig check of a setlist' },   // 4.99.12
       { f: 'The Session screen: big words and chords for a group', web: 'On this device', desktop: 'On a second screen or TV', adds: 'the Session screen on a second screen or TV' },
       { f: 'Songs from the desktop to a phone or tablet, in one file', web: 'Takes it in', desktop: true }
     ]

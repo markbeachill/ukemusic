@@ -267,6 +267,8 @@ A setlist is the songs for a gig, a jam or a club night, in order, in the keys y
 
 From a setlist: **Music stand** to read it yourself, **Session screen** for the room, and (desktop) **Songbook PDF** for one PDF of the whole set. Setlists are text files in the songs folder's Setlists folder; with Dropbox, the web player shares them.
 
+Before a gig, **Gig check** (desktop) lists the set in order with each song's key and capo, and marks what to look at: a song no longer in the songs folder, one in the set twice, one written for another instrument, one that needs a page turn on the Session screen. Capo changes between songs are noted too. **Next to look at** goes through them; **Open** opens a song in the setlist's key.
+
 ## Reading at a gig: Music stand and Session screen
 
 Which to use:
