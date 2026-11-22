@@ -32,6 +32,9 @@ mysongs/
 **/exports/
 **/.history/
 
+# --- Private SongFix2 workflow and song files ---
+/SongFix2/
+
 # --- Public Domain Songs: songs whose rights aren't confirmed yet stay local ---
 public domain songs/Public Domain Songs/C C Rider (See See Rider)/
 
