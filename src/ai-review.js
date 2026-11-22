@@ -41,7 +41,7 @@ function gather(files = []) {
     else if (base === 'review.md') id = 'review';
     else if (base === 'edits.txt' || base === 'edits-returned.txt') id = 'edits';
     else if (base === 'ai-prompt.txt' || /\.md$/.test(base) || /(^|\/)lessons\//i.test(name)) id = null;
-    else if (base.endsWith('-song.txt') || (/\.txt$/.test(base) && /--START MUSIC--/.test(text))) id = 'chart';
+    else if (base.endsWith('-song.txt') || base === 'pasted-song.txt' || (/\.txt$/.test(base) && /--START MUSIC--/.test(text))) id = 'chart';
     if (!id) { out.ignored.push(name); continue; }
     if (out[id] !== undefined) { out.ignored.push(`${name} (a second ${id === 'chart' ? 'song' : base})`); continue; }
     out[id] = text;
@@ -221,6 +221,12 @@ function compare(current, back, { beatsPerBar = 4, checkPlan = (plan, chart) => 
       const pb = playing(before, beatsPerBar);
       const pa = playing(after, beatsPerBar);
       bars = { before: pb.bars, after: pa.bars, parts: pa.parts.map((p, i) => ({ name: p.name, after: p.bars, before: pb.parts[i] && pb.parts[i].name === p.name ? pb.parts[i].bars : null })) };
+      const marks = (t) => (clean(t).match(/(?<!\[)\[[^\[\]\n]*\](?!\])/g) || []);
+      const mb = marks(before);
+      const ma = marks(after);
+      const norm = (m) => m.replace(/\s+/g, '');
+      const rewritten = mb.length === ma.length ? mb.filter((m, i) => m !== ma[i] && norm(m) === norm(ma[i])).length : 0;
+      if (rewritten) note(`${rewritten} chord marker${rewritten === 1 ? ' is' : 's are'} written another way that plays the same (such as [Cx3] → [C x3]): no need for that change.`);
       if (pb.chords.join(' ') === pa.chords.join(' ')) ok(`The chords are the same, in the same order (${pa.chords.length}).`);
       else {
         const moved = pb.chords.length === pa.chords.length ? pb.chords.map((c, i) => [c, pa.chords[i]]).filter(([x, y]) => x !== y) : [];
@@ -309,6 +315,25 @@ function reportHtml(res) {
   return parts.join('');
 }
 
+/**
+ * Text pasted from the chat: the song (the code block with --START MUSIC--), an edit list (@@ lines)
+ * or song.ini ([song]) -> files, as gather() takes them
+ */
+function fromPaste(text) {
+  const t = clean(text);
+  if (/^\s*@@\s+[A-Z]\s/m.test(t)) {
+    const fenced = [...t.matchAll(/```[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]).find((b) => /^@@/m.test(b));
+    return [{ name: 'EDITS.txt', text: fenced || t }];
+  }
+  const blocks = [...t.matchAll(/```[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]);
+  const song = blocks.find((b) => /--START MUSIC--/.test(b)) || (/--START MUSIC--/.test(t) ? t.slice(t.indexOf('--START MUSIC--'), t.includes('--END MUSIC--') ? t.indexOf('--END MUSIC--') + 13 : undefined) : null);
+  const out = [];
+  if (song) out.push({ name: 'pasted-song.txt', text: `${song.replace(/^\s*\n/, '').replace(/\n+$/, '')}\n` });
+  const ini = blocks.find((b) => /^\s*\[song\]/m.test(b) && !/--START MUSIC--/.test(b));
+  if (ini) out.push({ name: 'song.ini', text: ini });
+  return out;
+}
+
 /** Files picked, or a zip's files, as text: [{ name, text }] (readZip: song-files' zip reader) */
 async function readPicked(picked, readZip) {
   const out = [];
@@ -344,10 +369,26 @@ const CSS = `
 @media (prefers-color-scheme: dark) { .air-before { background: #3a2222; } .air-after { background: #1f3527; } .air-ok { color: #7fd1a0; } .air-look { color: #ff9a9a; } }
 `;
 
+/**
+ * A returned song that is only the music (as a chat gives it, in a code block) keeps the lines the song
+ * has above --START MUSIC-- and below --END MUSIC-- (its title, a practice tempo…)
+ */
+function keepOutside(currentChart, backChart) {
+  const cur = clean(currentChart);
+  const back = clean(backChart);
+  const a = cur.indexOf('--START MUSIC--');
+  const b = cur.indexOf('--END MUSIC--');
+  if (a < 0 || b < a || !/^\s*--START MUSIC--/.test(back) || !/--END MUSIC--\s*$/.test(back)) return back;
+  const before = cur.slice(0, a);
+  const after = cur.slice(b + '--END MUSIC--'.length);
+  if (!before.trim() && !after.trim()) return back;
+  return `${before}${back.trim()}${after || '\n'}`;
+}
+
 function show(holder, { got, current, beatsPerBar = 4 }) {
   const doc = holder.ownerDocument;
   if (!doc.getElementById('airCss')) doc.head.appendChild(Object.assign(doc.createElement('style'), { id: 'airCss', textContent: CSS }));
-  let back = { chart: got.chart, notes: got.notes, ini: got.ini, plan: got.plan };
+  let back = { chart: got.chart === undefined ? undefined : keepOutside(current.chart, got.chart), notes: got.notes, ini: got.ini, plan: got.plan };
   const list = got.edits !== undefined ? parseEdits(got.edits) : null;
   let rows = list ? [...new Set(list.edits.map((e) => e.row))] : [];
   let compared = null;
@@ -401,4 +442,4 @@ function show(holder, { got, current, beatsPerBar = 4 }) {
 /** Settings (an object, as the apps keep them) as song.ini text, to compare */
 const iniText = (settings) => (settings && Object.keys(settings).length ? stringifyIni(settings) : '');
 
-module.exports = { gather, parseEdits, applyEdits, compare, result, reportHtml, readPicked, show, iniText, lineDiff, words, FILES };
+module.exports = { fromPaste, keepOutside, gather, parseEdits, applyEdits, compare, result, reportHtml, readPicked, show, iniText, lineDiff, words, FILES };

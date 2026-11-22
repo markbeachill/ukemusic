@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.99.26 · AI chat: leave what works, and paste the answer into Bring back
+
+- **Ready to practise prompt**, after a real answer for Amazing Grace:
+  - it leaves notation that already works as it is (`[Cx3]` and `[C x3]` are the same; a chat had rewritten every one);
+  - it says what a plain chord does: on the beat it's a whole bar, after a chord of a few beats it's the rest of that bar;
+  - anything taken out of the song (a comment, a recap, a second ending) has to be said, and given back ready for your notes;
+  - given the song's zip, a chat that can give files back returns the changed ones as a zip, ready for Bring back.
+- **Bring back** takes the chat's answer pasted in (desktop: **Or paste what the chat wrote**; web player: **Paste what the chat wrote**): the song from its code block, or an edit list. A song pasted that's only the music keeps your song's lines above `--START MUSIC--` (its title, a practice tempo).
+- Bring back says when chord markers were only written another way that plays the same, so you know that change wasn't needed.
+
 ## v4.99.25 · Bring back from an AI chat, checked first
 
 - **Bring back** (desktop: Export → AI chat; web player: Edit → Help from an AI chat → **Bring back from an AI chat**): choose what the chat gave you, a zip, the song's files, or an edit list (`EDITS.txt`), and ukemusic checks it against the song **before anything changes**:

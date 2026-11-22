@@ -4324,8 +4324,13 @@
 
     <dialog id="aiReviewDialog" class="learn-changes-dialog ai-review-dialog" aria-labelledby="aiReviewTitle">
       <h2 id="aiReviewTitle">Bring back from an AI chat</h2>
-      <p id="aiReviewNote" class="dialog-note">Choose what the chat gave you: a zip, the song's files (the song, song.ini, notes.txt, practice-plan.txt, REVIEW.md), or an edit list (EDITS.txt). Nothing changes until you press Use.</p>
+      <p id="aiReviewNote" class="dialog-note">Choose what the chat gave you (a zip, the song's files: the song, song.ini, notes.txt, practice-plan.txt, REVIEW.md, or an edit list, EDITS.txt), or paste what it wrote. Nothing changes until you press Use.</p>
       <input id="aiReviewFiles" type="file" multiple accept=".zip,.txt,.ini,.md" hidden />
+      <details id="aiReviewPasteBox" class="ai-review-paste"><summary>Or paste what the chat wrote</summary>
+        <p class="dialog-note">Paste the chat's answer, or just its song (the code block from --START MUSIC-- to --END MUSIC--) or its edit list.</p>
+        <textarea id="aiReviewPaste" rows="6" spellcheck="false" style="width:100%;font-family:monospace" aria-label="What the chat wrote"></textarea>
+        <button id="aiReviewPasteCheck" type="button">Check what's pasted</button>
+      </details>
       <div id="aiReviewBody" class="ai-review" style="max-height:60vh;overflow:auto"></div>
       <div class="dialog-actions">
         <button id="aiReviewPick" type="button">Choose files</button>
@@ -15624,25 +15629,38 @@ ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or del
           if (!state.song) { setStatusMessage('Open a song first.'); return; }
           aiReviewView = null;
           document.getElementById('aiReviewBody').replaceChildren();
+          document.getElementById('aiReviewPaste').value = '';
           document.getElementById('aiReviewUse').disabled = true;
           aiReviewDialog.showModal();
-          document.getElementById('aiReviewFiles').click();
         });
         document.getElementById('aiReviewPick').addEventListener('click', () => document.getElementById('aiReviewFiles').click());
         document.getElementById('aiReviewCancel').addEventListener('click', () => aiReviewDialog.close());
-        document.getElementById('aiReviewFiles').addEventListener('change', async (event) => {
+        async function showAiReview(files) {
           const R = window.ukemusic.aiReview;
           const body = document.getElementById('aiReviewBody');
           try {
-            const got = R.gather(await R.readPicked([...event.target.files], window.ukemusic.songFiles.readZip));
-            event.target.value = '';
+            const got = R.gather(await files());
+            if (got.chart === undefined && got.notes === undefined && got.ini === undefined && got.plan === undefined && got.edits === undefined) {
+              body.textContent = 'There\'s no song, settings, notes, plan or edit list in that.';
+              document.getElementById('aiReviewUse').disabled = true;
+              return;
+            }
             const current = { chart: getEditorValue(), notes: state.notes || '', ini: R.iniText(state.songSettings), plan: await loadPlanText() };
             aiReviewView = R.show(body, { got, current, beatsPerBar: Number(effectiveConfig()?.song?.beats_per_bar) || 4 });
             if (aiReviewView.ignored.length) body.appendChild(Object.assign(document.createElement('p'), { className: 'dialog-note', textContent: `Left out: ${aiReviewView.ignored.join(', ')}` }));
             document.getElementById('aiReviewUse').disabled = false;
           } catch (error) {
-            body.textContent = `Couldn't read those files: ${error.message}`;
+            body.textContent = `Couldn't read that: ${error.message}`;
           }
+        }
+        document.getElementById('aiReviewFiles').addEventListener('change', (event) => {
+          const picked = [...event.target.files];
+          event.target.value = '';
+          showAiReview(() => window.ukemusic.aiReview.readPicked(picked, window.ukemusic.songFiles.readZip));
+        });
+        document.getElementById('aiReviewPasteCheck').addEventListener('click', () => {
+          document.getElementById('aiReviewPasteBox').open = false;
+          showAiReview(async () => window.ukemusic.aiReview.fromPaste(document.getElementById('aiReviewPaste').value));
         });
         document.getElementById('aiReviewUse').addEventListener('click', async () => {
           if (!aiReviewView || !state.song) return;

@@ -43,9 +43,10 @@ THE FORMAT (ukemusic)
   [[Verse 2]], [[Chorus]], [[Bridge]], [[Outro]]. Leave a blank line
   between parts.
 - How long each chord lasts:
-    a plain chord is one bar: [C]
-    several bars: [C x3]  (or [C][] for two, with [] showing where the
-      next bar starts in the words)
+    a plain chord fills the bar: [C] on the beat is a whole bar; after a
+      chord of a few beats it's the rest of that bar
+    several bars: [C x3] (also written [Cx3]: the same)  (or [C][] for
+      two, with [] showing where the next bar starts in the words)
     part of a bar, in beats: [Em:2]  (a plain chord after it fills the
       rest of the bar)
     no chord: [N.C.]   one strum left to ring: [C↓]   {stop} before a
@@ -69,7 +70,12 @@ THE FORMAT (ukemusic)
 
 WHAT EACH ONE MEANS
 1. Format. The song in the format above. Keep my words and line breaks
-   exactly as they are; shorten nothing unless I ask.
+   exactly as they are; shorten nothing unless I ask. If the sheet is
+   already in ukemusic's format, leave what's right as it is: don't
+   rewrite notation that already works ([Cx3] and [C x3] are the same).
+   Don't take anything out of the song (a comment, a recap, a second
+   ending) without saying so; give me what you took out, ready to paste
+   into my notes.
 2. Timing. Give every chord its length in bars or beats, so each line
    adds up to whole bars and the chords change where they do on the
    recording. Write out intros, instrumentals and endings as lines of
@@ -109,7 +115,11 @@ THE ANSWER, for what I chose
   note sung (e.g. E), and the strum(s) with a one-line description.
 - Then, if I chose them: Check by ear (6), then Practice notes (7).
 - Whatever I chose, list any change you made to the sheet's chords or
-  timing, so I can check it.
+  timing, so I can check it, and anything you took out of the song,
+  with its text for my notes.
+- If I attached the song's files (a zip from ukemusic) and you can give
+  files back, give the files you changed as a zip in the same layout,
+  so ukemusic can check them (Bring back) before I use them.
 
 Here is the sheet:
 [paste the chord sheet, or the song from ukemusic, here]
