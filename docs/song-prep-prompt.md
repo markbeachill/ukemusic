@@ -4,6 +4,8 @@ For a chord sheet from a website (or a song already in ukemusic) that you want t
 
 It's in the apps too: **Copy AI prompt: ready to practise** in the desktop app's File → Paste from website (it fills in the song that's open, or the sheet pasted there), and **Edit → Help from an AI chat** in the web player. The text is kept in `src/ai-prompts/ai-practice.txt` (below).
 
+**With the song's other files:** **Export → Copy for AI chat** (desktop) and **Copy song for an AI chat** (web player, Edit → Help from an AI chat) give the same prompt with the song and its settings (song.ini), notes and practice plan under their own headings, so the AI sees the tempo, key, credits and what you've noted. **AI chat zip** / **Download for an AI chat (zip)** makes a zip of the song's folder with the prompt (`ai-prompt.txt`), for a chat that takes attachments.
+
 It goes further than **Copy AI prompt** in File → Paste from website, which only changes the sheet into ukemusic's format. This one also sorts out the timing so playback is right, gives parts consistent names so Learn and the Stage copy work well, suggests strums, and tells you what to check by ear.
 
 ## How to use it

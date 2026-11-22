@@ -2748,6 +2748,13 @@
               </div>
               <span class="rib-label">Export</span>
             </div>
+            <div class="rib-group" data-feature="aiChat">
+              <div class="rib-items">
+                <button id="aiCopyButton" class="rib-button" type="button" data-icon="paste" title="Copy the song for an AI chat (Claude, ChatGPT, Gemini…): the ready-to-practise prompt with this song, its settings (song.ini), its notes and its practice plan. Paste it into the chat">Copy for AI chat</button>
+                <button id="aiZipButton" class="rib-button" type="button" data-icon="export" title="Save the song's folder as a zip, with the ready-to-practise prompt (ai-prompt.txt), into its exports folder: to attach to an AI chat, or to open in the web player">AI chat zip</button>
+              </div>
+              <span class="rib-label">AI chat</span>
+            </div>
             <div class="rib-group" data-feature="pdfs">
               <div class="rib-items">
                 <div class="rib-col">
@@ -15572,6 +15579,42 @@ ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or del
         // ── Export tab: one click for the usual exports, with the options beside them ──
         // Export now: one more step, the Export dialog with everything ticked
         document.getElementById('exportNowButton').addEventListener('click', () => openExportDialog());
+        // 4.99.24: the song for an AI chat (src/ai-bundle.js): the prompt with the song and its other files
+        async function aiBundleSong() {
+          const cfg = effectiveConfig();
+          const inst = cfg?.song?.instrument || 'soprano';
+          return {
+            title: state.song.title,
+            folder: String(state.song.folder || '').split(/[\\/]/).pop(),
+            fileName: String(state.song.songFile || '').split(/[\\/]/).pop(),
+            text: getEditorValue(),
+            settings: state.songSettings || {},
+            notes: state.notes || '',
+            plan: await loadPlanText(),
+            artist: cfg?.song?.artist || '',
+            instrument: shapesKey(inst) === 'baritone' ? 'baritone ukulele (DGBE)' : shapesKey(inst) === 'guitar' ? 'guitar (EADGBE)' : ''
+          };
+        }
+        document.getElementById('aiCopyButton').addEventListener('click', async (event) => {
+          const button = event.currentTarget;
+          if (!state.song) { setStatusMessage('Open a song first.'); return; }
+          const text = window.ukemusic.aiBundle.text(await aiBundleSong());
+          let done = window.ukemusic.copyText(text);
+          if (!done) { try { await navigator.clipboard.writeText(text); done = true; } catch (_e) { /* no clipboard */ } }
+          setStatusMessage(done ? 'Copied for an AI chat: paste it into the chat (Claude, ChatGPT, Gemini…).' : 'Couldn\'t copy to the clipboard.');
+          button.classList.add('done');
+          setTimeout(() => button.classList.remove('done'), 1500);
+        });
+        document.getElementById('aiZipButton').addEventListener('click', async () => {
+          if (!state.song) { setStatusMessage('Open a song first.'); return; }
+          try {
+            const song = await aiBundleSong();
+            const file = await window.ukemusic.saveAiZip({ folder: state.song.folder, fileName: window.ukemusic.aiBundle.zipName(song), bytes: window.ukemusic.aiBundle.zip(song) });
+            setStatusMessage(`Saved ${String(file).split(/[\\/]/).pop()} in the song's exports folder: attach it to an AI chat.`);
+          } catch (error) {
+            setStatusMessage(`Couldn't save the zip: ${error.message}`);
+          }
+        });
 
         // ── View tab: how the song looks ──
         // 4.33: the ribbon always changes *this song* (Settings → All songs sets the defaults).

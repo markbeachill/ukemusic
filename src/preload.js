@@ -267,6 +267,9 @@ contextBridge.exposeInMainWorld('ukemusic', {
   aiPrompt: require('./ai-prompt').AI_PROMPT,
   aiPracticePrompt: (details) => require('./ai-prompt').practicePrompt(details),
   aiChatUrl: require('./ai-prompt').AI_CHAT_URL,
+  // 4.99.24: the song for an AI chat: the prompt with the song and its song.ini, notes and practice plan
+  aiBundle: require('./ai-bundle'),
+  saveAiZip: (payload) => ipcRenderer.invoke('song:aiZip', payload),
   copyText: (text) => {
     try { require('electron').clipboard.writeText(String(text)); return true; } catch (_e) { return false; }
   },

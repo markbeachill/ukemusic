@@ -57,6 +57,7 @@
     { id: 'stage', app: 'both', where: 'Export; web: Settings', name: 'Stage copies', level: 'all' },
     { id: 'twoPage', app: 'desktop', where: 'Export', name: 'Two-page Stage', level: 'all' },
     { id: 'exportMore', app: 'desktop', where: 'Export', name: 'More formats: web page, text, ChordPro, words only, learn and pick sheets', level: 'all' },
+    { id: 'aiChat', app: 'both', where: 'Export; web: Edit → Help from an AI chat', name: 'The song for an AI chat: copy it with its settings, notes and plan, or save a zip', level: 'all' }, // 4.99.24
     // ── Desktop: Play ──
     { id: 'play', app: 'both', where: 'Play; web: the player', name: 'Play, Stop', level: 'simple' },
     { id: 'karaoke', app: 'both', where: 'Play; web: the player', name: 'Karaoke', level: 'simple' },

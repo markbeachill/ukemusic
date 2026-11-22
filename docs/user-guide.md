@@ -350,6 +350,8 @@ Open it from a song (**Play → Session screen**, with all features) or a setlis
 - **More formats:** a web page, words only, Markdown, ChordPro, and learn and pick sheets.
 - Tick **Make these my usual** to have the same ones ticked next time.
 
+**For an AI chat** (Claude, ChatGPT, Gemini…), the **AI chat** group on the Export tab gives the song with the ready-to-practise prompt and its other files: its settings (tempo, key, credits), its notes and its practice plan, so the chat sees all of it. **Copy for AI chat** copies it to paste into the chat; **AI chat zip** saves the song's folder as a zip in its exports folder, to attach. The web player has the same under **Edit → Help from an AI chat**, and its **Add songs from files** opens the zip.
+
 A **songbook** is one PDF of a setlist, with a cover and contents: **Songbook PDF** on the setlist.
 
 ![Songbook PDF: the cover, contents and paper size](../site/img/guide/desktop-X3.jpg)

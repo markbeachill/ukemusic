@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.99.24 · The song for an AI chat, with its settings, notes and plan
+
+- **Export → AI chat** (desktop) and **Edit → Help from an AI chat** (web player): the song for an AI chat (Claude, ChatGPT, Gemini…) with the ready-to-practise prompt **and the song's other files**: its settings (tempo, key, time, capo, credits), its notes and its practice plan, so the chat sees all of it, not only the sheet.
+- **Copy for AI chat** copies it all as one text to paste, each file under its own heading.
+- **AI chat zip** saves the song's folder as a zip (the song, song.ini, notes.txt, learn/practice-plan.txt) with the prompt in `ai-prompt.txt`, to attach to a chat. The desktop app puts it in the song's exports folder; the web player downloads it. The web player's **Add songs from files** opens the zip as the song again, leaving the prompt out.
+
 ## v4.99.23 · Ready to practise: the AI says what each change rests on
 
 - **Copy AI prompt: ready to practise** now asks the AI to say what each change rests on: the sheet, what it knows of the song, or a guess. It can't hear the recording, so it no longer calls a timing or tempo "as on the recording" unless it's sure, and an estimated tempo is marked as one, apart from the slower tempo to practise at.

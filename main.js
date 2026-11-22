@@ -960,6 +960,17 @@ function registerIpc() {
   });
 
   // 4.40: the song's trouble spots (learn/trouble-spots.json)
+  // 4.99.24: the song for an AI chat, as a zip in the song's exports folder (src/ai-bundle.js makes it)
+  handle('song:aiZip', async (_event, { folder, fileName, bytes } = {}) => {
+    if (!folder || !fs.existsSync(folder)) throw new Error('No song folder');
+    const name = path.basename(String(fileName || 'Song for an AI chat.zip')).replace(/[\\/:*?"<>|]/g, ' ');
+    const dir = path.join(folder, songs.EXPORTS_DIR);
+    ensureDirectory(dir);
+    const file = path.join(dir, /\.zip$/i.test(name) ? name : `${name}.zip`);
+    fs.writeFileSync(file, Buffer.from(bytes));
+    shell.showItemInFolder(file);
+    return file;
+  });
   handle('song:learnRead', async (_event, { folder, fileName } = {}) => songs.readLearn(folder, fileName));
   handle('song:learnWrite', async (_event, { folder, fileName, content } = {}) => songs.writeLearn(folder, fileName, String(content || '')));
 

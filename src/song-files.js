@@ -132,6 +132,7 @@ async function songsFromFiles(files) {
         for (const e of await readZip(bytes)) {
           if (/(^|\/)learn\/practice-plan\.txt$/i.test(e.name)) { flat.push({ name: e.name, text: decode(e.data) }); continue; }   // 4.99.19: a song's own practice plan
           if (/(^|\/)(__MACOSX|\.history|exports|learn)\//i.test(e.name) || /(^|\/)\.[^/]*$/.test(e.name)) continue;
+          if (/(^|\/)ai-prompt\.txt$/i.test(e.name)) continue;   // 4.99.24: the prompt in a zip for an AI chat
           flat.push({ name: e.name, text: TEXT_EXT.test(e.name) || /\.(ini|json)$/i.test(e.name) ? decode(e.data) : null });
         }
       } catch (error) { skipped.push(`${name} (${error.message})`); }
