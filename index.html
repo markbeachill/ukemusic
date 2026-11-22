@@ -2752,6 +2752,7 @@
               <div class="rib-items">
                 <button id="aiCopyButton" class="rib-button" type="button" data-icon="paste" title="Copy the song for an AI chat (Claude, ChatGPT, Gemini…): the ready-to-practise prompt with this song, its settings (song.ini), its notes and its practice plan. Paste it into the chat">Copy for AI chat</button>
                 <button id="aiZipButton" class="rib-button" type="button" data-icon="export" title="Save the song's folder as a zip, with the ready-to-practise prompt (ai-prompt.txt), into its exports folder: to attach to an AI chat, or to open in the web player">AI chat zip</button>
+                <button id="aiBackButton" class="rib-button" type="button" data-icon="import" title="Bring back what an AI chat returned (a zip, the song's files, or an edit list): see what would change and whether anything looks wrong, then use the files you tick">Bring back</button>
               </div>
               <span class="rib-label">AI chat</span>
             </div>
@@ -4318,6 +4319,17 @@
       <div class="dialog-actions">
         <button id="learnTroubleClear" type="button">Clear them all</button>
         <div class="right"><button id="learnTroubleClose" class="primary" type="button">Close</button></div>
+      </div>
+    </dialog>
+
+    <dialog id="aiReviewDialog" class="learn-changes-dialog ai-review-dialog" aria-labelledby="aiReviewTitle">
+      <h2 id="aiReviewTitle">Bring back from an AI chat</h2>
+      <p id="aiReviewNote" class="dialog-note">Choose what the chat gave you: a zip, the song's files (the song, song.ini, notes.txt, practice-plan.txt, REVIEW.md), or an edit list (EDITS.txt). Nothing changes until you press Use.</p>
+      <input id="aiReviewFiles" type="file" multiple accept=".zip,.txt,.ini,.md" hidden />
+      <div id="aiReviewBody" class="ai-review" style="max-height:60vh;overflow:auto"></div>
+      <div class="dialog-actions">
+        <button id="aiReviewPick" type="button">Choose files</button>
+        <div class="right"><button id="aiReviewCancel" type="button">Cancel</button><button id="aiReviewUse" class="primary" type="button" disabled>Use the ticked files</button></div>
       </div>
     </dialog>
 
@@ -15604,6 +15616,48 @@ ${entries.some((e) => e.missing) ? `<p class="missing">Not found (renamed or del
           setStatusMessage(done ? 'Copied for an AI chat: paste it into the chat (Claude, ChatGPT, Gemini…).' : 'Couldn\'t copy to the clipboard.');
           button.classList.add('done');
           setTimeout(() => button.classList.remove('done'), 1500);
+        });
+        // 4.99.25: bring back what the chat returned, checked first (src/ai-review.js)
+        let aiReviewView = null;
+        const aiReviewDialog = document.getElementById('aiReviewDialog');
+        document.getElementById('aiBackButton').addEventListener('click', () => {
+          if (!state.song) { setStatusMessage('Open a song first.'); return; }
+          aiReviewView = null;
+          document.getElementById('aiReviewBody').replaceChildren();
+          document.getElementById('aiReviewUse').disabled = true;
+          aiReviewDialog.showModal();
+          document.getElementById('aiReviewFiles').click();
+        });
+        document.getElementById('aiReviewPick').addEventListener('click', () => document.getElementById('aiReviewFiles').click());
+        document.getElementById('aiReviewCancel').addEventListener('click', () => aiReviewDialog.close());
+        document.getElementById('aiReviewFiles').addEventListener('change', async (event) => {
+          const R = window.ukemusic.aiReview;
+          const body = document.getElementById('aiReviewBody');
+          try {
+            const got = R.gather(await R.readPicked([...event.target.files], window.ukemusic.songFiles.readZip));
+            event.target.value = '';
+            const current = { chart: getEditorValue(), notes: state.notes || '', ini: R.iniText(state.songSettings), plan: await loadPlanText() };
+            aiReviewView = R.show(body, { got, current, beatsPerBar: Number(effectiveConfig()?.song?.beats_per_bar) || 4 });
+            if (aiReviewView.ignored.length) body.appendChild(Object.assign(document.createElement('p'), { className: 'dialog-note', textContent: `Left out: ${aiReviewView.ignored.join(', ')}` }));
+            document.getElementById('aiReviewUse').disabled = false;
+          } catch (error) {
+            body.textContent = `Couldn't read those files: ${error.message}`;
+          }
+        });
+        document.getElementById('aiReviewUse').addEventListener('click', async () => {
+          if (!aiReviewView || !state.song) return;
+          const { use, changes } = aiReviewView.chosen();
+          const done = [];
+          if (changes.text !== undefined) { setEditorProgrammatically(changes.text); done.push('the song'); }
+          if (changes.settings) { state.songSettings = changes.settings; await persistSongSettings(); populateSettingsForm(); done.push('its settings'); }
+          if (changes.notes !== undefined) { notesEditor.value = changes.notes; state.notes = changes.notes; notesPending = true; await flushNotes(); done.push('the notes'); }
+          if (changes.plan !== undefined) { planText.value = changes.plan; await savePlan(changes.plan); await renderPlanTab(); done.push('the practice plan'); }
+          aiReviewDialog.close();
+          updateDirtyState();
+          renderPreviewNow();
+          setNotice(done.length
+            ? `Used ${done.join(', ')}.${use.some((x) => x === 'chart' || x === 'ini') ? ' Save to keep the song and its settings (the version before stays in its history).' : ''}${use.some((x) => x === 'notes' || x === 'plan') ? ' The notes and plan are saved already.' : ''}`
+            : 'Nothing used.');
         });
         document.getElementById('aiZipButton').addEventListener('click', async () => {
           if (!state.song) { setStatusMessage('Open a song first.'); return; }

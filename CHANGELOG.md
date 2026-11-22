@@ -1,5 +1,16 @@
 # Changelog
 
+## v4.99.25 · Bring back from an AI chat, checked first
+
+- **Bring back** (desktop: Export → AI chat; web player: Edit → Help from an AI chat → **Bring back from an AI chat**): choose what the chat gave you, a zip, the song's files, or an edit list (`EDITS.txt`), and ukemusic checks it against the song **before anything changes**:
+  - whether the **words** change, or only the chords and directions;
+  - whether the **chords** change, or all move up together (**a change of key**), and any written key change;
+  - **how many bars** the song and each part play, before and after;
+  - which **settings** change (a setting the chat left out is kept);
+  - whether any of **your notes** would be lost (they're kept, added back at the end);
+  - whether ukemusic can run every step of the **practice plan**.
+- Each file has a tick; one with something to look at starts unticked. With an edit list, tick the rows you agreed with in the chat. Nothing changes until **Use the ticked files**: then Save keeps the song and its settings, and the version before stays in its history.
+
 ## v4.99.24 · The song for an AI chat, with its settings, notes and plan
 
 - **Export → AI chat** (desktop) and **Edit → Help from an AI chat** (web player): the song for an AI chat (Claude, ChatGPT, Gemini…) with the ready-to-practise prompt **and the song's other files**: its settings (tempo, key, time, capo, credits), its notes and its practice plan, so the chat sees all of it, not only the sheet.
