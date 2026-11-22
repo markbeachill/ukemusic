@@ -28,11 +28,11 @@ The prompt is kept in one place, **`src/ai-prompts/ai-practice.txt`**, a plain t
 | | What the AI does |
 |---|---|
 | 1. Format | The song in ukemusic's format, your words and line breaks kept exactly (always done: the rest need it) |
-| 2. Timing | Every chord's length, so playback follows the recording; intros and endings as lines of bars |
+| 2. Timing | Every chord's length, so playback follows the recording; intros and endings as lines of bars; it keeps the sheet's timing unless it's sure, and takes out a chord summary or second ending that would be played |
 | 3. Parts | The same name for the same part each time, and a repeated chorus written the same way |
 | 4. Chords | Checked against the song as it knows it; any change named and explained |
 | 5. Strums | Patterns for your level, named when they switch |
-| 6. Check by ear | What it changed, guessed or wasn't sure of, with where and how sure |
+| 6. Check by ear | What it changed, guessed or wasn't sure of, with where, how sure and what it rests on (the sheet, what it knows of the song, or a guess) |
 | 7. Practice notes | The hardest changes, easier shapes, a tempo to start at, which part first |
 | A. All of them | Everything above |
 
@@ -52,6 +52,7 @@ The prompt is kept in one place, **`src/ai-prompts/ai-practice.txt`**, a plain t
 ## Good to know
 
 - **The words stay yours.** The prompt asks for no words to be added or recalled, which keeps the AI to tidying what you gave it, and keeps copyrighted words you haven't got out of the song.
+- **The AI can't hear the recording.** It works from the sheet and what it knows of the song, so it says what each change rests on, and a tempo it estimates is marked as one. Your ears, and **Check by ear**, have the last word.
 - **One song at a time** works best, with the recording to hand to check against.
 - **To change one thing later** (a new strum from your teacher, say), paste the song and ask for that change alone, with the same rules.
 - **A tune**, for **Pick → Play the tune**: ask only for a song you know well, and check every note by ear. The format is in How to write songs (The tune).

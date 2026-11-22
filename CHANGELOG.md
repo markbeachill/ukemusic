@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.99.23 · Ready to practise: the AI says what each change rests on
+
+- **Copy AI prompt: ready to practise** now asks the AI to say what each change rests on: the sheet, what it knows of the song, or a guess. It can't hear the recording, so it no longer calls a timing or tempo "as on the recording" unless it's sure, and an estimated tempo is marked as one, apart from the slower tempo to practise at.
+- **Timing:** the AI keeps the sheet's chord lengths and where its chords fall unless it's confident they're wrong, and lists anything it's unsure of under **Check by ear**.
+- **Chord summaries and second endings:** a chord recap or a second version of the ending at the end of a sheet would be played as extra bars. The AI now takes it out of the song, gives it back for the Notes tab, and says how many bars that saves.
+- The menu, the rule about keeping your words, and what the apps fill in are as they were. The guide to the prompt (docs/song-prep-prompt.md) says the same.
+
 ## v4.99.22 · Change a practice plan row by row
 
 - **The plan as rows** (the Practice tab; web: ✎ Edit → Practice): each step is a row with its minutes, its tempo (60, or 70% of the song's; empty for the usual) and its note, and **▲ ▼ ✕** to move it up, down or remove it. **+ Add step** puts one in at the end. Fits a phone.

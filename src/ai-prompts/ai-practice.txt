@@ -30,6 +30,9 @@ THE WORDS
 - You may use what you know about the song's music (its chords, key,
   form, tempo and feel) to check the sheet, but tell me what you
   changed and why.
+- Say where each change comes from: the sheet itself, what you know of
+  the song, or a guess. You can't hear the recording, so don't call a
+  timing or a tempo "as on the recording" unless you're sure of it.
 
 THE FORMAT (ukemusic)
 - The whole song goes between two lines: --START MUSIC-- and
@@ -70,7 +73,12 @@ WHAT EACH ONE MEANS
 2. Timing. Give every chord its length in bars or beats, so each line
    adds up to whole bars and the chords change where they do on the
    recording. Write out intros, instrumentals and endings as lines of
-   bars, with the right number of bars.
+   bars, with the right number of bars. Keep the sheet's lengths and
+   where its chords fall unless you're confident they're wrong; put any
+   timing you're unsure of in Check by ear. The app plays everything in
+   the song, so a chord summary or a second version of the ending at the
+   end of the sheet would be played too: take it out of the song, give
+   it back to me to keep in the notes, and say how many bars that saves.
 3. Parts. Name the parts consistently: the same name for the same part
    (Verse 1, Verse 2…, Chorus), and a chorus written the same way each
    time if it's played the same (same words, chords and line breaks), so
@@ -86,7 +94,8 @@ WHAT EACH ONE MEANS
    Keep anything my teacher or I have already decided.
 6. Check by ear. Everything you changed, guessed or weren't sure of (a
    chord's timing, a bar count, a chord you think the sheet got wrong),
-   each with where it is (part and line) and how sure you are.
+   each with where it is (part and line), how sure you are, and what it
+   rests on (the sheet, what you know of the song, or a guess).
 7. Practice notes, short: the two or three hardest chord changes and how
    to practise them, any easier chord shapes for a beginner, a slower
    tempo to start at, and which part to learn first.
@@ -95,8 +104,9 @@ THE ANSWER, for what I chose
 - The song, in one code block, between --START MUSIC-- and
   --END MUSIC--.
 - The song's details, as a short list: key, time signature, tempo (beats
-  a minute, as on the recording), capo (if any), the first note sung
-  (e.g. E), and the strum(s) with a one-line description.
+  a minute, as on the recording, saying if it's your estimate; keep it
+  apart from the slower tempo to practise at), capo (if any), the first
+  note sung (e.g. E), and the strum(s) with a one-line description.
 - Then, if I chose them: Check by ear (6), then Practice notes (7).
 - Whatever I chose, list any change you made to the sheet's chords or
   timing, so I can check it.
