@@ -2649,7 +2649,7 @@ ${SHEET_CSS_TEXT}${stageCss}${stage ? STAGE_CSS : ''}.shorthand-key{margin-top:1
   $('guideBtnLib').addEventListener('click', openGuide);
   $('guideClose').addEventListener('click', () => $('guideDialog').close());
   $('aboutBtn').addEventListener('click', () => {
-    $('aboutBody').innerHTML = U.aboutHtml({ version: U.appVersion, edition: 'web' }).replace(/<p class="about-foot">[\s\S]*?<\/p>/, '<p class="about-foot">The full licence texts are in THIRD_PARTY_NOTICES.md in the ukemusic folder.</p>');
+    $('aboutBody').innerHTML = U.aboutHtml({ version: U.appVersion, edition: 'web' });
     $('aboutDialog').showModal();
   });
   $('aboutClose').addEventListener('click', () => $('aboutDialog').close());

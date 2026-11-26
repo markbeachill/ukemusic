@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.99.27 · Minor updates: clearer About credits
+
+- A shorter **About** box in both apps credits the FreePats nylon-string guitar recordings used for guitar and baritone ukulele, credits the music and Easy to read fonts, and links to the full licence details.
+
 ## v4.99.26 · AI chat: leave what works, and paste the answer into Bring back
 
 - **Ready to practise prompt**, after a real answer for Amazing Grace:
